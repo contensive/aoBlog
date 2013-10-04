@@ -1,6 +1,6 @@
-Blogs = 23, 23, 723, 539, 
-kmaCommonModule = 115, 115, 1395, 735, 
-ccCommonModule = 46, 46, 1092, 562, 
-CommentSupportClass = 69, 69, 798, 656, 
+Blogs = 23, 23, 723, 539, Z
 CategoriesClass = 92, 92, 981, 472, 
-PatchClass = 0, 0, 0, 0, C
+PatchClass = 125, 125, 1086, 758, 
+ccCommonModule = 0, 0, 0, 0, C
+kmaCommonModule = 0, 0, 0, 0, C
+CommentSupportClass = 100, 100, 1061, 733, 

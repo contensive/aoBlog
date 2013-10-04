@@ -11,3 +11,6 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = True
+'
+' not used but is part of the binary compatible object. Not needed in dotnet version
+'
