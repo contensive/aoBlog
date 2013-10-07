@@ -48,6 +48,8 @@ Option Explicit
 '========================================================================
 '
 Const AnonymousMemberName = "Anonymous"
+Const reCaptchaDisplayGuid = "{E9E51C6E-9152-4284-A44F-D3ABC423AB90}"
+Const reCaptchaProcessGuid = "{030AC5B0-F796-4EA4-B94C-986B1C29C16C}"
 '
 Const BackToRecentPostsMsg = "« Back to recent posts"
 'Const BackToRecentPostsMsg = "See recent posts"
@@ -157,10 +159,10 @@ Private Csv As Object
 '       To make an Add-on that works the same in v3.3 and v3.4, use this adapter instead of the execute above
 '========================================================================
 '
-Public Function Execute(CsvObject As Object, MainObject As Object, OptionString As String, FilterInput As String) As String
+Public Function Execute(CsvObject As Object, MainObject As Object, optionString As String, FilterInput As String) As String
     Set Csv = CsvObject
     Call Init(MainObject)
-    Execute = GetContent(OptionString)
+    Execute = GetContent(optionString)
 End Function
 
 Public Sub Init(MainObject As Object)
@@ -178,7 +180,7 @@ End Sub
 '
 '====================================================================================
 '
-Public Function GetContent(OptionString As String) As String
+Public Function GetContent(optionString As String) As String
     On Error GoTo ErrorTrap
     '
     Dim blogCaption As String
@@ -227,7 +229,7 @@ Public Function GetContent(OptionString As String) As String
     s = s & vbCrLf & cr & "<!-- Blog " & BlogName & " -->" & vbCrLf
     '
     If Not (Main Is Nothing) Then
-        BlogName = Main.GetAddonOption("BlogName", OptionString)
+        BlogName = Main.GetAddonOption("BlogName", optionString)
         '
         ' get legacy values that used to be in the instance options
         ' These values will all be empty except when the addon was added to a page
@@ -397,16 +399,16 @@ Public Function GetContent(OptionString As String) As String
         ' handle legacy instance option migration to the blog record
         '
         If Not ignoreLegacyInstanceOptions Then
-            AllowAnonymous = kmaEncodeBoolean(Main.GetAddonOption("Allow Anonymous Comments", OptionString))
-            autoApproveComments = kmaEncodeBoolean(Main.GetAddonOption("Auto-Approve New Comments", OptionString))
-            AllowCategories = kmaEncodeBoolean(Main.GetAddonOption("Allow Categories", OptionString))
-            PostsToDisplay = kmaEncodeInteger(Main.GetAddonOption("Number of entries to display", OptionString))
-            OverviewLength = kmaEncodeInteger(Main.GetAddonOption("Overview Character Length", OptionString))
-            ThumbnailImageWidth = kmaEncodeInteger(Main.GetAddonOption("Thumbnail Image Width", OptionString))
+            AllowAnonymous = kmaEncodeBoolean(Main.GetAddonOption("Allow Anonymous Comments", optionString))
+            autoApproveComments = kmaEncodeBoolean(Main.GetAddonOption("Auto-Approve New Comments", optionString))
+            AllowCategories = kmaEncodeBoolean(Main.GetAddonOption("Allow Categories", optionString))
+            PostsToDisplay = kmaEncodeInteger(Main.GetAddonOption("Number of entries to display", optionString))
+            OverviewLength = kmaEncodeInteger(Main.GetAddonOption("Overview Character Length", optionString))
+            ThumbnailImageWidth = kmaEncodeInteger(Main.GetAddonOption("Thumbnail Image Width", optionString))
             If ThumbnailImageWidth = 0 Then
                 ThumbnailImageWidth = 150
             End If
-            ImageWidthMax = kmaEncodeInteger(Main.GetAddonOption("Image Width Max", OptionString))
+            ImageWidthMax = kmaEncodeInteger(Main.GetAddonOption("Image Width Max", optionString))
             If ImageWidthMax = 0 Then
                 ImageWidthMax = 400
             End If
@@ -490,7 +492,7 @@ Public Function GetContent(OptionString As String) As String
                 '
                 ' Process the source form into form if there was a button - else keep formid
                 '
-                FormID = ProcessForm(SourceFormID, BlogID, IsBlogOwner, EntryID, ButtonValue, BlogName, BlogOwnerID, AllowAnonymous, AllowCategories, BlogCategoryID, RSSFeedId, BlogRootLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, autoApproveComments, authoringGroupId, emailComment)
+                FormID = ProcessForm(SourceFormID, BlogID, IsBlogOwner, EntryID, ButtonValue, BlogName, BlogOwnerID, AllowAnonymous, AllowCategories, BlogCategoryID, RSSFeedId, BlogRootLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, autoApproveComments, authoringGroupId, emailComment, optionString)
             End If
             '
             ' Get Next Form
@@ -557,7 +559,7 @@ ErrorTrap:
 '       returns the FormID for the next one to display
 '====================================================================================
 '
-Private Function ProcessForm(SourceFormID As Long, BlogID As Long, IsBlogOwner As Boolean, EntryID As Long, ButtonValue As String, BlogName As String, BlogOwnerID As Long, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, RSSFeedId As Long, BlogRootLink As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, autoApproveComments As Boolean, authoringGroupId As Long, emailComment As Boolean) As Long
+Private Function ProcessForm(SourceFormID As Long, BlogID As Long, IsBlogOwner As Boolean, EntryID As Long, ButtonValue As String, BlogName As String, BlogOwnerID As Long, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, RSSFeedId As Long, BlogRootLink As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, autoApproveComments As Boolean, authoringGroupId As Long, emailComment As Boolean, optionString As String) As Long
     On Error GoTo ErrorTrap
     '
     If ButtonValue <> "" Then
@@ -567,7 +569,7 @@ Private Function ProcessForm(SourceFormID As Long, BlogID As Long, IsBlogOwner A
             Case FormBlogEntryEditor
                 ProcessForm = ProcessFormBlogPost(SourceFormID, BlogID, EntryID, ButtonValue, BlogCategoryID, RSSFeedId, BlogRootLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax)
             Case FormBlogPostDetails
-                ProcessForm = ProcessFormBlogPostDetails(SourceFormID, BlogID, IsBlogOwner, ButtonValue, BlogName, BlogOwnerID, AllowAnonymous, BlogCategoryID, autoApproveComments, authoringGroupId, emailComment)
+                ProcessForm = ProcessFormBlogPostDetails(SourceFormID, BlogID, IsBlogOwner, ButtonValue, BlogName, BlogOwnerID, AllowAnonymous, BlogCategoryID, autoApproveComments, authoringGroupId, emailComment, optionString)
             Case FormBlogArchiveDateList
                  ProcessForm = FormBlogArchiveDateList
             Case FormBlogSearch
@@ -1934,6 +1936,10 @@ Private Function GetFormBlogPostDetails(BlogID As Long, EntryID As Long, IsBlogO
     If allowComments And (Main.VisitCookieSupport) And (Not Main.VisitIsBot) Then
         s = s & cr & "<div class=""aoBlogCommentHeader"">Post a Comment</div>"
         '
+        If (Main.IsUserError()) Then
+            s = s & "<div class=""aoBlogCommentError"">" & Main.GetUserError() & "</div>"
+        End If
+        '
         If (Not AllowAnonymous) And (Not Main.IsAuthenticated) Then
             AllowPasswordEmail = kmaEncodeBoolean(Main.GetSiteProperty("AllowPasswordEmail", False))
             AllowMemberJoin = kmaEncodeBoolean(Main.GetSiteProperty("AllowMemberJoin", False))
@@ -2014,6 +2020,8 @@ Private Function GetFormBlogPostDetails(BlogID As Long, EntryID As Long, IsBlogO
                 s = s & cr & "<div class=""aoBlogCommentCopy"">Comment</div>"
                 s = s & cr & "<div class=""aoBlogCommentCopy"">" & Main.GetFormInputText(RequestNameCommentCopy, "", 15, 70) & "</div>"
             End If
+            s = s & cr & "<div class=""aoBlogCommentCopy"">Verify Text</div>"
+            s = s & cr & "<div class=""aoBlogCommentCopy"">" & Main.ExecuteAddon2(reCaptchaDisplayGuid, "") & "</div>"
             s = s & cr & "<div class=""aoBlogCommentCopy"">" & Main.GetFormButton(FormButtonPostComment) & "&nbsp;" & Main.GetFormButton(FormButtonCancel) & "</div>"
         End If
     
@@ -2072,7 +2080,7 @@ ErrorTrap:
 '
 '====================================================================================
 '
-Private Function ProcessFormBlogPostDetails(SourceFormID As Long, BlogID As Long, IsBlogOwner As Boolean, ButtonValue As String, BlogName As String, BlogOwnerID As Long, AllowAnonymous As Boolean, BlogCategoryID As Long, autoApproveComments As Boolean, authoringGroupId As Long, emailComment As Boolean) As Long
+Private Function ProcessFormBlogPostDetails(SourceFormID As Long, BlogID As Long, IsBlogOwner As Boolean, ButtonValue As String, BlogName As String, BlogOwnerID As Long, AllowAnonymous As Boolean, BlogCategoryID As Long, autoApproveComments As Boolean, authoringGroupId As Long, emailComment As Boolean, optionString As String) As Long
     On Error GoTo ErrorTrap
     '
     Dim AuthoringMemberId As Long
@@ -2105,6 +2113,8 @@ Private Function ProcessFormBlogPostDetails(SourceFormID As Long, BlogID As Long
     Dim SN As String
     Dim EntryID As Long
     Dim formKey As String
+    Dim optionStr As String
+    Dim captchaResponse As String
     '
     ProcessFormBlogPostDetails = SourceFormID
     SN = Main.GetVisitProperty(SNBlogCommentName)
@@ -2121,6 +2131,15 @@ Private Function ProcessFormBlogPostDetails(SourceFormID As Long, BlogID As Long
             '
             ProcessFormBlogPostDetails = FormBlogPostList
         ElseIf ButtonValue = FormButtonPostComment Then
+            '
+            ' Process recaptcha
+            '
+            optionStr = "Challenge=" + Main.GetStreamText("recaptcha_challenge_field")
+            optionStr = optionStr & "&Response=" + Main.GetStreamText("recaptcha_response_field")
+            captchaResponse = Main.ExecuteAddon2(reCaptchaProcessGuid, optionStr)
+            If captchaResponse <> "" Then
+                Call Main.AddUserError("The Verify Text you entered did not match correctly. Please try again.")
+            End If
             '
             ' Process comment post
             '
@@ -2346,14 +2365,14 @@ Private Function GetBlogEntryCell(EntryPtr As Long, IsBlogOwner As Boolean, Entr
     Dim TagListRow As String
     Dim imageDescription As String
     Dim imageName As String
-    Dim Cnt As Long
+    Dim cnt As Long
     Dim c As String
     Dim ThumbnailFilename As String
     Dim imageFilename As String
     Dim SQL As String
     Dim imageIDList As String
     Dim ImageID() As String
-    Dim OptionString As String
+    Dim optionString As String
     Dim CSCount As Long
     Dim CommentCount As Long
     Dim CommentLine As String
@@ -2423,8 +2442,8 @@ Private Function GetBlogEntryCell(EntryPtr As Long, IsBlogOwner As Boolean, Entr
         c = ""
         If imageIDList <> "" Then
             c = ""
-            For Cnt = 0 To UBound(ImageID)
-                Call GetBlogImage(kmaEncodeInteger(ImageID(Cnt)), 0, ImageWidthMax, ThumbnailFilename, imageFilename, imageDescription, imageName)
+            For cnt = 0 To UBound(ImageID)
+                Call GetBlogImage(kmaEncodeInteger(ImageID(cnt)), 0, ImageWidthMax, ThumbnailFilename, imageFilename, imageDescription, imageName)
                 If imageFilename <> "" Then
                     c = c _
                         & cr & "<div class=""aoBlogEntryImageContainer"">" _
@@ -2492,13 +2511,13 @@ Dim SQS As String
     ' Podcast link
     '
     If PodcastMediaLink <> "" Then
-        OptionString = "" _
+        optionString = "" _
             & "&Media Link=" & Main.EncodeAddonOptionArgument(PodcastMediaLink) _
             & "&Media Size=" & Main.EncodeAddonOptionArgument(PodcastSize) _
             & "&Hide Player=true" _
             & "&Auto Start=false" _
             & ""
-        s = s & Main.ExecuteAddon2("{F6037DEE-023C-4A14-A972-ADAFA5538240}", OptionString)
+        s = s & Main.ExecuteAddon2("{F6037DEE-023C-4A14-A972-ADAFA5538240}", optionString)
     End If
     '
     ' Author Row
@@ -3092,7 +3111,7 @@ Private Function getLinkAlias(sourceLink As String) As String
     Dim Pos As Long
     Dim pageQs() As String
     Dim nameValues() As String
-    Dim Cnt As Long
+    Dim cnt As Long
     Dim Ptr As Long
     Dim Link As String
     Dim pageId  As Long
@@ -3106,10 +3125,10 @@ Private Function getLinkAlias(sourceLink As String) As String
         pageQs = Split(LCase(Link), "?")
         If UBound(pageQs) > 0 Then
             nameValues = Split(pageQs(1), "&")
-            Cnt = UBound(nameValues) + 1
+            cnt = UBound(nameValues) + 1
             If UBound(nameValues) > 0 Then
                 qs = ""
-                For Ptr = 0 To Cnt - 1
+                For Ptr = 0 To cnt - 1
                     NameValue = nameValues(Ptr)
                     If pageId = 0 Then
                         If Mid(NameValue, 1, 4) = "bid=" Then
