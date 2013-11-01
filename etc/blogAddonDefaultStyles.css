@@ -1,0 +1,320 @@
+.aoBlogCommentError .ccError 
+{
+	font-size:inherit;
+}
+div.aoBlogCommentError 
+{
+	 clear:both;
+	 margin:20px 0 0 20px;
+	 padding:10px;
+	font-weight:bold;
+	 border: 1px solid red;
+	 border-radius: 5px;
+	 background-color: #fdd;
+}
+.aoBlogProblem
+{
+	padding: 40px 0 40px 0;
+}
+.aoBlogEntryDivider
+{
+	clear:both;
+	border-bottom:1px solid black;
+	height:10px;
+	margin-bottom:10px;
+}
+.aoBlogEntryName
+{
+	clear:both;
+	margin-top:10px;
+	margin-bottom:5px;
+	font-weight:bold;
+	color:black;
+	font-size:120%;
+}
+.aoBlogEntryName a 
+{
+	text-decoration:none;
+	color:black
+}
+.aoBlogEntryName a:visited 
+{
+	text-decoration:none;
+	color:black
+}
+.aoBlogEntryName a:hover 
+{
+	text-decoration:none;
+	color:black
+}
+.aoBlogEntryThumbnail 
+{
+	float:left;
+	margin:0 10px 10px 0;
+	border:0;
+}
+.aoBlogEntryCopy
+{
+	clear:both;
+	color:black;
+	margin-top:10px;
+	margin-bottom:10px;
+}
+.aoBlogEntryReadMore
+{
+	clear:both;
+	margin-bottom:10px;
+}
+.aoBlogEntryByLine 
+{
+	clear:both;
+	color:#9C9C9C
+}
+.aoBlogCommentHeader
+{
+	clear:both;
+	 margin:20px 0 0 20px;
+	 font-weight:bold;
+	 color:black;
+	 font-size:120%;
+}
+.aoBlogCommentDivider
+{
+	clear:both;
+	border-bottom:1px dotted #808080;
+	margin-left:20px;
+	height:10px;
+	margin-bottom:10px;
+}
+.aoBlogCommentName
+{
+	clear:both;
+	margin-left:20px;
+	margin-top:10px;
+	color:black;
+	font-weight:bold;
+}
+.aoBlogNewCommentName
+{
+	clear:both;
+	margin-left:20px;
+	margin-top:10px;
+	padding:5px;
+	border:2px inset;
+}
+.aoBlogCommentCopy
+{
+	clear:both;
+	color:black;
+	margin-left:20px;
+	margin-top:10px;
+}
+.aoBlogCommentByLine 
+{
+	clear:both;
+	color:#9C9C9C;
+	margin-left:20px;
+	margin-top:10px;
+}
+.aoBlogLoginBox 
+{
+	width:300px;
+	padding:20px;
+	border:1px solid #9c9c9c
+}
+.aoBlogRSSFeedImage 
+{
+	vertical-align:middle;
+	border:0;
+}
+.aoBlogFooterLink 
+{
+	border:1px solid #eef;
+	padding:4px;
+	background-color:#f8f8ff
+}
+.aoBlogToolLink 
+{
+	border:1px solid #eef;
+	padding:4px;
+	background-color:#f8f8ff
+}
+.aoBlogArchiveLink 
+{
+	padding:4px;
+	padding-left:20px;
+}
+.aoBlogHeaderLink 
+{
+	padding:4px 0 4px 0;
+}
+.aoBlogEntryImageSection 
+{
+}
+.aoBlogEntryImageContainer 
+{
+	clear:both;
+	 border-top: 1px solid #eef;
+	 margin: 5px 0 5px 0;
+	 padding: 5px;
+	 background-color: #f8f8ff;
+	 overflow:auto;
+}
+.aoBlogEntryImageContainer img 
+{
+	float:left;
+	 border: 0;
+	 margin: 0 10px 0 0
+}
+.aoBlogEntryImageContainer h2 
+{
+	font-size:120%;
+	margin-bottom:10px
+}
+.aoBlogEntryImageContainer div 
+{
+}
+.aoBlogTagListHeader 
+{
+	clear:both;
+	 margin:20px 0 0 20px;
+	 font-weight:bold;
+	 color:black;
+	 font-size:120%;
+}
+.aoBlogTagList 
+{
+	padding:0 0 0 20px;
+	text-align:left;
+}
+.aoBlogTagListSection 
+{
+	clear:both;
+	 border-top: 1px solid #9c9c9c;
+	 margin: 5px 0 5px 0;
+	 padding: 0;
+	 background-color: #f8f8ff;
+}
+.aoBlogLoginBox .ccLoginFormCon
+{
+width: inherit;
+}
+/*
+* Blog List Layout Record
+*/
+.blogList .blogColumn1-Wrap
+{
+    float: left;
+    width: 100%;
+}
+.blogList .blogColumn1
+{
+    margin-right: 380px;
+}
+.blogList .blogSidebar
+{
+    float: left;
+    width: 340px;
+    margin-left: -340px;
+}
+.blogList .blogClear
+{
+    clear: both;
+}
+@media only screen and  (max-width: 768px)
+{
+	.blogList .blogColumn1-Wrap
+	{
+		float: none;
+		width: 100%;
+	}
+	.blogList .blogColumn1
+	{
+		margin-right: 0;
+	}
+	.blogList .blogSidebar
+	{
+		clear: both;
+		margin-left: 0;
+		width: 100%;
+		float: none;
+	}
+	.blogList .blogClear
+	{
+		clear: both;
+	}
+}
+/*
+* Sidebar cell format
+*/
+.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell
+{
+	background-color: #f6f6f6;
+	color: #666;
+	border: 1px solid #ddd;
+	border-top: 4px solid #ccc;
+	padding: 0 24px 24px 24px;
+	margin: 0 0 20px 0;
+}
+.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell h2.blogSidebarCellHeadline
+{
+	color: #495b67;
+	font-size: 24px;
+	height: 36px;
+	line-height: 36px;
+	margin: 24px 0 5px 0;
+	font-weight: 300;
+}
+.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellCopy
+{
+	margin: 5px 0 5px 0;
+	font-size: 14px;
+	line-height: 20px;
+}
+.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell h3.blogSidebarCellInputCaption
+{
+	color: #999;
+	font-size: 16px;
+	font-weight: 300;
+	line-height: 24px;
+	height: 24px;
+}
+.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellInput input
+{
+	-webkit-transition: border-color 0.3s,box-shadow 0.3s;
+	-moz-transition: border-color 0.3s,box-shadow 0.3s;
+	-o-transition: border-color 0.3s,box-shadow 0.3s;
+	transition: border-color 0.3s,box-shadow 0.3s;
+	-webkit-box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+	-moz-box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+	box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-ms-border-radius: 3px;
+	-o-border-radius: 3px;
+	border-radius: 3px;
+	width: 100%;
+	padding: 8px 8px;
+	font-size: inherit;
+	border: 1px solid #b0b0b0;
+	outline: none;
+}
+.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellButton
+{
+	margin: 20px 0 0 0;
+}
+.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellButton a
+{
+	display: inline-block;
+	padding: 5px 10px;
+	margin: 0 20px 0 0;
+	background-color: #F58022;
+	color: #FFFFFF;
+	border-radius: 4px;
+	font-weight: bold;
+	cursor: pointer;
+	text-decoration: none;
+}
