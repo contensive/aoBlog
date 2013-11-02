@@ -19,8 +19,10 @@ Namespace Contensive.Addons.aoBlogs2
             Try
                 Dim email As String = CP.Doc.GetText("email")
                 Dim blogId As Integer = CP.Doc.GetInteger("blogId")
+                Dim blogName As String = ""
                 Dim cs As CPCSBaseClass = CP.CSNew()
                 Dim groupId As Integer = 0
+                Dim userId As Integer = 0
                 '
                 If CP.User.IsRecognized() And Not CP.User.IsAuthenticated Then
                     Call CP.User.Logout()
@@ -28,18 +30,50 @@ Namespace Contensive.Addons.aoBlogs2
                 '
                 If email <> "" And blogId <> 0 Then
                     If cs.OpenRecord("blogs", blogId) Then
-                        groupId = cs.GetInteger("emailSubscribeGroupId ")
+                        blogName = cs.GetText("name")
+                        groupId = cs.GetInteger("emailSubscribeGroupId")
                     End If
                     Call cs.Close()
-                    If groupId > 0 Then
-                        If cs.OpenRecord("people", CP.User.Id) Then
-                            Call cs.SetField("email", email)
+                    If Not cs.OpenRecord("groups", groupId) Then
+                        Call cs.Close()
+                        If cs.Insert("Groups") Then
+                            groupId = cs.GetInteger("id")
+                            Call cs.SetField("name", "Email Subscriptions for Blog " & blogName)
+                            Call cs.SetField("caption", "Email Subscriptions for Blog " & blogName)
+                            Call cs.SetField("allowbulkemail", "1")
+                            Call cs.SetField("publicjoin", "1")
                         End If
                         Call cs.Close()
+                        If cs.OpenRecord("blogs", blogId) Then
+                            Call cs.SetField("emailSubscribeGroupId", groupId.ToString())
+                        End If
+                    End If
+                    Call cs.Close()
+                    '
+                    If groupId > 0 Then
+                        If cs.Open("people", "email=" & CP.Db.EncodeSQLText(email)) Then
+                            userId = cs.GetInteger("id")
+                        End If
+                        Call cs.Close()
+                        '
+                        If userId = 0 Then
+                            '
+                            ' this email address was not found in users, set it to the current user, authenticated or not
+                            '   (recognized case is not possible b/c check at top of routine)
+                            '
+                            userId = CP.User.Id
+                            If cs.OpenRecord("people", CP.User.Id) Then
+                                Call cs.SetField("email", email)
+                            End If
+                            Call cs.Close()
+                        End If
                         Call CP.Group.AddUser(groupId.ToString())
                     End If
                 End If
-                returnHtml = ""
+                '
+                ' return OK to display thank you message
+                '
+                returnHtml = "OK"
             Catch ex As Exception
                 errorReport(CP, ex, "execute")
                 returnHtml = ""

@@ -1,3 +1,4 @@
+
 Imports System
 Imports System.Collections.Generic
 Imports System.Text
@@ -48,6 +49,7 @@ Namespace Contensive.Addons.aoBlogs2
                 Dim copy As String
                 Dim link As String
                 Dim js As String = ""
+                Dim emailSubscribeGroupId As Integer
                 '
                 If blogName = "" Then
                     blogName = "Default"
@@ -62,6 +64,7 @@ Namespace Contensive.Addons.aoBlogs2
                     facebookLink = cs.GetText("facebookLink")
                     twitterLink = cs.GetText("twitterLink")
                     googlePlusLink = cs.GetText("googlePlusLink")
+                    emailSubscribeGroupId = cs.GetInteger("emailSubscribeGroupId")
                 End If
                 Call cs.Close()
                 '
@@ -81,9 +84,12 @@ Namespace Contensive.Addons.aoBlogs2
                     cellTemplate = sidebarCell.GetHtml()
                     '
                     If allowArticleCTA And isArticlePage Then
+                        '
+                        ' CTA cells
+                        '
                         If cs.Open("blog entry cta rules", "blogEntryid=" & entryId) Then
                             Do While cs.OK()
-                                If cs2.OpenRecord("call to actions", cs.GetInteger("CallToActionId")) Then
+                                If cs2.OpenRecord(cnCTA, cs.GetInteger("CallToActionId")) Then
                                     sidebarCell.Load(cellTemplate)
                                     '
                                     copy = cs2.GetText("headline")
@@ -126,23 +132,34 @@ Namespace Contensive.Addons.aoBlogs2
                     End If
                     '
                     If allowEmailSubscribe Then
+                        '
+                        ' Subscribe by email
+                        '
                         sidebarCell.Load(cellTemplate)
                         Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By Email")
-                        Call sidebarCell.SetInner(".blogSidebarCellCopy", "")
-                        Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "Email*")
-                        Call sidebarCell.SetInner(".blogSidebarCellButton a", "Subscribe")
-                        Call sidebarCell.SetInner(".blogSidebarCellButton", "<a href=""#"" id=""blogSidebarEmailSubscribe"">Subscribe</a>")
-                        js &= "jQuery(document).ready(function(){jQuery('#blogSidebarEmailSubscribe').bind(function(){alert('subscribed!');return false;})});"
+                        Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
+                        If CP.User.IsInGroup(emailSubscribeGroupId) Then
+                            Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "You are subscribed to this blog.")
+                            Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
+                            Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
+
+                        Else
+                            Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "Email*")
+                            Call sidebarCell.SetInner(".blogSidebarCellInput", "<input type=""text"" id=""blogSubscribeEmail"" name=""email"" value=""" & CP.User.Email & """>")
+                            Call sidebarCell.SetInner(".blogSidebarCellButton a", "Subscribe")
+                            Call sidebarCell.SetInner(".blogSidebarCellButton", "<a href=""#"" id=""blogSidebarEmailSubscribe"">Subscribe</a>")
+                        End If
                         cellList &= vbCrLf & vbTab & sidebarCell.GetHtml()
                         sidebarCnt += 1
                     End If
                 End If
                 layout.SetInner(".blogSidebar", cellList)
+                layout.Append(CP.Html.Hidden("blogId", blogId.ToString(), "", "blogId"))
                 If sidebarCnt = 0 Then
                     layout.SetInner(".blogList", layout.GetInner(".blogColumn1"))
                 End If
                 returnHtml = layout.GetHtml()
-                returnHtml = returnHtml.Replace("{{blogList}}", legacyBlog)
+                returnHtml = returnHtml.Replace("{{legacyBlog}}", legacyBlog)
                 If js <> "" Then
                     CP.Doc.AddHeadJavascript(js)
                 End If
@@ -192,6 +209,8 @@ Namespace Contensive.Addons.aoBlogs2
         Private Const cnRSSFeedBlogRules As String = "RSS Feed Blog Rules"
         Private Const cnBlogImages As String = "Blog Images"
         Private Const cnBlogImageRules As String = "Blog Image Rules"
+        Private Const cnCTA As String = "Calls to Action"
+
         '
         Private Const TableNameBlogCategoryRules As String = "ccBlogCategoryGroupRules"
         '

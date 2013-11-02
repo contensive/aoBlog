@@ -1,3 +1,4 @@
+
 .aoBlogCommentError .ccError 
 {
 	font-size:inherit;
@@ -109,6 +110,17 @@ div.aoBlogCommentError
 	margin-left:20px;
 	margin-top:10px;
 }
+.aoBlogCommentCopy>input,
+.aoBlogCommentCopy>textarea
+{
+	width:100%;
+}
+.aoBlogCommentCopy>input[type="submit"]
+{
+	width:inherit;
+	padding: 10px;
+	margin: 10px 10px 10px 0;
+}
 .aoBlogCommentByLine 
 {
 	clear:both;
@@ -120,7 +132,12 @@ div.aoBlogCommentError
 {
 	width:300px;
 	padding:20px;
-	border:1px solid #9c9c9c
+	border:1px solid #9c9c9c;
+	margin: 20px;
+}
+.aoBlogLoginBox .aoBlogCommentCopy
+{
+	margin:0;
 }
 .aoBlogRSSFeedImage 
 {
@@ -202,44 +219,44 @@ width: inherit;
 /*
 * Blog List Layout Record
 */
-.blogList .blogColumn1-Wrap
+.blogColumn1-Wrap
 {
     float: left;
     width: 100%;
 }
-.blogList .blogColumn1
+.blogColumn1
 {
     margin-right: 380px;
 }
-.blogList .blogSidebar
+.blogSidebar
 {
     float: left;
     width: 340px;
     margin-left: -340px;
 }
-.blogList .blogClear
+.blogClear
 {
     clear: both;
 }
 @media only screen and  (max-width: 768px)
 {
-	.blogList .blogColumn1-Wrap
+	.blogColumn1-Wrap
 	{
 		float: none;
 		width: 100%;
 	}
-	.blogList .blogColumn1
+	.blogColumn1
 	{
 		margin-right: 0;
 	}
-	.blogList .blogSidebar
+	.blogSidebar
 	{
 		clear: both;
 		margin-left: 0;
 		width: 100%;
 		float: none;
 	}
-	.blogList .blogClear
+	.blogClear
 	{
 		clear: both;
 	}
@@ -247,7 +264,7 @@ width: inherit;
 /*
 * Sidebar cell format
 */
-.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell
 {
 	background-color: #f6f6f6;
 	color: #666;
@@ -256,7 +273,7 @@ width: inherit;
 	padding: 0 24px 24px 24px;
 	margin: 0 0 20px 0;
 }
-.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell h2.blogSidebarCellHeadline
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell h2.blogSidebarCellHeadline
 {
 	color: #495b67;
 	font-size: 24px;
@@ -265,13 +282,13 @@ width: inherit;
 	margin: 24px 0 5px 0;
 	font-weight: 300;
 }
-.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellCopy
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellCopy
 {
 	margin: 5px 0 5px 0;
 	font-size: 14px;
 	line-height: 20px;
 }
-.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell h3.blogSidebarCellInputCaption
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell h3.blogSidebarCellInputCaption
 {
 	color: #999;
 	font-size: 16px;
@@ -279,7 +296,7 @@ width: inherit;
 	line-height: 24px;
 	height: 24px;
 }
-.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellInput input
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellInput input
 {
 	-webkit-transition: border-color 0.3s,box-shadow 0.3s;
 	-moz-transition: border-color 0.3s,box-shadow 0.3s;
@@ -302,11 +319,11 @@ width: inherit;
 	border: 1px solid #b0b0b0;
 	outline: none;
 }
-.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellButton
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellButton
 {
 	margin: 20px 0 0 0;
 }
-.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellButton a
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellButton a
 {
 	display: inline-block;
 	padding: 5px 10px;
