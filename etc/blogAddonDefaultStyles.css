@@ -1,4 +1,19 @@
 
+div.blogAdminWarning
+{
+	margin: 0;
+	border: 1px dashed #844;
+	background-color: #fdd;
+	padding: 10px;
+}
+.blogAdminWarning h2
+{
+	color: #f00;
+}
+.blogAdminWarning p
+{
+	color: #f00;
+}
 .aoBlogCommentError .ccError 
 {
 	font-size:inherit;
@@ -294,7 +309,6 @@ width: inherit;
 	font-size: 16px;
 	font-weight: 300;
 	line-height: 24px;
-	height: 24px;
 }
 .blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellInput input
 {
@@ -334,4 +348,27 @@ width: inherit;
 	font-weight: bold;
 	cursor: pointer;
 	text-decoration: none;
+}
+/*
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell  h3.blogSidebarRSSCopy
+{
+	color: #999;
+	font-size: 16px;
+	font-weight: 300;
+	line-height: 24px;
+	height: 24px;
+}
+*/
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell  h3.blogSidebarCellInputCaption a
+{
+	text-decoration: none;
+}
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell  #blogSidebarRSSLogo
+{
+	padding: 0 10px 0 0;
+	margin: 0 0 -5px 0;
+}
+.blogSidebar .blogSidebarCellWrap img.blogSidebarSocialLogo
+{
+	margin: 0 5px 0 0;
 }

@@ -46,10 +46,13 @@ Namespace Contensive.Addons.aoBlogs2
                 Dim sidebarCnt As Integer = 0
                 Dim cellList As String = ""
                 Dim cellTemplate As String = ""
-                Dim copy As String
+                Dim copy As String = ""
                 Dim link As String
                 Dim js As String = ""
                 Dim emailSubscribeGroupId As Integer
+                Dim rssFeedId As Integer
+                Dim RSSFilename As String
+                Dim followUsCaption As String = ""
                 '
                 If blogName = "" Then
                     blogName = "Default"
@@ -65,6 +68,9 @@ Namespace Contensive.Addons.aoBlogs2
                     twitterLink = cs.GetText("twitterLink")
                     googlePlusLink = cs.GetText("googlePlusLink")
                     emailSubscribeGroupId = cs.GetInteger("emailSubscribeGroupId")
+                    rssFeedId = cs.GetInteger("rssFeedId")
+                    allowRSSSubscribe = cs.GetBoolean("allowRSSSubscribe")
+                    followUsCaption = cs.GetText("followUsCaption")
                 End If
                 Call cs.Close()
                 '
@@ -114,7 +120,7 @@ Namespace Contensive.Addons.aoBlogs2
                                     If (copy = "") Or (link = "") Then
                                         Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
                                     Else
-                                        Call sidebarCell.SetInner(".blogSidebarCellButton", "<a href=""" & link & """>" & copy & "</a>")
+                                        Call sidebarCell.SetInner(".blogSidebarCellButton", "<a target=""_blank"" href=""" & link & """>" & copy & "</a>")
                                     End If
 
                                     'Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By Email")
@@ -151,6 +157,68 @@ Namespace Contensive.Addons.aoBlogs2
                         End If
                         cellList &= vbCrLf & vbTab & sidebarCell.GetHtml()
                         sidebarCnt += 1
+                    End If
+                    '
+                    If allowRSSSubscribe And (rssFeedId <> 0) Then
+                        '
+                        ' Subscribe by RSS
+                        '
+                        If cs.OpenRecord("rss feeds", rssFeedId) Then
+                            RSSFilename = cs.GetText("RSSFilename ")
+                        End If
+                        Call cs.Close()
+                        '
+                        sidebarCell.Load(cellTemplate)
+                        Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By RSS")
+                        Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
+                        'Call sidebarCell.SetInner(".blogSidebarCellCopy", "You are subscribed to this Feed.")
+                        Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""" & CP.Site.DomainPrimary & "/rss/" & RSSFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & blogName & " Feed" & "</a>")
+                        Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
+                        Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
+                        cellList &= vbCrLf & vbTab & sidebarCell.GetHtml()
+                        sidebarCnt += 1
+                    End If
+                    '
+                    If allowFacebookLink Or allowGooglePlusLink Or allowTwitterLink Then
+                        '
+                        ' Social Links
+                        '
+                        '
+                        copy = ""
+                        If allowFacebookLink And (facebookLink <> "") Then
+                            copy &= "<a href=""" & facebookLink & """ target=""_blank""><img class=""blogSidebarSocialLogo"" src=""/blogs/facebook.jpg"" width=""32"" height=""32""></a>"
+                        ElseIf allowFacebookLink Then
+                            If CP.User.IsAdmin Then
+                                copy &= "<div class=""blogAdminWarning""><h2>Administrator</h2><p>Add a facebook link for this blog, or disable the Allow Facebook Sidebar checkbox.</p></div>"
+                            End If
+                        End If
+                        If allowTwitterLink And (twitterLink <> "") Then
+                            copy &= "<a href=""" & twitterLink & """ target=""_blank""><img class=""blogSidebarSocialLogo"" src=""/blogs/twitter.jpg"" width=""32"" height=""32""></a>"
+                        ElseIf allowTwitterLink Then
+                            If CP.User.IsAdmin Then
+                                copy &= "<div class=""blogAdminWarning""><h2>Administrator</h2><p>Add a twitter link for this blog, or disable the Allow Twitter Sidebar checkbox.</p></div>"
+                            End If
+                        End If
+                        If allowTwitterLink And (googlePlusLink <> "") Then
+                            copy &= "<a href=""" & googlePlusLink & """ target=""_blank""><img class=""blogSidebarSocialLogo"" src=""/blogs/GooglePlus.jpg"" width=""32"" height=""32""></a>"
+                        ElseIf allowGooglePlusLink Then
+                            If CP.User.IsAdmin Then
+                                copy &= "<div class=""blogAdminWarning""><h2>Administrator</h2><p>Add a GooglePlus link for this blog, or disable the Allow Google Plus Sidebar checkbox.</p></div>"
+                            End If
+                        End If
+                        If copy <> "" Then
+                            If followUsCaption = "" Then
+                                followUsCaption = "Follow Us"
+                            End If
+                            sidebarCell.Load(cellTemplate)
+                            Call sidebarCell.SetInner(".blogSidebarCellHeadline", followUsCaption)
+                            Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
+                            Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
+                            Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
+                            Call sidebarCell.SetInner(".blogSidebarCellInputCaption", copy)
+                            cellList &= vbCrLf & vbTab & sidebarCell.GetHtml()
+                            sidebarCnt += 1
+                        End If
                     End If
                 End If
                 layout.SetInner(".blogSidebar", cellList)
