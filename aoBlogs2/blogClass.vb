@@ -155,7 +155,7 @@ Namespace Contensive.Addons.aoBlogs2
                             Call sidebarCell.SetInner(".blogSidebarCellButton a", "Subscribe")
                             Call sidebarCell.SetInner(".blogSidebarCellButton", "<a href=""#"" id=""blogSidebarEmailSubscribe"">Subscribe</a>")
                         End If
-                        cellList &= vbCrLf & vbTab & sidebarCell.GetHtml()
+                        cellList &= vbCrLf & vbTab & "<div id=""blogSidebarEmailCell"">" & sidebarCell.GetHtml() & "</div>"
                         sidebarCnt += 1
                     End If
                     '
@@ -172,10 +172,10 @@ Namespace Contensive.Addons.aoBlogs2
                         Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By RSS")
                         Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
                         'Call sidebarCell.SetInner(".blogSidebarCellCopy", "You are subscribed to this Feed.")
-                        Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""" & CP.Site.DomainPrimary & "/rss/" & RSSFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & blogName & " Feed" & "</a>")
+                        Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""http://" & CP.Site.DomainPrimary & "/rss/" & RSSFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & blogName & " Feed" & "</a>")
                         Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
                         Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
-                        cellList &= vbCrLf & vbTab & sidebarCell.GetHtml()
+                        cellList &= vbCrLf & vbTab & "<div id=""blogSidebarRSSCell"">" & sidebarCell.GetHtml() & "</div>"
                         sidebarCnt += 1
                     End If
                     '
@@ -216,7 +216,7 @@ Namespace Contensive.Addons.aoBlogs2
                             Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
                             Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
                             Call sidebarCell.SetInner(".blogSidebarCellInputCaption", copy)
-                            cellList &= vbCrLf & vbTab & sidebarCell.GetHtml()
+                            cellList &= vbCrLf & vbTab & "<div id=""blogSidebarSocialCell"">" & sidebarCell.GetHtml() & "</div>"
                             sidebarCnt += 1
                         End If
                     End If
