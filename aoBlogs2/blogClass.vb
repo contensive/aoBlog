@@ -53,6 +53,7 @@ Namespace Contensive.Addons.aoBlogs2
                 Dim rssFeedId As Integer
                 Dim RSSFilename As String
                 Dim followUsCaption As String = ""
+                Dim subscribed As Boolean = False
                 '
                 If blogName = "" Then
                     blogName = "Default"
@@ -152,10 +153,14 @@ Namespace Contensive.Addons.aoBlogs2
                         '
                         ' Subscribe by email
                         '
+                        subscribed = CP.Visit.GetBoolean("EmailSubscribed-Blog" & blogId & "-user" & CP.User.Id)
+                        If Not subscribed Then
+                            subscribed = CP.User.IsInGroup(emailSubscribeGroupId)
+                        End If
                         sidebarCell.Load(cellTemplate)
                         Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By Email")
                         Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
-                        If CP.User.IsInGroup(emailSubscribeGroupId) Then
+                        If subscribed Then
                             Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "You are subscribed to this blog.")
                             Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
                             Call sidebarCell.SetOuter(".blogSidebarCellButton", "")

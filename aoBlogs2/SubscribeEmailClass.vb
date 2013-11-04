@@ -71,8 +71,13 @@ Namespace Contensive.Addons.aoBlogs2
                     End If
                 End If
                 '
+                ' set flag to only allow this once per visit (for anonymous users who enter an email for soeone else)
+                '
+                Call CP.Visit.SetProperty("EmailSubscribed-Blog" & blogId & "-user" & CP.User.Id, "1")
+                '
                 ' return OK to display thank you message
                 '
+
                 returnHtml = "OK"
             Catch ex As Exception
                 errorReport(CP, ex, "execute")
