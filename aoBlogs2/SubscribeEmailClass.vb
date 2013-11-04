@@ -29,12 +29,12 @@ Namespace Contensive.Addons.aoBlogs2
                 End If
                 '
                 If email <> "" And blogId <> 0 Then
-                    If cs.OpenRecord("blogs", blogId) Then
+                    If cs.Open("blogs", "id=" & blogId) Then
                         blogName = cs.GetText("name")
                         groupId = cs.GetInteger("emailSubscribeGroupId")
                     End If
                     Call cs.Close()
-                    If Not cs.OpenRecord("groups", groupId) Then
+                    If Not cs.Open("groups", "id=" & groupId) Then
                         Call cs.Close()
                         If cs.Insert("Groups") Then
                             groupId = cs.GetInteger("id")
@@ -44,7 +44,7 @@ Namespace Contensive.Addons.aoBlogs2
                             Call cs.SetField("publicjoin", "1")
                         End If
                         Call cs.Close()
-                        If cs.OpenRecord("blogs", blogId) Then
+                        If cs.Open("blogs","id=" &  blogId) Then
                             Call cs.SetField("emailSubscribeGroupId", groupId.ToString())
                         End If
                     End If
@@ -62,7 +62,7 @@ Namespace Contensive.Addons.aoBlogs2
                             '   (recognized case is not possible b/c check at top of routine)
                             '
                             userId = CP.User.Id
-                            If cs.OpenRecord("people", CP.User.Id) Then
+                            If cs.Open("people", "id=" & CP.User.Id) Then
                                 Call cs.SetField("email", email)
                             End If
                             Call cs.Close()

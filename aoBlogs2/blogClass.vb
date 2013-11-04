@@ -95,7 +95,7 @@ Namespace Contensive.Addons.aoBlogs2
                         '
                         If cs.Open("blog entry cta rules", "blogEntryid=" & entryId) Then
                             Do While cs.OK()
-                                If cs2.OpenRecord(cnCTA, cs.GetInteger("CallToActionId")) Then
+                                If cs2.Open(cnCTA, "id=" & cs.GetInteger("CallToActionId")) Then
                                     sidebarCell.Load(cellTemplate)
                                     '
                                     copy = cs2.GetText("headline")
@@ -163,7 +163,7 @@ Namespace Contensive.Addons.aoBlogs2
                         '
                         ' Subscribe by RSS
                         '
-                        If cs.OpenRecord("rss feeds", rssFeedId) Then
+                        If cs.Open("rss feeds", "id=" & rssFeedId) Then
                             RSSFilename = cs.GetText("RSSFilename ")
                         End If
                         Call cs.Close()
@@ -224,7 +224,7 @@ Namespace Contensive.Addons.aoBlogs2
                 layout.SetInner(".blogSidebar", cellList)
                 layout.Append(CP.Html.Hidden("blogId", blogId.ToString(), "", "blogId"))
                 If sidebarCnt = 0 Then
-                    layout.SetInner(".blogList", layout.GetInner(".blogColumn1"))
+                    layout.SetInner(".blogWrapper", layout.GetInner(".blogColumn1"))
                 End If
                 returnHtml = layout.GetHtml()
                 returnHtml = returnHtml.Replace("{{legacyBlog}}", legacyBlog)
