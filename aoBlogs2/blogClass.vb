@@ -76,8 +76,6 @@ Namespace Contensive.Addons.aoBlogs2
                 '
                 Call CP.Doc.SetProperty("blogId", blogId.ToString())
                 legacyBlog = CP.Utils.ExecuteAddon(LegacyBlogAddon)
-                '
-
                 isArticlePage = (entryId <> 0)
                 allowListSidebar = allowEmailSubscribe Or allowFacebookLink Or allowGooglePlusLink Or allowGooglePlusLink Or allowRSSSubscribe Or allowTwitterLink
                 allowArticleSidebar = allowListSidebar Or allowArticleCTA
@@ -85,9 +83,22 @@ Namespace Contensive.Addons.aoBlogs2
                 '
                 cellList = ""
                 layout.OpenLayout(BlogListLayout)
+                sidebarCell.Load(layout.GetOuter(".blogSidebarCellWrap"))
+                cellTemplate = sidebarCell.GetHtml()
+                '
+                ' social media likes
+                '
+                Call sidebarCell.SetOuter(".blogSidebarCellHeadline", "")
+                Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
+                Call sidebarCell.SetInner(".blogSidebarCellInputCaption", CP.Utils.ExecuteAddon(facebookLikeAddonGuid))
+                Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
+                Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
+                copy = sidebarCell.GetHtml()
+                legacyBlog = Replace(legacyBlog, "<div class=""aoBlogEntryCopy"">", copy & "<div class=""aoBlogEntryCopy"">")
+                '
+                ' Sidebar
+                '
                 If allowSidebar Then
-                    sidebarCell.Load(layout.GetOuter(".blogSidebarCellWrap"))
-                    cellTemplate = sidebarCell.GetHtml()
                     '
                     If allowArticleCTA And isArticlePage Then
                         '
@@ -339,5 +350,6 @@ Namespace Contensive.Addons.aoBlogs2
         '
         Private Const BlogListLayout As String = "{58788483-D050-4464-9261-627278A57B35}"
         Private Const LegacyBlogAddon As String = "{656E95EA-2799-45CD-9712-D4CEDF0E2D02}"
+        Private Const facebookLikeAddonGuid As String = "{17919A35-06B3-4F32-9607-4DB3228A15DF}"
     End Class
 End Namespace
