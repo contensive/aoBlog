@@ -95,7 +95,9 @@ Namespace Contensive.Addons.aoBlogs2
                 Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
                 Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
                 copy = sidebarCell.GetHtml()
-                legacyBlog = Replace(legacyBlog, "<div class=""aoBlogEntryCopy"">", copy & "<div class=""aoBlogEntryCopy"">")
+                If isArticlePage Then
+                    legacyBlog = Replace(legacyBlog, "<div class=""aoBlogEntryCopy"">", copy & "<div class=""aoBlogEntryCopy"">")
+                End If
                 '
                 ' Sidebar
                 '
