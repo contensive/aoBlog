@@ -41,7 +41,7 @@ Namespace Contensive.Addons.aoBlogs2
                 Dim srcFormId As Integer = CP.Doc.GetInteger(RequestNameSourceFormID)
                 Dim dstFormId As Integer = CP.Doc.GetInteger(RequestNameFormID)
                 Dim isArticlePage As Boolean = False
-                Dim entryId As Integer = CP.Doc.GetInteger(RequestNameBlogEntryID)
+                Dim blogEntryId As Integer = CP.Doc.GetInteger(RequestNameBlogEntryID)
                 Dim allowSidebar As Boolean = False
                 Dim sidebarCnt As Integer = 0
                 Dim cellList As String = ""
@@ -54,6 +54,12 @@ Namespace Contensive.Addons.aoBlogs2
                 Dim RSSFilename As String
                 Dim followUsCaption As String = ""
                 Dim subscribed As Boolean = False
+                Dim sql As String
+                Dim imageFilename As String
+                Dim siteName As String
+                Dim blogEntryName As String
+                Dim blogEntryBrief As String
+                Dim adminSuggestions As String = ""
                 '
                 If blogName = "" Then
                     blogName = "Default"
@@ -75,9 +81,11 @@ Namespace Contensive.Addons.aoBlogs2
                 End If
                 Call cs.Close()
                 '
+                ' execute legaacy 
+                '
                 Call CP.Doc.SetProperty("blogId", blogId.ToString())
                 legacyBlog = CP.Utils.ExecuteAddon(LegacyBlogAddon)
-                isArticlePage = (entryId <> 0)
+                isArticlePage = (blogEntryId <> 0)
                 allowListSidebar = allowEmailSubscribe Or allowFacebookLink Or allowGooglePlusLink Or allowGooglePlusLink Or allowRSSSubscribe Or allowTwitterLink
                 allowArticleSidebar = allowListSidebar Or allowArticleCTA
                 allowSidebar = Not (dstFormId = FormBlogEntryEditor) And ((isArticlePage And allowArticleSidebar) Or (Not isArticlePage And allowListSidebar))
@@ -86,6 +94,53 @@ Namespace Contensive.Addons.aoBlogs2
                 layout.OpenLayout(BlogListLayout)
                 sidebarCell.Load(layout.GetOuter(".blogSidebarCellWrap"))
                 cellTemplate = sidebarCell.GetHtml()
+                '
+                ' Set Open Graph
+                '
+                If isArticlePage Then
+                    '
+                    ' article
+                    '
+                    imageFilename = ""
+                    sql = "select filename from blogImages i inner join blogImageRules r on r.blogImageId=i.id where r.blogentryId=" & blogEntryId & " order by r.sortOrder"
+                    If cs.OpenSQL(sql) Then
+                        imageFilename = cs.GetText("filename")
+                    End If
+                    Call cs.Close()
+                    '
+                    blogEntryName = ""
+                    blogEntryBrief = ""
+                    If cs.Open("blog entries", "id=" & blogEntryId) Then
+                        blogEntryName = cs.GetText("name")
+                        blogEntryBrief = cs.GetText("rssDescription")
+                        If blogEntryBrief = "" Then
+                            blogEntryBrief = CP.Utils.DecodeHTML(cs.GetText("copy"))
+                        End If
+                    End If
+                    Call cs.Close()
+                    '
+                    If blogEntryName <> "" Then
+                        siteName = CP.Site.GetProperty("facebook site_name")
+                        If siteName = "" Then
+                            Call CP.Site.LogWarning("Facebook site name is not set", "", "Facebook site name missing", "")
+                            siteName = CP.Site.Name
+                        End If
+                        If imageFilename <> "" Then
+                            Call CP.Doc.SetProperty("Open Graph Image", "http://" & CP.Site.Domain & CP.Site.FilePath & imageFilename)
+                        Else
+                            adminSuggestions &= CP.Html.li("This blog entry has no image. Adding an image will improve your social media appeal.")
+                        End If
+                        Call CP.Doc.SetProperty("Open Graph Site Name", CP.Utils.EncodeHTML(siteName))
+                        Call CP.Doc.SetProperty("Open Graph Content Type", "website")
+                        Call CP.Doc.SetProperty("Open Graph URL", CP.Content.GetPageLink(CP.Doc.PageId, "BlogEntryID=" & blogEntryId & "&FormID=300"))
+                        Call CP.Doc.SetProperty("Open Graph Title", blogEntryName)
+                        Call CP.Doc.SetProperty("Open Graph Description", blogEntryBrief)
+                    End If
+                Else
+                    '
+                    ' main blog will be handled by the content page
+                    '
+                End If
                 '
                 ' social media likes
                 '
@@ -107,7 +162,7 @@ Namespace Contensive.Addons.aoBlogs2
                         '
                         ' CTA cells
                         '
-                        If cs.Open("blog entry cta rules", "blogEntryid=" & entryId) Then
+                        If cs.Open("blog entry cta rules", "blogEntryid=" & blogEntryId) Then
                             Do While cs.OK()
                                 If cs2.Open(cnCTA, "id=" & cs.GetInteger("CallToActionId")) Then
                                     sidebarCell.Load(cellTemplate)
@@ -248,6 +303,9 @@ Namespace Contensive.Addons.aoBlogs2
                 returnHtml = returnHtml.Replace("{{legacyBlog}}", legacyBlog)
                 If js <> "" Then
                     CP.Doc.AddHeadJavascript(js)
+                End If
+                If adminSuggestions <> "" And CP.User.IsAdmin() Then
+                    returnHtml = "<div class=""ccHintWrapper""><div class=""ccHintWrapperContent""><h2>Administrator</h2><ul>" & adminSuggestions & "</ul></div></div>" & returnHtml
                 End If
                 '
             Catch ex As Exception
