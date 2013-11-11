@@ -60,6 +60,10 @@ Const RSSProcessAddonGuid = "{2119C2DA-1D57-4C32-B13C-28CD2D85EDF5}"
 '
 Const DefaultPostCopy = "This post has been created automatically for you by the system. Verify the blog is set up properly by viewing the blog settings available after turning on Advanced Edit in the toolbar."
 '
+Private Const imageDisplayTypeNone = 1
+Private Const imageDisplayTypeList = 2
+Private Const imageDisplayTypeFader = 3
+'
 Const cnPeople = "people"
 Const cnBlogs = "Blogs"
 Const cnBlogCopy = "Blog Copy"
@@ -637,6 +641,7 @@ Private Function GetFormBlogSearch(BlogID As Long, BlogName As String, IsBlogOwn
     Dim OrCnt As Long
     Dim allowComments As Boolean
     Dim QueryTag As String
+    Dim imageDisplayTypeId As Integer
     '
     Call Main.AddRefreshQueryString(RequestNameSourceFormID, FormBlogSearch)
     Call Main.AddRefreshQueryString(RequestNameFormID, FormBlogSearch)
@@ -745,7 +750,8 @@ Private Function GetFormBlogSearch(BlogID As Long, BlogName As String, IsBlogOwn
                     PodcastMediaLink = Main.GetCS(CSPointer, "PodcastMediaLink")
                     PodcastSize = Main.GetCS(CSPointer, "PodcastSize")
                     BlogTagList = Main.GetCS(CSPointer, "TagList")
-                    s = s & GetBlogEntryCell(ResultPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, AuthorMemberName, DateAdded, False, True, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, "", ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList)
+                    imageDisplayTypeId = Main.GetCSInteger(CSPointer, "imageDisplayTypeId")
+                    s = s & GetBlogEntryCell(ResultPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, AuthorMemberName, DateAdded, False, True, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, "", ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, imageDisplayTypeId)
                     's = s & GetBlogEntryCell(ResultPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, AuthorMemberName, DateAdded, False, True, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, "", ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, EntryCopyOverview)
                 Else
                     '
@@ -912,6 +918,7 @@ Private Function GetFormBlogArchivedBlogs(BlogID As Long, BlogName As String, Ar
     Dim PageNumber As Long
     Dim CS As Long
     Dim allowComments As Boolean
+    Dim imageDisplayTypeId As Integer
     '
     ' If it is the current month, start at entry 6
     '
@@ -945,7 +952,8 @@ Private Function GetFormBlogArchivedBlogs(BlogID As Long, BlogName As String, Ar
             PodcastMediaLink = Main.GetCS(CS, "PodcastMediaLink")
             PodcastSize = Main.GetCS(CS, "PodcastSize")
             BlogTagList = Main.GetCS(CS, "TagList")
-            s = s & GetBlogEntryCell(EntryPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, AuthorMemberName, DateAdded, False, False, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, entryEditLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList)
+            imageDisplayTypeId = Main.GetCSInteger(CS, "imageDisplayTypeId")
+            s = s & GetBlogEntryCell(EntryPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, AuthorMemberName, DateAdded, False, False, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, entryEditLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, imageDisplayTypeId)
             's = s & GetBlogEntryCell(EntryPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, AuthorMemberName, DateAdded, False, False, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, entryEditLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, EntryCopyOverview)
             Call Main.NextCSRecord(CS)
             'If Main.CSOK(CS) Then
@@ -1165,6 +1173,7 @@ Private Function GetFormBlogPostList(BlogID As Long, BlogName As String, IsBlogO
     Dim CSCat As Long
     Dim Patch As New PatchClass
     Dim NoneMsg As String
+    Dim imageDisplayTypeId As Integer
     '
     locBlogTitle = BlogName
     If InStr(1, locBlogTitle, " Blog", vbTextCompare) = 0 Then
@@ -1251,7 +1260,8 @@ Private Function GetFormBlogPostList(BlogID As Long, BlogName As String, IsBlogO
                 PodcastMediaLink = Main.GetCS(CS, "PodcastMediaLink")
                 PodcastSize = Main.GetCS(CS, "PodcastSize")
                 BlogTagList = Main.GetCS(CS, "BlogTagList")
-                s = s & GetBlogEntryCell(EntryPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, AuthorMemberName, DateAdded, False, False, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, entryEditLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList)
+                imageDisplayTypeId = Main.GetCSInteger(CS, "imageDisplayTypeId")
+                s = s & GetBlogEntryCell(EntryPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, AuthorMemberName, DateAdded, False, False, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, entryEditLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, imageDisplayTypeId)
                 's = s & GetBlogEntryCell(EntryPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, AuthorMemberName, DateAdded, False, False, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, entryEditLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, EntryCopyOverview)
                 'If Main.CSOK(CS) Then
                     s = s & cr & "<div class=""aoBlogEntryDivider"">&nbsp;</div>"
@@ -1852,6 +1862,8 @@ Private Function GetFormBlogPostDetails(BlogID As Long, EntryID As Long, IsBlogO
     Dim qs As String
     Dim QSBack As String
     Dim CommentCnt As Long
+    Dim imageDisplayTypeId As Integer
+    Dim loginForm As String
     '
     s = s & vbCrLf & Main.GetFormStart
     '
@@ -1892,7 +1904,8 @@ Private Function GetFormBlogPostDetails(BlogID As Long, EntryID As Long, IsBlogO
             Call Main.AddLinkAlias(EntryName, Main.RenderedPageID, qs)
         End If
         Call Main.SetCS(CS, "viewings", 1 + Main.GetCSInteger(CS, "viewings"))
-        s = s & GetBlogEntryCell(EntryPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, AuthorMemberName, DateAdded, True, False, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, entryEditLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList)
+        imageDisplayTypeId = Main.GetCSInteger(CS, "imageDisplayTypeId")
+        s = s & GetBlogEntryCell(EntryPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, AuthorMemberName, DateAdded, True, False, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, entryEditLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, imageDisplayTypeId)
         's = s & GetBlogEntryCell(EntryPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, AuthorMemberName, DateAdded, True, False, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, entryEditLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, EntryCopyOverview)
         EntryPtr = EntryPtr + 1
     End If
@@ -1991,18 +2004,20 @@ Private Function GetFormBlogPostDetails(BlogID As Long, EntryID As Long, IsBlogO
                     ' login
                     '
                     Copy = "To post a comment to this Blog, please login."
-                    If AllowPasswordEmail Then
-                        qs = ModifyQueryString(qs, "auth", "1")
-                        Copy = Copy & " <a href=""?" & qs & """> Forget your username or password?</a>"
-                    End If
+                    'If AllowPasswordEmail Then
+                    '    qs = ModifyQueryString(qs, "auth", "1")
+                    '    Copy = Copy & " <a href=""?" & qs & """> Forget your username or password?</a>"
+                    'End If
                     If AllowMemberJoin Then
                         qs = ModifyQueryString(qs, "auth", "2")
-                        Copy = Copy & " <a href=""?" & qs & """> Join?</a>"
+                        Copy = Copy & "<div class=""aoBlogRegisterLink""><a href=""?" & qs & """>Need to Register?</a></div>"
                     End If
+                    loginForm = Main.GetLoginForm()
+                    loginForm = Replace(loginForm, "LoginUsernameInput", "LoginUsernameInput-BlockFocus")
                     s = s _
-                        & "<div class=""aoBlogLoginBox"">" _
                         & cr & "<div class=""aoBlogCommentCopy"">" & Copy & "</div>" _
-                        & cr & "<div class=""aoBlogCommentCopy"">" & Main.GetLoginForm() & "</div>" _
+                        & cr & "<div class=""aoBlogLoginBox"">" _
+                        & cr & "<div class=""aoBlogCommentCopy"">" & loginForm & "</div>" _
                         & cr & "</div>"
             End Select
         
@@ -2355,7 +2370,7 @@ ErrorTrap:
     Call HandleError("UpdatedBlogsClass", "GetBlogCommentCell", Err.Number, Err.Source, Err.Description, True, False)
     End Function
 '
-Private Function GetBlogEntryCell(EntryPtr As Long, IsBlogOwner As Boolean, EntryID As Long, EntryName As String, EntryCopy As String, AuthorMemberName As String, DateAdded As Date, DisplayFullEntry As Boolean, IsSearchListing As Boolean, Return_CommentCnt As Long, allowComments As Boolean, PodcastMediaLink As String, PodcastSize As String, entryEditLink As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, BlogTagList As String) As String
+Private Function GetBlogEntryCell(EntryPtr As Long, IsBlogOwner As Boolean, EntryID As Long, EntryName As String, EntryCopy As String, AuthorMemberName As String, DateAdded As Date, DisplayFullEntry As Boolean, IsSearchListing As Boolean, Return_CommentCnt As Long, allowComments As Boolean, PodcastMediaLink As String, PodcastSize As String, entryEditLink As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, BlogTagList As String, imageDisplayTypeId As Integer) As String
 'Private Function GetBlogEntryCell(EntryPtr As Long, IsBlogOwner As Boolean, EntryID As Long, EntryName As String, EntryCopy As String, AuthorMemberName As String, DateAdded As Date, DisplayFullEntry As Boolean, IsSearchListing As Boolean, Return_CommentCnt As Long, allowComments As Boolean, PodcastMediaLink As String, PodcastSize As String, entryEditLink As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, BlogTagList As String, EntryCopyOverview As String) As String
     On Error GoTo ErrorTrap
     '
@@ -2429,7 +2444,8 @@ Private Function GetBlogEntryCell(EntryPtr As Long, IsBlogOwner As Boolean, Entr
     '
     s = ""
     If DisplayFullEntry Then
-        Call Main.AddPageTitle(EntryName)
+        ' added page title with meta content in dotnet blog wrapper
+        'Call Main.AddPageTitle(EntryName)
         s = s & vbCrLf & entryEditLink & "<h2 class=""aoBlogEntryName"">" & EntryName & "</h2>"
         s = s & cr & "<div class=""aoBlogEntryCopy"">"
         If ThumbnailFilename <> "" Then
@@ -2440,7 +2456,7 @@ Private Function GetBlogEntryCell(EntryPtr As Long, IsBlogOwner As Boolean, Entr
         qs = ModifyQueryString(qs, RequestNameBlogEntryID, CStr(EntryID))
         qs = ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor)
         c = ""
-        If imageIDList <> "" Then
+        If (imageDisplayTypeId = imageDisplayTypeList) And (imageIDList <> "") Then
             c = ""
             For cnt = 0 To UBound(ImageID)
                 Call GetBlogImage(kmaEncodeInteger(ImageID(cnt)), 0, ImageWidthMax, ThumbnailFilename, imageFilename, imageDescription, imageName)
