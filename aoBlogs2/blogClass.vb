@@ -60,6 +60,9 @@ Namespace Contensive.Addons.aoBlogs2
                 Dim blogEntryName As String
                 Dim blogEntryBrief As String
                 Dim adminSuggestions As String = ""
+                Dim blogEntryCID As Integer = 0
+                Dim MetaKeywordList As String
+                Dim blogTagList As String = ""
                 '
                 If blogName = "" Then
                     blogName = "Default"
@@ -95,11 +98,9 @@ Namespace Contensive.Addons.aoBlogs2
                 sidebarCell.Load(layout.GetOuter(".blogSidebarCellWrap"))
                 cellTemplate = sidebarCell.GetHtml()
                 '
-                ' Set Open Graph
-                '
                 If isArticlePage Then
                     '
-                    ' article
+                    ' article page
                     '
                     imageFilename = ""
                     sql = "select filename from blogImages i inner join blogImageRules r on r.blogImageId=i.id where r.blogentryId=" & blogEntryId & " order by r.sortOrder"
@@ -112,12 +113,15 @@ Namespace Contensive.Addons.aoBlogs2
                     blogEntryBrief = ""
                     If cs.Open("blog entries", "id=" & blogEntryId) Then
                         blogEntryName = cs.GetText("name")
+                        BlogTagList = cs.GetText("tagList")
                         blogEntryBrief = cs.GetText("rssDescription")
                         If blogEntryBrief = "" Then
                             blogEntryBrief = CP.Utils.DecodeHTML(cs.GetText("copy"))
                         End If
                     End If
                     Call cs.Close()
+                    '
+                    ' Set Open Graph
                     '
                     If blogEntryName <> "" Then
                         siteName = CP.Site.GetProperty("facebook site_name")
@@ -136,6 +140,36 @@ Namespace Contensive.Addons.aoBlogs2
                         Call CP.Doc.SetProperty("Open Graph Title", blogEntryName)
                         Call CP.Doc.SetProperty("Open Graph Description", blogEntryBrief)
                     End If
+                    '
+                    ' set article meta data
+                    '
+                    Dim metaTitle As String = ""
+                    Dim metaDescription = ""
+
+                    blogEntryCID = CP.Content.GetID("blog entries")
+                    If cs.Open("meta content", "(contentid=" & blogEntryCID & ")and(recordid=" & blogEntryId & ")") Then
+                        metaTitle = cs.GetText("name")
+                        If metaTitle = "" Then
+                            metaTitle = blogEntryName
+                        End If
+                        Call CP.Doc.AddTitle(metaTitle)
+                        '
+                        metaDescription = cs.GetText("MetaDescription")
+                        If metaDescription = "" Then
+                            metaDescription = blogEntryBrief
+                        End If
+                        Call CP.Doc.AddMetaDescription(metaDescription)
+                        '
+                        Call CP.Doc.AddHeadTag(cs.GetText("otherHeadTags"))
+                        '
+                        MetaKeywordList = cs.GetText("MetaKeywordList") & "," & blogTagList
+                        MetaKeywordList = Replace(MetaKeywordList, vbCrLf, ",")
+                        MetaKeywordList = Replace(MetaKeywordList, vbLf, ",")
+                        MetaKeywordList = Replace(MetaKeywordList, vbCr, ",")
+                        MetaKeywordList = Replace(MetaKeywordList, ",,", ",")
+                        Call CP.Doc.AddMetaKeywordList(MetaKeywordList)
+                    End If
+                    Call cs.Close()
                 Else
                     '
                     ' main blog will be handled by the content page
