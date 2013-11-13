@@ -642,13 +642,13 @@ Private Function GetFormBlogSearch(BlogID As Long, BlogName As String, IsBlogOwn
     Dim allowComments As Boolean
     Dim QueryTag As String
     Dim imageDisplayTypeId As Integer
+    Dim searchForm As String
     '
     Call Main.AddRefreshQueryString(RequestNameSourceFormID, FormBlogSearch)
     Call Main.AddRefreshQueryString(RequestNameFormID, FormBlogSearch)
     Call Main.AddRefreshQueryString(RequestNameBlogEntryID, "")
     '
     s = s & vbCrLf & Main.GetContentCopy2("Blogs Search Header for " & BlogName, , "<h2>" & BlogName & " Blog Search</h2>")
-    s = s & vbCrLf & Main.GetFormStart
     '
     ' Search results
     '
@@ -726,8 +726,6 @@ Private Function GetFormBlogSearch(BlogID As Long, BlogName As String, IsBlogOwn
         ' Display the results
         '
         s = s & cr & "<div class=""aoBlogEntryCopy"">" & Subcaption & "</div>"
-        s = s & Main.GetFormStart
-        s = s & "<table width=100% border=0 cellspacing=0 cellpadding=5>"
         '
         If Not Main.CSOK(CSPointer) Then
             s = s & cr & "<div class=""aoBlogProblem"">There were no matches to your search</div>"
@@ -775,21 +773,36 @@ Private Function GetFormBlogSearch(BlogID As Long, BlogName As String, IsBlogOwn
             Loop
         End If
         Call Main.CloseCS(CSPointer)
-        s = s & "</table>"
+        s = "" _
+            & cr & "<div class=""aoBlogSearchResultsCon"">" _
+            & kmaIndent(s) _
+            & cr & "</div>"
     End If
     '
     ' Blog Search Form
     '
-    s = s & "<table width=100% border=0 cellspacing=0 cellpadding=5>"
-    s = s & GetFormRow("Date:", GetField(RequestNameDateSearch, , 10, , Main.GetStreamText(RequestNameDateSearch)) & " " & "&nbsp;(mm/yyyy)")
-    s = s & GetFormRow("Keyword(s):", GetField(RequestNameKeywordList, KeywordList, , 30, Main.GetStreamText(RequestNameKeywordList)))
-    s = s & GetFormRow("", Main.GetFormButton(FormButtonSearch))
     qs = Main.RefreshQueryString()
     qs = ModifyQueryString(qs, RequestNameSourceFormID, "")
     qs = ModifyQueryString(qs, RequestNameFormID, FormBlogPostList)
-    s = s & vbCrLf & GetFormRow2("<div class=""aoBlogFooterLink""><a href=""?" & qs & """>" & BackToRecentPostsMsg & "</a></div>")
-    s = s & "</table>"
-    s = s & Main.GetFormEnd
+    '
+    searchForm = "" _
+        & cr & "<table width=100% border=0 cellspacing=0 cellpadding=5>" _
+        & kmaIndent(GetFormTableRow("Date:", GetField(RequestNameDateSearch, , 10, , Main.GetStreamText(RequestNameDateSearch)) & " " & "&nbsp;(mm/yyyy)")) _
+        & kmaIndent(GetFormTableRow("Keyword(s):", GetField(RequestNameKeywordList, KeywordList, , 30, Main.GetStreamText(RequestNameKeywordList)))) _
+        & kmaIndent(GetFormTableRow("", Main.GetFormButton(FormButtonSearch))) _
+        & kmaIndent(GetFormTableRow2("<div class=""aoBlogFooterLink""><a href=""?" & qs & """>" & BackToRecentPostsMsg & "</a></div>")) _
+        & cr & "</table>" _
+        & ""
+    searchForm = "" _
+        & cr & "<div  class=""aoBlogSearchFormCon"">" _
+        & kmaIndent(searchForm) _
+        & cr & "</div>" _
+        & ""
+    s = s & searchForm
+    s = "" _
+        & cr & Main.GetFormStart _
+        & kmaIndent(s) _
+        & cr & Main.GetFormEnd
     '
     GetFormBlogSearch = s
     '
@@ -992,9 +1005,9 @@ Private Function GetFormBlogThankYou(BlogID As Long, AllowCategories As Boolean)
     '
     Stream = Stream & Main.GetFormStart
     Stream = Stream & "<table width=100% border=0 cellspacing=0 cellpadding=5>"
-    Stream = Stream & GetFormRow("", Main.GetContentCopy("Blog Thank You Page"))
-    Stream = Stream & GetFormRow2("<BR><BR><BR>")
-    Stream = Stream & GetFormRow2("<a href=""" & Main.ServerPage & "?" & WorkingQueryString & "&" & RequestNameFormID & "=" & FormBlogPostList & """>Main Blog page</a>")
+    Stream = Stream & GetFormTableRow("", Main.GetContentCopy("Blog Thank You Page"))
+    Stream = Stream & GetFormTableRow2("<BR><BR><BR>")
+    Stream = Stream & GetFormTableRow2("<a href=""" & Main.ServerPage & "?" & WorkingQueryString & "&" & RequestNameFormID & "=" & FormBlogPostList & """>Main Blog page</a>")
     '
     Stream = Stream & "</table>"
     Stream = Stream & Main.GetFormEnd
@@ -1017,9 +1030,9 @@ Private Function GetFormBlogCommentThankYou(BlogID As Long) As String
     '
     Stream = Stream & Main.GetFormStart
     Stream = Stream & "<table width=100% border=0 cellspacing=0 cellpadding=5>"
-    Stream = Stream & GetFormRow("", Main.GetContentCopy("Blog comment post thank you note"))
-    Stream = Stream & GetFormRow2("<BR><BR><BR>")
-    Stream = Stream & GetFormRow2("<a href=""" & Main.ServerPage & "?" & WorkingQueryString & "&" & RequestNameFormID & "=" & FormBlogPostList & """>Main Blog page</a>")
+    Stream = Stream & GetFormTableRow("", Main.GetContentCopy("Blog comment post thank you note"))
+    Stream = Stream & GetFormTableRow2("<BR><BR><BR>")
+    Stream = Stream & GetFormTableRow2("<a href=""" & Main.ServerPage & "?" & WorkingQueryString & "&" & RequestNameFormID & "=" & FormBlogPostList & """>Main Blog page</a>")
     '
     Stream = Stream & "</table>"
     Stream = Stream & Main.GetFormEnd
@@ -1035,7 +1048,7 @@ ErrorTrap:
 '
 '====================================================================================
 '
-Private Function GetFormRow(FieldCaption As String, Innards As String, Optional AlignLeft As Boolean)
+Private Function GetFormTableRow(FieldCaption As String, Innards As String, Optional AlignLeft As Boolean)
     On Error GoTo ErrorTrap
     '
     Dim Stream As String
@@ -1052,18 +1065,18 @@ Private Function GetFormRow(FieldCaption As String, Innards As String, Optional 
     Stream = Stream & "<TD style=""width:100%;vertical-align:top"">" & Innards & "</TD>"
     Stream = Stream & "</TR>"
     '
-    GetFormRow = Stream
+    GetFormTableRow = Stream
     '
     Exit Function
 ErrorTrap:
-    Call HandleError("UpdatedBlogsClass", "GetFormRow", Err.Number, Err.Source, Err.Description, True, False)
+    Call HandleError("UpdatedBlogsClass", "GetFormTableRow", Err.Number, Err.Source, Err.Description, True, False)
     End Function
 '
 '====================================================================================
 '
 '====================================================================================
 '
-Private Function GetFormRow2(Innards As String) As String
+Private Function GetFormTableRow2(Innards As String) As String
     On Error GoTo ErrorTrap
     '
     Dim Stream As String
@@ -1072,11 +1085,11 @@ Private Function GetFormRow2(Innards As String) As String
     Stream = Stream & "<TD colspan=2 width=""100%"">" & Innards & "</TD>"
     Stream = Stream & "</TR>"
     '
-    GetFormRow2 = Stream
+    GetFormTableRow2 = Stream
     '
     Exit Function
 ErrorTrap:
-    Call HandleError("UpdatedBlogsClass", "GetFormRow2", Err.Number, Err.Source, Err.Description, True, False)
+    Call HandleError("UpdatedBlogsClass", "GetFormTableRow2", Err.Number, Err.Source, Err.Description, True, False)
     End Function
 '
 '====================================================================================
@@ -1428,7 +1441,7 @@ Private Function GetFormBlogPost(BlogID As Long, BlogName As String, IsBlogOwner
         '
         ' New Entry that is being saved
         '
-        s = s & GetFormRow2(Main.GetContentCopy2("Blog Create Header for " & BlogName, , "<h2>Create a new blog post</h2>"))
+        s = s & GetFormTableRow2(Main.GetContentCopy2("Blog Create Header for " & BlogName, , "<h2>Create a new blog post</h2>"))
         BlogTitle = Main.GetStreamText(RequestNameBlogTitle)
         BlogCopy = Main.GetStreamText(RequestNameBlogCopy)
         BlogTagList = Main.GetStreamText(RequestNameBlogTagList)
@@ -1461,9 +1474,9 @@ Private Function GetFormBlogPost(BlogID As Long, BlogName As String, IsBlogOwner
         '
         editor = Main.GetFormInputHTML3(RequestNameBlogCopy, BlogCopy, 500, "100%", False, True)
     End If
-    s = s & GetFormRow("<div style=""padding-top:3px"">Title: </div>", Main.GetFormInputText(RequestNameBlogTitle, BlogTitle, 1, 50))
-    s = s & GetFormRow("<div style=""padding-top:108px"">Post: </div>", editor)
-    s = s & GetFormRow("<div style=""padding-top:3px"">Tag List: </div>", Main.GetFormInputText(RequestNameBlogTagList, BlogTagList, 5, 50))
+    s = s & GetFormTableRow("<div style=""padding-top:3px"">Title: </div>", Main.GetFormInputText(RequestNameBlogTitle, BlogTitle, 1, 50))
+    s = s & GetFormTableRow("<div style=""padding-top:108px"">Post: </div>", editor)
+    s = s & GetFormTableRow("<div style=""padding-top:3px"">Tag List: </div>", Main.GetFormInputText(RequestNameBlogTagList, BlogTagList, 5, 50))
     If AllowCategories Then
         Hint = "5"
         CategorySelect = Main.GetFormInputSelect(RequestNameBlogCategoryIDSet, BlogCategoryID, "Blog Categories")
@@ -1473,7 +1486,7 @@ Private Function GetFormBlogPost(BlogID As Long, BlogName As String, IsBlogOwner
             '
             CategorySelect = "<div>This blog has no categories defined</div>"
         End If
-        s = s & GetFormRow("Category: ", CategorySelect)
+        s = s & GetFormTableRow("Category: ", CategorySelect)
     End If
     '
     ' file upload form taken from Resource Library
@@ -1593,20 +1606,20 @@ Private Function GetFormBlogPost(BlogID As Long, BlogName As String, IsBlogOwner
         & "</Table>" & Main.GetFormInputHidden("LibraryUploadCount", Ptr, "LibraryUploadCount") _
         & ""
     '
-    s = s & GetFormRow("Images: ", c)
+    s = s & GetFormTableRow("Images: ", c)
     If EntryID <> 0 Then
         Hint = "6"
-        s = s & GetFormRow("", Main.GetFormButton(FormButtonPost) & "&nbsp;" & Main.GetFormButton(FormButtonCancel) & "&nbsp;" & Main.GetFormButton(FormButtonDelete))
+        s = s & GetFormTableRow("", Main.GetFormButton(FormButtonPost) & "&nbsp;" & Main.GetFormButton(FormButtonCancel) & "&nbsp;" & Main.GetFormButton(FormButtonDelete))
     Else
         Hint = "7"
-        s = s & GetFormRow("", Main.GetFormButton(FormButtonPost) & "&nbsp;" & Main.GetFormButton(FormButtonCancel))
+        s = s & GetFormTableRow("", Main.GetFormButton(FormButtonPost) & "&nbsp;" & Main.GetFormButton(FormButtonCancel))
     End If
     Hint = "8"
     qs = Main.RefreshQueryString()
     qs = ModifyQueryString(qs, RequestNameBlogEntryID, "", True)
     qs = ModifyQueryString(qs, RequestNameFormID, FormBlogPostList)
     Hint = "9"
-    s = s & vbCrLf & GetFormRow2("<div class=""aoBlogFooterLink""><a href=""?" & qs & """>" & BackToRecentPostsMsg & "</a></div>")
+    s = s & vbCrLf & GetFormTableRow2("<div class=""aoBlogFooterLink""><a href=""?" & qs & """>" & BackToRecentPostsMsg & "</a></div>")
     
     '
     s = s & Main.GetFormInputHidden(RequestNameBlogEntryID, EntryID)
@@ -2067,12 +2080,12 @@ Private Function GetFormBlogPostDetails(BlogID As Long, EntryID As Long, IsBlogO
     s = s & cr & "<div class=""aoBlogFooterLink""><a href=""?" & QSBack & """>" & BackToRecentPostsMsg & "</a></div>"
     
 '    s = s & cr & "<table width=100% border=0 cellspacing=0 cellpadding=5>"
-'    s = s & vbCrLf & GetFormRow2(Main.GetContentCopy("Blog Entries"))
-'    s = s & vbCrLf & GetFormRow("", "<b>Post a comment<b>")
-'    s = s & vbCrLf & GetFormRow("Title: ", GetField(RequestNameCommentTitle, , 35))
-'    s = s & vbCrLf & GetFormRow("Comment: ", Main.GetFormInputText(RequestNameCommentCopy, Main.GetStreamText(RequestNameCommentCopy), 15, 70))
-'    s = s & vbCrLf & GetFormRow("", Main.GetFormButton(FormButtonPostComment) & "&nbsp;" & Main.GetFormButton(FormButtonCancel))
-'    s = s & vbCrLf & GetFormRow2("<a href=""" & Main.ServerPage & WorkingQueryString & RequestNameFormID & "=" & FormBlogPostList & """>Main Blog page</a>")
+'    s = s & vbCrLf & GetFormTableRow2(Main.GetContentCopy("Blog Entries"))
+'    s = s & vbCrLf & GetFormTableRow("", "<b>Post a comment<b>")
+'    s = s & vbCrLf & GetFormTableRow("Title: ", GetField(RequestNameCommentTitle, , 35))
+'    s = s & vbCrLf & GetFormTableRow("Comment: ", Main.GetFormInputText(RequestNameCommentCopy, Main.GetStreamText(RequestNameCommentCopy), 15, 70))
+'    s = s & vbCrLf & GetFormTableRow("", Main.GetFormButton(FormButtonPostComment) & "&nbsp;" & Main.GetFormButton(FormButtonCancel))
+'    s = s & vbCrLf & GetFormTableRow2("<a href=""" & Main.ServerPage & WorkingQueryString & RequestNameFormID & "=" & FormBlogPostList & """>Main Blog page</a>")
 '    s = s & vbCrLf & Main.GetFormInputHidden(RequestNameSourceFormID, FormBlogPostDetails)
 '    s = s & vbCrLf & Main.GetFormInputHidden(RequestNameBlogEntryID, EntryID)
 '    s = s & cr & "</table>"
@@ -2697,8 +2710,11 @@ Private Function AddMonth(StartDate As Date, Months As Long) As Date
     Dim M As Long
     '
     M = Month(StartDate) + Months
-    Y = Year(StartDate) + Int(M / 12)
-    M = M Mod 12
+    Y = Year(StartDate)
+    If M > 12 Then
+        Y = Y + Int(M / 12)
+        M = ((M - 1) Mod 12) + 1
+    End If
     AddMonth = CDate(M & "/1/" & Y)
     '
     Exit Function
