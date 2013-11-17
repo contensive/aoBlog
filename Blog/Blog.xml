@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <Collection name="Blog" guid="{13BB6661-3056-455E-B80D-B13779D11D2B}" system="No" updatable="Yes" blockNavigatorNode="No">
-	<HelpLink></HelpLink>
-	<Help>&lt;p&gt;The blog add-on is an easy way to add blog capability to your website. By using the settings within the add-on, a site can host multiple blogs.&lt;/p&gt;&lt;p&gt;To create a blog&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Edit a page were you want the blog to appear.&lt;/li&gt;&lt;li&gt;Use the Add-on drop-down and select &#39;Blog&#39; to drop it on the page.&lt;/li&gt;&lt;li&gt;In internet Explorer, double click the blog to bring up its options. In other browser&#39;s hit OK and use advanced edit on the public site to edit it&#39;s options.&lt;/li&gt;&lt;li&gt;In the Blog options, enter a name for your Blog, like &quot;Marketing Ideas&quot;. Choose from other options, like &quot;Allow Anonymous Comments&quot;&lt;br&gt;&lt;/li&gt;&lt;li&gt;The person who created the blog is the blog&#39;s owner. The blog owner and site administrators can create posts and approved comments. Additionally you can edit the blog and select an authoring group which is a group in which all members can create posts and approve comments.  &lt;br&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;To create a blog entry&lt;/p&gt;&lt;ul&gt;&lt;li&gt;log in as the same user who created the blog and visit the Blog public page &lt;br&gt;&lt;/li&gt;&lt;li&gt;Click the last entry of the blog page is &quot;Create a new post&quot;&lt;br&gt;&lt;/li&gt;&lt;li&gt;Enter a Title, Post copy, any tags that should apply and upload any photos that go with the post.&lt;/li&gt;&lt;li&gt;Click the Post button.&lt;br&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Create Blog Categories&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Categories can be created to group blog posts, as well to block posts to only those in select groups&lt;/li&gt;&lt;li&gt;To create a blog category, go to the administration site and open manage Addons to the Blog addon&lt;/li&gt;&lt;li&gt;Click on Blog Categories to see the list of current categories&lt;/li&gt;&lt;li&gt;Click Add to create a new category&lt;/li&gt;&lt;li&gt;Give the category a new&lt;/li&gt;&lt;li&gt;If you would like blog entries in this category to only be available to select groups, check the &quot;User Blocking&quot; checkbox and select the groups who should have access to read this blog posts.&lt;br&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;To assign a blog post to a category&lt;/p&gt;&lt;ul&gt;&lt;li&gt;You must be logged in as an administrator to use blocking categories&lt;br&gt;&lt;/li&gt;&lt;li&gt;Turn on your edit links and go to the blog post&lt;br&gt;&lt;/li&gt;&lt;li&gt;Edit the post record by clicking the edit icon directly above the post&#39;s Title&lt;/li&gt;&lt;li&gt;On the Features Tab, select the category in which to include this post&lt;br&gt;&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;To create an RSS feed for your blog.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;The RSS feed is automatically created when you create a post. A link to the feed is generated at the end of the post.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;.&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;</Help>
+	<HelpLink>http://support.contensive.com/Blog-Add-on-Reference</HelpLink>
+	<Help></Help>
 	<Addon name="Blog" guid="{7B7614BB-92E5-4D91-8A60-2058401B8524}" type="Add-on">
 		<Copy></Copy>
 		<CopyText></CopyText>
@@ -20,6 +20,26 @@
 		<IsInline>No</IsInline>
 		<JavascriptOnLoad></JavascriptOnLoad>
 		<JavascriptInHead><![CDATA[//
+// Email Subscribe
+//
+jQuery(document).ready(function(){
+	jQuery('#blogSidebarEmailSubscribe').click(function(){
+		cj.remote({
+			'method':'blogSubscribeByEmailHandler',
+			'queryString':'email='+jQuery('#blogSubscribeEmail').val()+'&blogid='+jQuery('#blogId').val(),
+			'callback':blogEmailSubscribeCallback
+		});
+		return false;
+		})
+});
+function blogEmailSubscribeCallback(response) {
+	if(response.substring(0,2)=='OK'){
+		jQuery('#blogSidebarEmailCell .blogSidebarCellInputCaption').html('You are subscribed to this blog.');
+		jQuery('#blogSidebarEmailCell .blogSidebarCellInput').remove();
+		jQuery('#blogSidebarEmailCell .blogSidebarCellButton').remove();
+	} else {
+	}
+}
 //
 //----------
 //
@@ -82,7 +102,24 @@ function blogNewRow() {
 		<ProcessInterval>0</ProcessInterval>
 		<PageTitle></PageTitle>
 		<RemoteAssetLink></RemoteAssetLink>
-		<Styles><![CDATA[.aoBlogCommentError .ccError 
+		<Styles><![CDATA[
+
+div.blogAdminWarning
+{
+	margin: 0;
+	border: 1px dashed #844;
+	background-color: #fdd;
+	padding: 10px;
+}
+.blogAdminWarning h2
+{
+	color: #f00;
+}
+.blogAdminWarning p
+{
+	color: #f00;
+}
+.aoBlogCommentError .ccError 
 {
 	font-size:inherit;
 }
@@ -131,7 +168,24 @@ div.aoBlogCommentError
 	text-decoration:none;
 	color:black
 }
+/*
+* This style is the customization style. Add it to the site's stylesheet or custom styles to create custom alignment.
+* the image size is determined by a setting, which creates an inline style in the image with width;
+* .blogWrapper .aoBlogEntryThumbnail 
+*/
 .aoBlogEntryThumbnail 
+{
+	float:left;
+	margin:0 10px 10px 0;
+	border:0;
+}
+.aoBlogEntryThumbnailRight
+{
+	float:right;
+	margin:0 0 10px 10px;
+	border:0;
+}
+.aoBlogEntryThumbnailLeft
 {
 	float:left;
 	margin:0 10px 10px 0;
@@ -193,6 +247,17 @@ div.aoBlogCommentError
 	margin-left:20px;
 	margin-top:10px;
 }
+.aoBlogCommentCopy>input,
+.aoBlogCommentCopy>textarea
+{
+	width:100%;
+}
+.aoBlogCommentCopy>input[type="submit"]
+{
+	width:inherit;
+	padding: 10px;
+	margin: 10px 10px 10px 0;
+}
 .aoBlogCommentByLine 
 {
 	clear:both;
@@ -204,7 +269,12 @@ div.aoBlogCommentError
 {
 	width:300px;
 	padding:20px;
-	border:1px solid #9c9c9c
+	border:1px solid #9c9c9c;
+	margin: 20px;
+}
+.aoBlogLoginBox .aoBlogCommentCopy
+{
+	margin:0;
 }
 .aoBlogRSSFeedImage 
 {
@@ -286,44 +356,44 @@ width: inherit;
 /*
 * Blog List Layout Record
 */
-.blogList .blogColumn1-Wrap
+.blogColumn1-Wrap
 {
     float: left;
     width: 100%;
 }
-.blogList .blogColumn1
+.blogColumn1
 {
     margin-right: 380px;
 }
-.blogList .blogSidebar
+.blogSidebar
 {
     float: left;
     width: 340px;
     margin-left: -340px;
 }
-.blogList .blogClear
+.blogClear
 {
     clear: both;
 }
 @media only screen and  (max-width: 768px)
 {
-	.blogList .blogColumn1-Wrap
+	.blogColumn1-Wrap
 	{
 		float: none;
 		width: 100%;
 	}
-	.blogList .blogColumn1
+	.blogColumn1
 	{
 		margin-right: 0;
 	}
-	.blogList .blogSidebar
+	.blogSidebar
 	{
 		clear: both;
 		margin-left: 0;
 		width: 100%;
 		float: none;
 	}
-	.blogList .blogClear
+	.blogClear
 	{
 		clear: both;
 	}
@@ -331,7 +401,7 @@ width: inherit;
 /*
 * Sidebar cell format
 */
-.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell
 {
 	background-color: #f6f6f6;
 	color: #666;
@@ -340,7 +410,7 @@ width: inherit;
 	padding: 0 24px 24px 24px;
 	margin: 0 0 20px 0;
 }
-.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell h2.blogSidebarCellHeadline
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell h2.blogSidebarCellHeadline
 {
 	color: #495b67;
 	font-size: 24px;
@@ -349,21 +419,20 @@ width: inherit;
 	margin: 24px 0 5px 0;
 	font-weight: 300;
 }
-.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellCopy
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellCopy
 {
 	margin: 5px 0 5px 0;
 	font-size: 14px;
 	line-height: 20px;
 }
-.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell h3.blogSidebarCellInputCaption
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell h3.blogSidebarCellInputCaption
 {
 	color: #999;
 	font-size: 16px;
 	font-weight: 300;
 	line-height: 24px;
-	height: 24px;
 }
-.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellInput input
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellInput input
 {
 	-webkit-transition: border-color 0.3s,box-shadow 0.3s;
 	-moz-transition: border-color 0.3s,box-shadow 0.3s;
@@ -386,11 +455,11 @@ width: inherit;
 	border: 1px solid #b0b0b0;
 	outline: none;
 }
-.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellButton
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellButton
 {
 	margin: 20px 0 0 0;
 }
-.blogList .blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellButton a
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellButton a
 {
 	display: inline-block;
 	padding: 5px 10px;
@@ -401,6 +470,58 @@ width: inherit;
 	font-weight: bold;
 	cursor: pointer;
 	text-decoration: none;
+}
+/*
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell  h3.blogSidebarRSSCopy
+{
+	color: #999;
+	font-size: 16px;
+	font-weight: 300;
+	line-height: 24px;
+	height: 24px;
+}
+*/
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell  h3.blogSidebarCellInputCaption a
+{
+	text-decoration: none;
+}
+.blogSidebar .blogSidebarCellWrap .blogSidebarCell  #blogSidebarRSSLogo
+{
+	padding: 0 10px 0 0;
+	margin: 0 0 -5px 0;
+}
+.blogSidebar .blogSidebarCellWrap img.blogSidebarSocialLogo
+{
+	margin: 0 5px 0 0;
+}
+/*
+* workaround for table that holds the editing form
+*/
+.blogWrapper table.aoBlogPostTable tr
+{
+}
+.blogWrapper table.aoBlogPostTable>tr>td,
+.blogWrapper table.aoBlogPostTable>tbody>tr>td
+{
+	padding: 5px;
+}
+/*
+* caption/data columns of standard tables
+*/
+.aoBlogTableRowCellLeft
+{
+	width:100px;
+	vertical-align:top;
+}
+.aoBlogTableRowCellRight
+{
+	vertical-align:top;
+}
+.aoBlogImageTable td
+{
+	text-align:left;
+	vertical-align:top;
+	padding-bottom:10px;
 }
 ]]></Styles>
 		<Scripting Language="" EntryPoint="" Timeout="5000"/>
@@ -439,6 +560,10 @@ width: inherit;
 		<PageTitle></PageTitle>
 		<RemoteAssetLink></RemoteAssetLink>
 		<Styles><![CDATA[
+
+
+
+
 
 
 
@@ -506,89 +631,7 @@ div.blogCatList ul li.last {}
 			<ContentChange name="Blog Categories" guid="{111F2579-1148-4953-ACB3-0B4A770DA581}"/>
 		</ProcessTriggers>
 	</Addon>
-	<Addon name="Legacy Blog " guid="{656E95EA-2799-45CD-9712-D4CEDF0E2D02}" type="Add-on">
-		<Copy></Copy>
-		<CopyText></CopyText>
-		<ActiveXProgramID><![CDATA[aoBlogs.Blogs]]></ActiveXProgramID>
-		<DotNetClass></DotNetClass>
-		<ArgumentList><![CDATA[BlogName=Default]]></ArgumentList>
-		<AsAjax>No</AsAjax>
-		<Filter>No</Filter>
-		<Help><![CDATA[<span style="font-weight: bold;">Blog Options</span><br>These settings can be accessed through the Options icon <img alt="" src="http://support.contensive.com/hlpRsrc/options.gif" border="0" align=""> with Advanced Edit enabled on the Contensive Toolbar.<br><ul><li>Blog Name - The name of the blog for this occurrence of the blog placed on a content page. Multiple blogs can be managed on one site</li><li>Allow Anonymous Comments - dictates if users must authenticate/register before commenting on a blog post</li><li>Overview Character Length - the amount of characters displayed on the overview page of a blog. The overview is created from the copy of the blog post. All HTML elements are removed from the overview.</li><li>Number of entries to display - the number of blog entries to display on the overview page before posts are added to the blog archive.</li></ul>Multiple instances of the Blog Add-on may be included on a site. If Blog Name is set differently for each instance, multiple blogs can be managed.<br><br>With Allow Anonymous Comments set to Yes, anyone can post a comment to a blog. These comments require approval by the blog owner. If Allow Anonymous Comments is not set, users must authenticate prior to commenting on a blog. A log in form will automatically display for the user to provide a valid user name and password. If the Site Property "AllowMemberJoin" is set to True, users without a user name and password will be able to register with the site though a link marked "Join?" on the log in form. If the Site Property "AllowPasswordEmail" is set to True, users who have forgotten their user name or password will be able to request them using their email address through a link marked "Forgot your user name or password?" on the log in form.<br><br>All comments not posted by the blog owner will send an email notification to the blog owner. The email will contain the blog name the comment was posted to, and the name of the post the comment was posted to. The from address on the notification email can be set here Admin&gt;Setting&gt;Preferences on the tab labeled Email use the field "Default Email From Address".]]></Help>
-		<HelpLink><![CDATA[http://www.Contensive.com]]></HelpLink>
-		<Icon Link="/blogs/blog.png" width="57" height="59" sprites="4" />
-		<InIframe>No</InIframe>
-		<BlockEditTools>No</BlockEditTools>
-		<FormXML></FormXML>
-		<IsInline>No</IsInline>
-		<JavascriptOnLoad></JavascriptOnLoad>
-		<JavascriptInHead><![CDATA[//
-//
-//----------
-//
-function blogNewRow() {
-		var RLTable = document.getElementById('UploadInsert' );
-		var CountElement = document.getElementById('LibraryUploadCount' );
-		var tCols,tRows,NewRowNumber;
-		var RowCnt = RLTable.rows.length;
-		var NewRow,NewRow2,NewRow3,NewRow4,NewRow5,NewCell;
-		if ( RLTable ) {
-			NewRowNumber = parseInt( CountElement.value )+1;
-			CountElement.value = NewRowNumber;
-			tRows = RLTable.getElementsByTagName("TR");
-			//
-			//  put in a rule so rows dont run together
-			//
-			NewRow = RLTable.insertRow(RowCnt);
-			NewCell = NewRow.insertCell(0);
-			NewCell.innerHTML='<hr>';
-			//
-			//  order
-			//
-			NewRow2 = RLTable.insertRow(RowCnt+1);
-			NewCell = NewRow2.insertCell(0);
-			NewCell.innerHTML= 'Order<br><INPUT TYPE="Text" NAME="LibraryOrder.'+NewRowNumber+'" SIZE="2" value="'+parseInt(NewRowNumber)+'">'
-			//
-			//  image
-			//
-			NewRow3 = RLTable.insertRow(RowCnt+2);
-			NewCell = NewRow3.insertCell(0);
-			NewCell.innerHTML='Image<br><INPUT TYPE="file" name="LibraryUpload.'+NewRowNumber+'">';
-			//
-			//  name
-			//
-			NewRow4 = RLTable.insertRow(RowCnt+3);
-			NewCell = NewRow4.insertCell(0);
-			NewCell.innerHTML= 'Name<br><INPUT TYPE="Text" NAME="LibraryName.'+NewRowNumber+'" SIZE="30">'
-			//
-			//  description
-			//
-			NewRow5 = RLTable.insertRow(RowCnt+4);
-			NewCell = NewRow5.insertCell(0);
-			NewCell.innerHTML='Description<br><TEXTAREA NAME="LibraryDescription.'+NewRowNumber+'" ROWS="5" COLS="50"></TEXTAREA>';
-		}
-}
-]]></JavascriptInHead>
-		<JavascriptBodyEnd></JavascriptBodyEnd>
-		<MetaDescription></MetaDescription>
-		<OtherHeadTags></OtherHeadTags>
-		<Content>Yes</Content>
-		<Template>Yes</Template>
-		<Email>No</Email>
-		<Admin>No</Admin>
-		<OnPageEndEvent>No</OnPageEndEvent>
-		<OnPageStartEvent>No</OnPageStartEvent>
-		<OnBodyStart>No</OnBodyStart>
-		<OnBodyEnd>No</OnBodyEnd>
-		<RemoteMethod>No</RemoteMethod>
-		<ProcessRunOnce>No</ProcessRunOnce>
-		<ProcessInterval>0</ProcessInterval>
-		<PageTitle></PageTitle>
-		<RemoteAssetLink></RemoteAssetLink>
-		<Styles></Styles>
-		<Scripting Language="" EntryPoint="" Timeout="5000"/>
-	</Addon>
-	<Addon name="SubscribeEmailHandler" guid="{499CE116-2516-42C6-9AF7-9E190E2929D0}" type="Add-on">
+	<Addon name="blogSubscribeByEmailHandler" guid="{499CE116-2516-42C6-9AF7-9E190E2929D0}" type="Add-on">
 		<Copy></Copy>
 		<CopyText></CopyText>
 		<ActiveXProgramID></ActiveXProgramID>
@@ -670,14 +713,50 @@ function blogNewRow() {
 		<Styles></Styles>
 		<Scripting Language="" EntryPoint="" Timeout="5000"/>
 	</Addon>
+	<Addon name="Legacy Blog " guid="{656E95EA-2799-45CD-9712-D4CEDF0E2D02}" type="Add-on">
+		<Copy></Copy>
+		<CopyText></CopyText>
+		<ActiveXProgramID><![CDATA[aoBlogs.Blogs]]></ActiveXProgramID>
+		<DotNetClass></DotNetClass>
+		<ArgumentList><![CDATA[BlogName=Default]]></ArgumentList>
+		<AsAjax>No</AsAjax>
+		<Filter>No</Filter>
+		<Help><![CDATA[<span style="font-weight: bold;">Blog Options</span><br>These settings can be accessed through the Options icon <img alt="" src="http://support.contensive.com/hlpRsrc/options.gif" border="0" align=""> with Advanced Edit enabled on the Contensive Toolbar.<br><ul><li>Blog Name - The name of the blog for this occurrence of the blog placed on a content page. Multiple blogs can be managed on one site</li><li>Allow Anonymous Comments - dictates if users must authenticate/register before commenting on a blog post</li><li>Overview Character Length - the amount of characters displayed on the overview page of a blog. The overview is created from the copy of the blog post. All HTML elements are removed from the overview.</li><li>Number of entries to display - the number of blog entries to display on the overview page before posts are added to the blog archive.</li></ul>Multiple instances of the Blog Add-on may be included on a site. If Blog Name is set differently for each instance, multiple blogs can be managed.<br><br>With Allow Anonymous Comments set to Yes, anyone can post a comment to a blog. These comments require approval by the blog owner. If Allow Anonymous Comments is not set, users must authenticate prior to commenting on a blog. A log in form will automatically display for the user to provide a valid user name and password. If the Site Property "AllowMemberJoin" is set to True, users without a user name and password will be able to register with the site though a link marked "Join?" on the log in form. If the Site Property "AllowPasswordEmail" is set to True, users who have forgotten their user name or password will be able to request them using their email address through a link marked "Forgot your user name or password?" on the log in form.<br><br>All comments not posted by the blog owner will send an email notification to the blog owner. The email will contain the blog name the comment was posted to, and the name of the post the comment was posted to. The from address on the notification email can be set here Admin&gt;Setting&gt;Preferences on the tab labeled Email use the field "Default Email From Address".]]></Help>
+		<HelpLink><![CDATA[http://www.Contensive.com]]></HelpLink>
+		<Icon Link="/blogs/blog.png" width="57" height="59" sprites="4" />
+		<InIframe>No</InIframe>
+		<BlockEditTools>No</BlockEditTools>
+		<FormXML></FormXML>
+		<IsInline>No</IsInline>
+		<JavascriptOnLoad></JavascriptOnLoad>
+		<JavascriptInHead></JavascriptInHead>
+		<JavascriptBodyEnd></JavascriptBodyEnd>
+		<MetaDescription></MetaDescription>
+		<OtherHeadTags></OtherHeadTags>
+		<Content>Yes</Content>
+		<Template>Yes</Template>
+		<Email>No</Email>
+		<Admin>No</Admin>
+		<OnPageEndEvent>No</OnPageEndEvent>
+		<OnPageStartEvent>No</OnPageStartEvent>
+		<OnBodyStart>No</OnBodyStart>
+		<OnBodyEnd>No</OnBodyEnd>
+		<RemoteMethod>No</RemoteMethod>
+		<ProcessRunOnce>No</ProcessRunOnce>
+		<ProcessInterval>0</ProcessInterval>
+		<PageTitle></PageTitle>
+		<RemoteAssetLink></RemoteAssetLink>
+		<Styles></Styles>
+		<Scripting Language="" EntryPoint="" Timeout="5000"/>
+	</Addon>
 	<data>
-		<record content="Layouts" guid="{58788483-D050-4464-9261-627278A57B35}" name="Blog List">
+		<record content="Layouts" guid="{58788483-D050-4464-9261-627278A57B35}" name="Blog Layout">
 			<field name="ACTIVE">True</field>
 			<field name="SORTORDER"></field>
-			<field name="Layout"><![CDATA[<div class="blogList">
+			<field name="Layout"><![CDATA[<div class="blogWrapper">
 	<div class="blogColumn1-Wrap">
 		<div class="blogColumn1">
-			{{blogList}}
+			{{legacyBlog}}
 		</div>
 	</div>
 	<div class="blogSidebar">
@@ -702,7 +781,7 @@ function blogNewRow() {
 		<Field Name="Active" active="True" AdminOnly="False" Authorable="True" Caption="Active" DeveloperOnly="False" EditSortPriority="200" FieldType="Boolean" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="0" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="1" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 		<Field Name="SortOrder" active="True" AdminOnly="False" Authorable="False" Caption="Alpha Sort Order" DeveloperOnly="False" EditSortPriority="2000" FieldType="Text" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="0" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 		<Field Name="blogEntryId" active="True" AdminOnly="False" Authorable="True" Caption="Blog Entry" DeveloperOnly="False" EditSortPriority="1000" FieldType="Lookup" HTMLContent="False" IndexColumn="" IndexSortDirection="" IndexSortOrder="" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="True" IsBaseField="False" LookupContent="Blog Entries" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
-		<Field Name="CallToActionId" active="True" AdminOnly="False" Authorable="True" Caption="Call to Action" DeveloperOnly="False" EditSortPriority="1100" FieldType="Lookup" HTMLContent="False" IndexColumn="" IndexSortDirection="" IndexSortOrder="" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="True" IsBaseField="False" LookupContent="Calls To Action" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
+		<Field Name="CallToActionId" active="True" AdminOnly="False" Authorable="True" Caption="Call to Action" DeveloperOnly="False" EditSortPriority="1100" FieldType="Lookup" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="Calls To Action" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 	</CDef>
 	<CDef Name="Blog Category Group Rules" Active="1" AdminOnly="1" AllowAdd="1" AllowCalendarEvents="0" AllowContentChildTool="0" AllowContentTracking="0" AllowDelete="1" AllowMetaContent="0" AllowTopicRules="0" AllowWorkflowAuthoring="0" AuthoringDataSourceName="Default" AuthoringTableName="ccBlogCategoryGroupRules" ContentDataSourceName="Default" ContentTableName="ccBlogCategoryGroupRules" DefaultSortMethod="By Name" DeveloperOnly="1" DropDownFieldList="Name" EditorGroupName="Content Editors" Parent="" IconLink="" IconHeight="0" IconWidth="0" IconSprites="0" isbasecontent="0" guid="{2C0B087A-8764-41F2-87D5-C8E5FDAD5EC1}" >
 		<Field Name="Name" active="True" AdminOnly="False" Authorable="True" Caption="Name" DeveloperOnly="False" EditSortPriority="110" FieldType="Text" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="0" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
@@ -769,13 +848,13 @@ function blogNewRow() {
 		<Field Name="allowEmailSubscribe" active="True" AdminOnly="False" Authorable="True" Caption="Allow Email Subscribe" DeveloperOnly="False" EditSortPriority="1020" FieldType="Boolean" HTMLContent="False" IndexColumn="" IndexSortDirection="" IndexSortOrder="" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="0" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="" EditTab="Sidebar" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="True" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault>When checked, the sidebar will include a link to subscribe by email to this blog.</HelpDefault>
 		</Field>
-		<Field Name="allowArticleCTA" active="True" AdminOnly="False" Authorable="True" Caption="Allow Article Calls-To-Action" DeveloperOnly="False" EditSortPriority="1010" FieldType="Boolean" HTMLContent="False" IndexColumn="" IndexSortDirection="" IndexSortOrder="" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="0" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="" EditTab="Sidebar" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="True" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+		<Field Name="allowArticleCTA" active="True" AdminOnly="False" Authorable="True" Caption="Allow Article Calls-To-Action" DeveloperOnly="False" EditSortPriority="1010" FieldType="Boolean" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="0" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="Sidebar" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault>When checked, the article page can include a Call To Action section of the sitebar.</HelpDefault>
 		</Field>
 		<Field Name="allowRSSSubscribe" active="True" AdminOnly="False" Authorable="True" Caption="Allow RSS Feed Subscribe" DeveloperOnly="False" EditSortPriority="1050" FieldType="Boolean" HTMLContent="False" IndexColumn="" IndexSortDirection="" IndexSortOrder="" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="0" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="" EditTab="Sidebar" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="True" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault>When checked, the sidebar will include a link to subscribe by RSS to this blog.</HelpDefault>
 		</Field>
-		<Field Name="allowFacebookLink" active="True" AdminOnly="False" Authorable="True" Caption="Allow Follow on Facebook" DeveloperOnly="False" EditSortPriority="1060" FieldType="Boolean" HTMLContent="False" IndexColumn="" IndexSortDirection="" IndexSortOrder="" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="0" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="" EditTab="Sidebar" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="True" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+		<Field Name="allowFacebookLink" active="True" AdminOnly="False" Authorable="True" Caption="Allow Follow on Facebook" DeveloperOnly="False" EditSortPriority="1062" FieldType="Boolean" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="0" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="Sidebar" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault>When checked, the sidebar will include a Follow This Blog section with a link to the Facebook account set below.</HelpDefault>
 		</Field>
 		<Field Name="allowTwitterLink" active="True" AdminOnly="False" Authorable="True" Caption="Allow Follow on Twitter" DeveloperOnly="False" EditSortPriority="1070" FieldType="Boolean" HTMLContent="False" IndexColumn="" IndexSortDirection="" IndexSortOrder="" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="0" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="" EditTab="Sidebar" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="True" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
@@ -795,6 +874,9 @@ function blogNewRow() {
 		</Field>
 		<Field Name="emailSubscribeGroupId" active="True" AdminOnly="False" Authorable="True" Caption="Email Subscribe Group" DeveloperOnly="False" EditSortPriority="1025" FieldType="Lookup" HTMLContent="False" IndexColumn="" IndexSortDirection="" IndexSortOrder="" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="" EditTab="Sidebar" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="True" IsBaseField="False" LookupContent="Groups" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault>if Allow Email Subscribe, this is the group that this user will be added to if they subscribe.</HelpDefault>
+		</Field>
+		<Field Name="followUsCaption" active="True" AdminOnly="False" Authorable="True" Caption="Follow Us Caption" DeveloperOnly="False" EditSortPriority="1060" FieldType="Text" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="Follow Us" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="Sidebar" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+			<HelpDefault>If any of the Allow Follow options are selected, this caption will appear over them.</HelpDefault>
 		</Field>
 	</CDef>
 	<CDef Name="Blog Copy" Active="1" AdminOnly="1" AllowAdd="1" AllowCalendarEvents="0" AllowContentChildTool="0" AllowContentTracking="0" AllowDelete="1" AllowMetaContent="0" AllowTopicRules="0" AllowWorkflowAuthoring="0" AuthoringDataSourceName="Default" AuthoringTableName="ccBlogCopy" ContentDataSourceName="Default" ContentTableName="ccBlogCopy" DefaultSortMethod="By Name" DeveloperOnly="1" DropDownFieldList="NAME" EditorGroupName="" Parent="" IconLink="" IconHeight="0" IconWidth="0" IconSprites="0" isbasecontent="0" guid="{F5E77D9E-2278-4938-B525-86D643B36051}" >
@@ -826,7 +908,7 @@ function blogNewRow() {
 		<Field Name="RSSDatePublish" active="True" AdminOnly="False" Authorable="False" Caption="Date Publish" DeveloperOnly="False" EditSortPriority="1030" FieldType="Date" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="RSS Feeds" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 		<Field Name="RSSDescription" active="True" AdminOnly="False" Authorable="False" Caption="Description" DeveloperOnly="False" EditSortPriority="1020" FieldType="LongText" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="RSS Feeds" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 	</CDef>
-	<CDef Name="Blog Entries" Active="1" AdminOnly="0" AllowAdd="1" AllowCalendarEvents="0" AllowContentChildTool="0" AllowContentTracking="0" AllowDelete="1" AllowMetaContent="0" AllowTopicRules="0" AllowWorkflowAuthoring="0" AuthoringDataSourceName="Default" AuthoringTableName="ccBlogCopy" ContentDataSourceName="Default" ContentTableName="ccBlogCopy" DefaultSortMethod="By Name" DeveloperOnly="0" DropDownFieldList="NAME" EditorGroupName="" Parent="Blog Copy" IconLink="" IconHeight="0" IconWidth="0" IconSprites="0" isbasecontent="0" guid="{524CFE8D-9CB3-4159-B1B0-683E62C38344}" >
+	<CDef Name="Blog Entries" Active="1" AdminOnly="0" AllowAdd="1" AllowCalendarEvents="0" AllowContentChildTool="0" AllowContentTracking="0" AllowDelete="1" AllowMetaContent="1" AllowTopicRules="0" AllowWorkflowAuthoring="0" AuthoringDataSourceName="Default" AuthoringTableName="ccBlogCopy" ContentDataSourceName="Default" ContentTableName="ccBlogCopy" DefaultSortMethod="By Name" DeveloperOnly="0" DropDownFieldList="NAME" EditorGroupName="" Parent="Blog Copy" IconLink="" IconHeight="0" IconWidth="0" IconSprites="0" isbasecontent="0" guid="{524CFE8D-9CB3-4159-B1B0-683E62C38344}" >
 		<Field Name="EntryID" active="True" AdminOnly="False" Authorable="False" Caption="Blog Entry" DeveloperOnly="False" EditSortPriority="1010" FieldType="Lookup" HTMLContent="False" IndexColumn="99" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="Blog Entries" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 		<Field Name="AuthorMemberID" active="True" AdminOnly="False" Authorable="False" Caption="Author" DeveloperOnly="False" EditSortPriority="1020" FieldType="Lookup" HTMLContent="False" IndexColumn="1" IndexSortDirection="" IndexSortOrder="1" IndexWidth="30" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="True" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="People" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 		<Field Name="CopyText" active="True" AdminOnly="False" Authorable="False" Caption="Text Copy" DeveloperOnly="False" EditSortPriority="1055" FieldType="LongText" HTMLContent="False" IndexColumn="99" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
@@ -876,13 +958,22 @@ function blogNewRow() {
 		<Field Name="Viewings" active="True" AdminOnly="False" Authorable="True" Caption="Total Viewing Count" DeveloperOnly="False" EditSortPriority="1060" FieldType="Integer" HTMLContent="False" IndexColumn="99" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="Features" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="True" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault>The number of times this entry was viewed on the website.</HelpDefault>
 		</Field>
-		<Field Name="Images" active="True" AdminOnly="False" Authorable="True" Caption="Images" DeveloperOnly="False" EditSortPriority="2000" FieldType="Redirect" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="BlogEntryID" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="Features" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="BlogEntryID" ManyToManyRuleSecondaryField="BlogImageID" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="Blog Image Rules" ManyToManyContent="Blog Images" ManyToManyRuleContent="Blog Image Rules" >
+		<Field Name="Images" active="True" AdminOnly="False" Authorable="True" Caption="Images" DeveloperOnly="False" EditSortPriority="2000" FieldType="Redirect" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="BlogEntryID" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="Images" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="BlogEntryID" ManyToManyRuleSecondaryField="BlogImageID" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="Blog Image Rules" ManyToManyContent="Blog Images" ManyToManyRuleContent="Blog Image Rules" >
 			<HelpDefault>Click Open in New Window to see all the images associated with this entry. To add an image to a blg use the public blog interface.</HelpDefault>
 		</Field>
 		<Field Name="TagList" active="True" AdminOnly="False" Authorable="True" Caption="Tag List" DeveloperOnly="False" EditSortPriority="1250" FieldType="LongText" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="Features" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault>A comma separated list of tags. Tags can be searched on the website. An entry can be associated to any number of tags, and a tag can be in many entries.</HelpDefault>
 		</Field>
-		<Field Name="callsToAction" active="True" AdminOnly="False" Authorable="True" Caption="Calls To Action" DeveloperOnly="False" EditSortPriority="1000" FieldType="ManyToMany" HTMLContent="False" IndexColumn="" IndexSortDirection="" IndexSortOrder="" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="" EditTab="Calls To Action" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="blogEntryId" ManyToManyRuleSecondaryField="CalltoActionId" IsModified="True" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="Calls To Action" ManyToManyRuleContent="Blog Entry CTA Rules" ></Field>
+		<Field Name="callsToAction" active="True" AdminOnly="False" Authorable="True" Caption="Calls To Action" DeveloperOnly="False" EditSortPriority="1000" FieldType="ManyToMany" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="Calls To Action" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="blogEntryId" ManyToManyRuleSecondaryField="CalltoActionId" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="Calls To Action" ManyToManyRuleContent="Blog Entry CTA Rules" ></Field>
+		<Field Name="imageDisplayTypeId" active="True" AdminOnly="False" Authorable="True" Caption="Secondary Images" DeveloperOnly="False" EditSortPriority="2100" FieldType="Lookup" HTMLContent="False" IndexColumn="" IndexSortDirection="" IndexSortOrder="" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="1" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="" EditTab="Images" Scramble="False" LookupList="Do Not Display,List Images After Post, Image Slider After Post" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="True" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+			<HelpDefault>This selection determines how secondary images appear after the end of the article page. The article page is the blog view that displays the entire story. The Primary image is the first image in your blog post image list, when sorted by Alpha Sort order. Additional images are considered Secondary Images. The Primary image is always used for social media.</HelpDefault>
+		</Field>
+		<Field Name="primaryImagePositionId" active="True" AdminOnly="False" Authorable="True" Caption="List View Primary Image Position" DeveloperOnly="False" EditSortPriority="2010" FieldType="Lookup" HTMLContent="False" IndexColumn="" IndexSortDirection="" IndexSortOrder="" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="1" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="" EditTab="Images" Scramble="False" LookupList="Use Stylesheet,Align Right,Align Left,Do Not Display" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="True" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+			<HelpDefault>This selection determines how your primary image appears in the List View. The list view is the blog view that displays a list of blog entries. The Primary image is the first image in your blog post image list, when sorted by Alpha Sort order. Additional images are considered Secondary Images. The Primary image is always used for social media.</HelpDefault>
+		</Field>
+		<Field Name="articlePrimaryImagePositionId" active="True" AdminOnly="False" Authorable="True" Caption="Article View Primary Image Position" DeveloperOnly="False" EditSortPriority="2020" FieldType="Lookup" HTMLContent="False" IndexColumn="" IndexSortDirection="" IndexSortOrder="" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="1" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="" EditTab="Images" Scramble="False" LookupList="Use Stylesheet,Align Right,Align Left,Do Not Display" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="True" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+			<HelpDefault>This selection determines how your primary image appears in the article view. The article page is the blog view that displays the entire story. The Primary image is the first image in your blog post image list, when sorted by Alpha Sort order. Additional images are considered Secondary Images. The Primary image is always used for social media.</HelpDefault>
+		</Field>
 	</CDef>
 	<CDef Name="RSS Feed Blog Rules" Active="1" AdminOnly="1" AllowAdd="1" AllowCalendarEvents="0" AllowContentChildTool="0" AllowContentTracking="0" AllowDelete="1" AllowMetaContent="0" AllowTopicRules="0" AllowWorkflowAuthoring="0" AuthoringDataSourceName="Default" AuthoringTableName="ccRSSFeedRules" ContentDataSourceName="Default" ContentTableName="ccRSSFeedRules" DefaultSortMethod="By Name" DeveloperOnly="1" DropDownFieldList="Name" EditorGroupName="Content Editors" Parent="" IconLink="" IconHeight="0" IconWidth="0" IconSprites="0" isbasecontent="0" guid="{B921F7A7-1EE1-4EC2-A65D-33FD2E310F54}" >
 		<Field Name="Name" active="True" AdminOnly="False" Authorable="True" Caption="Name" DeveloperOnly="False" EditSortPriority="110" FieldType="Text" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="0" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
@@ -934,12 +1025,22 @@ function blogNewRow() {
 		<Field Name="MemberID" active="True" AdminOnly="False" Authorable="True" Caption="User" DeveloperOnly="False" EditSortPriority="1200" FieldType="Lookup" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="True" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="People" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 		<Field Name="VisitID" active="True" AdminOnly="False" Authorable="True" Caption="Visit" DeveloperOnly="False" EditSortPriority="1300" FieldType="Lookup" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="True" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="Visits" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 	</CDef>
+	<ImportCollection name="Twitter">{EADB8DAF-CC49-404E-AEDE-71AEE9C9BFEC}</ImportCollection>
+	<ImportCollection name="Open Graph Meta Tags">{E4FAFB02-D4B2-4336-8956-A1DE68291C3B}</ImportCollection>
+	<ImportCollection name="FaceBook Social Plug-ins">{507B7EB2-D3E5-4F9E-88BB-777FDA06EC65}</ImportCollection>
 	<ImportCollection name="Call To Action">{7103AAC0-E1CF-424D-AD1F-8CB256FD5AFD}</ImportCollection>
 	<ImportCollection name="reCAPTCHA">{B0330AE8-225D-429A-8985-B5F602E295E2}</ImportCollection>
 	<ImportCollection name="Webcast and Podcast">{A651410B-5848-46BF-AFDB-3A8D3E895B9D}</ImportCollection>
 	<ImportCollection name="RSS Feed">{06791870-0EF8-48CB-AC54-2327FF5A1C40}</ImportCollection>
+	<ImportCollection name="Social Media">{3B4362B9-5556-4890-B049-56B31B869C64}</ImportCollection>
 	<Resource name="blog.png" type="www" path="blogs" />
+	<Resource name="facebook.jpg" type="www" path="blogs" />
+	<Resource name="googleplus.jpg" type="www" path="blogs" />
+	<Resource name="linkedin.jpg" type="www" path="blogs" />
+	<Resource name="pinterest.jpg" type="www" path="blogs" />
+	<Resource name="rss.png" type="www" path="blogs" />
+	<Resource name="twitter.jpg" type="www" path="blogs" />
 	<Resource name="defaultpostcopy.txt" type="content" path="blogs" />
 	<Resource name="aoblogs.dll" type="executable" path="" />
-	<Resource name="aoBlogs2.dll" type="executable" path="" />
+	<Resource name="aoblogs2.dll" type="executable" path="" />
 </Collection>

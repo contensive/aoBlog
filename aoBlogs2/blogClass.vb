@@ -18,7 +18,7 @@ Namespace Contensive.Addons.aoBlogs2
         '=====================================================================================
         '
         Public Overrides Function Execute(ByVal CP As CPBaseClass) As Object
-            Dim returnHtml As String
+            Dim returnHtml As String = ""
             Try
                 Dim layout As CPBlockBaseClass = CP.BlockNew()
                 Dim sidebarCell As CPBlockBaseClass = CP.BlockNew()
@@ -28,6 +28,7 @@ Namespace Contensive.Addons.aoBlogs2
                 Dim cs As CPCSBaseClass = CP.CSNew()
                 Dim cs2 As CPCSBaseClass = CP.CSNew()
                 Dim allowArticleCTA As Boolean = False
+                Dim allowArchiveList As Boolean = False
                 Dim allowEmailSubscribe As Boolean = False
                 Dim allowRSSSubscribe As Boolean = False
                 Dim allowFacebookLink As Boolean = False
@@ -51,7 +52,7 @@ Namespace Contensive.Addons.aoBlogs2
                 Dim js As String = ""
                 Dim emailSubscribeGroupId As Integer
                 Dim rssFeedId As Integer
-                Dim RSSFilename As String
+                Dim RSSFilename As String = ""
                 Dim followUsCaption As String = ""
                 Dim subscribed As Boolean = False
                 Dim sql As String
@@ -63,6 +64,17 @@ Namespace Contensive.Addons.aoBlogs2
                 Dim blogEntryCID As Integer = 0
                 Dim MetaKeywordList As String
                 Dim blogTagList As String = ""
+                Dim blogListQs As String = ""
+                Dim blogListLink As String = ""
+                Dim archiveList As String = ""
+                Dim allowSearch As String = ""
+                '
+                blogListQs = CP.Doc.RefreshQueryString()
+                blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameSourceFormID, "")
+                blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameFormID, "")
+                blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameBlogCategoryID, "")
+                blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameBlogEntryID, "")
+                blogListLink = CP.Content.GetLinkAliasByPageID(CP.Doc.PageId, blogListQs, "?" & blogListQs)
                 '
                 If blogName = "" Then
                     blogName = "Default"
@@ -81,6 +93,8 @@ Namespace Contensive.Addons.aoBlogs2
                     rssFeedId = cs.GetInteger("rssFeedId")
                     allowRSSSubscribe = cs.GetBoolean("allowRSSSubscribe")
                     followUsCaption = cs.GetText("followUsCaption")
+                    allowArchiveList = cs.GetBoolean("allowArchiveList")
+                    allowSearch = cs.GetBoolean("allowSearch")
                 End If
                 Call cs.Close()
                 '
@@ -89,7 +103,31 @@ Namespace Contensive.Addons.aoBlogs2
                 Call CP.Doc.SetProperty("blogId", blogId.ToString())
                 legacyBlog = CP.Utils.ExecuteAddon(LegacyBlogAddon)
                 isArticlePage = (blogEntryId <> 0)
-                allowListSidebar = allowEmailSubscribe Or allowFacebookLink Or allowGooglePlusLink Or allowGooglePlusLink Or allowRSSSubscribe Or allowTwitterLink
+                If allowArchiveList Then
+                    '
+                    ' create the article list now - if only the current month, turn if off before setting allowListSidebar
+                    '
+                    ArchiveList = GetFormBlogArchiveDateList(CP, blogId, blogListQs)
+                    If archiveList = "" Then
+                        allowArchiveList = False
+                    End If
+                End If
+                If allowRSSSubscribe Then
+                    '
+                    ' check if RSS exists
+                    '
+                    allowRSSSubscribe = False
+                    If (rssFeedId <> 0) Then
+                        If cs.Open("rss feeds", "id=" & rssFeedId) Then
+                            RSSFilename = cs.GetText("RSSFilename ")
+                        End If
+                        Call cs.Close()
+                        If RSSFilename <> "" Then
+                            allowRSSSubscribe = True
+                        End If
+                    End If
+                End If
+                allowListSidebar = allowEmailSubscribe Or allowFacebookLink Or allowGooglePlusLink Or allowGooglePlusLink Or allowRSSSubscribe Or allowTwitterLink Or allowArchiveList Or allowSearch
                 allowArticleSidebar = allowListSidebar Or allowArticleCTA
                 allowSidebar = Not (dstFormId = FormBlogEntryEditor) And ((isArticlePage And allowArticleSidebar) Or (Not isArticlePage And allowListSidebar))
                 '
@@ -266,14 +304,7 @@ Namespace Contensive.Addons.aoBlogs2
                         sidebarCnt += 1
                     End If
                     '
-                    If allowRSSSubscribe And (rssFeedId <> 0) Then
-                        '
-                        ' Subscribe by RSS
-                        '
-                        If cs.Open("rss feeds", "id=" & rssFeedId) Then
-                            RSSFilename = cs.GetText("RSSFilename ")
-                        End If
-                        Call cs.Close()
+                    If allowRSSSubscribe Then
                         '
                         sidebarCell.Load(cellTemplate)
                         Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By RSS")
@@ -327,6 +358,40 @@ Namespace Contensive.Addons.aoBlogs2
                             sidebarCnt += 1
                         End If
                     End If
+                    '
+                    If allowSearch Then
+                        '
+                        ' Search 
+                        '
+                        Dim formInput As String
+                        formInput = CP.Html.InputText("keywordList", CP.Doc.GetText("keywordList"))
+                        formInput += CP.Html.Hidden("formid", "120")
+                        formInput += CP.Html.Hidden("sourceformid", "120")
+                        formInput += CP.Html.Hidden("button", " Search Blogs ")
+                        formInput = CP.Html.Form(formInput, , , "blogSidebarSearchForm")
+                        sidebarCell.Load(cellTemplate)
+                        Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Search")
+                        Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
+                        Call sidebarCell.SetOuter(".blogSidebarCellInputCaption", "")
+                        Call sidebarCell.SetInner(".blogSidebarCellInput", formInput)
+                        Call sidebarCell.SetInner(".blogSidebarCellButton", "<a href=""#"" id=""blogSidebarSearch"" onclick=""jQuery('#blogSidebarSearchForm').submit();return false;"">Search</a>")
+                        cellList &= vbCrLf & vbTab & "<div id=""blogSidebarSearchCell"">" & sidebarCell.GetHtml() & "</div>"
+                        sidebarCnt += 1
+                    End If
+                    '
+                    If allowArchiveList Then
+                        '
+                        ' Archive List
+                        '
+                        sidebarCell.Load(cellTemplate)
+                        Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Archives")
+                        Call sidebarCell.SetInner(".blogSidebarCellCopy", archiveList)
+                        Call sidebarCell.SetOuter(".blogSidebarCellInputCaption", "")
+                        Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
+                        Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
+                        cellList &= vbCrLf & vbTab & "<div id=""blogSidebarArchiveCell"">" & sidebarCell.GetHtml() & "</div>"
+                        sidebarCnt += 1
+                    End If
                 End If
                 layout.SetInner(".blogSidebar", cellList)
                 layout.Append(CP.Html.Hidden("blogId", blogId.ToString(), "", "blogId"))
@@ -344,7 +409,6 @@ Namespace Contensive.Addons.aoBlogs2
                 '
             Catch ex As Exception
                 errorReport(CP, ex, "execute")
-                returnHtml = "Visual Studio Contensive Addon - Error response"
             End Try
             Return returnHtml
         End Function
@@ -362,6 +426,52 @@ Namespace Contensive.Addons.aoBlogs2
                 '
             End Try
         End Sub
+        '
+        '====================================================================================
+        '
+        '====================================================================================
+        '
+        Private Function GetFormBlogArchiveDateList(cp As CPBaseClass, BlogID As Integer, blogListQs As String) As String
+            Dim returnHtml As String = ""
+            Try
+                Dim cs As CPCSBaseClass = cp.CSNew()
+                Dim ArchiveMonth As Integer
+                Dim ArchiveYear As Integer
+                Dim NameOfMonth As String
+                Dim qs As String
+                Dim SQL As String
+                '
+                SQL = "SELECT distinct Month(DateAdded) as ArchiveMonth, year(dateadded) as ArchiveYear " _
+                    & " From ccBlogCopy" _
+                    & " Where (ContentControlID = " & cp.Content.GetID(cnBlogEntries) & ") And (Active <> 0)" _
+                    & " AND (BlogID=" & BlogID & ")" _
+                    & " ORDER BY year(dateadded) desc, Month(DateAdded) desc"
+                If cs.OpenSQL(SQL) Then
+                    qs = blogListQs
+                    qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogArchivedBlogs)
+                    Do While cs.OK
+                        ArchiveMonth = cs.GetInteger("ArchiveMonth")
+                        ArchiveYear = cs.GetInteger("ArchiveYear")
+                        NameOfMonth = MonthName(ArchiveMonth)
+                        qs = cp.Utils.ModifyQueryString(qs, RequestNameArchiveMonth, CStr(ArchiveMonth))
+                        qs = cp.Utils.ModifyQueryString(qs, RequestNameArchiveYear, CStr(ArchiveYear))
+                        returnHtml = returnHtml & vbCrLf & vbTab & vbTab & "<li class=""aoBlogArchiveLink""><a href=""?" & qs & """>" & NameOfMonth & "&nbsp;" & ArchiveYear & "</a></li>"
+                        Call cs.GoNext()
+                    Loop
+                End If
+                Call cs.Close()
+                If returnHtml <> "" Then
+                    returnHtml = "" _
+                        & vbCrLf & vbTab & "<ul class=""aoBlogArchiveLinkList"">" _
+                        & returnHtml _
+                        & vbCrLf & vbTab & "</ul>"
+                End If
+                '
+            Catch ex As Exception
+                errorReport(cp, ex, "GetFormBlogArchiveDateList")
+            End Try
+            Return returnHtml
+        End Function
         '
         Private Const AnonymousMemberName = "Anonymous"
         Private Const reCaptchaDisplayGuid = "{E9E51C6E-9152-4284-A44F-D3ABC423AB90}"

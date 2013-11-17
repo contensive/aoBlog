@@ -140,7 +140,7 @@ Const FormBlogArchiveDateList = 400
 'Const FormBlogCommentThankYou = 550
 Const FormBlogArchivedBlogs = 600
 '
-Private WorkingQueryString As String
+'Private WorkingQueryString As String
 Private ErrorString As String
 'Private ButtonValue As String
 '
@@ -195,6 +195,7 @@ Public Function GetContent(OptionString As String) As String
     Dim NewPostCopy As String
     Dim BlogPostID As Long
     Dim CSRule As Long
+    Dim csLink As Long
     Dim EntryLink As String
     Dim RSSTitle As String
     Dim RSSFeedFilename As String
@@ -223,64 +224,29 @@ Public Function GetContent(OptionString As String) As String
     Dim BlogCategoryID As Long
     Dim RSSFeedId As Long
     Dim RSSFeedName As String
-    Dim BlogRootLink As String
     Dim ThumbnailImageWidth As Long
     Dim BuildVersion As String
     Dim ImageWidthMax As Long
     Dim autoApproveComments As Boolean
     Dim emailComment As Boolean
-    Dim BlogListLink As String
     Dim qs As String
+    'Dim BlogRootLink As String
+    Dim blogListLink As String
+    Dim blogListQs As String
     '
-    ' Blog Search Form
+    ' get blogListLink - link to the main list page
     '
-    qs = Main.RefreshQueryString()
-    qs = ModifyQueryString(qs, RequestNameSourceFormID, "")
-    qs = ModifyQueryString(qs, RequestNameFormID, "")
-    qs = ModifyQueryString(qs, RequestNameBlogCategoryID, "")
-    qs = ModifyQueryString(qs, RequestNameBlogEntryID, "")
-    BlogListLink = getLinkAlias("?" & qs)
+    blogListQs = Main.RefreshQueryString()
+    blogListQs = ModifyQueryString(blogListQs, RequestNameSourceFormID, "")
+    blogListQs = ModifyQueryString(blogListQs, RequestNameFormID, "")
+    blogListQs = ModifyQueryString(blogListQs, RequestNameBlogCategoryID, "")
+    blogListQs = ModifyQueryString(blogListQs, RequestNameBlogEntryID, "")
+    blogListLink = getLinkAlias("?" & blogListQs)
     '
     s = s & vbCrLf & cr & "<!-- Blog " & BlogName & " -->" & vbCrLf
     '
     If Not (Main Is Nothing) Then
         BlogName = Main.GetAddonOption("BlogName", OptionString)
-        '
-        ' get legacy values that used to be in the instance options
-        ' These values will all be empty except when the addon was added to a page
-        ' in a previous build. A new Blog field "ignoreLegacyInstanceOptions" will be set
-        ' when this is detected and the instance values will be saved to the Blog record.
-        '
-'        AllowAnonymous = kmaEncodeBoolean(Main.GetAddonOption("Allow Anonymous Comments", OptionString))
-'        autoApproveComments = kmaEncodeBoolean(Main.GetAddonOption("Auto-Approve New Comments", OptionString))
-'        AllowCategories = kmaEncodeBoolean(Main.GetAddonOption("Allow Categories", OptionString))
-'        PostsToDisplay = kmaEncodeInteger(Main.GetAddonOption("Number of entries to display", OptionString))
-'        OverviewLength = kmaEncodeInteger(Main.GetAddonOption("Overview Character Length", OptionString))
-'        ThumbnailImageWidth = kmaEncodeInteger(Main.GetAddonOption("Thumbnail Image Width", OptionString))
-'        If ThumbnailImageWidth = 0 Then
-'            ThumbnailImageWidth = 150
-'        End If
-'        ImageWidthMax = kmaEncodeInteger(Main.GetAddonOption("Image Width Max", OptionString))
-'        If ImageWidthMax = 0 Then
-'            ImageWidthMax = 400
-'        End If
-'        If OverviewLength = 0 Then
-'            OverviewLength = 150
-'        End If
-'        If PostsToDisplay = 0 Then
-'            PostsToDisplay = 5
-'        End If
-'        If AllowCategories Then
-'            If Main.InStream(RequestNameBlogCategoryIDSet) Then
-'                BlogCategoryID = Main.GetStreamInteger(RequestNameBlogCategoryIDSet)
-'            Else
-'                BlogCategoryID = Main.GetStreamInteger(RequestNameBlogCategoryID)
-'            End If
-'            Call Main.AddRefreshQueryString(RequestNameBlogCategoryID, BlogCategoryID)
-'        End If
-'        If BlogName = "" Then
-'            BlogName = "Default"
-'        End If
         If BlogName = "" Then
             BlogName = "Default"
         End If
@@ -327,8 +293,10 @@ Public Function GetContent(OptionString As String) As String
                     BlogID = Main.GetCSInteger(CS, "ID")
                     BlogOwnerID = Main.MemberID
                     IsBlogOwner = True
+                    blogCaption = BlogName
                     '
                     Call Main.SetCS(CS, "name", BlogName)
+                    Call Main.SetCS(CS, "caption", blogCaption)
                     Call Main.SetCS(CS, "OwnerMemberID", BlogOwnerID)
                     '
                     RSSFeedId = Main.GetCSInteger(CS, "RSSFeedID")
@@ -346,7 +314,7 @@ Public Function GetContent(OptionString As String) As String
                 '
                 ' Create the Feed for the new blog
                 '
-                Call VerifyFeedReturnArgs(BlogID, RSSFeedId, RSSFeedName, RSSFeedFilename, BlogRootLink)
+                Call VerifyFeedReturnArgs(BlogID, blogListLink, RSSFeedId, RSSFeedName, RSSFeedFilename)
                 '
                 Title = "Welcome to the " & BlogName
                 If InStr(1, BlogName, " Blog", vbTextCompare) = 0 Then
@@ -355,30 +323,38 @@ Public Function GetContent(OptionString As String) As String
                 Title = Title & "!"
                 '
                 CS = Main.InsertCSRecord(cnBlogEntries)
-                If Main.CSOK(CS) Then
+                If Main.csok(CS) Then
                     BlogPostID = Main.GetCS(CS, "ID")
                     Call Main.SetCS(CS, "BlogID", BlogID)
                     Call Main.SetCS(CS, "Name", Title)
-                    NewPostCopy = Main.ReadVirtualFile("blogs/DefaultPostCopy.txt")
-                    If NewPostCopy = "" Then
-                        NewPostCopy = DefaultPostCopy
-                    End If
-                    Call Main.SetCS(CS, "copy", NewPostCopy)
                     Call Main.SetCS(CS, "AuthorMemberID", Main.MemberID)
-                    EntryLink = BlogRootLink
-                    EntryLink = ModifyQueryString(EntryLink, RequestNameBlogEntryID, CStr(BlogPostID))
-                    EntryLink = ModifyQueryString(EntryLink, RequestNameFormID, FormBlogPostDetails)
-                    EntryLink = ModifyQueryString(EntryLink, RequestNameBlogCategoryID, "")
-                    Call Main.SetCS(CS, "RSSTitle", Title)
-                    If InStr(1, EntryLink, Main.SiteProperty_AdminURL, vbTextCompare) = 0 Then
-                        Call Main.SetCS(CS, "RSSLink", EntryLink)
-                    End If
-                    Call Main.SetCS(CS, "RSSDescription", filterCopy(NewPostCopy, 150))
+                    '
                     RSSTitle = Trim(Title)
                     If RSSTitle = "" Then
                         RSSTitle = "Blog Post " & EntryID
                     End If
                     Call Main.SetCS(CS, "RSSTitle", RSSTitle)
+                    '
+                    NewPostCopy = Main.ReadVirtualFile("blogs/DefaultPostCopy.txt")
+                    If NewPostCopy = "" Then
+                        NewPostCopy = DefaultPostCopy
+                    End If
+                    Call Main.SetCS(CS, "copy", NewPostCopy)
+                    '
+                    qs = ""
+                    qs = ModifyQueryString(qs, RequestNameBlogEntryID, CStr(BlogPostID))
+                    qs = ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails)
+                    Call Main.AddLinkAlias(Title, Main.renderedPageId, qs)
+                    csLink = Main.OpenCSContent("link Aliases", "(pageid=" & Main.renderedPageId & ")and(QueryStringSuffix=" & KmaEncodeSQLText(qs) & ")")
+                    If Main.csok(csLink) Then
+                        EntryLink = Main.GetCSText(csLink, "name")
+                    End If
+                    Call Main.CloseCS(csLink)
+                    If InStr(1, EntryLink, Main.SiteProperty_AdminURL, vbTextCompare) = 0 Then
+                        Call Main.SetCS(CS, "RSSLink", EntryLink)
+                    End If
+                    '
+                    Call Main.SetCS(CS, "RSSDescription", filterCopy(NewPostCopy, 150))
                 End If
                 Call Main.CloseCS(CS)
                 '
@@ -468,19 +444,20 @@ Public Function GetContent(OptionString As String) As String
             '
             ' Get the Feed Args
             '
-            CSFeed = Main.OpenCSContentRecord(cnRSSFeeds, RSSFeedId)
-            If Main.IsCSOK(CS) Then
+            CSFeed = Main.OpenCSContent(cnRSSFeeds, "id=" & RSSFeedId)
+            If Main.IsCSOK(CSFeed) Then
                 RSSFeedName = Main.GetCS(CSFeed, "Name")
                 RSSFeedFilename = Main.GetCS(CSFeed, "RSSFilename")
-                BlogRootLink = Main.GetCS(CSFeed, "Link")
+                'BlogRootLink = Main.GetCS(CSFeed, "Link")
             End If
             Call Main.CloseCS(CSFeed)
             '
-            If BlogRootLink = "" Or RSSFeedFilename = "" Then
+            If RSSFeedFilename = "" Then
+            'If BlogRootLink = "" Or RSSFeedFilename = "" Then
                 '
                 ' feed has not been initialized yet, call it now
                 '
-                Call VerifyFeedReturnArgs(BlogID, RSSFeedId, RSSFeedName, RSSFeedFilename, BlogRootLink)
+                Call VerifyFeedReturnArgs(BlogID, blogListLink, RSSFeedId, RSSFeedName, RSSFeedFilename)
             End If
             '
             ' Process Input
@@ -496,23 +473,23 @@ Public Function GetContent(OptionString As String) As String
             ArchiveYear = Main.GetStreamInteger(RequestNameArchiveYear)
             EntryID = Main.GetStreamInteger(RequestNameBlogEntryID)
             '
-            WorkingQueryString = Main.RefreshQueryString
-            If WorkingQueryString = "" Then
-                WorkingQueryString = "?"
-            Else
-                WorkingQueryString = "?" & WorkingQueryString & "&"
-            End If
+            'WorkingQueryString = Main.RefreshQueryString
+            'If WorkingQueryString = "" Then
+            '    WorkingQueryString = "?"
+            'Else
+            '    WorkingQueryString = "?" & WorkingQueryString & "&"
+            'End If
             '
             If ButtonValue <> "" Then
                 '
                 ' Process the source form into form if there was a button - else keep formid
                 '
-                FormID = ProcessForm(SourceFormID, BlogID, IsBlogOwner, EntryID, ButtonValue, BlogName, BlogOwnerID, AllowAnonymous, AllowCategories, BlogCategoryID, RSSFeedId, BlogRootLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, autoApproveComments, authoringGroupId, emailComment, OptionString)
+                FormID = ProcessForm(SourceFormID, BlogID, IsBlogOwner, EntryID, ButtonValue, BlogName, BlogOwnerID, AllowAnonymous, AllowCategories, BlogCategoryID, RSSFeedId, blogListLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, autoApproveComments, authoringGroupId, emailComment, OptionString)
             End If
             '
             ' Get Next Form
             '
-            s = s & GetForm(FormID, BlogID, BlogName, IsBlogOwner, ArchiveMonth, ArchiveYear, EntryID, KeywordList, ButtonValue, DateSearchText, AllowAnonymous, AllowCategories, BlogCategoryID, RSSFeedName, RSSFeedFilename, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogDescription, blogCaption, RSSFeedId, BlogListLink)
+            s = s & GetForm(FormID, BlogID, BlogName, IsBlogOwner, ArchiveMonth, ArchiveYear, EntryID, KeywordList, ButtonValue, DateSearchText, AllowAnonymous, AllowCategories, BlogCategoryID, RSSFeedName, RSSFeedFilename, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogDescription, blogCaption, RSSFeedId, blogListLink, blogListQs)
         End If
     End If
     '
@@ -527,7 +504,7 @@ ErrorTrap:
 '
 '====================================================================================
 '
-Private Function GetForm(FormID As Long, BlogID As Long, BlogName As String, IsBlogOwner As Boolean, ArchiveMonth As Long, ArchiveYear As Long, EntryID As Long, KeywordList As String, ButtonValue As String, DateSearchText As String, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, RSSFeedName As String, RSSFeedFilename As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, blogDescription As String, blogCaption As String, RSSFeedId As Long, BlogListLink As String) As String
+Private Function GetForm(FormID As Long, BlogID As Long, BlogName As String, IsBlogOwner As Boolean, ArchiveMonth As Long, ArchiveYear As Long, EntryID As Long, KeywordList As String, ButtonValue As String, DateSearchText As String, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, RSSFeedName As String, RSSFeedFilename As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, blogDescription As String, blogCaption As String, RSSFeedId As Long, blogListLink As String, blogListQs As String) As String
     On Error GoTo ErrorTrap
     '
     Dim Stream As String
@@ -537,28 +514,28 @@ Private Function GetForm(FormID As Long, BlogID As Long, BlogName As String, IsB
     IsEditing = Main.IsAuthoring("Blogs")
     Select Case FormID
         Case FormBlogPostDetails
-            Stream = Stream & GetFormBlogPostDetails(BlogID, EntryID, IsBlogOwner, AllowAnonymous, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogListLink)
+            Stream = Stream & GetFormBlogPostDetails(BlogID, EntryID, IsBlogOwner, AllowAnonymous, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink)
         Case FormBlogArchiveDateList
-            Stream = Stream & GetFormBlogArchiveDateList(BlogID, BlogName, IsEditing, IsBlogOwner, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogListLink)
+            Stream = Stream & GetFormBlogArchiveDateList(BlogID, BlogName, IsEditing, IsBlogOwner, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs)
         Case FormBlogArchivedBlogs
-            Stream = Stream & GetFormBlogArchivedBlogs(BlogID, BlogName, ArchiveMonth, ArchiveYear, IsEditing, IsBlogOwner, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogListLink)
+            Stream = Stream & GetFormBlogArchivedBlogs(BlogID, BlogName, ArchiveMonth, ArchiveYear, IsEditing, IsBlogOwner, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs)
         Case FormBlogEntryEditor
-            Stream = Stream & GetFormBlogPost(BlogID, BlogName, IsBlogOwner, EntryID, AllowCategories, BlogCategoryID, BlogListLink)
+            Stream = Stream & GetFormBlogPost(BlogID, BlogName, IsBlogOwner, EntryID, AllowCategories, BlogCategoryID, blogListLink)
         Case FormBlogSearch
-            Stream = Stream & GetFormBlogSearch(BlogID, BlogName, IsBlogOwner, KeywordList, ButtonValue, DateSearchText, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogListLink)
+            Stream = Stream & GetFormBlogSearch(BlogID, BlogName, IsBlogOwner, KeywordList, ButtonValue, DateSearchText, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink)
         Case Else
             If EntryID <> 0 Then
                 '
                 ' Go to details page
                 '
                 FormID = FormBlogPostDetails
-                Stream = Stream & GetFormBlogPostDetails(BlogID, EntryID, IsBlogOwner, AllowAnonymous, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogListLink)
+                Stream = Stream & GetFormBlogPostDetails(BlogID, EntryID, IsBlogOwner, AllowAnonymous, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink)
             Else
                 '
                 ' list all the entries
                 '
                 FormID = FormBlogPostList
-                Stream = Stream & GetFormBlogPostList(BlogID, BlogName, IsBlogOwner, IsEditing, EntryID, AllowCategories, BlogCategoryID, RSSFeedName, RSSFeedFilename, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogDescription, blogCaption, RSSFeedId, BlogListLink)
+                Stream = Stream & GetFormBlogPostList(BlogID, BlogName, IsBlogOwner, IsEditing, EntryID, AllowCategories, BlogCategoryID, RSSFeedName, RSSFeedFilename, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogDescription, blogCaption, RSSFeedId, blogListLink)
             End If
     End Select
     '
@@ -574,7 +551,7 @@ ErrorTrap:
 '       returns the FormID for the next one to display
 '====================================================================================
 '
-Private Function ProcessForm(SourceFormID As Long, BlogID As Long, IsBlogOwner As Boolean, EntryID As Long, ButtonValue As String, BlogName As String, BlogOwnerID As Long, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, RSSFeedId As Long, BlogRootLink As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, autoApproveComments As Boolean, authoringGroupId As Long, emailComment As Boolean, OptionString As String) As Long
+Private Function ProcessForm(SourceFormID As Long, BlogID As Long, IsBlogOwner As Boolean, EntryID As Long, ButtonValue As String, BlogName As String, BlogOwnerID As Long, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, RSSFeedId As Long, blogListLink As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, autoApproveComments As Boolean, authoringGroupId As Long, emailComment As Boolean, OptionString As String) As Long
     On Error GoTo ErrorTrap
     '
     If ButtonValue <> "" Then
@@ -582,7 +559,7 @@ Private Function ProcessForm(SourceFormID As Long, BlogID As Long, IsBlogOwner A
             Case FormBlogPostList
                 ProcessForm = FormBlogPostList
             Case FormBlogEntryEditor
-                ProcessForm = ProcessFormBlogPost(SourceFormID, BlogID, EntryID, ButtonValue, BlogCategoryID, RSSFeedId, BlogRootLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax)
+                ProcessForm = ProcessFormBlogPost(SourceFormID, BlogID, EntryID, ButtonValue, BlogCategoryID, RSSFeedId, blogListLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax)
             Case FormBlogPostDetails
                 ProcessForm = ProcessFormBlogPostDetails(SourceFormID, BlogID, IsBlogOwner, ButtonValue, BlogName, BlogOwnerID, AllowAnonymous, BlogCategoryID, autoApproveComments, authoringGroupId, emailComment, OptionString)
             Case FormBlogArchiveDateList
@@ -603,7 +580,7 @@ ErrorTrap:
 '
 '====================================================================================
 '
-Private Function GetFormBlogSearch(BlogID As Long, BlogName As String, IsBlogOwner As Boolean, KeywordList As String, ButtonValue As String, DateSearchText As String, AllowCategories As Boolean, BlogCategoryID As Long, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, BlogListLink As String) As String
+Private Function GetFormBlogSearch(BlogID As Long, BlogName As String, IsBlogOwner As Boolean, KeywordList As String, ButtonValue As String, DateSearchText As String, AllowCategories As Boolean, BlogCategoryID As Long, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, blogListLink As String) As String
     On Error GoTo ErrorTrap
     '
     'Dim EntryCopyOverview As String
@@ -657,8 +634,8 @@ Private Function GetFormBlogSearch(BlogID As Long, BlogName As String, IsBlogOwn
     Dim primaryImagePositionId As Long
     Dim articlePrimaryImagePositionId As Long
     '
-    Call Main.AddRefreshQueryString(RequestNameSourceFormID, FormBlogSearch)
-    Call Main.AddRefreshQueryString(RequestNameFormID, FormBlogSearch)
+    'Call Main.AddRefreshQueryString(RequestNameSourceFormID, FormBlogSearch)
+    'Call Main.AddRefreshQueryString(RequestNameFormID, FormBlogSearch)
     Call Main.AddRefreshQueryString(RequestNameBlogEntryID, "")
     '
     s = s & vbCrLf & Main.GetContentCopy2("Blogs Search Header for " & BlogName, , "<h2>" & BlogName & " Blog Search</h2>")
@@ -680,29 +657,31 @@ Private Function GetFormBlogSearch(BlogID As Long, BlogName As String, IsBlogOwn
         End If
         '
         Subcaption = ""
-        Criteria = ""
+        Dim subCriteria As String
+        Criteria = "(blogId=" & BlogID & ")"
+        subCriteria = ""
         If (KeywordList <> "") Then
             KeywordList = "," & KeywordList & ","
             KeyWordsArray = Split(KeywordList, ",", , vbTextCompare)
             KeyWordsArrayCounter = UBound(KeyWordsArray)
             For CounterKeyWords = 0 To KeyWordsArrayCounter
                 If KeyWordsArray(CounterKeyWords) <> "" Then
-                    If Criteria <> "" Then
-                        Criteria = Criteria & "or"
+                    If subCriteria <> "" Then
+                        subCriteria = subCriteria & "or"
                         Subcaption = Subcaption & " or "
                     End If
                     EnteredKeyWords = KeyWordsArray(CounterKeyWords)
                     Subcaption = Subcaption & "'<i>" & kmaEncodeHTML(EnteredKeyWords) & "</i>'"
                     EnteredKeyWords = KmaEncodeSQLText(EnteredKeyWords)
                     EnteredKeyWords = "'%" & Mid(EnteredKeyWords, 2, Len(EnteredKeyWords) - 2) & "%'"
-                    Criteria = Criteria & " (Copy like " & EnteredKeyWords & ")"
+                    subCriteria = subCriteria & " (Copy like " & EnteredKeyWords & ")"
                 End If
             Next
             If Subcaption <> "" Then
                 Subcaption = " containing " & Subcaption
             End If
-            If Criteria <> "" Then
-                Criteria = "(" & Criteria & ")"
+            If subCriteria <> "" Then
+                Criteria = Criteria & "and(" & subCriteria & ")"
             End If
         End If
         If (DateSearch <> CDate(0)) Then
@@ -740,11 +719,11 @@ Private Function GetFormBlogSearch(BlogID As Long, BlogName As String, IsBlogOwn
         '
         s = s & cr & "<div class=""aoBlogEntryCopy"">" & Subcaption & "</div>"
         '
-        If Not Main.CSOK(CSPointer) Then
+        If Not Main.csok(CSPointer) Then
             s = s & cr & "<div class=""aoBlogProblem"">There were no matches to your search</div>"
         Else
             s = s & cr & "<div class=""aoBlogEntryDivider"">&nbsp;</div>"
-            Do While Main.CSOK(CSPointer)
+            Do While Main.csok(CSPointer)
                 ParentID = Main.GetCSInteger(CSPointer, "EntryID")
                 If ParentID = 0 Then
                     '
@@ -799,7 +778,7 @@ Private Function GetFormBlogSearch(BlogID As Long, BlogName As String, IsBlogOwn
         & kmaIndent(GetFormTableRow("Date:", GetField(RequestNameDateSearch, , 10, , Main.GetStreamText(RequestNameDateSearch)) & " " & "&nbsp;(mm/yyyy)")) _
         & kmaIndent(GetFormTableRow("Keyword(s):", GetField(RequestNameKeywordList, KeywordList, , 30, Main.GetStreamText(RequestNameKeywordList)))) _
         & kmaIndent(GetFormTableRow("", Main.GetFormButton(FormButtonSearch))) _
-        & kmaIndent(GetFormTableRow2("<div class=""aoBlogFooterLink""><a href=""" & BlogListLink & """>" & BackToRecentPostsMsg & "</a></div>")) _
+        & kmaIndent(GetFormTableRow2("<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>")) _
         & cr & "</table>" _
         & ""
     searchForm = "" _
@@ -811,6 +790,8 @@ Private Function GetFormBlogSearch(BlogID As Long, BlogName As String, IsBlogOwn
     s = "" _
         & cr & Main.GetFormStart _
         & kmaIndent(s) _
+        & cr & "<input type=""hidden"" name=""" & RequestNameSourceFormID & """ value=""" & FormBlogSearch & """>" _
+        & cr & "<input type=""hidden"" name=""" & RequestNameFormID & """ value=""" & FormBlogSearch & """>" _
         & cr & Main.GetFormEnd
     '
     GetFormBlogSearch = s
@@ -824,10 +805,11 @@ ErrorTrap:
 '
 '====================================================================================
 '
-Private Function GetFormBlogArchiveDateList(BlogID As Long, BlogName As String, IsEditing As Boolean, IsBlogOwner As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, BlogListLink As String) As String
+Private Function GetFormBlogArchiveDateList(BlogID As Long, BlogName As String, IsEditing As Boolean, IsBlogOwner As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, blogListLink As String, blogListQs As String) As String
     On Error GoTo ErrorTrap
     '
     Dim s As String
+    Dim CS As Long
     Dim CSPointer As Long
     Dim ArchiveList As String ' ** link for different month
     Dim TitleBlog As String
@@ -840,7 +822,6 @@ Private Function GetFormBlogArchiveDateList(BlogID As Long, BlogName As String, 
     Dim ArchiveYear As Long
     Dim Counter As Long
     Dim NameOfMonth As String
-    Dim CS As Long
     Dim DateAddedSQL As String
     Dim FieldList As String
     Dim qs As String
@@ -849,26 +830,18 @@ Private Function GetFormBlogArchiveDateList(BlogID As Long, BlogName As String, 
     '
     s = s & vbCrLf & Main.GetContentCopy2("Blogs Archives Header for " & BlogName, , "<h2>" & BlogName & " Blog Archive</h2>")
     '
-    'FieldList = "distinct Month(DateAdded) as ArchiveMonth, year(dateadded) as ArchiveYear"
-    qs = Main.RefreshQueryString()
-    qs = ModifyQueryString(qs, RequestNameBlogEntryID, "", True)
-    qs = ModifyQueryString(qs, RequestNameSourceFormID, FormBlogArchiveDateList)
-    'CS = Main.OpenCSContent(cnBlogEntries, "", "Year(DateAdded), Month(DateAdded) desc", , , , FieldList)
-    
-    SQL = "SELECT distinct Month(DateAdded) as ArchiveMonth, year(dateadded) as ArchiveYear "
-    SQL = SQL & " From ccBlogCopy"
-    SQL = SQL & " Where (ContentControlID = " & Main.GetContentID(cnBlogEntries) & ") And (Active <> 0)"
-    SQL = SQL & " AND (BlogID=" & BlogID & ")"
-    SQL = SQL & " ORDER BY year(dateadded) desc, Month(DateAdded) desc"
-    
+    SQL = "SELECT distinct Month(DateAdded) as ArchiveMonth, year(dateadded) as ArchiveYear " _
+        & " From ccBlogCopy" _
+        & " Where (ContentControlID = " & Main.GetContentID(cnBlogEntries) & ") And (Active <> 0)" _
+        & " AND (BlogID=" & BlogID & ")" _
+        & " ORDER BY year(dateadded) desc, Month(DateAdded) desc"
     CS = Main.OpenCSSQL("Default", SQL)
-    
     If Not Main.IsCSOK(CS) Then
         '
         ' No archives, give them an error
         '
         s = s & cr & "<div class=""aoBlogProblem"">There are no current blog entries</div>"
-        s = s & cr & "<div class=""aoBlogFooterLink""><a href=""" & BlogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
+        s = s & cr & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
         
     Else
         RowCnt = Main.GetCSRowCount(CS)
@@ -877,26 +850,32 @@ Private Function GetFormBlogArchiveDateList(BlogID As Long, BlogName As String, 
             ' weird - just give them the same error
             '
             s = s & cr & "<div class=""aoBlogProblem"">There are no current blog posts</div>"
-            s = s & cr & "<div class=""aoBlogFooterLink""><a href=""" & BlogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
+            s = s & cr & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
         ElseIf RowCnt = 1 Then
             '
             ' one archive - just display it
             '
             ArchiveMonth = Main.GetCSInteger(CS, "ArchiveMonth")
             ArchiveYear = Main.GetCSInteger(CS, "ArchiveYear")
-            s = s & GetFormBlogArchivedBlogs(BlogID, BlogName, ArchiveMonth, ArchiveYear, IsEditing, IsBlogOwner, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogListLink)
+            s = s & GetFormBlogArchivedBlogs(BlogID, BlogName, ArchiveMonth, ArchiveYear, IsEditing, IsBlogOwner, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs)
         Else
             '
             ' Display List of archive
             '
+            qs = ModifyQueryString(blogListQs, RequestNameSourceFormID, FormBlogArchiveDateList)
+            qs = ModifyQueryString(qs, RequestNameFormID, FormBlogArchivedBlogs)
             Do While Main.IsCSOK(CS)
                 ArchiveMonth = Main.GetCSInteger(CS, "ArchiveMonth")
                 ArchiveYear = Main.GetCSInteger(CS, "ArchiveYear")
                 NameOfMonth = MonthName(ArchiveMonth)
-                s = s & vbCrLf & vbTab & vbTab & "<div class=""aoBlogArchiveLink""><a href=""" & Main.ServerPage & WorkingQueryString & RequestNameFormID & "=" & FormBlogArchivedBlogs & "&" & RequestNameArchiveMonth & "=" & ArchiveMonth & "&" & RequestNameArchiveYear & "=" & ArchiveYear & "&" & RequestNameSourceFormID & "=" & FormBlogArchiveDateList & """>" & NameOfMonth & " " & ArchiveYear & "</a></div>"
+                qs = ModifyQueryString(qs, RequestNameArchiveMonth, CStr(ArchiveMonth))
+                qs = ModifyQueryString(qs, RequestNameArchiveYear, CStr(ArchiveYear))
+                '
+                s = s & vbCrLf & vbTab & vbTab & "<div class=""aoBlogArchiveLink""><a href=""?" & qs & """>" & NameOfMonth & " " & ArchiveYear & "</a></div>"
+                's = s & vbCrLf & vbTab & vbTab & "<div class=""aoBlogArchiveLink""><a href=""?" & qs & RequestNameFormID & "=" & FormBlogArchivedBlogs & "&" & RequestNameArchiveMonth & "=" & ArchiveMonth & "&" & RequestNameArchiveYear & "=" & ArchiveYear & "&" & RequestNameSourceFormID & "=" & FormBlogArchiveDateList & """>" & NameOfMonth & " " & ArchiveYear & "</a></div>"
                 Main.NextCSRecord (CS)
             Loop
-            s = s & vbCrLf & vbTab & "<div class=""aoBlogFooterLink""><a href=""" & BlogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
+            s = s & vbCrLf & vbTab & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
         End If
     End If
     '
@@ -911,7 +890,7 @@ ErrorTrap:
 '
 '====================================================================================
 '
-Private Function GetFormBlogArchivedBlogs(BlogID As Long, BlogName As String, ArchiveMonth As Long, ArchiveYear As Long, IsEditing As Boolean, IsBlogOwner As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, BlogListLink As String) As String
+Private Function GetFormBlogArchivedBlogs(BlogID As Long, BlogName As String, ArchiveMonth As Long, ArchiveYear As Long, IsEditing As Boolean, IsBlogOwner As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, blogListLink As String, blogListQs As String) As String
     On Error GoTo ErrorTrap
     '
     'Dim EntryCopyOverview As String
@@ -945,21 +924,21 @@ Private Function GetFormBlogArchivedBlogs(BlogID As Long, BlogName As String, Ar
     ' If it is the current month, start at entry 6
     '
     PageNumber = 1
-    If Month(Now) = ArchiveMonth And Year(Now) = ArchiveYear Then
-        PageNumber = 2
-    End If
+    'If Month(Now) = ArchiveMonth And Year(Now) = ArchiveYear Then
+    '    PageNumber = 2
+    'End If
     IsEditing = Main.IsAuthoring("Blogs")
     s = s & vbCrLf & Main.GetFormStart
     '
     ' List Blog Entries
     '
     CS = Main.OpenCSContent(cnBlogEntries, "(Month(DateAdded)=" & ArchiveMonth & ")and(year(DateAdded)=" & ArchiveYear & ")and(BlogID=" & BlogID & ")", "DateAdded Desc", , , , , PostsToDisplay, PageNumber)
-    If Not Main.CSOK(CS) Then
+    If Not Main.csok(CS) Then
         s = s & cr & "<div class=""aoBlogProblem"">There are no blog archives for " & ArchiveMonth & "/" & ArchiveYear & "</div>"
     Else
         EntryPtr = 0
         entryEditLink = ""
-        Do While Main.CSOK(CS)
+        Do While Main.csok(CS)
             EntryID = Main.GetCSInteger(CS, "ID")
             AuthorMemberID = Main.GetCSInteger(CS, "AuthorMemberID")
             AuthorMemberName = Main.GetRecordName("people", AuthorMemberID)
@@ -986,12 +965,14 @@ Private Function GetFormBlogArchivedBlogs(BlogID As Long, BlogName As String, Ar
             EntryPtr = EntryPtr + 1
         Loop
     End If
+    qs = blogListQs
+    qs = ModifyQueryString(qs, RequestNameFormID, FormBlogSearch)
     s = s & cr & "<div>&nbsp;</div>"
-    s = s & cr & "<div class=""aoBlogFooterLink""><a href=""" & Main.ServerPage & WorkingQueryString & RequestNameFormID & "=" & FormBlogSearch & """>Search</a></div>"
+    s = s & cr & "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>"
     qs = Main.RefreshQueryString()
     qs = ModifyQueryString(qs, RequestNameBlogEntryID, "", True)
     qs = ModifyQueryString(qs, RequestNameFormID, FormBlogPostList)
-    s = s & cr & "<div class=""aoBlogFooterLink""><a href=""" & BlogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
+    s = s & cr & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
     Call Main.CloseCS(CS)
     '
     's = s & Main.GetFormInputHidden(RequestNameBlogEntryID, CommentBlogID)
@@ -1003,56 +984,6 @@ Private Function GetFormBlogArchivedBlogs(BlogID As Long, BlogName As String, Ar
     Exit Function
 ErrorTrap:
     Call HandleError("UpdatedBlogsClass", "GetFormBlogArchivedBlogs", Err.Number, Err.Source, Err.Description, True, False)
-    End Function
-'
-'====================================================================================
-'
-'====================================================================================
-'
-Private Function GetFormBlogThankYou(BlogID As Long, AllowCategories As Boolean) As String
-    On Error GoTo ErrorTrap
-    '
-    Dim Stream As String
-    '
-    Stream = Stream & Main.GetFormStart
-    Stream = Stream & "<table width=100% border=0 cellspacing=0 cellpadding=5 class=""aoBlogThankYouTable"">"
-    Stream = Stream & GetFormTableRow("", Main.GetContentCopy("Blog Thank You Page"))
-    Stream = Stream & GetFormTableRow2("<BR><BR><BR>")
-    Stream = Stream & GetFormTableRow2("<a href=""" & Main.ServerPage & "?" & WorkingQueryString & "&" & RequestNameFormID & "=" & FormBlogPostList & """>Main Blog page</a>")
-    '
-    Stream = Stream & "</table>"
-    Stream = Stream & Main.GetFormEnd
-    '
-    GetFormBlogThankYou = Stream
-    '
-    Exit Function
-ErrorTrap:
-    Call HandleError("UpdatedBlogsClass", "GetFormBlogThankYou", Err.Number, Err.Source, Err.Description, True, False)
-    End Function
-'
-'====================================================================================
-'
-'====================================================================================
-'
-Private Function GetFormBlogCommentThankYou(BlogID As Long) As String
-    On Error GoTo ErrorTrap
-    '
-    Dim Stream As String
-    '
-    Stream = Stream & Main.GetFormStart
-    Stream = Stream & "<table width=100% border=0 cellspacing=0 cellpadding=5 class=""aoBlogThankYouCommentTable"">"
-    Stream = Stream & GetFormTableRow("", Main.GetContentCopy("Blog comment post thank you note"))
-    Stream = Stream & GetFormTableRow2("<BR><BR><BR>")
-    Stream = Stream & GetFormTableRow2("<a href=""" & Main.ServerPage & "?" & WorkingQueryString & "&" & RequestNameFormID & "=" & FormBlogPostList & """>Main Blog page</a>")
-    '
-    Stream = Stream & "</table>"
-    Stream = Stream & Main.GetFormEnd
-    '
-    GetFormBlogCommentThankYou = Stream
-    '
-    Exit Function
-ErrorTrap:
-    Call HandleError("UpdatedBlogsClass", "GetFormBlogCommentThankYou", Err.Number, Err.Source, Err.Description, True, False)
     End Function
 '
 '====================================================================================
@@ -1148,7 +1079,7 @@ End Function
 '
 '====================================================================================
 '
-Private Function GetFormBlogPostList(BlogID As Long, BlogName As String, IsBlogOwner As Boolean, IsEditing As Boolean, EntryID As Long, AllowCategories As Boolean, BlogCategoryID As Long, RSSFeedName As String, RSSFeedFilename As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, blogDescription As String, blogCaption As String, RSSFeedId As Long, BlogListLink As String) As String
+Private Function GetFormBlogPostList(BlogID As Long, BlogName As String, IsBlogOwner As Boolean, IsEditing As Boolean, EntryID As Long, AllowCategories As Boolean, BlogCategoryID As Long, RSSFeedName As String, RSSFeedFilename As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, blogDescription As String, blogCaption As String, RSSFeedId As Long, blogListLink As String) As String
     On Error GoTo ErrorTrap
     '
     'Dim EntryCopyOverview As String
@@ -1229,10 +1160,10 @@ Private Function GetFormBlogPostList(BlogID As Long, BlogName As String, IsBlogO
         CS = Main.OpenCSContent(cnBlogEntries, "(BlogID=" & BlogID & ")", "DateAdded Desc")
         NoneMsg = "There are no blog posts available"
     End If
-    If Not Main.CSOK(CS) Then
+    If Not Main.csok(CS) Then
         s = s & cr & "<div class=""aoBlogProblem"">" & NoneMsg & "</div>"
     Else
-        Do While Main.CSOK(CS) And EntryPtr < PostsToDisplay
+        Do While Main.csok(CS) And EntryPtr < PostsToDisplay
             TestCategoryID = Main.GetCSInteger(CS, "BlogCategoryid")
             If TestCategoryID <> 0 Then
                 '
@@ -1314,7 +1245,7 @@ Private Function GetFormBlogPostList(BlogID As Long, BlogName As String, IsBlogO
             '
             qs = Main.RefreshQueryString
             qs = ModifyQueryString(qs, RequestNameBlogCategoryIDSet, "0", True)
-            CategoryFooter = CategoryFooter & cr & "<div class=""aoBlogFooterLink""><a href=""" & BlogListLink & """>See posts in all categories</a></div>"
+            CategoryFooter = CategoryFooter & cr & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>See posts in all categories</a></div>"
         'Else
             '
             ' select a category
@@ -1338,7 +1269,7 @@ Private Function GetFormBlogPostList(BlogID As Long, BlogName As String, IsBlogO
                 End If
                 If Not IsBlocked Then
                     qs = ModifyQueryString(qs, RequestNameBlogCategoryIDSet, CStr(BlogCategoryID), True)
-                    CategoryFooter = CategoryFooter & cr & "<div class=""aoBlogFooterLink""><a href=""" & BlogListLink & """>See posts in the category " & Main.GetCS(CS, "name") & "</a></div>"
+                    CategoryFooter = CategoryFooter & cr & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>See posts in the category " & Main.GetCS(CS, "name") & "</a></div>"
                 End If
                 Call Main.NextCSRecord(CS)
             Loop
@@ -1417,7 +1348,7 @@ ErrorTrap:
 '
 '====================================================================================
 '
-Private Function GetFormBlogPost(BlogID As Long, BlogName As String, IsBlogOwner As Boolean, EntryID As Long, AllowCategories As Boolean, BlogCategoryID As Long, BlogListLink As String) As String
+Private Function GetFormBlogPost(BlogID As Long, BlogName As String, IsBlogOwner As Boolean, EntryID As Long, AllowCategories As Boolean, BlogCategoryID As Long, blogListLink As String) As String
     On Error GoTo ErrorTrap
     '
     Dim editor As String
@@ -1634,7 +1565,7 @@ Private Function GetFormBlogPost(BlogID As Long, BlogName As String, IsBlogOwner
     qs = ModifyQueryString(qs, RequestNameBlogEntryID, "", True)
     qs = ModifyQueryString(qs, RequestNameFormID, FormBlogPostList)
     Hint = "9"
-    s = s & vbCrLf & GetFormTableRow2("<div class=""aoBlogFooterLink""><a href=""" & BlogListLink & """>" & BackToRecentPostsMsg & "</a></div>")
+    s = s & vbCrLf & GetFormTableRow2("<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>")
     
     '
     s = s & Main.GetFormInputHidden(RequestNameBlogEntryID, EntryID)
@@ -1656,7 +1587,7 @@ ErrorTrap:
 '
 '====================================================================================
 '
-Private Function ProcessFormBlogPost(SourceFormID As Long, BlogID As Long, EntryID As Long, ButtonValue As String, BlogCategoryID As Long, RSSFeedId As Long, BlogRootLink As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long) As Long
+Private Function ProcessFormBlogPost(SourceFormID As Long, BlogID As Long, EntryID As Long, ButtonValue As String, BlogCategoryID As Long, RSSFeedId As Long, blogListLink As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long) As Long
     On Error GoTo ErrorTrap
     '
     Dim UploadCount As Long
@@ -1699,14 +1630,14 @@ Private Function ProcessFormBlogPost(SourceFormID As Long, BlogID As Long, Entry
             '
             If EntryID = 0 Then
                 CS = Main.InsertCSRecord(cnBlogEntries)
-                If Main.CSOK(CS) Then
+                If Main.csok(CS) Then
                     EntryID = Main.GetCS(CS, "ID")
                     Call Main.SetCS(CS, "BlogID", BlogID)
                 End If
                 Call Main.CloseCS(CS)
             End If
             CS = Main.OpenCSContent(cnBlogEntries, "(blogid=" & BlogID & ")and(ID=" & EntryID & ")")
-            If Main.CSOK(CS) Then
+            If Main.csok(CS) Then
                 EntryName = Main.GetStreamText(RequestNameBlogTitle)
                 Call Main.SetCS(CS, "Name", EntryName)
                 Call Main.SetCS(CS, "copy", Main.GetStreamText(RequestNameBlogCopy))
@@ -1716,7 +1647,7 @@ Private Function ProcessFormBlogPost(SourceFormID As Long, BlogID As Long, Entry
                 ProcessFormBlogPost = FormBlogPostList
             End If
             Call Main.CloseCS(CS)
-            Call UpdateBlogFeed(BlogID, RSSFeedId, BlogRootLink)
+            Call UpdateBlogFeed(BlogID, RSSFeedId, blogListLink)
             ProcessFormBlogPost = FormBlogPostList
             '
             ' Upload files
@@ -1846,7 +1777,7 @@ Private Function ProcessFormBlogPost(SourceFormID As Long, BlogID As Long, Entry
             '
             Call Main.DeleteContentRecords(cnBlogEntries, "(blogid=" & BlogID & ")and(ID=" & EntryID & ")")
             ProcessFormBlogPost = FormBlogPostList
-            Call UpdateBlogFeed(BlogID, RSSFeedId, BlogRootLink)
+            Call UpdateBlogFeed(BlogID, RSSFeedId, blogListLink)
             ProcessFormBlogPost = FormBlogPostList
         End If
     End If
@@ -1860,7 +1791,7 @@ ErrorTrap:
 '
 '====================================================================================
 '
-Private Function GetFormBlogPostDetails(BlogID As Long, EntryID As Long, IsBlogOwner As Boolean, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, BlogListLink As String) As String
+Private Function GetFormBlogPostDetails(BlogID As Long, EntryID As Long, IsBlogOwner As Boolean, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, blogListLink As String) As String
     On Error GoTo ErrorTrap
     '
     'Dim EntryCopyOverview As String
@@ -1904,13 +1835,13 @@ Private Function GetFormBlogPostDetails(BlogID As Long, EntryID As Long, IsBlogO
     'QSBack = Main.RefreshQueryString()
     'QSBack = ModifyQueryString(QSBack, RequestNameBlogEntryID, "", True)
     'QSBack = ModifyQueryString(QSBack, RequestNameFormID, FormBlogPostList)
-    s = s & cr & "<div class=""aoBlogHeaderLink""><a href=""" & BlogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
+    s = s & cr & "<div class=""aoBlogHeaderLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
     '
     ' Print the Blog Entry
     '
     CommentCnt = 0
     CS = Main.OpenCSContentRecord(cnBlogEntries, EntryID)
-    If Not Main.CSOK(CS) Then
+    If Not Main.csok(CS) Then
         s = s & cr & "<div class=""aoBlogProblem"">Sorry, the blog post you selected is not currently available</div>"
     Else
         EntryID = Main.GetCSInteger(CS, "ID")
@@ -1930,9 +1861,7 @@ Private Function GetFormBlogPostDetails(BlogID As Long, EntryID As Long, IsBlogO
         qs = ""
         qs = ModifyQueryString(qs, RequestNameBlogEntryID, CStr(EntryID))
         qs = ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails)
-        If Main.version > "4.1.160" Then
-            Call Main.AddLinkAlias(EntryName, Main.RenderedPageID, qs)
-        End If
+        Call Main.AddLinkAlias(EntryName, Main.renderedPageId, qs)
         Call Main.SetCS(CS, "viewings", 1 + Main.GetCSInteger(CS, "viewings"))
         imageDisplayTypeId = Main.GetCSInteger(CS, "imageDisplayTypeId")
         primaryImagePositionId = Main.GetCSInteger(CS, "primaryImagePositionId")
@@ -2096,7 +2025,7 @@ Private Function GetFormBlogPostDetails(BlogID As Long, EntryID As Long, IsBlogO
     'QSBack = Main.RefreshQueryString()
     'QSBack = ModifyQueryString(QSBack, RequestNameBlogEntryID, "", True)
     'QSBack = ModifyQueryString(QSBack, RequestNameFormID, FormBlogPostList)
-    s = s & cr & "<div class=""aoBlogFooterLink""><a href=""" & BlogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
+    s = s & cr & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
     '
     s = s & vbCrLf & Main.GetFormInputHidden(RequestNameSourceFormID, FormBlogPostDetails)
     s = s & vbCrLf & Main.GetFormInputHidden(RequestNameBlogEntryID, EntryID)
@@ -2203,7 +2132,7 @@ Private Function ProcessFormBlogPostDetails(SourceFormID As Long, BlogID As Long
                         MemberID = Main.MemberID
                         MemberName = Main.MemberName
                     End If
-                    If Main.CSOK(CSP) Then
+                    If Main.csok(CSP) Then
                         Call Main.SetCS(CSP, "BlogID", BlogID)
                         'Call Main.SetCS(CSP, "Name", Main.GetStreamText(RequestNameAuthorName))
                         'Call Main.SetCS(CSP, "AuthorEmail", Main.GetStreamText(RequestNameAuthorEmail))
@@ -2707,12 +2636,12 @@ Dim SQS As String
                 Criteria = "((Approved<>0)or(AuthorMemberID=" & Main.MemberID & "))and(EntryID=" & EntryID & ")"
             End If
             CS = Main.OpenCSContent(cnBlogComments, Criteria, "DateAdded")
-            If Main.CSOK(CS) Then
+            If Main.csok(CS) Then
                 Divider = "<div class=""aoBlogCommentDivider"">&nbsp;</div>"
                 s = s & cr & "<div class=""aoBlogCommentHeader"">Comments</div>"
                 s = s & vbCrLf & Divider
                 CommentPtr = 0
-                Do While Main.CSOK(CS)
+                Do While Main.csok(CS)
                     CommentID = Main.GetCSInteger(CS, "ID")
                     AuthorMemberID = Main.GetCSInteger(CS, "AuthorMemberID")
                     AuthorMemberName = Main.GetRecordName("people", AuthorMemberID)
@@ -2809,7 +2738,7 @@ Private Sub Upgrade()
         If CurrentVersion = "00000" Then
             
             CSPointer = Main.OpenCSContent(cnBlogEntries)
-            Do While Main.CSOK(CSPointer)
+            Do While Main.csok(CSPointer)
                 Call Main.SetCS(CSPointer, "AllowComments", 1)
                 Call Main.SaveCSRecord(CSPointer)
                 Call Main.NextCSRecord(CSPointer)
@@ -2819,7 +2748,7 @@ Private Sub Upgrade()
         End If
         If CurrentVersion <= "2.0.062" Then
             csBlogs = Main.OpenCSContent(cnBlogs)
-            Do While Main.CSOK(csBlogs)
+            Do While Main.csok(csBlogs)
                 blogCopyName = Main.GetCSText(csBlogs, "name")
                 blogDescription = ""
                 If InStr(1, blogCopyName, " Blog", vbTextCompare) = 0 Then
@@ -2859,7 +2788,7 @@ End Sub
 '       run on every post
 '========================================================================
 '
-Private Sub UpdateBlogFeed(BlogID As Long, RSSFeedId As Long, BlogRootLink As String)
+Private Sub UpdateBlogFeed(BlogID As Long, RSSFeedId As Long, blogListLink As String)
     On Error GoTo ErrorTrap
     '
     Dim RSSTitle As String
@@ -2939,28 +2868,20 @@ Private Sub UpdateBlogFeed(BlogID As Long, RSSFeedId As Long, BlogRootLink As St
                 EntryID = Csv.GetCSInteger(CSPost, "id")
                 EntryCopy = Csv.GetCSText(CSPost, "copy")
                 '
-                EntryLink = BlogRootLink
-                EntryLink = kmaModifyLinkQuery(EntryLink, RequestNameBlogEntryID, CStr(EntryID))
-                EntryLink = kmaModifyLinkQuery(EntryLink, RequestNameFormID, FormBlogPostDetails)
-                EntryLink = kmaModifyLinkQuery(EntryLink, RequestNameBlogCategoryID, "")
-                EntryLink = getLinkAlias(EntryLink)
-                '
-
-                'QS = Main.RefreshQueryString()
-                'QS = ModifyQueryString(QS, RequestNameBlogEntryID, CStr(EntryID))
-                'QS = ModifyQueryString(QS, RequestNameFormID, FormBlogPostDetails)
-                'QS = ModifyQueryString(QS, RequestNameBlogCategoryID, "")
-                Call Main.SetCS(CSPost, "RSSTitle", EntryName)
-                'EntryLink = "http://" & Main.ServerDomainPrimary & Main.ServerPath & Main.ServerPage & "?" & QS
-                If InStr(1, EntryLink, AdminURL, vbTextCompare) = 0 Then
-                    Call Main.SetCS(CSPost, "RSSLink", EntryLink)
-                End If
-                Call Main.SetCS(CSPost, "RSSDescription", filterCopy(EntryCopy, 150))
                 RSSTitle = Trim(EntryName)
                 If RSSTitle = "" Then
                     RSSTitle = "Blog Post " & EntryID
                 End If
                 Call Main.SetCS(CSPost, "RSSTitle", RSSTitle)
+                '
+                qs = ""
+                qs = ModifyQueryString(qs, RequestNameBlogEntryID, CStr(BlogPostID))
+                qs = ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails)
+                EntryLink = Main.GetLinkAliasByPageID(Main.renderedPageId, qs, blogListLink & "?" & qs)
+                If InStr(1, EntryLink, AdminURL, vbTextCompare) = 0 Then
+                    Call Main.SetCS(CSPost, "RSSLink", EntryLink)
+                End If
+                Call Main.SetCS(CSPost, "RSSDescription", filterCopy(EntryCopy, 150))
             End If
             Call Csv.CloseCS(CSPost)
             '
@@ -2992,7 +2913,8 @@ End Sub
 '       run on every post
 '========================================================================
 '
-Private Sub VerifyFeedReturnArgs(BlogID As Long, Return_RSSFeedID As Long, Return_RSSFeedName As String, Return_RSSFeedFilename As String, Return_BlogRootLink As String)
+Private Sub VerifyFeedReturnArgs(BlogID As Long, blogListLink As String, Return_RSSFeedID As Long, Return_RSSFeedName As String, Return_RSSFeedFilename As String)
+'Private Sub VerifyFeedReturnArgs(BlogID As Long, blogListLink As String, Return_RSSFeedID As Long, Return_RSSFeedName As String, Return_RSSFeedFilename As String, Return_BlogRootLink As String)
     On Error GoTo ErrorTrap
     '
     Dim qs As String
@@ -3000,6 +2922,7 @@ Private Sub VerifyFeedReturnArgs(BlogID As Long, Return_RSSFeedID As Long, Retur
     Dim BlogName As String
     Dim blogDescription As String
     Dim CSFeed As Long
+    Dim rssLink As String
     '
     CSBlog = Csv.OpenCSContent(cnBlogs, "ID=" & BlogID)
     If Csv.IsCSOK(CSBlog) Then
@@ -3048,22 +2971,26 @@ Private Sub VerifyFeedReturnArgs(BlogID As Long, Return_RSSFeedID As Long, Retur
             Return_RSSFeedName = Main.GetCSText(CSFeed, "name")
             Return_RSSFeedID = Main.GetCSInteger(CSFeed, "id")
             Return_RSSFeedFilename = Trim(Main.GetCS(CSFeed, "rssfilename"))
-            Return_BlogRootLink = Trim(Main.GetCS(CSFeed, "link"))
-            If Return_BlogRootLink = "" Then
-                '
-                ' set blog link to current link without forms/categories
-                '   exclude admin
-                '   exclude a post
-                '
-                Return_BlogRootLink = Main.ServerLink
-                If (InStr(1, Return_BlogRootLink, "admin", vbTextCompare) = 0) And (Main.ServerForm = "") Then
-                    Return_BlogRootLink = ModifyQueryString(Return_BlogRootLink, RequestNameFormID, "", False)
-                    Return_BlogRootLink = ModifyQueryString(Return_BlogRootLink, RequestNameSourceFormID, "", False)
-                    Return_BlogRootLink = ModifyQueryString(Return_BlogRootLink, RequestNameBlogCategoryID, "", False)
-                    Return_BlogRootLink = ModifyQueryString(Return_BlogRootLink, RequestNameBlogCategoryIDSet, "", False)
-                    Call Main.SetCS(CSFeed, "link", Return_BlogRootLink)
-                End If
+            If Trim(Main.GetCS(CSFeed, "link")) = "" Then
+                rssLink = Main.serverProtocol & Main.ServerHost & blogListLink
+                Call Main.SetCS(CSFeed, "link", rssLink)
             End If
+            'Return_BlogRootLink = Trim(Main.GetCS(CSFeed, "link"))
+            'If Return_BlogRootLink = "" Then
+            '    '
+            '    ' set blog link to current link without forms/categories
+            '    '   exclude admin
+            '    '   exclude a post
+            '    '
+            '    Return_BlogRootLink = Main.ServerLink
+            '    If (InStr(1, Return_BlogRootLink, "admin", vbTextCompare) = 0) And (Main.ServerForm = "") Then
+            '        Return_BlogRootLink = ModifyQueryString(Return_BlogRootLink, RequestNameFormID, "", False)
+            '        Return_BlogRootLink = ModifyQueryString(Return_BlogRootLink, RequestNameSourceFormID, "", False)
+            '        Return_BlogRootLink = ModifyQueryString(Return_BlogRootLink, RequestNameBlogCategoryID, "", False)
+            '        Return_BlogRootLink = ModifyQueryString(Return_BlogRootLink, RequestNameBlogCategoryIDSet, "", False)
+            '        Call Main.SetCS(CSFeed, "link", Return_BlogRootLink)
+            '    End If
+            'End If
         End If
         Call Main.CloseCS(CSFeed)
     End If
