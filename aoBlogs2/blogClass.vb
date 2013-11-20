@@ -68,6 +68,7 @@ Namespace Contensive.Addons.aoBlogs2
                 Dim blogListLink As String = ""
                 Dim archiveList As String = ""
                 Dim allowSearch As String = ""
+                Dim ptr As Integer
                 '
                 blogListQs = CP.Doc.RefreshQueryString()
                 blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameSourceFormID, "")
@@ -118,6 +119,7 @@ Namespace Contensive.Addons.aoBlogs2
                     '
                     allowRSSSubscribe = False
                     If (rssFeedId <> 0) Then
+                        RSSFilename = ""
                         If cs.Open("rss feeds", "id=" & rssFeedId) Then
                             RSSFilename = cs.GetText("RSSFilename ")
                         End If
@@ -155,6 +157,13 @@ Namespace Contensive.Addons.aoBlogs2
                         blogEntryBrief = cs.GetText("rssDescription")
                         If blogEntryBrief = "" Then
                             blogEntryBrief = CP.Utils.DecodeHTML(cs.GetText("copy"))
+                            If blogEntryBrief.Length > 300 Then
+                                ptr = blogEntryBrief.IndexOf(" ", 290)
+                                If ptr < 0 Then
+                                    ptr = 300
+                                End If
+                                blogEntryBrief = blogEntryBrief.Substring(1, ptr - 1) & "..."
+                            End If
                         End If
                     End If
                     Call cs.Close()
@@ -306,15 +315,29 @@ Namespace Contensive.Addons.aoBlogs2
                     '
                     If allowRSSSubscribe Then
                         '
-                        sidebarCell.Load(cellTemplate)
-                        Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By RSS")
-                        Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
-                        'Call sidebarCell.SetInner(".blogSidebarCellCopy", "You are subscribed to this Feed.")
-                        Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""http://" & CP.Site.DomainPrimary & "/rss/" & RSSFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & blogName & " Feed" & "</a>")
-                        Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
-                        Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
-                        cellList &= vbCrLf & vbTab & "<div id=""blogSidebarRSSCell"">" & sidebarCell.GetHtml() & "</div>"
-                        sidebarCnt += 1
+                        If RSSFilename = "" Then
+                            adminSuggestions &= CP.Html.li("This blog includes an RSS Feed, but no feed has been created. It his persists, please contact the site developer. Disable RSS feeds for this blog to hide this message.")
+                        Else
+                            '
+                            sidebarCell.Load(cellTemplate)
+                            Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By RSS")
+                            Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
+                            'Call sidebarCell.SetInner(".blogSidebarCellCopy", "You are subscribed to this Feed.")
+                            Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""http://" & CP.Site.DomainPrimary & "/rss/" & RSSFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & blogName & " Feed" & "</a>")
+                            Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
+                            Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
+                            cellList &= vbCrLf & vbTab & "<div id=""blogSidebarRSSCell"">" & sidebarCell.GetHtml() & "</div>"
+                            sidebarCnt += 1
+                        End If
+                        'sidebarCell.Load(cellTemplate)
+                        'Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By RSS")
+                        'Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
+                        ''Call sidebarCell.SetInner(".blogSidebarCellCopy", "You are subscribed to this Feed.")
+                        'Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""http://" & CP.Site.DomainPrimary & "/rss/" & RSSFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & blogName & " Feed" & "</a>")
+                        'Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
+                        'Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
+                        'cellList &= vbCrLf & vbTab & "<div id=""blogSidebarRSSCell"">" & sidebarCell.GetHtml() & "</div>"
+                        'sidebarCnt += 1
                     End If
                     '
                     If allowFacebookLink Or allowGooglePlusLink Or allowTwitterLink Then
