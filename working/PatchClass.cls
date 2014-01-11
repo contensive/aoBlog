@@ -46,11 +46,13 @@ Public Function IsGroupListMember(Main As Object, GroupIDList As String, Optiona
     ' ----- Error Trap
     '
 ErrorTrap:
+    Call handleClassError("", "isGroupListMember", Err.Number, Err.Source, Err.Description, True, False)
 End Function
 '
 '
 '
 Public Function GetBlockingGroups(Main As Object, BlogCategoryID As Long) As String
+    On Error GoTo ErrorTrap
     '
     Dim SQL As String
     Dim CS As Long
@@ -62,6 +64,17 @@ Public Function GetBlockingGroups(Main As Object, BlogCategoryID As Long) As Str
         Call Main.NextCSRecord(CS)
     Loop
     Call Main.CloseCS(CS)
+    Exit Function
     '
+    ' ----- Error Trap
+    '
+ErrorTrap:
+    Call handleClassError("", "GetBlockingGroups", Err.Number, Err.Source, Err.Description, True, False)
+End Function
+'
+'
+'
+Private Function handleClassError(ignore As String, MethodName As String, ErrNumber As Long, ErrSource As String, ErrDescription As String, ErrorTrap As Boolean, ResumeNext As Boolean, Optional URL As String) As String
+    Call Main.ReportError3(Main.applicationName, "patchClass", MethodName, "", ErrNumber, ErrSource, ErrDescription, ResumeNext)
 End Function
 

@@ -33,7 +33,7 @@ Public Function Execute(CsvObject As Object, MainObject As Object, OptionString 
     Dim s As String
     Dim Link As String
     Dim BlogURL As String
-    Dim Cnt As Long
+    Dim cnt As Long
     Dim AClass As String
     Dim RecordID As Long
     Dim RecordName As String
@@ -110,12 +110,12 @@ Public Function Execute(CsvObject As Object, MainObject As Object, OptionString 
     If s <> "" Then
         Execute = "" _
             & vbCrLf & vbTab & "<ul>" _
-            & KmaIndent(Execute) _
+            & kmaIndent(Execute) _
             & vbCrLf & vbTab & "</ul>" _
             & ""
         Execute = "" _
             & vbCrLf & vbTab & "<div class=""blogCatList"">" _
-            & KmaIndent(Execute) _
+            & kmaIndent(Execute) _
             & vbCrLf & vbTab & "</div>" _
             & ""
     End If
@@ -123,5 +123,13 @@ Public Function Execute(CsvObject As Object, MainObject As Object, OptionString 
     '
     Exit Function
 ErrorTrap:
+    Call handleClassError("", "execute", Err.Number, Err.Source, Err.Description, True, False)
     'HandleError
 End Function
+'
+'
+'
+Private Function handleClassError(ignore As String, MethodName As String, ErrNumber As Long, ErrSource As String, ErrDescription As String, ErrorTrap As Boolean, ResumeNext As Boolean, Optional URL As String) As String
+    Call Main.ReportError3(Main.applicationName, "categoriesClass", MethodName, "", ErrNumber, ErrSource, ErrDescription, ResumeNext)
+End Function
+
