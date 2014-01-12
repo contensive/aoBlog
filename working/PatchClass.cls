@@ -75,6 +75,11 @@ End Function
 '
 '
 Private Function handleClassError(ignore As String, MethodName As String, ErrNumber As Long, ErrSource As String, ErrDescription As String, ErrorTrap As Boolean, ResumeNext As Boolean, Optional URL As String) As String
-    Call Main.ReportError3(Main.applicationName, "patchClass", MethodName, "", ErrNumber, ErrSource, ErrDescription, ResumeNext)
+    If Main.version < "4.2.000" Then
+        Call Main.ReportError3(Main.applicationName, "patchClass", MethodName, "", ErrNumber, ErrSource, ErrDescription, True)
+        Err.Clear
+    Else
+        Call Main.ReportError3(Main.applicationName, "patchClass", MethodName, "", ErrNumber, ErrSource, ErrDescription, ResumeNext)
+    End If
 End Function
 
