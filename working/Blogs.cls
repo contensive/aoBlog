@@ -166,6 +166,8 @@ End Type
 Private users() As userCacheStruct
 Private userCnt As Long
 '
+Private allowAuthorInfoLink As Boolean
+'
 '========================================================================
 '   v3.3 Add-on Compatibility
 '       To make an Add-on that works the same in v3.3 and v3.4, use this adapter instead of the execute above
@@ -520,6 +522,8 @@ Private Function GetForm(FormID As Long, BlogID As Long, BlogName As String, IsB
     '
     'Call Main.AddRefreshQueryString(RequestNameSourceFormID, FormID)
     IsEditing = Main.IsAuthoring("Blogs")
+    allowAuthorInfoLink = Csv.IsContentFieldSupported("people", "autoinfoLink")
+    '
     Select Case FormID
         Case FormBlogPostDetails
             Stream = Stream & GetFormBlogPostDetails(BlogID, EntryID, IsBlogOwner, AllowAnonymous, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs)
@@ -3195,7 +3199,10 @@ Private Function getUserPtr(userid As Long) As Long
             ReDim Preserve users(userCnt)
             users(userPtr).Id = userid
             users(userPtr).Name = Main.GetCSText(CS, "name")
-            users(userPtr).authorInfoLink = Main.GetCSText(CS, "authorInfoLink")
+            users(userPtr).authorInfoLink = ""
+            If allowAuthorInfoLink Then
+                users(userPtr).authorInfoLink = Main.GetCSText(CS, "authorInfoLink")
+            End If
         End If
         Call Main.CloseCS(CS)
     End If
