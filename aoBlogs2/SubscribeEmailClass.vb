@@ -67,7 +67,15 @@ Namespace Contensive.Addons.aoBlogs2
                             End If
                             Call cs.Close()
                         End If
-                        Call CP.Group.AddUser(groupId.ToString())
+                        If Not cs.Open("member rules", "memberid=" & CP.User.Id & " and groupid=" & groupId) Then
+                            Call cs.Close()
+                            If cs.Insert("member rules") Then
+                                Call cs.SetField("groupid", groupId)
+                                Call cs.SetField("memberid", CP.User.Id)
+                            End If
+                        End If
+                        Call cs.Close()
+                        'Call CP.Group.AddUser(groupId.ToString())
                     End If
                 End If
                 '
