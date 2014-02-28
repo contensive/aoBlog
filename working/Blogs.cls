@@ -1368,7 +1368,7 @@ Private Function GetFormBlogPost(BlogID As Long, BlogName As String, IsBlogOwner
     Dim ImageID As Long
     Dim Pos As Long
     Dim CategorySelect As String
-    Dim Hint As String
+    Dim hint As String
     Dim Button As String
     Dim qs As String
     Dim c As String
@@ -1383,14 +1383,14 @@ Private Function GetFormBlogPost(BlogID As Long, BlogName As String, IsBlogOwner
     Dim Divider As String
     Dim BlogTitle As String
     '
-    Hint = "1"
+    hint = "1"
     s = s & Main.GetUploadFormStart
     s = s & "<table width=100% border=0 cellspacing=0 cellpadding=5 class=""aoBlogPostTable"">"
     '
     'AddBlogFlag = Main.GetStreamBoolean(RequestNameAddBlogFlag)
     '
     If EntryID = 0 Then
-        Hint = "2"
+        hint = "2"
         '
         ' New Entry that is being saved
         '
@@ -1399,7 +1399,7 @@ Private Function GetFormBlogPost(BlogID As Long, BlogName As String, IsBlogOwner
         BlogCopy = Main.GetStreamText(RequestNameBlogCopy)
         BlogTagList = Main.GetStreamText(RequestNameBlogTagList)
     Else
-        Hint = "3"
+        hint = "3"
         '
         ' Edit an entry
         '
@@ -1415,7 +1415,7 @@ Private Function GetFormBlogPost(BlogID As Long, BlogName As String, IsBlogOwner
             BlogCopy = "<!-- cc --><p><br></p><!-- /cc -->"
         End If
     End If
-    Hint = "4"
+    hint = "4"
     If Main.SiteProperty_BuildVersion < "4.1.515" Then
         '
         ' block active content
@@ -1431,7 +1431,7 @@ Private Function GetFormBlogPost(BlogID As Long, BlogName As String, IsBlogOwner
     s = s & GetFormTableRow("<div style=""padding-top:108px"">Post: </div>", editor)
     s = s & GetFormTableRow("<div style=""padding-top:3px"">Tag List: </div>", Main.GetFormInputText(RequestNameBlogTagList, BlogTagList, 5, 50))
     If AllowCategories Then
-        Hint = "5"
+        hint = "5"
         CategorySelect = Main.GetFormInputSelect(RequestNameBlogCategoryIDSet, BlogCategoryID, "Blog Categories")
         If (InStr(1, CategorySelect, "<option value=""""></option></select>", vbTextCompare) <> 0) Then
             '
@@ -1561,33 +1561,33 @@ Private Function GetFormBlogPost(BlogID As Long, BlogName As String, IsBlogOwner
     '
     s = s & GetFormTableRow("Images: ", c)
     If EntryID <> 0 Then
-        Hint = "6"
+        hint = "6"
         s = s & GetFormTableRow("", Main.GetFormButton(FormButtonPost) & "&nbsp;" & Main.GetFormButton(FormButtonCancel) & "&nbsp;" & Main.GetFormButton(FormButtonDelete))
     Else
-        Hint = "7"
+        hint = "7"
         s = s & GetFormTableRow("", Main.GetFormButton(FormButtonPost) & "&nbsp;" & Main.GetFormButton(FormButtonCancel))
     End If
-    Hint = "8"
+    hint = "8"
     qs = Main.RefreshQueryString()
     qs = ModifyQueryString(qs, RequestNameBlogEntryID, "", True)
     qs = ModifyQueryString(qs, RequestNameFormID, FormBlogPostList)
-    Hint = "9"
+    hint = "9"
     s = s & vbCrLf & GetFormTableRow2("<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>")
     
     '
     s = s & Main.GetFormInputHidden(RequestNameBlogEntryID, EntryID)
     s = s & Main.GetFormInputHidden(RequestNameSourceFormID, FormBlogEntryEditor)
     s = s & "</table>"
-    Hint = "95"
+    hint = "95"
     s = s & Main.GetFormEnd
     '
     GetFormBlogPost = s
-    Hint = "96"
+    hint = "96"
     Call Main.SetVisitProperty(SNBlogEntryName, CStr(GetRandomInteger()))
     '
     Exit Function
 ErrorTrap:
-    Call handleClassError("UpdatedBlogsClass", "GetFormBlogPost, hint=" & Hint, Err.Number, Err.Source, Err.Description, True, False)
+    Call handleClassError("UpdatedBlogsClass", "GetFormBlogPost, hint=" & hint, Err.Number, Err.Source, Err.Description, True, False)
     End Function
 '
 '====================================================================================
@@ -2273,7 +2273,10 @@ Private Function GetBlogCommentCell(IsBlogOwner As Boolean, DateAdded As Date, A
     Dim authorMemberName As String
     '
     userPtr = getUserPtr(AuthorMemberID)
-    authorMemberName = users(userPtr).Name
+    authorMemberName = ""
+    If userPtr > 0 Then
+        authorMemberName = users(userPtr).Name
+    End If
     If IsSearchListing Then
         qs = Main.RefreshQueryString
         qs = ModifyQueryString(qs, RequestNameBlogEntryID, CStr(EntryID))
@@ -2335,6 +2338,7 @@ ErrorTrap:
 Private Function GetBlogEntryCell(EntryPtr As Long, IsBlogOwner As Boolean, EntryID As Long, EntryName As String, EntryCopy As String, DateAdded As Date, DisplayFullEntry As Boolean, IsSearchListing As Boolean, Return_CommentCnt As Long, allowComments As Boolean, PodcastMediaLink As String, PodcastSize As String, entryEditLink As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, BlogTagList As String, imageDisplayTypeId As Long, primaryImagePositionId As Long, articlePrimaryImagePositionId As Long, blogListQs As String, AuthorMemberID As Long) As String
     On Error GoTo ErrorTrap
     '
+    Dim hint As String
     Dim Link As String
     Dim Ptr As Long
     Dim Tags() As String
@@ -2370,8 +2374,12 @@ Private Function GetBlogEntryCell(EntryPtr As Long, IsBlogOwner As Boolean, Entr
     Dim userPtr As Long
     Dim authorMemberName As String
     '
+    hint = "enter"
+    authorMemberName = ""
     userPtr = getUserPtr(AuthorMemberID)
-    authorMemberName = users(userPtr).Name
+    If userPtr > 0 Then
+        authorMemberName = users(userPtr).Name
+    End If
     qs = blogListQs
     qs = ModifyQueryString(qs, RequestNameBlogEntryID, CStr(EntryID))
     qs = ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails)
@@ -2387,6 +2395,7 @@ Private Function GetBlogEntryCell(EntryPtr As Long, IsBlogOwner As Boolean, Entr
     '
     ' Get ImageID List
     '
+    hint = hint & ",1"
     imageIDList = ""
     SQL = "select i.id from BlogImages i,BlogImageRules r where r.BlogImageID=i.id and i.active<>0 and r.blogentryid=" & EntryID & " order by i.SortOrder"
     CS = Main.OpenCSSQL("default", SQL)
@@ -2398,6 +2407,7 @@ Private Function GetBlogEntryCell(EntryPtr As Long, IsBlogOwner As Boolean, Entr
     '
     ' Get Thumbnail filename
     '
+    hint = hint & ",2"
     If imageIDList <> "" Then
         imageIDList = Mid(imageIDList, 2)
         ImageID = Split(imageIDList, ",")
@@ -2405,6 +2415,7 @@ Private Function GetBlogEntryCell(EntryPtr As Long, IsBlogOwner As Boolean, Entr
     End If
     '
     s = ""
+    hint = hint & ",3"
     If DisplayFullEntry Then
         ' added page title with meta content in dotnet blog wrapper
         'Call Main.AddPageTitle(EntryName)
@@ -2433,6 +2444,7 @@ Private Function GetBlogEntryCell(EntryPtr As Long, IsBlogOwner As Boolean, Entr
                     s = s & "<img class=""aoBlogEntryThumbnail"" src=""" & Main.serverFilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;"">"
             End Select
         End If
+hint = hint & ",4"
         s = s & EntryCopy & "</div>"
         qs = blogListQs
         qs = ModifyQueryString(qs, RequestNameBlogEntryID, CStr(EntryID))
@@ -2462,6 +2474,7 @@ Private Function GetBlogEntryCell(EntryPtr As Long, IsBlogOwner As Boolean, Entr
                     & cr & "</div>"
             End If
         End If
+hint = hint & ",5"
         If BlogTagList <> "" Then
             BlogTagList = Replace(BlogTagList, ",", vbCrLf)
             Tags = Split(BlogTagList, vbCrLf)
@@ -2488,6 +2501,7 @@ Dim SQS As String
                 & cr & "</div>"
         End If
     Else
+hint = hint & ",6"
         s = s & vbCrLf & entryEditLink & "<h2 class=""aoBlogEntryName""><a href=""" & EntryLink & """>" & EntryName & "</a></h2>"
         s = s & cr & "<div class=""aoBlogEntryCopy"">"
         If ThumbnailFilename <> "" Then
@@ -2528,6 +2542,7 @@ Dim SQS As String
     '
     ' Podcast link
     '
+hint = hint & ",7"
     If PodcastMediaLink <> "" Then
         OptionString = "" _
             & "&Media Link=" & Main.EncodeAddonOptionArgument(PodcastMediaLink) _
@@ -2540,6 +2555,7 @@ Dim SQS As String
     '
     ' Author Row
     '
+hint = hint & ",8"
     RowCopy = ""
     If authorMemberName <> "" Then
         RowCopy = RowCopy & "By " & authorMemberName
@@ -2551,6 +2567,7 @@ Dim SQS As String
             RowCopy = RowCopy & DateAdded
         End If
     End If
+hint = hint & ",9"
     If allowComments And (Main.VisitCookieSupport) And (Not Main.VisitIsBot) Then
     'If allowComments Then
         '
@@ -2591,6 +2608,7 @@ Dim SQS As String
     '    s = s & vbCrLf & Main.GetAdminHintWrapper("Blog Details: <a href=""?" & QS & """>Click here</a>")
     'End If
     '
+hint = hint & ",10"
     If allowComments And (Main.VisitCookieSupport) And (Not Main.VisitIsBot) Then
     'If allowComments Then
         If Not DisplayFullEntry Then
@@ -2637,6 +2655,7 @@ Dim SQS As String
             '
             ' Show all comments
             '
+hint = hint & ",11"
             If IsBlogOwner Then
                 '
                 ' Owner - Show all comments
@@ -2675,6 +2694,7 @@ Dim SQS As String
     
     End If
     '
+hint = hint & ",12"
     If ToolLine <> "" Then
         s = s & cr & "<div class=""aoBlogToolLink"">" & ToolLine & "</div>"
     End If
@@ -2685,7 +2705,7 @@ Dim SQS As String
     '
     Exit Function
 ErrorTrap:
-    Call handleClassError("UpdatedBlogsClass", "GetBlogEntryCell", Err.Number, Err.Source, Err.Description, True, False)
+    Call handleClassError("UpdatedBlogsClass", "GetBlogEntryCell, hint=[" & hint & "]", Err.Number, Err.Source, Err.Description, True, False)
 End Function
 '
 '
