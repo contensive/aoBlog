@@ -787,7 +787,7 @@ Private Function GetFormBlogSearch(BlogID As Long, BlogName As String, IsBlogOwn
     searchForm = "" _
         & cr & "<table width=100% border=0 cellspacing=0 cellpadding=5 class=""aoBlogSearchTable"">" _
         & kmaIndent(GetFormTableRow("Date:", GetField(RequestNameDateSearch, , 10, , Main.GetStreamText(RequestNameDateSearch)) & " " & "&nbsp;(mm/yyyy)")) _
-        & kmaIndent(GetFormTableRow("Keyword(s):", GetField(RequestNameKeywordList, KeywordList, , 30, Main.GetStreamText(RequestNameKeywordList)))) _
+        & kmaIndent(GetFormTableRow("Keyword(s):", GetField(RequestNameKeywordList, , , 30, Main.GetStreamText(RequestNameKeywordList)))) _
         & kmaIndent(GetFormTableRow("", Main.GetFormButton(FormButtonSearch))) _
         & kmaIndent(GetFormTableRow2("<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>")) _
         & cr & "</table>" _
