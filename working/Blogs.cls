@@ -1139,6 +1139,7 @@ Private Function GetFormBlogPostList(BlogID As Long, BlogName As String, IsBlogO
     Dim imageDisplayTypeId As Long
     Dim primaryImagePositionId As Long
     Dim articlePrimaryImagePositionId As Long
+    Dim categoryLink As String
     '
     locBlogTitle = BlogName
     If InStr(1, locBlogTitle, " Blog", vbTextCompare) = 0 Then
@@ -1275,8 +1276,9 @@ Private Function GetFormBlogPostList(BlogID As Long, BlogName As String, IsBlogO
                     End If
                 End If
                 If Not IsBlocked Then
-                    qs = ModifyQueryString(qs, RequestNameBlogCategoryIDSet, CStr(BlogCategoryID), True)
-                    CategoryFooter = CategoryFooter & cr & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>See posts in the category " & Main.GetCS(CS, "name") & "</a></div>"
+                    'qs = ModifyQueryString(qs, RequestNameBlogCategoryIDSet, CStr(BlogCategoryID), True)
+                    categoryLink = kmaModifyLinkQuery(blogListLink, RequestNameBlogCategoryIDSet, CStr(BlogCategoryID), True)
+                    CategoryFooter = CategoryFooter & cr & "<div class=""aoBlogFooterLink""><a href=""" & categoryLink & """>See posts in the category " & Main.GetCS(CS, "name") & "</a></div>"
                 End If
                 Call Main.NextCSRecord(CS)
             Loop
