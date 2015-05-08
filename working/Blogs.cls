@@ -1893,7 +1893,7 @@ Private Function GetFormBlogPostDetails(blogId As Long, EntryID As Long, IsBlogO
     ' cnBlogs
     CS = Main.OpenCSContentRecord(cnBlogs, blogId)
         '
-        allowCaptcha = Main.GetCSBoolean(CS, "recapcha")
+        allowCaptcha = Main.GetCSBoolean(CS, "recaptcha")
         '
     Call Main.CloseCS(CS)
     
@@ -2110,6 +2110,7 @@ Private Function ProcessFormBlogPostDetails(SourceFormID As Long, blogId As Long
     Dim formKey As String
     Dim optionStr As String
     Dim captchaResponse As String
+    Dim allowCaptcha As Boolean
     '
     ProcessFormBlogPostDetails = SourceFormID
     SN = Main.GetVisitProperty(SNBlogCommentName)
@@ -2132,8 +2133,28 @@ Private Function ProcessFormBlogPostDetails(SourceFormID As Long, blogId As Long
             optionStr = "Challenge=" + Main.GetStreamText("recaptcha_challenge_field")
             optionStr = optionStr & "&Response=" + Main.GetStreamText("recaptcha_response_field")
             captchaResponse = Main.ExecuteAddon2(reCaptchaProcessGuid, optionStr)
+            '
+            
+            
+           '****** The next three lines are for reference Delete When complete Working with Toggling Recaptcha ******
+            
+           '  CS = Main.OpenCSContentRecord(cnBlogs, blogId)
+           '
+           'allowCaptcha = Main.GetCSBoolean(CS, "recaptcha")
+           '
+           'Call Main.CloseCS(CS)
+            
+            
+            
+            
+            
+            
+            
+            '
             If captchaResponse <> "" Then
+                If allowCaptcha Then
                 Call Main.AddUserError("The Verify Text you entered did not match correctly. Please try again.")
+                End If
             End If
             '
             ' Process comment post
