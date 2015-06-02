@@ -2022,9 +2022,10 @@ Private Function GetFormBlogPostDetails(blogId As Long, EntryID As Long, IsBlogO
                 s = s & cr & "<div class=""aoBlogCommentCopy"">Comment</div>"
                 s = s & cr & "<div class=""aoBlogCommentCopy"">" & Main.GetFormInputText(RequestNameCommentCopy, "", 15, 70) & "</div>"
             End If
-            s = s & cr & "<div class=""aoBlogCommentCopy"">Verify Text</div>"
+            's = s & cr & "<div class=""aoBlogCommentCopy"">Verify Text</div>"
             
             If allowCaptcha Then
+            s = s & cr & "<div class=""aoBlogCommentCopy"">Verify Text</div>"
             s = s & cr & "<div class=""aoBlogCommentCopy"">" & Main.ExecuteAddon2(reCaptchaDisplayGuid, "") & "</div>"
             End If
             
