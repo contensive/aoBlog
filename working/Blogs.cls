@@ -50,6 +50,7 @@ Option Explicit
 Const AnonymousMemberName = "Anonymous"
 Const reCaptchaDisplayGuid = "{E9E51C6E-9152-4284-A44F-D3ABC423AB90}"
 Const reCaptchaProcessGuid = "{030AC5B0-F796-4EA4-B94C-986B1C29C16C}"
+Const reCaptchaWorkingGuid = "{500A1F57-86A2-4D47-B747-4EF4D30A83E2}"
 '
 Const BackToRecentPostsMsg = "« Back to recent posts"
 'Const BackToRecentPostsMsg = "See recent posts"
@@ -242,6 +243,7 @@ Public Function GetContent(OptionString As String) As String
     'Dim BlogRootLink As String
     Dim blogListLink As String
     Dim blogListQs As String
+    Dim allowRecaptcha As Boolean
     '
     ' get blogListLink - link to the main list page
     '
@@ -286,6 +288,7 @@ Public Function GetContent(OptionString As String) As String
             ImageWidthMax = Main.GetCSInteger(CS, "ImageWidthMax")
             blogDescription = Main.GetCSText(CS, "copy")
             blogCaption = Main.GetCSText(CS, "caption")
+            allowRecaptcha = Main.GetCSBoolean(CS, "recaptcha")
         End If
         Call Main.CloseCS(CS)
         If blogId = 0 Then
@@ -441,10 +444,10 @@ Public Function GetContent(OptionString As String) As String
             Call Main.AddRefreshQueryString(RequestNameBlogCategoryID, BlogCategoryID)
         End If
         '
-        Call Main.TestPoint("Blogs.GetContent, Main.IsAuthenticated=" & Main.IsAuthenticated)
-        Call Main.TestPoint("Blogs.GetContent, Main.MemberID=" & Main.MemberID)
-        Call Main.TestPoint("Blogs.GetContent, BlogOwnerID=" & BlogOwnerID)
-        Call Main.TestPoint("Blogs.GetContent, IsBlogOwner=" & IsBlogOwner)
+        Call Main.testpoint("Blogs.GetContent, Main.IsAuthenticated=" & Main.IsAuthenticated)
+        Call Main.testpoint("Blogs.GetContent, Main.MemberID=" & Main.MemberID)
+        Call Main.testpoint("Blogs.GetContent, BlogOwnerID=" & BlogOwnerID)
+        Call Main.testpoint("Blogs.GetContent, IsBlogOwner=" & IsBlogOwner)
         If IsBlogOwner And (blogId = 0) Then
             '
             ' Blog record was not, or can not be created
@@ -494,12 +497,12 @@ Public Function GetContent(OptionString As String) As String
                 '
                 ' Process the source form into form if there was a button - else keep formid
                 '
-                FormID = ProcessForm(SourceFormID, blogId, IsBlogOwner, EntryID, ButtonValue, BlogName, BlogOwnerID, AllowAnonymous, AllowCategories, BlogCategoryID, RSSFeedId, blogListLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, autoApproveComments, authoringGroupId, emailComment, OptionString)
+                FormID = ProcessForm(SourceFormID, blogId, IsBlogOwner, EntryID, ButtonValue, BlogName, BlogOwnerID, AllowAnonymous, AllowCategories, BlogCategoryID, RSSFeedId, blogListLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, autoApproveComments, authoringGroupId, emailComment, OptionString, allowRecaptcha)
             End If
             '
             ' Get Next Form
             '
-            s = s & GetForm(FormID, blogId, BlogName, IsBlogOwner, ArchiveMonth, ArchiveYear, EntryID, KeywordList, ButtonValue, DateSearchText, AllowAnonymous, AllowCategories, BlogCategoryID, RSSFeedName, RSSFeedFilename, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogDescription, blogCaption, RSSFeedId, blogListLink, blogListQs)
+            s = s & GetForm(FormID, blogId, BlogName, IsBlogOwner, ArchiveMonth, ArchiveYear, EntryID, KeywordList, ButtonValue, DateSearchText, AllowAnonymous, AllowCategories, BlogCategoryID, RSSFeedName, RSSFeedFilename, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogDescription, blogCaption, RSSFeedId, blogListLink, blogListQs, allowRecaptcha)
         End If
     End If
     '
@@ -514,7 +517,7 @@ End Function
 '
 '====================================================================================
 '
-Private Function GetForm(FormID As Long, blogId As Long, BlogName As String, IsBlogOwner As Boolean, ArchiveMonth As Long, ArchiveYear As Long, EntryID As Long, KeywordList As String, ButtonValue As String, DateSearchText As String, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, RSSFeedName As String, RSSFeedFilename As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, blogDescription As String, blogCaption As String, RSSFeedId As Long, blogListLink As String, blogListQs As String) As String
+Private Function GetForm(FormID As Long, blogId As Long, BlogName As String, IsBlogOwner As Boolean, ArchiveMonth As Long, ArchiveYear As Long, EntryID As Long, KeywordList As String, ButtonValue As String, DateSearchText As String, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, RSSFeedName As String, RSSFeedFilename As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, blogDescription As String, blogCaption As String, RSSFeedId As Long, blogListLink As String, blogListQs As String, allowCaptcha As Boolean) As String
     On Error GoTo ErrorTrap
     '
     Dim Stream As String
@@ -526,7 +529,7 @@ Private Function GetForm(FormID As Long, blogId As Long, BlogName As String, IsB
     '
     Select Case FormID
         Case FormBlogPostDetails
-            Stream = Stream & GetFormBlogPostDetails(blogId, EntryID, IsBlogOwner, AllowAnonymous, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs)
+            Stream = Stream & GetFormBlogPostDetails(blogId, EntryID, IsBlogOwner, AllowAnonymous, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs, allowCaptcha)
         Case FormBlogArchiveDateList
             Stream = Stream & GetFormBlogArchiveDateList(blogId, BlogName, IsEditing, IsBlogOwner, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs)
         Case FormBlogArchivedBlogs
@@ -541,7 +544,7 @@ Private Function GetForm(FormID As Long, blogId As Long, BlogName As String, IsB
                 ' Go to details page
                 '
                 FormID = FormBlogPostDetails
-                Stream = Stream & GetFormBlogPostDetails(blogId, EntryID, IsBlogOwner, AllowAnonymous, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs)
+                Stream = Stream & GetFormBlogPostDetails(blogId, EntryID, IsBlogOwner, AllowAnonymous, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs, allowCaptcha)
             Else
                 '
                 ' list all the entries
@@ -563,7 +566,7 @@ ErrorTrap:
 '       returns the FormID for the next one to display
 '====================================================================================
 '
-Private Function ProcessForm(SourceFormID As Long, blogId As Long, IsBlogOwner As Boolean, EntryID As Long, ButtonValue As String, BlogName As String, BlogOwnerID As Long, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, RSSFeedId As Long, blogListLink As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, autoApproveComments As Boolean, authoringGroupId As Long, emailComment As Boolean, OptionString As String) As Long
+Private Function ProcessForm(SourceFormID As Long, blogId As Long, IsBlogOwner As Boolean, EntryID As Long, ButtonValue As String, BlogName As String, BlogOwnerID As Long, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, RSSFeedId As Long, blogListLink As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, autoApproveComments As Boolean, authoringGroupId As Long, emailComment As Boolean, OptionString As String, allowRecaptcha As Boolean) As Long
     On Error GoTo ErrorTrap
     '
     If ButtonValue <> "" Then
@@ -573,7 +576,7 @@ Private Function ProcessForm(SourceFormID As Long, blogId As Long, IsBlogOwner A
             Case FormBlogEntryEditor
                 ProcessForm = ProcessFormBlogPost(SourceFormID, blogId, EntryID, ButtonValue, BlogCategoryID, RSSFeedId, blogListLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax)
             Case FormBlogPostDetails
-                ProcessForm = ProcessFormBlogPostDetails(SourceFormID, blogId, IsBlogOwner, ButtonValue, BlogName, BlogOwnerID, AllowAnonymous, BlogCategoryID, autoApproveComments, authoringGroupId, emailComment, OptionString)
+                ProcessForm = ProcessFormBlogPostDetails(SourceFormID, blogId, IsBlogOwner, ButtonValue, BlogName, BlogOwnerID, AllowAnonymous, BlogCategoryID, autoApproveComments, authoringGroupId, emailComment, OptionString, allowRecaptcha)
             Case FormBlogArchiveDateList
                  ProcessForm = FormBlogArchiveDateList
             Case FormBlogSearch
@@ -1291,7 +1294,7 @@ Private Function GetFormBlogPostList(blogId As Long, BlogName As String, IsBlogO
     '
     s = s & cr & "<div>&nbsp;</div>"
     If IsBlogOwner Then
-        Call Main.TestPoint("Blogs.GetFormBlogPostList, IsBlogOwner=true, appending 'create' message")
+        Call Main.testpoint("Blogs.GetFormBlogPostList, IsBlogOwner=true, appending 'create' message")
         '
         ' Create a new entry if this is the Blog Owner
         '
@@ -1801,7 +1804,7 @@ ErrorTrap:
 '
 '====================================================================================
 '
-Private Function GetFormBlogPostDetails(blogId As Long, EntryID As Long, IsBlogOwner As Boolean, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, blogListLink As String, blogListQs As String) As String
+Private Function GetFormBlogPostDetails(blogId As Long, EntryID As Long, IsBlogOwner As Boolean, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, blogListLink As String, blogListQs As String, allowCaptcha As Boolean) As String
     On Error GoTo ErrorTrap
     '
     'Dim EntryCopyOverview As String
@@ -1835,9 +1838,11 @@ Private Function GetFormBlogPostDetails(blogId As Long, EntryID As Long, IsBlogO
     Dim primaryImagePositionId As Long
     Dim articlePrimaryImagePositionId As Long
     '
-    Dim allowCaptcha As Boolean
+    'Dim allowCaptcha As Boolean
     'Dim blogId As Long
     
+    Call Main.testpoint("blog -- getFormBlogPostDetails, enter ")
+    Call Main.testpoint("blog -- getFormBlogPostDetails, allowCaptcha=[" & allowCaptcha & "]")
     s = s & vbCrLf & Main.GetFormStart
     '
     ' setup form key
@@ -1891,11 +1896,11 @@ Private Function GetFormBlogPostDetails(blogId As Long, EntryID As Long, IsBlogO
     
     ' contensive
     ' cnBlogs
-    CS = Main.OpenCSContentRecord(cnBlogs, blogId)
+    'CS = Main.OpenCSContentRecord(cnBlogs, blogId)
         '
-        allowCaptcha = Main.GetCSBoolean(CS, "recaptcha")
+        'allowCaptcha = Main.GetCSBoolean(CS, "recaptcha")
         '
-    Call Main.CloseCS(CS)
+    'Call Main.CloseCS(CS)
     
     '
     ' Add viewing log entry
@@ -2023,12 +2028,13 @@ Private Function GetFormBlogPostDetails(blogId As Long, EntryID As Long, IsBlogO
                 s = s & cr & "<div class=""aoBlogCommentCopy"">" & Main.GetFormInputText(RequestNameCommentCopy, "", 15, 70) & "</div>"
             End If
             's = s & cr & "<div class=""aoBlogCommentCopy"">Verify Text</div>"
-            
+            '
             If allowCaptcha Then
-            s = s & cr & "<div class=""aoBlogCommentCopy"">Verify Text</div>"
-            s = s & cr & "<div class=""aoBlogCommentCopy"">" & Main.ExecuteAddon2(reCaptchaDisplayGuid, "") & "</div>"
+                s = s & cr & "<div class=""aoBlogCommentCopy"">Verify Text</div>"
+                s = s & cr & "<div class=""aoBlogCommentCopy"">" & Main.ExecuteAddon2(reCaptchaDisplayGuid, "") & "</div>"
+                Call Main.testpoint("output - reCaptchaDisplayGuid")
             End If
-            
+            '
             s = s & cr & "<div class=""aoBlogCommentCopy"">" & Main.GetFormButton(FormButtonPostComment) & "&nbsp;" & Main.GetFormButton(FormButtonCancel) & "</div>"
         End If
     
@@ -2076,7 +2082,7 @@ ErrorTrap:
 '
 '====================================================================================
 '
-Private Function ProcessFormBlogPostDetails(SourceFormID As Long, blogId As Long, IsBlogOwner As Boolean, ButtonValue As String, BlogName As String, BlogOwnerID As Long, AllowAnonymous As Boolean, BlogCategoryID As Long, autoApproveComments As Boolean, authoringGroupId As Long, emailComment As Boolean, OptionString As String) As Long
+Private Function ProcessFormBlogPostDetails(SourceFormID As Long, blogId As Long, IsBlogOwner As Boolean, ButtonValue As String, BlogName As String, BlogOwnerID As Long, AllowAnonymous As Boolean, BlogCategoryID As Long, autoApproveComments As Boolean, authoringGroupId As Long, emailComment As Boolean, OptionString As String, allowCaptcha As Boolean) As Long
     On Error GoTo ErrorTrap
     '
     Dim AuthoringMemberId As Long
@@ -2111,7 +2117,7 @@ Private Function ProcessFormBlogPostDetails(SourceFormID As Long, blogId As Long
     Dim formKey As String
     Dim optionStr As String
     Dim captchaResponse As String
-    Dim allowCaptcha As Boolean
+    'Dim allowCaptcha As Boolean
     '
     ProcessFormBlogPostDetails = SourceFormID
     SN = Main.GetVisitProperty(SNBlogCommentName)
@@ -2128,33 +2134,16 @@ Private Function ProcessFormBlogPostDetails(SourceFormID As Long, blogId As Long
             '
             ProcessFormBlogPostDetails = FormBlogPostList
         ElseIf ButtonValue = FormButtonPostComment Then
-            '
-            ' Process recaptcha
-            '
-            optionStr = "Challenge=" + Main.GetStreamText("recaptcha_challenge_field")
-            optionStr = optionStr & "&Response=" + Main.GetStreamText("recaptcha_response_field")
-            captchaResponse = Main.ExecuteAddon2(reCaptchaProcessGuid, optionStr)
-            '
-            
-            
-           '****** The next three lines are for reference Delete When complete Working with Toggling Recaptcha ******
-            
-           '  CS = Main.OpenCSContentRecord(cnBlogs, blogId)
-           '
-           'allowCaptcha = Main.GetCSBoolean(CS, "recaptcha")
-           '
-           'Call Main.CloseCS(CS)
-            
-            
-            
-            
-            
-            
-            
-            '
-            If captchaResponse <> "" Then
-                If allowCaptcha Then
-                Call Main.AddUserError("The Verify Text you entered did not match correctly. Please try again.")
+            If allowCaptcha Then
+                '
+                ' Process recaptcha
+                '
+                optionStr = "Challenge=" + Main.GetStreamText("recaptcha_challenge_field")
+                optionStr = optionStr & "&Response=" + Main.GetStreamText("recaptcha_response_field")
+                captchaResponse = Main.ExecuteAddon2(reCaptchaProcessGuid, optionStr)
+                Call Main.testpoint("output - reCaptchaProcessGuid, result=" & captchaResponse)
+                If captchaResponse <> "" Then
+                    Call Main.AddUserError("The verify text you entered did not match correctly. Please try again.")
                 End If
             End If
             '
@@ -2165,6 +2154,7 @@ Private Function ProcessFormBlogPostDetails(SourceFormID As Long, blogId As Long
             'formKey = Main.DecodeKeyNumber(formKey)
             Copy = Main.GetStreamText(RequestNameCommentCopy)
             If Copy <> "" Then
+                Call Main.testpoint("blog -- adding comment [" & Copy & "]")
                 'If (Main.VisitID <> kmaEncodeInteger(Main.DecodeKeyNumber(formKey))) Then
                 '    Call Main.AddUserError("<p>This comment has already been accepted.</p>")
                 'End If
@@ -2174,7 +2164,10 @@ Private Function ProcessFormBlogPostDetails(SourceFormID As Long, blogId As Long
                     RetryCommentPost = False
                 End If
                 Call Main.CloseCS(CSP)
-                If Not Main.IsUserError() Then
+                If Main.IsUserError() Then
+                    Call Main.testpoint("blog -- user error")
+                Else
+                    Call Main.testpoint("blog -- adding comment, no user error")
                     EntryID = Main.GetStreamInteger(RequestNameBlogEntryID)
                     CSP = Main.InsertCSRecord(cnBlogComments)
                     If AllowAnonymous And (Not Main.IsAuthenticated) Then
@@ -2286,12 +2279,12 @@ Private Function ProcessFormBlogPostDetails(SourceFormID As Long, blogId As Long
                 End If
             End If
 '            '
-'            CommentInfo = "Submitted at " & Now() & " by " & AuthorName
-'            EmailString = "<br>"
-'            EmailString = EmailString & CommentInfo & "<br>"
-'            EmailString = EmailString & "<a href=""http://" & Main.ServerHost & Main.ServerAppRootPath & "admin/index.asp?cid=" & Main.GetContentID(cnBlogEntries) & "&id=" & CommentID & "&af=4"">click here</a>"
-'            Call Main.SendSystemEmail(SystemEmailCommentNotification, EmailString)
-            '
+          ' CommentInfo = "Submitted at " & Now() & " by " & AuthorName
+          '  EmailString = "<br>"
+           ' EmailString = EmailString & CommentInfo & "<br>"
+            'EmailString = EmailString & "<a href=""http://" & Main.ServerHost & Main.ServerAppRootPath & "admin/index.asp?cid=" & Main.GetContentID(cnBlogEntries) & "&id=" & CommentID & "&af=4"">click here</a>"
+           ' Call Main.SendSystemEmail(SystemEmailCommentNotification, EmailString)
+            'test good
         End If
         Call Main.SetVisitProperty(SNBlogCommentName, "")
     End If
