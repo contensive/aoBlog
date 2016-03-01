@@ -155,6 +155,7 @@ Private PostsToDisplay As Long
 'Private AddOnVersion As String
 Const StreamUpgradeTimeout = 1800
 
+'Private Main As ccWeb3.MainClass
 Private Main As Object
 Private Csv As Object
 '
@@ -3159,6 +3160,8 @@ Private Function getLinkAlias(sourceLink As String) As String
     Dim NameValue As String
     Dim qs As String
     '
+    'Call Main.SaveVirtualFile("blog.log", "getLinkAlias(" & sourceLink & ")")
+    '
     returnLink = sourceLink
     If kmaEncodeBoolean(Main.GetSiteProperty("allowLinkAlias", "1")) Then
         Link = sourceLink
@@ -3192,6 +3195,8 @@ Private Function getLinkAlias(sourceLink As String) As String
         End If
     End If
     getLinkAlias = returnLink
+    '
+    'Call Main.SaveVirtualFile("blog.log", "getLinkAlias(" & sourceLink & ")=[" & getLinkAlias & "]")
     '
     Exit Function
 ErrorTrap:
