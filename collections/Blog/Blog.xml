@@ -104,8 +104,6 @@ function blogNewRow() {
 		<RemoteAssetLink></RemoteAssetLink>
 		<Styles><![CDATA[
 
-
-
 div.blogAdminWarning
 {
 	margin: 0;
@@ -538,6 +536,11 @@ width: inherit;
 	padding:0 0 5px 0;;
 	margin:0;
 }
+@media screen and (max-width: 480px) {
+.aoBlogCommentHeader { margin: 20px 0; }
+.aoBlogLoginBox { margin: 20px 0; padding: 10px; width: 100%; }
+.aoBlogCommentCopy { margin-left: 0; }
+}
 ]]></Styles>
 		<Scripting Language="" EntryPoint="" Timeout="5000"/>
 	</Addon>
@@ -575,28 +578,6 @@ width: inherit;
 		<PageTitle></PageTitle>
 		<RemoteAssetLink></RemoteAssetLink>
 		<Styles><![CDATA[
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 div.blogCatList {}
 div.blogCatList ul {}
@@ -1095,7 +1076,7 @@ function blogNewRow() {
 		<Field Name="EntryID" active="True" AdminOnly="False" Authorable="True" Caption="Blog Entry" DeveloperOnly="False" EditSortPriority="1010" FieldType="Lookup" HTMLContent="False" IndexColumn="99" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="Blog Entries" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" editorAddonId="" >
 			<HelpDefault>The Post on which this comment was created.</HelpDefault>
 		</Field>
-		<Field Name="AuthorMemberID" active="True" AdminOnly="False" Authorable="True" Caption="Author" DeveloperOnly="False" EditSortPriority="200" FieldType="Integer" HTMLContent="False" IndexColumn="1" IndexSortDirection="" IndexSortOrder="1" IndexWidth="30" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="True" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="People" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" editorAddonId="" ></Field>
+		<Field Name="AuthorMemberID" active="True" AdminOnly="False" Authorable="True" Caption="Author" DeveloperOnly="False" EditSortPriority="200" FieldType="Integer" HTMLContent="False" IndexColumn="1" IndexSortDirection="" IndexSortOrder="1" IndexWidth="30" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="True" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="True" IsBaseField="False" LookupContent="People" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" editorAddonId="blogAuthorGroupSelector" ></Field>
 		<Field Name="Approved" active="True" AdminOnly="False" Authorable="True" Caption="Approved" DeveloperOnly="False" EditSortPriority="1030" FieldType="Boolean" HTMLContent="False" IndexColumn="2" IndexSortDirection="" IndexSortOrder="0" IndexWidth="10" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="1" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" editorAddonId="" >
 			<HelpDefault>check to approve the comment, uncheck to block it.</HelpDefault>
 		</Field>
