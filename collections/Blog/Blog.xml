@@ -310,7 +310,7 @@ div.aoBlogCommentError
 	clear:both;
 	 border-top: 1px solid #eef;
 	 margin: 5px 0 5px 0;
-	 padding: 5px;
+	 padding: 20px;
 	 background-color: #f8f8ff;
 	 overflow:auto;
 }
@@ -323,7 +323,8 @@ div.aoBlogCommentError
 .aoBlogEntryImageContainer h2 
 {
 	font-size:120%;
-	margin-bottom:10px
+	margin-bottom:10px;
+	font-weight: bold;
 }
 .aoBlogEntryImageContainer div 
 {

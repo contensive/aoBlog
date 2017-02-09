@@ -1482,7 +1482,7 @@ Private Function GetFormBlogPost(blogId As Long, BlogName As String, IsBlogOwner
             & "<td><input type=""checkbox"" name=""" & rnBlogImageDelete & "." & Ptr & """>&nbsp;Delete</TD>" _
             & "</tr>" _
             & "<tr>" _
-            & "<td align=""left"" class=""ccAdminSmall""><img src=""" & Main.serverFilePath & imageFilename & """></TD>" _
+            & "<td align=""left"" class=""ccAdminSmall""><img alt=""" & imageName & """ title=""" & imageName & """ src=""" & Main.serverFilePath & imageFilename & """></TD>" _
             & "</tr>" _
             & ""
         '
@@ -2465,12 +2465,12 @@ Private Function GetBlogEntryCell(EntryPtr As Long, IsBlogOwner As Boolean, Entr
                     '
                     ' align right
                     '
-                    s = s & "<img class=""aoBlogEntryThumbnailRight"" src=""" & Main.serverFilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;"">"
+                    s = s & "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & Main.serverFilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;"">"
                 Case 3
                     '
                     ' align left
                     '
-                    s = s & "<img class=""aoBlogEntryThumbnailLeft"" src=""" & Main.serverFilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;"">"
+                    s = s & "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & Main.serverFilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;"">"
                 Case 4
                     '
                     ' hide
@@ -2479,7 +2479,7 @@ Private Function GetBlogEntryCell(EntryPtr As Long, IsBlogOwner As Boolean, Entr
                     '
                     ' 1 and none align per stylesheet
                     '
-                    s = s & "<img class=""aoBlogEntryThumbnail"" src=""" & Main.serverFilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;"">"
+                    s = s & "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & Main.serverFilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;"">"
             End Select
         End If
 hint = hint & ",4"
@@ -2495,7 +2495,7 @@ hint = hint & ",4"
                 If imageFilename <> "" Then
                     c = c _
                         & cr & "<div class=""aoBlogEntryImageContainer"">" _
-                        & cr & "<img src=""" & Main.serverFilePath & imageFilename & """>"
+                        & cr & "<img alt=""" & imageName & """ title=""" & imageName & """  src=""" & Main.serverFilePath & imageFilename & """>"
                     If imageName <> "" Then
                         c = c & cr & "<h2>" & imageName & "</h2>"
                     End If
@@ -2548,12 +2548,12 @@ hint = hint & ",6"
                     '
                     ' align right
                     '
-                    s = s & "<a href=""" & EntryLink & """><img class=""aoBlogEntryThumbnailRight"" src=""" & Main.serverFilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;""></a>"
+                    s = s & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & Main.serverFilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;""></a>"
                 Case 3
                     '
                     ' align left
                     '
-                    s = s & "<a href=""" & EntryLink & """><img class=""aoBlogEntryThumbnailLeft"" src=""" & Main.serverFilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;""></a>"
+                    s = s & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & Main.serverFilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;""></a>"
                 Case 4
                     '
                     ' hide
@@ -2562,7 +2562,7 @@ hint = hint & ",6"
                     '
                     ' 1 and none align per stylesheet
                     '
-                    s = s & "<a href=""" & EntryLink & """><img class=""aoBlogEntryThumbnail"" src=""" & Main.serverFilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;""></a>"
+                    s = s & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & Main.serverFilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;""></a>"
             End Select
         End If
         s = s & "<p>" & filterCopy(EntryCopy, OverviewLength) & "</p></div>"
