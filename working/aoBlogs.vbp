@@ -20,7 +20,6 @@ CompatibleEXE32="..\..\release\aoBlogs.dll"
 VersionCompatible32="1"
 MajorVer=2
 MinorVer=0
-RevisionVer=143
 AutoIncrementVer=1
 ServerSupportFiles=0
 VersionCompanyName="kma.net"
