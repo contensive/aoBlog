@@ -2145,6 +2145,7 @@ Private Function ProcessFormBlogPostDetails(SourceFormID As Long, blogId As Long
                 Call Main.testpoint("output - reCaptchaProcessGuid, result=" & captchaResponse)
                 If captchaResponse <> "" Then
                     Call Main.AddUserError("The verify text you entered did not match correctly. Please try again.")
+                    Call AppendLog("Trace", "testpoint1")
                 End If
             End If
             '
@@ -2163,10 +2164,12 @@ Private Function ProcessFormBlogPostDetails(SourceFormID As Long, blogId As Long
                 If Main.IsCSOK(CSP) Then
                     Call Main.AddUserError("<p>This comment has already been accepted.</p>")
                     RetryCommentPost = False
+                    Call AppendLog("Trace", "testpoint2")
                 End If
                 Call Main.CloseCS(CSP)
                 If Main.IsUserError() Then
                     Call Main.testpoint("blog -- user error")
+                    Call AppendLog("Trace", "testpoint3")
                 Else
                     Call Main.testpoint("blog -- adding comment, no user error")
                     EntryID = Main.GetStreamInteger(RequestNameBlogEntryID)
@@ -2180,6 +2183,7 @@ Private Function ProcessFormBlogPostDetails(SourceFormID As Long, blogId As Long
                     End If
                     If Main.csok(CSP) Then
                         Call Main.SetCS(CSP, "BlogID", blogId)
+                        Call Main.SetCS(CSP, "active", 1)
                         'Call Main.SetCS(CSP, "Name", Main.GetStreamText(RequestNameAuthorName))
                         'Call Main.SetCS(CSP, "AuthorEmail", Main.GetStreamText(RequestNameAuthorEmail))
                         Call Main.SetCS(CSP, "Name", Main.GetStreamText(RequestNameCommentTitle))
