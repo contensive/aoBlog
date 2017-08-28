@@ -1064,7 +1064,7 @@ Private Function GetField(RequestName As String, Optional Height As String, Opti
         End If
     '
     Stream = Main.GetFormInputText(RequestName, DefaultValue, Height, Width, RequestName)
-    Stream = Replace(Stream, "<INPUT ", "<INPUT maxlength=" & MaxLenghth & " ", 1, 99, 1)
+    Stream = Replace(Stream, "<INPUT ", "<INPUT maxlength=""" & MaxLenghth & """ ", 1, 99, 1)
     '
     GetField = Stream
     '
