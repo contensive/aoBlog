@@ -3250,7 +3250,7 @@ Private Function getUserPtr(userid As Long) As Long
     Dim userPtr As Long
     Dim CS As Long
     '
-    userPtr = 0
+    userPtr = -1
     If userCnt > 0 Then
         For userPtr = 0 To userCnt - 1
             If users(userPtr).Id = userid Then
