@@ -2419,7 +2419,7 @@ Private Function GetBlogEntryCell(EntryPtr As Long, IsBlogOwner As Boolean, Entr
     hint = "enter"
     authorMemberName = ""
     userPtr = getUserPtr(AuthorMemberID)
-    If userPtr >= 0 Then
+    If userPtr > 0 Then
         authorMemberName = users(userPtr).Name
     End If
     qs = blogListQs
