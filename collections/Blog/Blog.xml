@@ -165,7 +165,7 @@ function blogNewRow() {
 		<Copy></Copy>
 		<CopyText></CopyText>
 		<ActiveXProgramID></ActiveXProgramID>
-		<DotNetClass><![CDATA[Contensive.Addons.aoBlogs2.BlogClass]]></DotNetClass>
+		<DotNetClass><![CDATA[Contensive.Addons.Blog.Views.BlogClass]]></DotNetClass>
 		<ArgumentList><![CDATA[BlogName=Default]]></ArgumentList>
 		<AsAjax>No</AsAjax>
 		<Filter>No</Filter>

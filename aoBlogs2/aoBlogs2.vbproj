@@ -7,8 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{C4E29804-17F1-4177-8AE9-7361DC8EBDF2}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace>Contensive.Addons.Blog</RootNamespace>
     <AssemblyName>aoBlogs2</AssemblyName>
     <MyType>Windows</MyType>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
@@ -65,9 +64,8 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CPBase">
-      <HintPath>..\..\Release\CPBase.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="CPBase, Version=4.1.2.0, Culture=neutral, PublicKeyToken=10b3c53389b845fb, processorArchitecture=MSIL">
+      <HintPath>..\packages\contensive.clib.4.1.2\lib\net35\CPBase.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -82,8 +80,21 @@
     <Import Include="System.Diagnostics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="blogClass.vb" />
-    <Compile Include="latestNews.vb" />
+    <Compile Include="constants.vb" />
+    <Compile Include="Controllers\genericController.vb" />
+    <Compile Include="Models\baseModel.vb" />
+    <Compile Include="Models\EmailModel.vb" />
+    <Compile Include="Models\GroupModel.vb" />
+    <Compile Include="Models\GroupRuleModel.vb" />
+    <Compile Include="Models\MemberRuleModel.vb" />
+    <Compile Include="Models\PeopleModel.vb" />
+    <Compile Include="Models\_blankModel.vb" />
+    <Compile Include="Views\vb6BlogsClass.vb" />
+    <Compile Include="Controllers\vb6PatchClass.vb" />
+    <Compile Include="Views\vb6CategoriesClass.vb" />
+    <Compile Include="Views\_blankClass.vb" />
+    <Compile Include="Views\latestNews - Copy.vb" />
+    <Compile Include="Views\latestNews.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -99,7 +110,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="SubscribeEmailClass.vb" />
+    <Compile Include="Views\SubscribeEmailClass.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
@@ -119,6 +130,7 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -147,6 +159,12 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Models\modelData.txt" />
+    <Content Include="Resources\LegacyVb6-ccCommonModule.txt" />
+    <Content Include="Resources\LegacyVb6-KmaCommonModule.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
