@@ -13,7 +13,7 @@ Namespace Controllers
         ' ----- Returns true if the visitor is a member, and in the group named
         '========================================================================
         '
-        Public Function IsGroupListMember(Main As Object, GroupIDList As String, Optional CheckMemberID As Variant) As Boolean
+        Public Function IsGroupListMember(cp As CPBaseClass, GroupIDList As String, Optional CheckMemberID As Object = 0) As Boolean
             Dim iCheckMemberID As Long
             Dim CSPointer As Long
             Dim GroupID As Long
@@ -24,17 +24,17 @@ Namespace Controllers
             '
             SQLPageStartTime = KmaEncodeSQLDate(Now)
             IsGroupListMember = False
-            iCheckMemberID = KmaEncodeMissingInteger(CheckMemberID, Main.MemberID)
+            iCheckMemberID = If(CheckMemberID = 0, cp.User.Id, CheckMemberID)
             InList = "," & GroupIDList & ","
-            CSPointer = Main.OpenCSContent_Internal("Member Rules", "((DateExpires is null)or(DateExpires>" & SQLPageStartTime & "))and(MemberID=" & KmaEncodeSQLNumber(iCheckMemberID) & ")", , , , , "GroupID")
-            Do While Main.IsCSOK(CSPointer)
-                If InStr(1, InList, "," & Main.GetCSText(CSPointer, "GroupID") & ",") Then
+            CSPointer = cp.OpenCSContent_Internal("Member Rules", "((DateExpires is null)or(DateExpires>" & SQLPageStartTime & "))and(MemberID=" & KmaEncodeSQLNumber(iCheckMemberID) & ")", , , , , "GroupID")
+            Do While cp.IsCSOK(CSPointer)
+                If InStr(1, InList, "," & cp.GetCSText(CSPointer, "GroupID") & ",") Then
                     IsGroupListMember = True
                     Exit Do
                 End If
-                Call Main.NextCSRecord(CSPointer)
+                Call cp.NextCSRecord(CSPointer)
             Loop
-            Call Main.CloseCS(CSPointer)
+            Call cp.CloseCS(CSPointer)
         End Function
         '
         '
