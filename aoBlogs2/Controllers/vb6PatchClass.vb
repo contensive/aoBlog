@@ -14,6 +14,8 @@ Namespace Controllers
         '========================================================================
         '
         Public Function IsGroupListMember(cp As CPBaseClass, GroupIDList As String, Optional CheckMemberID As Object = 0) As Boolean
+            Dim result As Boolean = False
+
             Dim iCheckMemberID As Long
             Dim CSPointer As Long
             Dim GroupID As Long
@@ -22,19 +24,20 @@ Namespace Controllers
             Dim InList As String
             Dim SQLPageStartTime As String
             '
-            SQLPageStartTime = KmaEncodeSQLDate(Now)
-            IsGroupListMember = False
+            SQLPageStartTime = cp.Db.EncodeSQLDate(Now)
+            result = False
             iCheckMemberID = If(CheckMemberID = 0, cp.User.Id, CheckMemberID)
             InList = "," & GroupIDList & ","
-            CSPointer = cp.OpenCSContent_Internal("Member Rules", "((DateExpires is null)or(DateExpires>" & SQLPageStartTime & "))and(MemberID=" & KmaEncodeSQLNumber(iCheckMemberID) & ")", , , , , "GroupID")
-            Do While cp.IsCSOK(CSPointer)
-                If InStr(1, InList, "," & cp.GetCSText(CSPointer, "GroupID") & ",") Then
-                    IsGroupListMember = True
-                    Exit Do
+            Dim memberRuleList As List(Of Models.MemberRuleModel) = Models.MemberRuleModel.createList(cp, "((DateExpires is null)or(DateExpires>" & SQLPageStartTime & "))and(MemberID=" & KmaEncodeSQLNumber(iCheckMemberID) & ")")
+            For Each memberRule In memberRuleList
+                If InStr(1, InList, "," & memberRule.GroupID & ",") Then
+                    result = True
+                    Exit For
                 End If
-                Call cp.NextCSRecord(CSPointer)
-            Loop
-            Call cp.CloseCS(CSPointer)
+            Next
+
+            Return result
+
         End Function
         '
         '
