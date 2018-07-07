@@ -64,9 +64,6 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CPBase, Version=4.1.2.0, Culture=neutral, PublicKeyToken=10b3c53389b845fb, processorArchitecture=MSIL">
-      <HintPath>..\packages\contensive.clib.4.1.2\lib\net35\CPBase.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -88,6 +85,7 @@
     <Compile Include="Models\GroupRuleModel.vb" />
     <Compile Include="Models\MemberRuleModel.vb" />
     <Compile Include="Models\PeopleModel.vb" />
+    <Compile Include="Models\BlogCategoryGroupRulesModel.vb" />
     <Compile Include="Models\_blankModel.vb" />
     <Compile Include="Views\vb6BlogsClass.vb" />
     <Compile Include="Controllers\vb6PatchClass.vb" />
@@ -130,7 +128,6 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -160,7 +157,11 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <PackageReference Include="contensive.clib">
+      <Version>4.1.2</Version>
+    </PackageReference>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Models\modelData.txt" />
     <Content Include="Resources\LegacyVb6-ccCommonModule.txt" />

@@ -14,13 +14,13 @@ Namespace Views
             Try
                 '
                 Dim BlogLink As String
-                Dim CS As Long
+                Dim CS As Integer
                 Dim s As String
                 Dim Link As String
                 Dim BlogURL As String
-                Dim cnt As Long
+                Dim cnt As Integer
                 Dim AClass As String
-                Dim RecordID As Long
+                Dim RecordID As Integer
                 Dim RecordName As String
                 Dim Patch As New PatchClass
                 Dim GroupList As String

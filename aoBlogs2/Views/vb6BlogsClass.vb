@@ -59,20 +59,20 @@ Namespace Views
         Private ErrorString As String
         Private RetryCommentPost As Boolean                 ' when true, the comment post page prepopulates with the previous comment post. set by process comment
 
-        Private OverviewLength As Long
-        Private PostsToDisplay As Long
+        Private OverviewLength As Integer
+        Private PostsToDisplay As Integer
 
         Const StreamUpgradeTimeout = 1800
 
         '
         Public Class userCacheStruct
-            Public Id As Long
+            Public Id As Integer
             Public Name As String
             Public authorInfoLink As String
         End Class
         '
         Private users() As userCacheStruct
-        Private userCnt As Long
+        Private userCnt As Integer
         '
         Private allowAuthorInfoLink As Boolean
 
@@ -82,42 +82,42 @@ Namespace Views
             Dim blogDescription As String
             Dim ignoreLegacyInstanceOptions As Boolean
             Dim authoringGroup As String
-            Dim authoringGroupId As Long
+            Dim authoringGroupId As Integer
             Dim NewPostCopy As String
-            Dim BlogPostID As Long
-            Dim CSRule As Long
-            Dim csLink As Long
+            Dim BlogPostID As Integer
+            Dim CSRule As Integer
+            Dim csLink As Integer
             Dim EntryLink As String
             Dim RSSTitle As String
             Dim RSSFeedFilename As String
-            Dim CSFeed As Long
+            Dim CSFeed As Integer
             Dim DateSearchText As String
             Dim KeywordList As String
             Dim ButtonValue As String
             Dim IsContentManager As Boolean
             Dim Stream As String
             Dim BlogName As String
-            Dim blogId As Long
-            Dim BlogOwnerID As Long
+            Dim blogId As Integer
+            Dim BlogOwnerID As Integer
             Dim IsBlogOwner As Boolean
-            Dim CS As Long
-            Dim FormID As Long
-            Dim SourceFormID As Long
+            Dim CS As Integer
+            Dim FormID As Integer
+            Dim SourceFormID As Integer
             Dim DbVersion As String
             Dim AppVersion As String
             Dim s As String
-            Dim ArchiveMonth As Long
-            Dim ArchiveYear As Long
-            Dim EntryID As Long
+            Dim ArchiveMonth As Integer
+            Dim ArchiveYear As Integer
+            Dim EntryID As Integer
             Dim AllowAnonymous As Boolean
             Dim Title As String
             Dim AllowCategories As Boolean
-            Dim BlogCategoryID As Long
-            Dim RSSFeedId As Long
+            Dim BlogCategoryID As Integer
+            Dim RSSFeedId As Integer
             Dim RSSFeedName As String
-            Dim ThumbnailImageWidth As Long
+            Dim ThumbnailImageWidth As Integer
             Dim BuildVersion As String
-            Dim ImageWidthMax As Long
+            Dim ImageWidthMax As Integer
             Dim autoApproveComments As Boolean
             Dim emailComment As Boolean
             Dim qs As String
@@ -394,7 +394,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Private Function GetForm(FormID As Long, blogId As Long, BlogName As String, IsBlogOwner As Boolean, ArchiveMonth As Long, ArchiveYear As Long, EntryID As Long, KeywordList As String, ButtonValue As String, DateSearchText As String, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, RSSFeedName As String, RSSFeedFilename As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, blogDescription As String, blogCaption As String, RSSFeedId As Long, blogListLink As String, blogListQs As String, allowCaptcha As Boolean) As String
+        Private Function GetForm(FormID As Integer, blogId As Integer, BlogName As String, IsBlogOwner As Boolean, ArchiveMonth As Integer, ArchiveYear As Integer, EntryID As Integer, KeywordList As String, ButtonValue As String, DateSearchText As String, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Integer, RSSFeedName As String, RSSFeedFilename As String, ThumbnailImageWidth As Integer, BuildVersion As String, ImageWidthMax As Integer, blogDescription As String, blogCaption As String, RSSFeedId As Integer, blogListLink As String, blogListQs As String, allowCaptcha As Boolean) As String
             '
             Dim Stream As String
             Dim IsEditing As Boolean
@@ -438,7 +438,7 @@ Namespace Views
         '       returns the FormID for the next one to display
         '====================================================================================
         '
-        Private Function ProcessForm(SourceFormID As Long, blogId As Long, IsBlogOwner As Boolean, EntryID As Long, ButtonValue As String, BlogName As String, BlogOwnerID As Long, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, RSSFeedId As Long, blogListLink As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, autoApproveComments As Boolean, authoringGroupId As Long, emailComment As Boolean, OptionString As String, allowRecaptcha As Boolean) As Long
+        Private Function ProcessForm(SourceFormID As Integer, blogId As Integer, IsBlogOwner As Boolean, EntryID As Integer, ButtonValue As String, BlogName As String, BlogOwnerID As Integer, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Integer, RSSFeedId As Integer, blogListLink As String, ThumbnailImageWidth As Integer, BuildVersion As String, ImageWidthMax As Integer, autoApproveComments As Boolean, authoringGroupId As Integer, emailComment As Boolean, OptionString As String, allowRecaptcha As Boolean) As Integer
             '
             If ButtonValue <> "" Then
                 Select Case SourceFormID
@@ -462,57 +462,57 @@ Namespace Views
         '
         '====================================================================================
         '
-        Private Function GetFormBlogSearch(blogId As Long, BlogName As String, IsBlogOwner As Boolean, KeywordList As String, ButtonValue As String, DateSearchText As String, AllowCategories As Boolean, BlogCategoryID As Long, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, blogListLink As String, blogListQs As String) As String
+        Private Function GetFormBlogSearch(blogId As Integer, BlogName As String, IsBlogOwner As Boolean, KeywordList As String, ButtonValue As String, DateSearchText As String, AllowCategories As Boolean, BlogCategoryID As Integer, ThumbnailImageWidth As Integer, BuildVersion As String, ImageWidthMax As Integer, blogListLink As String, blogListQs As String) As String
             '
             'Dim EntryCopyOverview As String
             Dim BlogTagList As String
             Dim PodcastMediaLink As String
             Dim PodcastSize As String
-            Dim Return_CommentCnt As Long
+            Dim Return_CommentCnt As Integer
             Dim DateSearch As Date
             Dim Subcaption As String
-            Dim AuthorMemberID As Long
-            Dim ParentID As Long
-            Dim ResultPtr As Long
-            Dim EntryID As Long
+            Dim AuthorMemberID As Integer
+            Dim ParentID As Integer
+            Dim ResultPtr As Integer
+            Dim EntryID As Integer
             Dim EntryName As String
             Dim EntryCopy As String
-            Dim CommentID As Long
+            Dim CommentID As Integer
             Dim CommentName As String
             Dim CommentCopy As String
             Dim DateAdded As Date
             Dim Approved As Boolean
             Dim s As String
-            Dim CS As Long
+            Dim CS As Integer
             Dim SQL As String
-            Dim CommentPointer As Long
-            Dim CommentCount As Long
+            Dim CommentPointer As Integer
+            Dim CommentCount As Integer
             Dim CommentSQL As String
             Dim CommentString As String
-            Dim CommentBlogID As Long
+            Dim CommentBlogID As Integer
             Dim CSP As String
             Dim Divider As String
             Dim qs As String
             '
-            Dim CSPointer As Long
+            Dim CSPointer As Integer
             Dim Criteria As String
             Dim SearchMonth As String
             Dim SearchYear As String
             Dim DateString As String
             Dim KeyWordsArray() As String
-            Dim KeyWordsCounter As Long
-            Dim KeyWordsArrayCounter As Long
+            Dim KeyWordsCounter As Integer
+            Dim KeyWordsArrayCounter As Integer
             Dim EnteredKeyWords As String
-            Dim CounterKeyWords As Long
+            Dim CounterKeyWords As Integer
             Dim OrClause As String
             Dim Button As String
-            Dim OrCnt As Long
+            Dim OrCnt As Integer
             Dim allowComments As Boolean
             Dim QueryTag As String
-            Dim imageDisplayTypeId As Long
+            Dim imageDisplayTypeId As Integer
             Dim searchForm As String
-            Dim primaryImagePositionId As Long
-            Dim articlePrimaryImagePositionId As Long
+            Dim primaryImagePositionId As Integer
+            Dim articlePrimaryImagePositionId As Integer
             '
             'Call Main.AddRefreshQueryString(RequestNameSourceFormID, FormBlogSearch)
             'Call Main.AddRefreshQueryString(RequestNameFormID, FormBlogSearch)
@@ -681,26 +681,26 @@ Namespace Views
         '
         '====================================================================================
         '
-        Private Function GetFormBlogArchiveDateList(blogId As Long, BlogName As String, IsEditing As Boolean, IsBlogOwner As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, blogListLink As String, blogListQs As String) As String
+        Private Function GetFormBlogArchiveDateList(blogId As Integer, BlogName As String, IsEditing As Boolean, IsBlogOwner As Boolean, AllowCategories As Boolean, BlogCategoryID As Integer, ThumbnailImageWidth As Integer, BuildVersion As String, ImageWidthMax As Integer, blogListLink As String, blogListQs As String) As String
             '
             Dim s As String
-            Dim CS As Long
-            Dim CSPointer As Long
+            Dim CS As Integer
+            Dim CSPointer As Integer
             Dim ArchiveList As String ' ** link for different month
             Dim TitleBlog As String
             Dim DateBlog As String
             Dim CopyBlog As String
-            Dim MonthCounter As Long
-            Dim ThisMonth As Long
-            Dim ThisYear As Long
-            Dim ArchiveMonth As Long
-            Dim ArchiveYear As Long
-            Dim Counter As Long
+            Dim MonthCounter As Integer
+            Dim ThisMonth As Integer
+            Dim ThisYear As Integer
+            Dim ArchiveMonth As Integer
+            Dim ArchiveYear As Integer
+            Dim Counter As Integer
             Dim NameOfMonth As String
             Dim DateAddedSQL As String
             Dim FieldList As String
             Dim qs As String
-            Dim RowCnt As Long
+            Dim RowCnt As Integer
             Dim SQL As String
             '
             s = s & vbCrLf & Main.GetContentCopy2("Blogs Archives Header for " & BlogName, , "<h2>" & BlogName & " Blog Archive</h2>")
@@ -761,34 +761,34 @@ Namespace Views
         '
         '====================================================================================
         '
-        Private Function GetFormBlogArchivedBlogs(blogId As Long, BlogName As String, ArchiveMonth As Long, ArchiveYear As Long, IsEditing As Boolean, IsBlogOwner As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, blogListLink As String, blogListQs As String) As String
+        Private Function GetFormBlogArchivedBlogs(blogId As Integer, BlogName As String, ArchiveMonth As Integer, ArchiveYear As Integer, IsEditing As Boolean, IsBlogOwner As Boolean, AllowCategories As Boolean, BlogCategoryID As Integer, ThumbnailImageWidth As Integer, BuildVersion As String, ImageWidthMax As Integer, blogListLink As String, blogListQs As String) As String
             '
             'Dim EntryCopyOverview As String
             Dim PodcastMediaLink As String
             Dim PodcastSize As String
-            Dim Return_CommentCnt As Long
+            Dim Return_CommentCnt As Integer
             Dim qs As String
             Dim EntryCopy As String
             Dim EntryName As String
             Dim entryEditLink As String
             Dim DateAdded As Date
-            Dim AuthorMemberID As Long
-            Dim EntryID As Long
+            Dim AuthorMemberID As Integer
+            Dim EntryID As Integer
             Dim BlogTagList As String
-            Dim EntryPtr As Long
+            Dim EntryPtr As Integer
             Dim s As String
-            Dim ArchivesSQL As Long
-            Dim ArchivesPointer As Long
+            Dim ArchivesSQL As Integer
+            Dim ArchivesPointer As Integer
             Dim SelectedDate As String
-            Dim BlahDate As Long
-            Dim CurrentBLogPointer As Long
-            Dim CurrentBlogID As Long
-            Dim PageNumber As Long
-            Dim CS As Long
+            Dim BlahDate As Integer
+            Dim CurrentBLogPointer As Integer
+            Dim CurrentBlogID As Integer
+            Dim PageNumber As Integer
+            Dim CS As Integer
             Dim allowComments As Boolean
-            Dim imageDisplayTypeId As Long
-            Dim primaryImagePositionId As Long
-            Dim articlePrimaryImagePositionId As Long
+            Dim imageDisplayTypeId As Integer
+            Dim primaryImagePositionId As Integer
+            Dim articlePrimaryImagePositionId As Integer
             '
             ' If it is the current month, start at entry 6
             '
@@ -916,7 +916,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Private Function Random(Lowerbound As Long, Upperbound As Long)
+        Private Function Random(Lowerbound As Integer, Upperbound As Integer)
             '
             Randomize()
             Random = Int(Rnd() * Upperbound) + Lowerbound
@@ -927,7 +927,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Private Function GetFormBlogPostList(blogId As Long, BlogName As String, IsBlogOwner As Boolean, IsEditing As Boolean, EntryID As Long, AllowCategories As Boolean, BlogCategoryID As Long, RSSFeedName As String, RSSFeedFilename As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, blogDescription As String, blogCaption As String, RSSFeedId As Long, blogListLink As String, blogListQs As String) As String
+        Private Function GetFormBlogPostList(blogId As Integer, BlogName As String, IsBlogOwner As Boolean, IsEditing As Boolean, EntryID As Integer, AllowCategories As Boolean, BlogCategoryID As Integer, RSSFeedName As String, RSSFeedFilename As String, ThumbnailImageWidth As Integer, BuildVersion As String, ImageWidthMax As Integer, blogDescription As String, blogCaption As String, RSSFeedId As Integer, blogListLink As String, blogListQs As String) As String
             '
             'Dim EntryCopyOverview As String
             Dim BlogTagList As String
@@ -937,30 +937,30 @@ Namespace Views
             Dim FeedFooter As String
             Dim ReturnFooter As String
             Dim CategoryFooter As String
-            Dim TestCategoryID As Long
+            Dim TestCategoryID As Integer
             Dim GroupList As String
             Dim BlogCategoryName As String
-            Dim Return_CommentCnt As Long
+            Dim Return_CommentCnt As Integer
             Dim qs As String
-            Dim CommentPtr As Long
-            Dim CommentID As Long
+            Dim CommentPtr As Integer
+            Dim CommentID As Integer
             Dim Approved As Boolean
             Dim CommentName As String
             Dim CommentCopy As String
             Dim s As String
-            Dim CS As Long
+            Dim CS As Integer
             Dim SQL As String
-            Dim CommentPointer As Long
-            Dim CommentCount As Long
+            Dim CommentPointer As Integer
+            Dim CommentCount As Integer
             Dim CommentSQL As String
             Dim CommentString As String
-            Dim CommentBlogID As Long
+            Dim CommentBlogID As Integer
             Dim CSP As String
             Dim Divider As String
             Dim AddBlogFlag As Boolean
             Dim SearchFlag As Boolean
-            Dim CSCount As Long
-            Dim AuthorMemberID As Long
+            Dim CSCount As Integer
+            Dim AuthorMemberID As Integer
             Dim DateAdded As Date
             Dim RowCopy As String
             'Dim IsEditing As Boolean
@@ -968,15 +968,15 @@ Namespace Views
             Dim Criteria As String
             Dim EntryCopy As String
             Dim allowComments As Boolean
-            Dim EntryPtr As Long
+            Dim EntryPtr As Integer
             Dim locBlogTitle As String
             Dim IsBlocked As Boolean
-            Dim CSCat As Long
+            Dim CSCat As Integer
             Dim Patch As New PatchClass
             Dim NoneMsg As String
-            Dim imageDisplayTypeId As Long
-            Dim primaryImagePositionId As Long
-            Dim articlePrimaryImagePositionId As Long
+            Dim imageDisplayTypeId As Integer
+            Dim primaryImagePositionId As Integer
+            Dim articlePrimaryImagePositionId As Integer
             Dim categoryLink As String
             '
             locBlogTitle = BlogName
@@ -1192,30 +1192,30 @@ Namespace Views
         '
         '====================================================================================
         '
-        Private Function GetFormBlogPost(blogId As Long, BlogName As String, IsBlogOwner As Boolean, EntryID As Long, AllowCategories As Boolean, BlogCategoryID As Long, blogListLink As String) As String
+        Private Function GetFormBlogPost(blogId As Integer, BlogName As String, IsBlogOwner As Boolean, EntryID As Integer, AllowCategories As Boolean, BlogCategoryID As Integer, blogListLink As String) As String
             '
             Dim editor As String
             Dim BlogCopy As String
             Dim BlogTagList As String
-            Dim Ptr As Long
+            Dim Ptr As Integer
             Dim imageName As String
             Dim imageDescription As String
             Dim imageFilename As String
-            Dim ImageID As Long
-            Dim Pos As Long
+            Dim ImageID As Integer
+            Dim Pos As Integer
             Dim CategorySelect As String
             Dim hint As String
             Dim Button As String
             Dim qs As String
             Dim c As String
             Dim s As String
-            Dim CS As Long
+            Dim CS As Integer
             Dim SQL As String
-            Dim CommentPointer As Long
-            Dim CommentCount As Long
+            Dim CommentPointer As Integer
+            Dim CommentCount As Integer
             Dim CommentSQL As String
             Dim CommentString As String
-            Dim CommentBlogID As Long
+            Dim CommentBlogID As Integer
             Dim Divider As String
             Dim BlogTitle As String
             '
@@ -1427,31 +1427,31 @@ Namespace Views
         '
         '====================================================================================
         '
-        Private Function ProcessFormBlogPost(SourceFormID As Long, blogId As Long, EntryID As Long, ButtonValue As String, BlogCategoryID As Long, RSSFeedId As Long, blogListLink As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long) As Long
+        Private Function ProcessFormBlogPost(SourceFormID As Integer, blogId As Integer, EntryID As Integer, ButtonValue As String, BlogCategoryID As Integer, RSSFeedId As Integer, blogListLink As String, ThumbnailImageWidth As Integer, BuildVersion As String, ImageWidthMax As Integer) As Integer
             '
-            Dim UploadCount As Long
-            Dim UploadPointer As Long
+            Dim UploadCount As Integer
+            Dim UploadPointer As Integer
             Dim Copy As String
             Dim FileExtension As String
             Dim FilenameNoExtension As String
             Dim VirtualFilePath As String
-            Dim BlogImageID As Long
-            Dim ImageID As Long
-            Dim imageOrder As Long
+            Dim BlogImageID As Integer
+            Dim ImageID As Integer
+            Dim imageOrder As Integer
             Dim imageName As String
             Dim imageDescription As String
             Dim AltSizeList As String
-            Dim ImageWidth As Long
-            Dim ImageHeight As Long
+            Dim ImageWidth As Integer
+            Dim ImageHeight As Integer
             Dim sf As Object
             Dim qs As String
             Dim EntryName As String
             Dim EntryLink As String
-            Dim CS As Long
+            Dim CS As Integer
             Dim SN As String
             Dim SNName As String
             Dim VirtualFilePathPage As String
-            Dim Pos As Long
+            Dim Pos As Integer
             Dim imageFilename As String
             '
             ProcessFormBlogPost = SourceFormID
@@ -1590,7 +1590,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Private Function GetFormBlogPostDetails(blogId As Long, EntryID As Long, IsBlogOwner As Boolean, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Long, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, blogListLink As String, blogListQs As String, allowCaptcha As Boolean) As String
+        Private Function GetFormBlogPostDetails(blogId As Integer, EntryID As Integer, IsBlogOwner As Boolean, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Integer, ThumbnailImageWidth As Integer, BuildVersion As String, ImageWidthMax As Integer, blogListLink As String, blogListQs As String, allowCaptcha As Boolean) As String
             '
             'Dim EntryCopyOverview As String
             Dim BlogTagList As String
@@ -1598,33 +1598,33 @@ Namespace Views
             Dim PodcastMediaLink As String
             Dim PodcastSize As String
             Dim formKey As String
-            Dim Return_CommentCnt As Long
+            Dim Return_CommentCnt As Integer
             Dim Copy As String
             Dim DateAdded As Date
-            Dim AuthorMemberID As Long
+            Dim AuthorMemberID As Integer
             Dim s As String
-            Dim CS As Long
+            Dim CS As Integer
             Dim Divider As String
-            Dim RandomNumber As Long
+            Dim RandomNumber As Integer
             Dim Approved As Boolean
             Dim CommentName As String
             Dim CommentCopy As String
-            Dim CommentPtr As Long
-            Dim CommentID As Long
+            Dim CommentPtr As Integer
+            Dim CommentID As Integer
             Dim EntryName As String
             Dim EntryCopy As String
             Dim allowComments As Boolean
-            Dim EntryPtr As Long
+            Dim EntryPtr As Integer
             Dim qs As String
             Dim QSBack As String
-            Dim CommentCnt As Long
-            Dim imageDisplayTypeId As Long
+            Dim CommentCnt As Integer
+            Dim imageDisplayTypeId As Integer
             Dim loginForm As String
-            Dim primaryImagePositionId As Long
-            Dim articlePrimaryImagePositionId As Long
+            Dim primaryImagePositionId As Integer
+            Dim articlePrimaryImagePositionId As Integer
             '
             'Dim allowCaptcha As Boolean
-            'Dim blogId As Long
+            'Dim blogId As Integer
 
             Call Main.testpoint("blog -- getFormBlogPostDetails, enter ")
             Call Main.testpoint("blog -- getFormBlogPostDetails, allowCaptcha=[" & allowCaptcha & "]")
@@ -1716,7 +1716,7 @@ Namespace Views
             '    s = s & cr & "<div class=""aoBlogCommentHeader"">Comments</div>"
             '    s = s & vbCrLf & Divider
             '
-            Dim Auth As Long
+            Dim Auth As Integer
             Dim AllowPasswordEmail As Boolean
             Dim AllowMemberJoin As Boolean
             '
@@ -1864,28 +1864,28 @@ Namespace Views
         '
         '====================================================================================
         '
-        Private Function ProcessFormBlogPostDetails(SourceFormID As Long, blogId As Long, IsBlogOwner As Boolean, ButtonValue As String, BlogName As String, BlogOwnerID As Long, AllowAnonymous As Boolean, BlogCategoryID As Long, autoApproveComments As Boolean, authoringGroupId As Long, emailComment As Boolean, OptionString As String, allowCaptcha As Boolean) As Long
+        Private Function ProcessFormBlogPostDetails(SourceFormID As Integer, blogId As Integer, IsBlogOwner As Boolean, ButtonValue As String, BlogName As String, BlogOwnerID As Integer, AllowAnonymous As Boolean, BlogCategoryID As Integer, autoApproveComments As Boolean, authoringGroupId As Integer, emailComment As Boolean, OptionString As String, allowCaptcha As Boolean) As Integer
             '
-            Dim AuthoringMemberId As Long
+            Dim AuthoringMemberId As Integer
             Dim authoringGroup As String
-            Dim MemberID As Long
+            Dim MemberID As Integer
             Dim MemberName As String
             Dim EntryLink As String
             'Dim ButtonValue As String
             Dim EmailBody As String
             Dim EmailFromAddress As String
-            Dim EntryCnt As Long
-            Dim EntryPtr As Long
-            Dim CommentCnt As Long
-            Dim CommentPtr As Long
+            Dim EntryCnt As Integer
+            Dim EntryPtr As Integer
+            Dim CommentCnt As Integer
+            Dim CommentPtr As Integer
             Dim Suffix As String
-            Dim CS As Long
+            Dim CS As Integer
             Dim Copy As String
-            Dim CSP As Long
+            Dim CSP As Integer
             Dim EmailString As String
             Dim CommentInfo As String
-            Dim CommentID As Long
-            Dim RandomSerialNumber As Long
+            Dim CommentID As Integer
+            Dim RandomSerialNumber As Integer
             Dim EntryName As String
             Dim CommentTitle As String
             Dim AuthorName As String
@@ -1894,7 +1894,7 @@ Namespace Views
             Dim CommentDate As String
             Dim Approved As Boolean
             Dim SN As String
-            Dim EntryID As Long
+            Dim EntryID As Integer
             Dim formKey As String
             Dim optionStr As String
             Dim captchaResponse As String
@@ -2080,14 +2080,14 @@ Namespace Views
         '
         '====================================================================================
         '
-        Private Function GetBlogCommentCell(IsBlogOwner As Boolean, DateAdded As Date, Approved As Boolean, CommentName As String, CommentCopy As String, CommentID As Long, EntryPtr As Long, CommentPtr As Long, AuthorMemberID As Long, EntryID As Long, IsSearchListing As Boolean, EntryName As String) As String
+        Private Function GetBlogCommentCell(IsBlogOwner As Boolean, DateAdded As Date, Approved As Boolean, CommentName As String, CommentCopy As String, CommentID As Integer, EntryPtr As Integer, CommentPtr As Integer, AuthorMemberID As Integer, EntryID As Integer, IsSearchListing As Boolean, EntryName As String) As String
             '
             Dim Copy As String
             Dim s As String
             Dim RowCopy As String
             Dim RequestSuffix As String
             Dim qs As String
-            Dim userPtr As Long
+            Dim userPtr As Integer
             Dim authorMemberName As String
             '
             userPtr = getUserPtr(AuthorMemberID)
@@ -2150,16 +2150,16 @@ Namespace Views
             '
         End Function
         '
-        Private Function GetBlogEntryCell(EntryPtr As Long, IsBlogOwner As Boolean, EntryID As Long, EntryName As String, EntryCopy As String, DateAdded As Date, DisplayFullEntry As Boolean, IsSearchListing As Boolean, Return_CommentCnt As Long, allowComments As Boolean, PodcastMediaLink As String, PodcastSize As String, entryEditLink As String, ThumbnailImageWidth As Long, BuildVersion As String, ImageWidthMax As Long, BlogTagList As String, imageDisplayTypeId As Long, primaryImagePositionId As Long, articlePrimaryImagePositionId As Long, blogListQs As String, AuthorMemberID As Long) As String
+        Private Function GetBlogEntryCell(EntryPtr As Integer, IsBlogOwner As Boolean, EntryID As Integer, EntryName As String, EntryCopy As String, DateAdded As Date, DisplayFullEntry As Boolean, IsSearchListing As Boolean, Return_CommentCnt As Integer, allowComments As Boolean, PodcastMediaLink As String, PodcastSize As String, entryEditLink As String, ThumbnailImageWidth As Integer, BuildVersion As String, ImageWidthMax As Integer, BlogTagList As String, imageDisplayTypeId As Integer, primaryImagePositionId As Integer, articlePrimaryImagePositionId As Integer, blogListQs As String, AuthorMemberID As Integer) As String
             '
             Dim hint As String
             Dim Link As String
-            Dim Ptr As Long
+            Dim Ptr As Integer
             Dim Tags() As String
             Dim TagListRow As String
             Dim imageDescription As String
             Dim imageName As String
-            Dim cnt As Long
+            Dim cnt As Integer
             Dim c As String
             Dim ThumbnailFilename As String
             Dim imageFilename As String
@@ -2167,25 +2167,25 @@ Namespace Views
             Dim imageIDList As String
             Dim ImageID() As String
             Dim OptionString As String
-            Dim CSCount As Long
-            Dim CommentCount As Long
+            Dim CSCount As Integer
+            Dim CommentCount As Integer
             Dim CommentLine As String
             Dim ToolLine As String
             Dim qs As String
             Dim CommentCopy As String
             Dim CommentName As String
             Dim Approved As Boolean
-            Dim CommentID As Long
-            Dim CommentPtr As Long
+            Dim CommentID As Integer
+            Dim CommentPtr As Integer
             Dim Divider As String
-            Dim CS As Long
+            Dim CS As Integer
             Dim s As String
             Dim RowCopy As String
             Dim Criteria As String
             Dim OverviewCopy As String
             Dim EntryLink As String
-            Dim CSImages As Long
-            Dim userPtr As Long
+            Dim CSImages As Integer
+            Dim userPtr As Integer
             Dim authorMemberName As String
             '
             hint = "enter"
@@ -2521,10 +2521,10 @@ Namespace Views
         '
         '
         '
-        Private Function AddMonth(StartDate As Date, Months As Long) As Date
+        Private Function AddMonth(StartDate As Date, Months As Integer) As Date
             '
-            Dim Y As Long
-            Dim M As Long
+            Dim Y As Integer
+            Dim M As Integer
             '
             M = Month(StartDate) + Months
             Y = Year(StartDate)
@@ -2536,7 +2536,7 @@ Namespace Views
             '
         End Function
 
-        Private Function filterCopy(rawCopy As String, MaxLength As Long) As String
+        Private Function filterCopy(rawCopy As String, MaxLength As Integer) As String
 
             Dim Copy As String
             Dim objHTML As New kmaHTML.DecodeClass
@@ -2555,26 +2555,26 @@ Namespace Views
         '       run on every post
         '========================================================================
         '
-        Private Sub UpdateBlogFeed(blogId As Long, RSSFeedId As Long, blogListLink As String)
+        Private Sub UpdateBlogFeed(blogId As Integer, RSSFeedId As Integer, blogListLink As String)
             '
             Dim RSSTitle As String
             Dim EntryCopy As String
             Dim EntryLink As String
-            Dim EntryID As Long
-            Dim CSPost As Long
+            Dim EntryID As Integer
+            Dim CSPost As Integer
             Dim qs As String
             Dim EntryName As String
-            Dim CS As Long
-            Dim RuleIDs() As Long
-            Dim RuleBlogPostIDs() As Long
-            Dim RuleCnt As Long
-            Dim RulePtr As Long
-            Dim RuleSize As Long
-            Dim BlogPostID As Long
-            Dim CSRule As Long
+            Dim CS As Integer
+            Dim RuleIDs() As Integer
+            Dim RuleBlogPostIDs() As Integer
+            Dim RuleCnt As Integer
+            Dim RulePtr As Integer
+            Dim RuleSize As Integer
+            Dim BlogPostID As Integer
+            Dim CSRule As Integer
             Dim SQL As String
             Dim AdminURL As String
-            Dim pageId As Long
+            Dim pageId As Integer
             '
             AdminURL = Main.SiteProperty_AdminURL
             'call VerifyFeedReturnArgs(BlogID, )
@@ -2675,13 +2675,13 @@ Namespace Views
         '       run on every post
         '========================================================================
         '
-        Private Sub VerifyFeedReturnArgs(blogId As Long, blogListLink As String, Return_RSSFeedID As Long, Return_RSSFeedName As String, Return_RSSFeedFilename As String)
+        Private Sub VerifyFeedReturnArgs(blogId As Integer, blogListLink As String, Return_RSSFeedID As Integer, Return_RSSFeedName As String, Return_RSSFeedFilename As String)
             '
             Dim qs As String
-            Dim CSBlog As Long
+            Dim CSBlog As Integer
             Dim BlogName As String
             Dim blogDescription As String
-            Dim CSFeed As Long
+            Dim CSFeed As Integer
             Dim rssLink As String
             '
             CSBlog = Csv.OpenCSContent(cnBlogs, "ID=" & blogId)
@@ -2760,23 +2760,23 @@ Namespace Views
         '
         '
         '
-        Private Function GetBlogImage(BlogImageID As Long, ThumbnailImageWidth As Long, ImageWidthMax As Long, ByRef Return_ThumbnailFilename As String, ByRef Return_ImageFilename As String, ByRef Return_ImageDescription As String, ByRef Return_Imagename As String) As String
+        Private Function GetBlogImage(BlogImageID As Integer, ThumbnailImageWidth As Integer, ImageWidthMax As Integer, ByRef Return_ThumbnailFilename As String, ByRef Return_ImageFilename As String, ByRef Return_ImageDescription As String, ByRef Return_Imagename As String) As String
             '
             Dim sf As Object
             Dim FilenameNoExtension As String
             Dim FilenameExtension As String
-            Dim Pos As Long
-            Dim CS As Long
+            Dim Pos As Integer
+            Dim CS As Integer
             Dim Filename As String
             Dim AltSizeList As String
             Dim Sizes() As String
             Dim Size As String
-            Dim Ptr As Long
+            Dim Ptr As Integer
             Dim Dims() As String
             Dim ThumbNailSize As String
             Dim ImageSize As String
             Dim UpdateRecord As Boolean
-            Dim DimWidth As Long
+            Dim DimWidth As Integer
             '
             CS = Main.OpenCSContentRecord(cnBlogImages, BlogImageID, , , "name,description,filename,altsizelist")
             If Main.IsCSOK(CS) Then
@@ -2871,13 +2871,13 @@ ErrorTrap:
         Private Function getLinkAlias(sourceLink As String) As String
             '
             Dim returnLink As String
-            Dim Pos As Long
+            Dim Pos As Integer
             Dim pageQs() As String
             Dim nameValues() As String
-            Dim cnt As Long
-            Dim Ptr As Long
+            Dim cnt As Integer
+            Dim Ptr As Integer
             Dim Link As String
-            Dim pageId As Long
+            Dim pageId As Integer
             Dim NameValue As String
             Dim qs As String
             '
@@ -2921,10 +2921,10 @@ ErrorTrap:
         '
         '
         '
-        Private Function getUserPtr(userid As Long) As Long
+        Private Function getUserPtr(userid As Integer) As Integer
             '
-            Dim userPtr As Long
-            Dim CS As Long
+            Dim userPtr As Integer
+            Dim CS As Integer
             '
             userPtr = -1
             If userCnt > 0 Then
