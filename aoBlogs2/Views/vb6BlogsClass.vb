@@ -128,56 +128,57 @@ Namespace Views
             '
             ' get blogListLink - link to the main list page
             '
-            blogListQs = Main.RefreshQueryString()
-            blogListQs = ModifyQueryString(blogListQs, RequestNameSourceFormID, "")
-            blogListQs = ModifyQueryString(blogListQs, RequestNameFormID, "")
-            blogListQs = ModifyQueryString(blogListQs, RequestNameBlogCategoryID, "")
-            blogListQs = ModifyQueryString(blogListQs, RequestNameBlogEntryID, "")
-            blogListLink = getLinkAlias("?" & blogListQs)
+            blogListQs = cp.Doc.RefreshQueryString()
+            blogListQs = cp.Utils.ModifyQueryString(blogListQs, RequestNameSourceFormID, "")
+            blogListQs = cp.Utils.ModifyQueryString(blogListQs, RequestNameFormID, "")
+            blogListQs = cp.Utils.ModifyQueryString(blogListQs, RequestNameBlogCategoryID, "")
+            blogListQs = cp.Utils.ModifyQueryString(blogListQs, RequestNameBlogEntryID, "")
+            blogListLink = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, "", "") & "?" & blogListQs
             '
-            s = s & vbCrLf & cr & "<!-- Blog " & BlogName & " -->" & vbCrLf
+            s = s & vbCrLf & "<!-- Blog " & BlogName & " -->" & vbCrLf
             '
-            If Not (Main Is Nothing) Then
-                BlogName = Main.GetAddonOption("BlogName", OptionString)
-                If BlogName = "" Then
+            'If Not (Main Is Nothing) Then
+            BlogName = cp.Doc.GetText("BlogName")
+            If BlogName = "" Then
                     BlogName = "Default"
                 End If
-                BuildVersion = Main.SiteProperty_BuildVersion
+            'BuildVersion = Main.SiteProperty_BuildVersion
+            '
+            ' add warning if the blog is being viewed in the admin site
+            '
+            '    If (InStr(1, Main.ServerLink, Main.SiteProperty_AdminURL, vbTextCompare) <> 0) Then
+            '    s = s & cp.Utils.("Some blog features such as the rss feed can not be initialized when viewed from the admin site.")
+            'End If
+            '
+            ' Get the blog record
+            '
+            Dim csopen As CPCSBaseClass = cp.CSNew()
+            CS = csopen.Open(cnBlogs, "(name=" & cp.Utils.EncodeQueryString(BlogName) & ")", "ID")
+            'If Main.IsCSOK(CS) Then
+            blogId = cp.Site.GetInteger(CS, "ID")
+            RSSFeedId = cp.Site.GetInteger(CS, "RSSFeedID")
+            BlogOwnerID = cp.Site.GetInteger(CS, "OwnerMemberID")
+            authoringGroupId = cp.Site.GetInteger(CS, "AuthoringGroupID")
+            ignoreLegacyInstanceOptions = cp.Site.GetBoolean(CS, "ignoreLegacyInstanceOptions")
+            AllowAnonymous = cp.Site.GetBoolean(CS, "AllowAnonymous")
+            autoApproveComments = cp.Site.GetBoolean(CS, "autoApproveComments")
+            emailComment = cp.Site.GetBoolean(CS, "emailComment")
+            AllowCategories = cp.Site.GetBoolean(CS, "AllowCategories")
+            PostsToDisplay = cp.Site.GetInteger(CS, "PostsToDisplay")
+            OverviewLength = cp.Site.GetInteger(CS, "OverviewLength")
+            ThumbnailImageWidth = cp.Site.GetInteger(CS, "ThumbnailImageWidth")
+            ImageWidthMax = cp.Site.GetInteger(CS, "ImageWidthMax")
+            blogDescription = cp.Site.GetText(CS, "copy")
+            blogCaption = cp.Site.GetText(CS, "caption")
+            allowRecaptcha = cp.Site.GetBoolean(CS, "recaptcha")
+            'End If
+             csopen.Close()
+            If blogId = 0 Then
                 '
-                ' add warning if the blog is being viewed in the admin site
+                ' Create New Blog
                 '
-                If (InStr(1, Main.ServerLink, Main.SiteProperty_AdminURL, vbTextCompare) <> 0) Then
-                    s = s & Main.GetAdminHintWrapper("Some blog features such as the rss feed can not be initialized when viewed from the admin site.")
-                End If
-                '
-                ' Get the blog record
-                '
-                CS = Main.OpenCSContent(cnBlogs, "(name=" & KmaEncodeSQLText(BlogName) & ")", "ID")
-                If Main.IsCSOK(CS) Then
-                    blogId = Main.GetCSInteger(CS, "ID")
-                    RSSFeedId = Main.GetCSInteger(CS, "RSSFeedID")
-                    BlogOwnerID = Main.GetCSInteger(CS, "OwnerMemberID")
-                    authoringGroupId = Main.GetCSInteger(CS, "AuthoringGroupID")
-                    ignoreLegacyInstanceOptions = Main.GetCSBoolean(CS, "ignoreLegacyInstanceOptions")
-                    AllowAnonymous = Main.GetCSBoolean(CS, "AllowAnonymous")
-                    autoApproveComments = Main.GetCSBoolean(CS, "autoApproveComments")
-                    emailComment = Main.GetCSBoolean(CS, "emailComment")
-                    AllowCategories = Main.GetCSBoolean(CS, "AllowCategories")
-                    PostsToDisplay = Main.GetCSInteger(CS, "PostsToDisplay")
-                    OverviewLength = Main.GetCSInteger(CS, "OverviewLength")
-                    ThumbnailImageWidth = Main.GetCSInteger(CS, "ThumbnailImageWidth")
-                    ImageWidthMax = Main.GetCSInteger(CS, "ImageWidthMax")
-                    blogDescription = Main.GetCSText(CS, "copy")
-                    blogCaption = Main.GetCSText(CS, "caption")
-                    allowRecaptcha = Main.GetCSBoolean(CS, "recaptcha")
-                End If
-                Call Main.CloseCS(CS)
-                If blogId = 0 Then
-                    '
-                    ' Create New Blog
-                    '
-                    IsContentManager = Main.IsContentManager("Page Content")
-                    If IsContentManager Then
+                IsContentManager = cp.Doc.GetText("Page Content") 'Main.IsContentManager("Page Content")
+                If IsContentManager Then
                         '
                         ' BIG assumption - First hit by a content manager for this page is the author
                         '
@@ -385,7 +386,7 @@ Namespace Views
                     '
                     s = s & GetForm(FormID, blogId, BlogName, IsBlogOwner, ArchiveMonth, ArchiveYear, EntryID, KeywordList, ButtonValue, DateSearchText, AllowAnonymous, AllowCategories, BlogCategoryID, RSSFeedName, RSSFeedFilename, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogDescription, blogCaption, RSSFeedId, blogListLink, blogListQs, allowRecaptcha)
                 End If
-            End If
+
             '
             GetContent = s
         End Function
@@ -2868,7 +2869,7 @@ ErrorTrap:
         '
         '
         '
-        Private Function getLinkAlias(sourceLink As String) As String
+        Private Function getLinkAlias(cp As CPBaseClass, sourceLink As String) As String
             '
             Dim returnLink As String
             Dim Pos As Integer
@@ -2884,7 +2885,7 @@ ErrorTrap:
             'Call Main.SaveVirtualFile("blog.log", "getLinkAlias(" & sourceLink & ")")
             '
             returnLink = sourceLink
-            If kmaEncodeBoolean(Main.GetSiteProperty("allowLinkAlias", "1")) Then
+            If cp.utils.EncodeBoolean(cp.Site.GetProperty("allowLinkAlias", "1")) Then
                 Link = sourceLink
                 '
                 pageQs = Split(LCase(Link), "?")
@@ -2898,7 +2899,7 @@ ErrorTrap:
                             NameValue = nameValues(Ptr)
                             If pageId = 0 Then
                                 If Mid(NameValue, 1, 4) = "bid=" Then
-                                    pageId = kmaEncodeInteger(Mid(NameValue, 5))
+                                    pageId = cp.Utils.EncodeInteger(Mid(NameValue, 5))
                                     NameValue = ""
                                 End If
                             End If
@@ -2910,7 +2911,7 @@ ErrorTrap:
                             If Len(qs) > 1 Then
                                 qs = Mid(qs, 2)
                             End If
-                            returnLink = Main.GetLinkAliasByPageID(pageId, qs, sourceLink)
+                            returnLink = cp.Content.GetLinkAliasByPageID(pageId, qs, sourceLink)
                         End If
                     End If
                 End If
