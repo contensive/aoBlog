@@ -1,5 +1,4 @@
 ﻿
-
 Option Explicit On
 Option Strict On
 
@@ -9,90 +8,118 @@ Imports System.Text
 Imports Contensive.BaseClasses
 
 Namespace Models
-    Public Class xxxxxmodelNameGoesHerexxxxx        '<------ set set model Name and everywhere that matches this string
+    Public Class blogModel        '<------ set set model Name and everywhere that matches this string
         Inherits baseModel
         Implements ICloneable
         '
         '====================================================================================================
         '-- const
-        Public Const contentName As String = "xxxxxcontentNameGoesHerexxxxx"      '<------ set content name
-        Public Const contentTableName As String = "xxxxxtableNameGoesHerexxxxx"   '<------ set to tablename for the primary content (used for cache names)
+        Public Const contentName As String = "Blogs"      '<------ set content name
+        Public Const contentTableName As String = "ccBlogs"   '<------ set to tablename for the primary content (used for cache names)
         Private Shadows Const contentDataSource As String = "default"             '<------ set to datasource if not default
         '
         '====================================================================================================
         ' -- instance properties
-        'instancePropertiesGoHere
-        ' sample instance property -- Public Property DataSourceID As Integer
+        Public Property AllowAnonymous As Boolean
+        Public Property allowArchiveList As Boolean
+        Public Property allowArticleCTA As Boolean
+        Public Property AllowCategories As Boolean
+        Public Property allowEmailSubscribe As Boolean
+        Public Property allowFacebookLink As Boolean
+        Public Property allowGooglePlusLink As Boolean
+        Public Property allowRSSSubscribe As Boolean
+        Public Property allowSearch As Boolean
+        Public Property allowTwitterLink As Boolean
+        Public Property AuthoringGroupID As Integer
+        Public Property autoApproveComments As Boolean
+        Public Property BriefFilename As String
+        Public Property Caption As String
+        Public Property Copy As String
+        Public Property emailComment As Boolean
+        Public Property emailSubscribeGroupId As Integer
+        Public Property facebookLink As String
+        Public Property followUsCaption As String
+        Public Property googlePlusLink As String
+        Public Property HideContributer As Boolean
+        Public Property ignoreLegacyInstanceOptions As Boolean
+        Public Property ImageWidthMax As Integer
+        Public Property OverviewLength As Integer
+        Public Property OwnerMemberID As Integer
+        Public Property PostsToDisplay As Integer
+        Public Property recaptcha As Boolean
+        Public Property RSSFeedID As Integer
+        Public Property ThumbnailImageWidth As Integer
+        Public Property twitterLink As String
         '
         '====================================================================================================
-        Public Overloads Shared Function add(cp As CPBaseClass) As xxxxxmodelNameGoesHerexxxxx
-            Return add(Of xxxxxmodelNameGoesHerexxxxx)(cp)
+        Public Overloads Shared Function add(cp As CPBaseClass) As blogModel
+            Return add(Of blogModel)(cp)
         End Function
         '
         '====================================================================================================
-        Public Overloads Shared Function create(cp As CPBaseClass, recordId As Integer) As xxxxxmodelNameGoesHerexxxxx
-            Return create(Of xxxxxmodelNameGoesHerexxxxx)(cp, recordId)
+        Public Overloads Shared Function create(cp As CPBaseClass, recordId As Integer) As blogModel
+            Return create(Of blogModel)(cp, recordId)
         End Function
         '
         '====================================================================================================
-        Public Overloads Shared Function create(cp As CPBaseClass, recordGuid As String) As xxxxxmodelNameGoesHerexxxxx
-            Return create(Of xxxxxmodelNameGoesHerexxxxx)(cp, recordGuid)
+        Public Overloads Shared Function create(cp As CPBaseClass, recordGuid As String) As blogModel
+            Return create(Of blogModel)(cp, recordGuid)
         End Function
         '
         '====================================================================================================
-        Public Overloads Shared Function createByName(cp As CPBaseClass, recordName As String) As xxxxxmodelNameGoesHerexxxxx
-            Return createByName(Of xxxxxmodelNameGoesHerexxxxx)(cp, recordName)
+        Public Overloads Shared Function createByName(cp As CPBaseClass, recordName As String) As blogModel
+            Return createByName(Of blogModel)(cp, recordName)
         End Function
         '
         '====================================================================================================
         Public Overloads Sub save(cp As CPBaseClass)
-            MyBase.save(Of xxxxxmodelNameGoesHerexxxxx)(cp)
+            MyBase.save(Of blogModel)(cp)
         End Sub
         '
         '====================================================================================================
         Public Overloads Shared Sub delete(cp As CPBaseClass, recordId As Integer)
-            delete(Of xxxxxmodelNameGoesHerexxxxx)(cp, recordId)
+            delete(Of blogModel)(cp, recordId)
         End Sub
         '
         '====================================================================================================
         Public Overloads Shared Sub delete(cp As CPBaseClass, ccGuid As String)
-            delete(Of xxxxxmodelNameGoesHerexxxxx)(cp, ccGuid)
+            delete(Of blogModel)(cp, ccGuid)
         End Sub
         '
         '====================================================================================================
-        Public Overloads Shared Function createList(cp As CPBaseClass, sqlCriteria As String, Optional sqlOrderBy As String = "id") As List(Of xxxxxmodelNameGoesHerexxxxx)
-            Return createList(Of xxxxxmodelNameGoesHerexxxxx)(cp, sqlCriteria, sqlOrderBy)
+        Public Overloads Shared Function createList(cp As CPBaseClass, sqlCriteria As String, Optional sqlOrderBy As String = "id") As List(Of blogModel)
+            Return createList(Of blogModel)(cp, sqlCriteria, sqlOrderBy)
         End Function
         '
         '====================================================================================================
         Public Overloads Shared Function getRecordName(cp As CPBaseClass, recordId As Integer) As String
-            Return baseModel.getRecordName(Of xxxxxmodelNameGoesHerexxxxx)(cp, recordId)
+            Return baseModel.getRecordName(Of blogModel)(cp, recordId)
         End Function
         '
         '====================================================================================================
         Public Overloads Shared Function getRecordName(cp As CPBaseClass, ccGuid As String) As String
-            Return baseModel.getRecordName(Of xxxxxmodelNameGoesHerexxxxx)(cp, ccGuid)
+            Return baseModel.getRecordName(Of blogModel)(cp, ccGuid)
         End Function
         '
         '====================================================================================================
         Public Overloads Shared Function getRecordId(cp As CPBaseClass, ccGuid As String) As Integer
-            Return baseModel.getRecordId(Of xxxxxmodelNameGoesHerexxxxx)(cp, ccGuid)
+            Return baseModel.getRecordId(Of blogModel)(cp, ccGuid)
         End Function
         '
         '====================================================================================================
         Public Overloads Shared Function getCount(cp As CPBaseClass, sqlCriteria As String) As Integer
-            Return baseModel.getCount(Of xxxxxmodelNameGoesHerexxxxx)(cp, sqlCriteria)
+            Return baseModel.getCount(Of blogModel)(cp, sqlCriteria)
         End Function
         '
         '====================================================================================================
         Public Overloads Function getUploadPath(fieldName As String) As String
-            Return MyBase.getUploadPath(Of xxxxxmodelNameGoesHerexxxxx)(fieldName)
+            Return MyBase.getUploadPath(Of blogModel)(fieldName)
         End Function
         '
         '====================================================================================================
         '
-        Public Function Clone(cp As CPBaseClass) As xxxxxmodelNameGoesHerexxxxx
-            Dim result As xxxxxmodelNameGoesHerexxxxx = DirectCast(Me.Clone(), xxxxxmodelNameGoesHerexxxxx)
+        Public Function Clone(cp As CPBaseClass) As blogModel
+            Dim result As blogModel = DirectCast(Me.Clone(), blogModel)
             result.id = cp.Content.AddRecord(contentName)
             result.ccguid = cp.Utils.CreateGuid()
             result.save(cp)
@@ -111,12 +138,12 @@ Namespace Models
         ''' </summary>
         ''' <param name="cp"></param>
         ''' <param name="modelList">A dictionary with guid as key, and this model as object</param>
-        Public Shared Sub migrationImport(cp As CPBaseClass, modelList As Dictionary(Of String, xxxxxmodelNameGoesHerexxxxx))
+        Public Shared Sub migrationImport(cp As CPBaseClass, modelList As Dictionary(Of String, blogModel))
             Dim ContentControlID As Integer = cp.Content.GetID(contentName)
             For Each kvp In modelList
                 If (Not String.IsNullOrEmpty(kvp.Value.ccguid)) Then
                     kvp.Value.id = 0
-                    Dim dbData As xxxxxmodelNameGoesHerexxxxx = create(cp, kvp.Value.ccguid)
+                    Dim dbData As blogModel = create(cp, kvp.Value.ccguid)
                     If (dbData IsNot Nothing) Then
                         kvp.Value.id = dbData.id
                     Else

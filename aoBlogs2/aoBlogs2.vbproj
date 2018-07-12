@@ -86,6 +86,9 @@
     <Compile Include="Models\MemberRuleModel.vb" />
     <Compile Include="Models\PeopleModel.vb" />
     <Compile Include="Models\BlogCategoryGroupRulesModel.vb" />
+    <Compile Include="Models\blogModel.vb" />
+    <Compile Include="Models\BlogEntryModel.vb" />
+    <Compile Include="Models\LinkAliasesModel.vb" />
     <Compile Include="Models\_blankModel.vb" />
     <Compile Include="Views\vb6BlogsClass.vb" />
     <Compile Include="Controllers\vb6PatchClass.vb" />
