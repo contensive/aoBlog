@@ -92,12 +92,12 @@ Namespace Views
                 If s <> "" Then
                     Execute = "" _
             & vbCrLf & vbTab & "<ul>" _
-            & kmaIndent(Execute) _
+            & CP.Html.Indent(Execute) _
             & vbCrLf & vbTab & "</ul>" _
             & ""
                     Execute = "" _
             & vbCrLf & vbTab & "<div class=""blogCatList"">" _
-            & kmaIndent(Execute) _
+            & CP.Html.Indent(Execute) _
             & vbCrLf & vbTab & "</div>" _
             & ""
                 End If

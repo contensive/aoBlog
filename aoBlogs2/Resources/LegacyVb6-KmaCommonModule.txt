@@ -2183,7 +2183,7 @@ End Function
 '
 '   Indent every line by 1 tab
 '
-Public Function kmaIndent(Source As String) As String
+Public Function cp.Html.Indent(Source As String) As String
     Dim PosStart As Long
     Dim posEnd As Long
     Dim pre As String
@@ -2200,7 +2200,7 @@ Public Function kmaIndent(Source As String) As String
             '
             ' no textarea
             '
-            kmaIndent = Replace(Source, vbCrLf & vbTab, vbCrLf & vbTab & vbTab)
+            cp.Html.Indent = Replace(Source, vbCrLf & vbTab, vbCrLf & vbTab & vbTab)
         Else
             '
             ' text area found, isolate it and indent before and after
@@ -2214,7 +2214,7 @@ Public Function kmaIndent(Source As String) As String
                 target = Mid(Source, PosStart, posEnd - PosStart + Len("</textarea>"))
                 post = Mid(Source, posEnd + Len("</textarea>"))
             End If
-            kmaIndent = kmaIndent(pre) & target & kmaIndent(post)
+            cp.Html.Indent = cp.Html.Indent(pre) & target & cp.Html.Indent(post)
         End If
     Else
         '
@@ -2229,11 +2229,11 @@ Public Function kmaIndent(Source As String) As String
             target = Mid(Source, PosStart, posEnd - PosStart + Len("]]>"))
             post = Mid(Source, posEnd + 3)
         End If
-        kmaIndent = kmaIndent(pre) & target & kmaIndent(post)
+        cp.Html.Indent = cp.Html.Indent(pre) & target & cp.Html.Indent(post)
     End If
-'    kmaIndent = Source
-'    If InStr(1, kmaIndent, "<textarea", vbTextCompare) = 0 Then
-'        kmaIndent = Replace(Source, vbCrLf & vbTab, vbCrLf & vbTab & vbTab)
+'    cp.Html.Indent = Source
+'    If InStr(1, cp.Html.Indent, "<textarea", vbTextCompare) = 0 Then
+'        cp.Html.Indent = Replace(Source, vbCrLf & vbTab, vbCrLf & vbTab & vbTab)
 '    End If
 End Function
 '

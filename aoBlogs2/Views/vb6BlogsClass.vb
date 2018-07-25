@@ -264,7 +264,7 @@ Namespace Views
                 '
                 ' Add this new default post to the new feed
                 '
-                Dim RSSFeedBlogRules As Models.RSSFeedBlogRulesModel = Models.RSSFeedBlogRulesModel.add(cp)
+                Dim RSSFeedBlogRules As Models.RSSFeedBlogRuleModel = Models.RSSFeedBlogRuleModel.add(cp)
                 If (RSSFeedBlogRules IsNot Nothing) Then
                     RSSFeedBlogRules.RSSFeedID = RSSFeedId
                     RSSFeedBlogRules.BlogPostID = BlogPostID
@@ -321,60 +321,71 @@ Namespace Views
                     PostsToDisplay = 5
                 End If
                 Dim legacyblogList As List(Of Models.blogModel) = Models.blogModel.createList(cp, "(id=" & cp.Utils.EncodeNumber(blogId) & ")", "ID")
+
                 If (legacyblogList.Count > 0) Then
-
-                    Call Main.SetCS(CS, "ignoreLegacyInstanceOptions", True)
-                    Call Main.SetCS(CS, "AllowAnonymous", AllowAnonymous)
-                    Call Main.SetCS(CS, "autoApproveComments", autoApproveComments)
-                    Call Main.SetCS(CS, "AllowCategories", AllowCategories)
-                    Call Main.SetCS(CS, "PostsToDisplay", PostsToDisplay)
-                    Call Main.SetCS(CS, "OverviewLength", OverviewLength)
-                    Call Main.SetCS(CS, "ThumbnailImageWidth", ThumbnailImageWidth)
-                    Call Main.SetCS(CS, "ImageWidthMax", ImageWidthMax)
+                    Dim legacyblog As Models.blogModel = blogList.First
+                    legacyblog = Models.blogModel.add(cp)
+                    legacyblog.ignoreLegacyInstanceOptions = True
+                    legacyblog.AllowAnonymous = AllowAnonymous
+                    legacyblog.autoApproveComments = autoApproveComments
+                    legacyblog.AllowCategories = AllowCategories
+                    legacyblog.PostsToDisplay = PostsToDisplay
+                    legacyblog.OverviewLength = OverviewLength
+                    legacyblog.ThumbnailImageWidth = ThumbnailImageWidth
+                    legacyblog.ImageWidthMax = ImageWidthMax
+          
                 End If
 
-                CS = Main.OpenCSContent(cnBlogs, "(id=" & cp.Utils.EncodeNumber(blogId) & ")", "ID")
-                If Main.IsCSOK(CS) Then
-                    Call Main.SetCS(CS, "ignoreLegacyInstanceOptions", True)
-                    Call Main.SetCS(CS, "AllowAnonymous", AllowAnonymous)
-                    Call Main.SetCS(CS, "autoApproveComments", autoApproveComments)
-                    Call Main.SetCS(CS, "AllowCategories", AllowCategories)
-                    Call Main.SetCS(CS, "PostsToDisplay", PostsToDisplay)
-                    Call Main.SetCS(CS, "OverviewLength", OverviewLength)
-                    Call Main.SetCS(CS, "ThumbnailImageWidth", ThumbnailImageWidth)
-                    Call Main.SetCS(CS, "ImageWidthMax", ImageWidthMax)
-                End If
-                Call Main.CloseCS(CS)
+                'CS = Main.OpenCSContent(cnBlogs, "(id=" & cp.Utils.EncodeNumber(blogId) & ")", "ID")
+                'If Main.IsCSOK(CS) Then
+                '    Call Main.SetCS(CS, "ignoreLegacyInstanceOptions", True)
+                '    Call Main.SetCS(CS, "AllowAnonymous", AllowAnonymous)
+                '    Call Main.SetCS(CS, "autoApproveComments", autoApproveComments)
+                '    Call Main.SetCS(CS, "AllowCategories", AllowCategories)
+                '    Call Main.SetCS(CS, "PostsToDisplay", PostsToDisplay)
+                '    Call Main.SetCS(CS, "OverviewLength", OverviewLength)
+                '    Call Main.SetCS(CS, "ThumbnailImageWidth", ThumbnailImageWidth)
+                '    Call Main.SetCS(CS, "ImageWidthMax", ImageWidthMax)
+                'End If
+                'Call Main.CloseCS(CS)
             End If
             If AllowCategories Then
-                If Main.InStream(RequestNameBlogCategoryIDSet) Then
-                    BlogCategoryID = Main.GetStreamInteger(RequestNameBlogCategoryIDSet)
+                If (cp.Doc.GetText(RequestNameBlogCategoryIDSet) <> "") Then
+                    BlogCategoryID = cp.Doc.GetInteger(RequestNameBlogCategoryIDSet)
                 Else
-                    BlogCategoryID = Main.GetStreamInteger(RequestNameBlogCategoryID)
+                    BlogCategoryID = cp.Doc.GetInteger(RequestNameBlogCategoryID)
                 End If
-                Call Main.AddRefreshQueryString(RequestNameBlogCategoryID, BlogCategoryID)
+                'If Main.InStream(RequestNameBlogCategoryIDSet) Then
+
+                '    BlogCategoryID = cp.Doc.GetInteger(RequestNameBlogCategoryIDSet)
+                'Else
+                '    BlogCategoryID = cp.Doc.GetInteger(RequestNameBlogCategoryID)
+                'End If
+                Call cp.Doc.AddRefreshQueryString(RequestNameBlogCategoryID, BlogCategoryID)
+                ' Call Main.AddRefreshQueryString(RequestNameBlogCategoryID, BlogCategoryID)
             End If
             '
-            Call Main.testpoint("Blogs.GetContent, Main.IsAuthenticated=" & Main.IsAuthenticated)
-            Call Main.testpoint("Blogs.GetContent, Main.MemberID=" & cp.User.Id)
-            Call Main.testpoint("Blogs.GetContent, BlogOwnerID=" & BlogOwnerID)
-            Call Main.testpoint("Blogs.GetContent, IsBlogOwner=" & IsBlogOwner)
+            'Call Main.testpoint("Blogs.GetContent, Main.IsAuthenticated=" & Main.IsAuthenticated)
+            'Call Main.testpoint("Blogs.GetContent, Main.MemberID=" & cp.User.Id)
+            'Call Main.testpoint("Blogs.GetContent, BlogOwnerID=" & BlogOwnerID)
+            'Call Main.testpoint("Blogs.GetContent, IsBlogOwner=" & IsBlogOwner)
             If IsBlogOwner And (blogId = 0) Then
                 '
                 ' Blog record was not, or can not be created
                 '
-                s = s & Main.GetAdminHintWrapper("This blog has not been configured. Please edit this page and edit the properties for the blog Add-on")
+                s = s & cp.Html.adminHint("This blog has not been configured. Please edit this page and edit the properties for the blog Add-on")
             Else
                 '
                 ' Get the Feed Args
                 '
-                CSFeed = Main.OpenCSContent(cnRSSFeeds, "id=" & RSSFeedId)
-                If Main.IsCSOK(CSFeed) Then
-                    RSSFeedName = Main.GetCS(CSFeed, "Name")
-                    RSSFeedFilename = Main.GetCS(CSFeed, "RSSFilename")
+                Dim RSSFeedModelList As List(Of Models.RSSFeedModel) = Models.RSSFeedModel.createList(cp, "id=" & RSSFeedId)
+                Dim RSSFeed As Models.RSSFeedModel = Models.RSSFeedModel.add(cp)
+                If cp.CSNew.OK() Then
+                    RSSFeedName = RSSFeed.name
+                    RSSFeedFilename = RSSFeed.RSSFilename
                     'BlogRootLink = Main.GetCS(CSFeed, "Link")
                 End If
-                Call Main.CloseCS(CSFeed)
+
                 '
                 If RSSFeedFilename = "" Then
                     'If BlogRootLink = "" Or RSSFeedFilename = "" Then
@@ -386,18 +397,18 @@ Namespace Views
                 '
                 ' Process Input
                 '
-                ButtonValue = Main.GetStreamText("button")
-                FormID = Main.GetStreamInteger(RequestNameFormID)
-                SourceFormID = Main.GetStreamInteger(RequestNameSourceFormID)
-                KeywordList = Main.GetStreamText(RequestNameKeywordList)
-                DateSearchText = Main.GetStreamText(RequestNameDateSearch)
-                'BlogTitle = Main.GetStreamText(RequestNameBlogTitle)
-                'BlogCopy = Main.GetStreamText(RequestNameBlogCopy)
-                ArchiveMonth = Main.GetStreamInteger(RequestNameArchiveMonth)
-                ArchiveYear = Main.GetStreamInteger(RequestNameArchiveYear)
-                EntryID = Main.GetStreamInteger(RequestNameBlogEntryID)
+                ButtonValue = cp.Doc.GetText("button")
+                FormID = cp.Doc.GetInteger(RequestNameFormID)
+                SourceFormID = cp.Doc.GetInteger(RequestNameSourceFormID)
+                KeywordList = cp.Doc.GetText(RequestNameKeywordList)
+                DateSearchText = cp.Doc.GetText(RequestNameDateSearch)
+                'BlogTitle = cp.Doc.getText(RequestNameBlogTitle)
+                'BlogCopy = cp.Doc.getText(RequestNameBlogCopy)
+                ArchiveMonth = cp.Doc.GetInteger(RequestNameArchiveMonth)
+                ArchiveYear = cp.Doc.GetInteger(RequestNameArchiveYear)
+                EntryID = cp.Doc.GetInteger(RequestNameBlogEntryID)
                 '
-                'WorkingQueryString = Main.RefreshQueryString
+                'WorkingQueryString = cp.Doc.RefreshQueryString
                 'If WorkingQueryString = "" Then
                 '    WorkingQueryString = "?"
                 'Else
@@ -408,12 +419,12 @@ Namespace Views
                     '
                     ' Process the source form into form if there was a button - else keep formid
                     '
-                    FormID = ProcessForm(SourceFormID, blogId, IsBlogOwner, EntryID, ButtonValue, BlogName, BlogOwnerID, AllowAnonymous, AllowCategories, BlogCategoryID, RSSFeedId, blogListLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, autoApproveComments, authoringGroupId, emailComment, OptionString, allowRecaptcha)
+                    FormID = ProcessForm(cp, SourceFormID, blogId, IsBlogOwner, EntryID, ButtonValue, BlogName, BlogOwnerID, AllowAnonymous, AllowCategories, BlogCategoryID, RSSFeedId, blogListLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, autoApproveComments, authoringGroupId, emailComment, OptionString, allowRecaptcha)
                 End If
                 '
                 ' Get Next Form
                 '
-                s = s & GetForm(FormID, blogId, BlogName, IsBlogOwner, ArchiveMonth, ArchiveYear, EntryID, KeywordList, ButtonValue, DateSearchText, AllowAnonymous, AllowCategories, BlogCategoryID, RSSFeedName, RSSFeedFilename, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogDescription, blogCaption, RSSFeedId, blogListLink, blogListQs, allowRecaptcha)
+                s = s & GetForm(cp, FormID, blogId, BlogName, IsBlogOwner, ArchiveMonth, ArchiveYear, EntryID, KeywordList, ButtonValue, DateSearchText, AllowAnonymous, AllowCategories, BlogCategoryID, RSSFeedName, RSSFeedFilename, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogDescription, blogCaption, RSSFeedId, blogListLink, blogListQs, allowRecaptcha)
             End If
 
             '
@@ -431,32 +442,33 @@ Namespace Views
             '
             'Call Main.AddRefreshQueryString(RequestNameSourceFormID, FormID)
             IsEditing = cp.User.IsAuthoring("Blogs")
+            Dim Csv As Object = Nothing
             allowAuthorInfoLink = Csv.IsContentFieldSupported("people", "autoinfoLink")
             '
             Select Case FormID
                 Case FormBlogPostDetails
-                    Stream = Stream & GetFormBlogPostDetails(blogId, EntryID, IsBlogOwner, AllowAnonymous, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs, allowCaptcha)
+                    Stream = Stream & GetFormBlogPostDetails(cp, blogId, EntryID, IsBlogOwner, AllowAnonymous, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs, allowCaptcha)
                 Case FormBlogArchiveDateList
-                    Stream = Stream & GetFormBlogArchiveDateList(blogId, BlogName, IsEditing, IsBlogOwner, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs)
+                    Stream = Stream & GetFormBlogArchiveDateList(cp, blogId, BlogName, IsEditing, IsBlogOwner, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs)
                 Case FormBlogArchivedBlogs
-                    Stream = Stream & GetFormBlogArchivedBlogs(blogId, BlogName, ArchiveMonth, ArchiveYear, IsEditing, IsBlogOwner, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs)
+                    Stream = Stream & GetFormBlogArchivedBlogs(cp, blogId, BlogName, ArchiveMonth, ArchiveYear, IsEditing, IsBlogOwner, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs)
                 Case FormBlogEntryEditor
                     Stream = Stream & GetFormBlogPost(blogId, BlogName, IsBlogOwner, EntryID, AllowCategories, BlogCategoryID, blogListLink)
                 Case FormBlogSearch
-                    Stream = Stream & GetFormBlogSearch(blogId, BlogName, IsBlogOwner, KeywordList, ButtonValue, DateSearchText, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs)
+                    Stream = Stream & GetFormBlogSearch(cp, blogId, BlogName, IsBlogOwner, KeywordList, ButtonValue, DateSearchText, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs)
                 Case Else
                     If EntryID <> 0 Then
                         '
                         ' Go to details page
                         '
                         FormID = FormBlogPostDetails
-                        Stream = Stream & GetFormBlogPostDetails(blogId, EntryID, IsBlogOwner, AllowAnonymous, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs, allowCaptcha)
+                        Stream = Stream & GetFormBlogPostDetails(cp, blogId, EntryID, IsBlogOwner, AllowAnonymous, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs, allowCaptcha)
                     Else
                         '
                         ' list all the entries
                         '
                         FormID = FormBlogPostList
-                        Stream = Stream & GetFormBlogPostList(blogId, BlogName, IsBlogOwner, IsEditing, EntryID, AllowCategories, BlogCategoryID, RSSFeedName, RSSFeedFilename, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogDescription, blogCaption, RSSFeedId, blogListLink, blogListQs)
+                        Stream = Stream & GetFormBlogPostList(cp, blogId, BlogName, IsBlogOwner, IsEditing, EntryID, AllowCategories, BlogCategoryID, RSSFeedName, RSSFeedFilename, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogDescription, blogCaption, RSSFeedId, blogListLink, blogListQs)
                     End If
             End Select
             '
@@ -468,14 +480,14 @@ Namespace Views
         '       returns the FormID for the next one to display
         '====================================================================================
         '
-        Private Function ProcessForm(SourceFormID As Integer, blogId As Integer, IsBlogOwner As Boolean, EntryID As Integer, ButtonValue As String, BlogName As String, BlogOwnerID As Integer, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Integer, RSSFeedId As Integer, blogListLink As String, ThumbnailImageWidth As Integer, BuildVersion As String, ImageWidthMax As Integer, autoApproveComments As Boolean, authoringGroupId As Integer, emailComment As Boolean, OptionString As String, allowRecaptcha As Boolean) As Integer
+        Private Function ProcessForm(cp As CPBaseClass, SourceFormID As Integer, blogId As Integer, IsBlogOwner As Boolean, EntryID As Integer, ButtonValue As String, BlogName As String, BlogOwnerID As Integer, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Integer, RSSFeedId As Integer, blogListLink As String, ThumbnailImageWidth As Integer, BuildVersion As String, ImageWidthMax As Integer, autoApproveComments As Boolean, authoringGroupId As Integer, emailComment As Boolean, OptionString As String, allowRecaptcha As Boolean) As Integer
             '
             If ButtonValue <> "" Then
                 Select Case SourceFormID
                     Case FormBlogPostList
                         ProcessForm = FormBlogPostList
                     Case FormBlogEntryEditor
-                        ProcessForm = ProcessFormBlogPost(SourceFormID, blogId, EntryID, ButtonValue, BlogCategoryID, RSSFeedId, blogListLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax)
+                        ProcessForm = ProcessFormBlogPost(cp, SourceFormID, blogId, EntryID, ButtonValue, BlogCategoryID, RSSFeedId, blogListLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax)
                     Case FormBlogPostDetails
                         ProcessForm = ProcessFormBlogPostDetails(SourceFormID, blogId, IsBlogOwner, ButtonValue, BlogName, BlogOwnerID, AllowAnonymous, BlogCategoryID, autoApproveComments, authoringGroupId, emailComment, OptionString, allowRecaptcha)
                     Case FormBlogArchiveDateList
@@ -513,7 +525,7 @@ Namespace Views
             Dim DateAdded As Date
             Dim Approved As Boolean
             Dim s As String
-            Dim CS As Integer
+            'Dim CS As Integer
             Dim SQL As String
             Dim CommentPointer As Integer
             Dim CommentCount As Integer
@@ -524,7 +536,7 @@ Namespace Views
             Dim Divider As String
             Dim qs As String
             '
-            Dim CSPointer As Integer
+            'Dim CSPointer As Integer
             Dim Criteria As String
             Dim SearchMonth As String
             Dim SearchYear As String
@@ -543,26 +555,28 @@ Namespace Views
             Dim searchForm As String
             Dim primaryImagePositionId As Integer
             Dim articlePrimaryImagePositionId As Integer
+            Dim GetUserError As String = ""
+
             '
             'Call Main.AddRefreshQueryString(RequestNameSourceFormID, FormBlogSearch)
             'Call Main.AddRefreshQueryString(RequestNameFormID, FormBlogSearch)
-            Call Main.AddRefreshQueryString(RequestNameBlogEntryID, "")
+            Call cp.Doc.AddRefreshQueryString(RequestNameBlogEntryID, "")
             '
-            s = s & vbCrLf & Main.GetContentCopy2("Blogs Search Header for " & BlogName, , "<h2>" & BlogName & " Blog Search</h2>")
+            s = s & vbCrLf & cp.Content.GetCopy("Blogs Search Header for " & BlogName, "<h2>" & BlogName & " Blog Search</h2>")
             '
             ' Search results
             '
-            QueryTag = Main.GetStreamText(RequestNameQueryTag)
-            Button = Main.GetStreamText("button")
+            QueryTag = cp.Doc.GetText(RequestNameQueryTag)
+            Button = cp.Doc.GetText("button")
             If (Button = FormButtonSearch) Or (QueryTag <> "") Then
                 '
                 ' Attempt to figure out the date provided
                 '
-                If KmaEncodeDate(DateSearchText) <> CDate(0) Then
-                    DateSearch = KmaEncodeDate(DateSearchText)
+                If cp.Db.EncodeSQLDate(DateSearchText) <> CDate("0") Then
+                    DateSearch = cp.Db.EncodeSQLDate(DateSearchText)
                     If DateSearch < CDate("1/1/2000") Then
-                        DateSearch = CDate(0)
-                        Call Main.AddUserError("The date is not valid")
+                        DateSearch = CDate("0")
+                        Call cp.Site.ErrorReport("The date is not valid")
                     End If
                 End If
                 '
@@ -581,7 +595,7 @@ Namespace Views
                                 Subcaption = Subcaption & " or "
                             End If
                             EnteredKeyWords = KeyWordsArray(CounterKeyWords)
-                            Subcaption = Subcaption & "'<i>" & kmaEncodeHTML(EnteredKeyWords) & "</i>'"
+                            Subcaption = Subcaption & "'<i>" & cp.Db.EncodeSQLText(EnteredKeyWords) & "</i>'"
                             EnteredKeyWords = cp.Db.EncodeSQLText(EnteredKeyWords)
                             EnteredKeyWords = "'%" & Mid(EnteredKeyWords, 2, Len(EnteredKeyWords) - 2) & "%'"
                             subCriteria = subCriteria & " (Copy like " & EnteredKeyWords & ")"
@@ -594,17 +608,17 @@ Namespace Views
                         Criteria = Criteria & "and(" & subCriteria & ")"
                     End If
                 End If
-                If (DateSearch <> CDate(0)) Then
+                If (DateSearch <> CDate("0")) Then
                     SearchMonth = Month(DateSearch)
                     SearchYear = Year(DateSearch)
                     Subcaption = Subcaption & " in " & SearchMonth & "/" & SearchYear
                     If Criteria <> "" Then
                         Criteria = Criteria & "AND"
                     End If
-                    Criteria = Criteria & "(DateAdded>=" & KmaEncodeSQLDate(DateSearch) & ")and(DateAdded<" & KmaEncodeSQLDate(AddMonth(DateSearch, 1)) & ")"
+                    Criteria = Criteria & "(DateAdded>=" & cp.Db.EncodeSQLDate(DateSearch) & ")and(DateAdded<" & cp.Db.EncodeSQLDate(AddMonth(DateSearch, 1)) & ")"
                 End If
                 If (QueryTag <> "") Then
-                    Subcaption = Subcaption & " tagged with '<i>" & kmaEncodeHTML(QueryTag) & "</i>'"
+                    Subcaption = Subcaption & " tagged with '<i>" & cp.Utils.EncodeHTML(QueryTag) & "</i>'"
                     If Criteria <> "" Then
                         Criteria = Criteria & "AND"
                     End If
@@ -615,103 +629,152 @@ Namespace Views
                 If Subcaption <> "" Then
                     Subcaption = "Search for entries and comments " & Subcaption
                 End If
-                If Main.IsUserError Then
-                    Subcaption = Subcaption & Main.GetUserError
+
+                If GetUserError Then
+                    Subcaption = Subcaption & (cp.UserError.ToString)
                 End If
                 '
-                If Criteria = "" Then
-                    CSPointer = -1
-                Else
-                    CSPointer = Main.OpenCSContent(cnBlogCopy, Criteria)
+                Dim BlogCopyList As New List(Of Models.BlogCopyModel)
+                If Criteria <> "" Then
+                    BlogCopyList = Models.BlogCopyModel.createList(cp, Criteria)
                 End If
                 '
                 ' Display the results
                 '
                 s = s & cr & "<div class=""aoBlogEntryCopy"">" & Subcaption & "</div>"
                 '
-                If Not Main.csok(CSPointer) Then
-                    s = s & cr & "<div class=""aoBlogProblem"">There were no matches to your search</div>"
+                If (blogcopylist.count = 0) Then
+                    s = s & "</br>" & "<div class=""aoBlogProblem"">There were no matches to your search</div>"
                 Else
-                    s = s & cr & "<div class=""aoBlogEntryDivider"">&nbsp;</div>"
-                    Do While Main.csok(CSPointer)
-                        ParentID = Main.GetCSInteger(CSPointer, "EntryID")
+                    s = s & "</br>" & "<div class=""aoBlogEntryDivider"">&nbsp;</div>"
+                    For Each BlogComment In Models.BlogCopyModel.createList(cp, Criteria)
+                        ParentID = cp.Doc.GetInteger("EntryID")
                         If ParentID = 0 Then
                             '
                             ' Entry
                             '
-                            AuthorMemberID = Main.GetCSInteger(CSPointer, "AuthorMemberID")
+                            AuthorMemberID = cp.Doc.GetInteger("AuthorMemberID")
                             If AuthorMemberID = 0 Then
-                                AuthorMemberID = Main.GetCSInteger(CSPointer, "createdBy")
+                                AuthorMemberID = cp.Doc.GetInteger("createdBy")
                             End If
-                            EntryID = Main.GetCSInteger(CSPointer, "ID")
-                            EntryName = Main.GetCSText(CSPointer, "name")
-                            EntryCopy = Main.GetCSText(CSPointer, "copy")
-                            'EntryCopyOverview = Main.GetCSText(CSPointer, "copyOverview")
-                            DateAdded = Main.GetCSDate(CSPointer, "DateAdded")
-                            allowComments = cp.Site.GetBoolean(CSPointer, "allowComments")
-                            PodcastMediaLink = Main.GetCS(CSPointer, "PodcastMediaLink")
-                            PodcastSize = Main.GetCS(CSPointer, "PodcastSize")
-                            BlogTagList = Main.GetCS(CSPointer, "TagList")
-                            imageDisplayTypeId = Main.GetCSInteger(CSPointer, "imageDisplayTypeId")
-                            primaryImagePositionId = Main.GetCSInteger(CSPointer, "primaryImagePositionId")
-                            articlePrimaryImagePositionId = Main.GetCSInteger(CSPointer, "articlePrimaryImagePositionId")
-                            s = s & GetBlogEntryCell(ResultPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, DateAdded, False, True, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, "", ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, imageDisplayTypeId, primaryImagePositionId, articlePrimaryImagePositionId, blogListQs, AuthorMemberID)
+                            EntryID = cp.Doc.GetInteger("ID")
+                            EntryName = cp.Doc.GetText("name")
+                            EntryCopy = cp.Doc.GetText("copy")
+                            'EntryCopyOverview = cp.Doc.GetText(CSPointer, "copyOverview")
+                            DateAdded = cp.Doc.GetDate("DateAdded")
+                            allowComments = cp.Doc.GetBoolean("allowComments")
+                            PodcastMediaLink = cp.Doc.GetText("PodcastMediaLink")
+                            PodcastSize = cp.Doc.GetText("PodcastSize")
+                            BlogTagList = cp.Doc.GetText("TagList")
+                            imageDisplayTypeId = cp.Doc.GetInteger("imageDisplayTypeId")
+                            primaryImagePositionId = cp.Doc.GetInteger("primaryImagePositionId")
+                            articlePrimaryImagePositionId = cp.Doc.GetInteger("articlePrimaryImagePositionId")
+                            s = s & GetBlogEntryCell(cp, ResultPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, DateAdded, False, True, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, "", ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, imageDisplayTypeId, primaryImagePositionId, articlePrimaryImagePositionId, blogListQs, AuthorMemberID)
                         Else
                             '
                             ' Comment
                             '
-                            AuthorMemberID = Main.GetCSInteger(CSPointer, "createdBy")
-                            CommentID = Main.GetCSInteger(CSPointer, "ID")
-                            CommentName = Main.GetCSText(CSPointer, "name")
-                            CommentCopy = Main.GetCSText(CSPointer, "copyText")
-                            DateAdded = Main.GetCSDate(CSPointer, "DateAdded")
-                            Approved = cp.Site.GetBoolean(CSPointer, "Approved")
-                            EntryID = Main.GetCSInteger(CSPointer, "EntryID")
-                            EntryName = Main.GetRecordName("Blog Copy", EntryID)
-                            s = s & GetBlogCommentCell(IsBlogOwner, DateAdded, Approved, CommentName, CommentCopy, CommentID, ResultPtr, 0, AuthorMemberID, EntryID, True, EntryName)
+                            AuthorMemberID = cp.Doc.GetInteger("createdBy")
+                            CommentID = cp.Doc.GetInteger("ID")
+                            CommentName = cp.Doc.GetText("name")
+                            CommentCopy = cp.Doc.GetText("copyText")
+                            DateAdded = cp.Doc.GetDate("DateAdded")
+                            Approved = cp.Doc.GetBoolean("Approved")
+                            EntryID = cp.Doc.GetInteger("EntryID")
+                            EntryName = cp.Doc.GetInteger("Blog Copy", EntryID)
+                            s = s & GetBlogCommentCell(cp, IsBlogOwner, DateAdded, Approved, CommentName, CommentCopy, CommentID, ResultPtr, 0, AuthorMemberID, EntryID, True, EntryName)
                         End If
                         '
                         s = s & cr & "<div class=""aoBlogEntryDivider"">&nbsp;</div>"
                         ResultPtr = ResultPtr + 1
-                        Call Main.NextCSRecord(CSPointer)
-                    Loop
+
+                    Next
                 End If
-                Call Main.CloseCS(CSPointer)
+                'Do While Main.csok(CSPointer)
+                '    ParentID = Main.GetCSInteger(CSPointer, "EntryID")
+                '    If ParentID = 0 Then
+                '        '
+                '        ' Entry
+                '        '
+                '        AuthorMemberID = Main.GetCSInteger(CSPointer, "AuthorMemberID")
+                '        If AuthorMemberID = 0 Then
+                '            AuthorMemberID = Main.GetCSInteger(CSPointer, "createdBy")
+                '        End If
+                '        EntryID = Main.GetCSInteger(CSPointer, "ID")
+                '        EntryName = cp.Doc.GetText(CSPointer, "name")
+                '        EntryCopy = cp.Doc.GetText(CSPointer, "copy")
+                '        'EntryCopyOverview = cp.Doc.GetText(CSPointer, "copyOverview")
+                '        DateAdded = Main.GetCSDate(CSPointer, "DateAdded")
+                '        allowComments = cp.Site.GetBoolean(CSPointer, "allowComments")
+                '        PodcastMediaLink = Main.GetCS(CSPointer, "PodcastMediaLink")
+                '        PodcastSize = Main.GetCS(CSPointer, "PodcastSize")
+                '        BlogTagList = Main.GetCS(CSPointer, "TagList")
+                '        imageDisplayTypeId = Main.GetCSInteger(CSPointer, "imageDisplayTypeId")
+                '        primaryImagePositionId = Main.GetCSInteger(CSPointer, "primaryImagePositionId")
+                '        articlePrimaryImagePositionId = Main.GetCSInteger(CSPointer, "articlePrimaryImagePositionId")
+                '        s = s & GetBlogEntryCell(ResultPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, DateAdded, False, True, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, "", ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, imageDisplayTypeId, primaryImagePositionId, articlePrimaryImagePositionId, blogListQs, AuthorMemberID)
+                '    Else
+                '        '
+                '        ' Comment
+                '        '
+                '        AuthorMemberID = Main.GetCSInteger(CSPointer, "createdBy")
+                '        CommentID = Main.GetCSInteger(CSPointer, "ID")
+                '        CommentName = cp.Doc.GetText(CSPointer, "name")
+                '        CommentCopy = cp.Doc.GetText(CSPointer, "copyText")
+                '        DateAdded = Main.GetCSDate(CSPointer, "DateAdded")
+                '        Approved = cp.Site.GetBoolean(CSPointer, "Approved")
+                '        EntryID = Main.GetCSInteger(CSPointer, "EntryID")
+                '        EntryName = Main.GetRecordName("Blog Copy", EntryID)
+                '        s = s & GetBlogCommentCell(IsBlogOwner, DateAdded, Approved, CommentName, CommentCopy, CommentID, ResultPtr, 0, AuthorMemberID, EntryID, True, EntryName)
+                '    End If
+                '    '
+                '    s = s & cr & "<div class=""aoBlogEntryDivider"">&nbsp;</div>"
+                '    ResultPtr = ResultPtr + 1
+                '    Call Main.NextCSRecord(CSPointer)
+                'Loop
+                'End If
+                'Call Main.CloseCS(CSPointer)
                 s = "" _
-        & cr & "<div class=""aoBlogSearchResultsCon"">" _
-        & kmaIndent(s) _
-        & cr & "</div>"
-            End If
+                        & cr & "<div class=""aoBlogSearchResultsCon"">" _
+                        & cp.Html.Indent(s) _
+                        & cr & "</div>"
+                End If
             '
             searchForm = "" _
-    & cr & "<table width=100% border=0 cellspacing=0 cellpadding=5 class=""aoBlogSearchTable"">" _
-    & kmaIndent(GetFormTableRow("Date:", GetField(RequestNameDateSearch, , 10, , Main.GetStreamText(RequestNameDateSearch)) & " " & "&nbsp;(mm/yyyy)")) _
-    & kmaIndent(GetFormTableRow("Keyword(s):", GetField(RequestNameKeywordList, , , 30, Main.GetStreamText(RequestNameKeywordList)))) _
-    & kmaIndent(GetFormTableRow("", Main.GetFormButton(FormButtonSearch))) _
-    & kmaIndent(GetFormTableRow2("<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>")) _
-    & cr & "</table>" _
-    & ""
+                    & cr & "<table width=100% border=0 cellspacing=0 cellpadding=5 class=""aoBlogSearchTable"">" _
+                    & cp.Html.Indent(GetFormTableRow("Date:", cp.GetType.GetField(RequestNameDateSearch, cp.Doc.GetText(RequestNameDateSearch)).ToString & " " & "&nbsp;(mm/yyyy)"), 10).ToString _
+                    & cp.Html.Indent(GetFormTableRow("Keyword(s):", cp.GetType.GetField(RequestNameKeywordList, cp.Doc.GetText(RequestNameKeywordList)).ToString) _
+                    & cp.Html.Indent(GetFormTableRow("", cp.Html.Button(FormButtonSearch))) _
+                    & cp.Html.Indent(GetFormTableRow2("<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>")) _
+                    & cr & "</table>" _
+                    & "")
+
             searchForm = "" _
-    & cr & "<div  class=""aoBlogSearchFormCon"">" _
-    & kmaIndent(searchForm) _
-    & cr & "</div>" _
-    & ""
+                    & cr & "<div  class=""aoBlogSearchFormCon"">" _
+                    & cp.Html.Indent(searchForm) _
+                    & cr & "</div>" _
+                    & ""
             s = s & searchForm
+
             s = "" _
-    & cr & Main.GetFormStart _
-    & kmaIndent(s) _
-    & cr & "<input type=""hidden"" name=""" & RequestNameSourceFormID & """ value=""" & FormBlogSearch & """>" _
-    & cr & "<input type=""hidden"" name=""" & RequestNameFormID & """ value=""" & FormBlogSearch & """>" _
-    & cr & Main.GetFormEnd
+                 & s = s & cp.Html.Indent(s) _
+                 & s = s & cr & "<input type=""hidden"" name=""" & RequestNameSourceFormID & """ value=""" & FormBlogSearch & """>" _
+                 & s = s & cr & "<input type=""hidden"" name=""" & RequestNameFormID & """ value=""" & FormBlogSearch & """>" _
+                 & s = s & cr & cp.Html.Form(s)
             '
+
             GetFormBlogSearch = s
+        End Function
+
+        Private Function GetFormTableRow(v1 As String, v2 As String) As String
+            Throw New NotImplementedException()
         End Function
         '
         '====================================================================================
         '
         '====================================================================================
         '
-        Private Function GetFormBlogArchiveDateList(blogId As Integer, BlogName As String, IsEditing As Boolean, IsBlogOwner As Boolean, AllowCategories As Boolean, BlogCategoryID As Integer, ThumbnailImageWidth As Integer, BuildVersion As String, ImageWidthMax As Integer, blogListLink As String, blogListQs As String) As String
+        Private Function GetFormBlogArchiveDateList(cp As CPBaseClass, blogId As Integer, BlogName As String, IsEditing As Boolean, IsBlogOwner As Boolean, AllowCategories As Boolean, BlogCategoryID As Integer, ThumbnailImageWidth As Integer, BuildVersion As String, ImageWidthMax As Integer, blogListLink As String, blogListQs As String) As String
             '
             Dim s As String
             Dim CS As Integer
@@ -732,16 +795,17 @@ Namespace Views
             Dim qs As String
             Dim RowCnt As Integer
             Dim SQL As String
+            Dim OpenSQL As String = ""
             '
-            s = s & vbCrLf & Main.GetContentCopy2("Blogs Archives Header for " & BlogName, , "<h2>" & BlogName & " Blog Archive</h2>")
-            '
+            s = s & vbCrLf & cp.Content.GetCopy("Blogs Archives Header for " & BlogName, "<h2>" & BlogName & " Blog Archive</h2>")
+            '            
             SQL = "SELECT distinct Month(DateAdded) as ArchiveMonth, year(dateadded) as ArchiveYear " _
-    & " From ccBlogCopy" _
-    & " Where (ContentControlID = " & Main.GetContentID(cnBlogEntries) & ") And (Active <> 0)" _
-    & " AND (BlogID=" & blogId & ")" _
-    & " ORDER BY year(dateadded) desc, Month(DateAdded) desc"
-            CS = Main.OpenCSSQL("Default", SQL)
-            If Not Main.IsCSOK(CS) Then
+                    & " From ccBlogCopy" _
+                    & " Where (ContentControlID = " & cp.Content.GetID(cnBlogEntries) & ") And (Active <> 0)" _
+                    & " AND (BlogID=" & blogId & ")" _
+                    & " ORDER BY year(dateadded) desc, Month(DateAdded) desc"
+            OpenSQL = cp.Db.ExecuteSQL(SQL, "Default")
+            If Not OpenSQL Then
                 '
                 ' No archives, give them an error
                 '
@@ -749,7 +813,8 @@ Namespace Views
                 s = s & cr & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
 
             Else
-                RowCnt = Main.GetCSRowCount(CS)
+
+                RowCnt = cp.CSNew.GetRowCount()
                 If RowCnt = 0 Then
                     '
                     ' weird - just give them the same error
@@ -760,25 +825,27 @@ Namespace Views
                     '
                     ' one archive - just display it
                     '
-                    ArchiveMonth = Main.GetCSInteger(CS, "ArchiveMonth")
-                    ArchiveYear = Main.GetCSInteger(CS, "ArchiveYear")
-                    s = s & GetFormBlogArchivedBlogs(blogId, BlogName, ArchiveMonth, ArchiveYear, IsEditing, IsBlogOwner, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs)
+                    ArchiveMonth = cp.Doc.GetInteger("ArchiveMonth")
+                    ArchiveYear = cp.Doc.GetInteger("ArchiveYear")
+                    s = s & GetFormBlogArchivedBlogs(cp, blogId, BlogName, ArchiveMonth, ArchiveYear, IsEditing, IsBlogOwner, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs)
                 Else
                     '
                     ' Display List of archive
                     '
                     qs = cp.Utils.ModifyQueryString(blogListQs, RequestNameSourceFormID, FormBlogArchiveDateList)
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogArchivedBlogs)
-                    Do While Main.IsCSOK(CS)
-                        ArchiveMonth = Main.GetCSInteger(CS, "ArchiveMonth")
-                        ArchiveYear = Main.GetCSInteger(CS, "ArchiveYear")
+
+                    Do While cp.CSNew.OK()
+                        ArchiveMonth = cp.Doc.GetInteger("ArchiveMonth")
+                        ArchiveYear = cp.Doc.GetInteger("ArchiveYear")
                         NameOfMonth = MonthName(ArchiveMonth)
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameArchiveMonth, CStr(ArchiveMonth))
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameArchiveYear, CStr(ArchiveYear))
                         '
                         s = s & vbCrLf & vbTab & vbTab & "<div class=""aoBlogArchiveLink""><a href=""?" & qs & """>" & NameOfMonth & " " & ArchiveYear & "</a></div>"
                         's = s & vbCrLf & vbTab & vbTab & "<div class=""aoBlogArchiveLink""><a href=""?" & qs & RequestNameFormID & "=" & FormBlogArchivedBlogs & "&" & RequestNameArchiveMonth & "=" & ArchiveMonth & "&" & RequestNameArchiveYear & "=" & ArchiveYear & "&" & RequestNameSourceFormID & "=" & FormBlogArchiveDateList & """>" & NameOfMonth & " " & ArchiveYear & "</a></div>"
-                        Main.NextCSRecord(CS)
+
+                        cp.CSNew.GoNext()
                     Loop
                     s = s & vbCrLf & vbTab & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
                 End If
@@ -791,7 +858,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Private Function GetFormBlogArchivedBlogs(blogId As Integer, BlogName As String, ArchiveMonth As Integer, ArchiveYear As Integer, IsEditing As Boolean, IsBlogOwner As Boolean, AllowCategories As Boolean, BlogCategoryID As Integer, ThumbnailImageWidth As Integer, BuildVersion As String, ImageWidthMax As Integer, blogListLink As String, blogListQs As String) As String
+        Private Function GetFormBlogArchivedBlogs(cp As CPBaseClass, blogId As Integer, BlogName As String, ArchiveMonth As Integer, ArchiveYear As Integer, IsEditing As Boolean, IsBlogOwner As Boolean, AllowCategories As Boolean, BlogCategoryID As Integer, ThumbnailImageWidth As Integer, BuildVersion As String, ImageWidthMax As Integer, blogListLink As String, blogListQs As String) As String
             '
             'Dim EntryCopyOverview As String
             Dim PodcastMediaLink As String
@@ -826,56 +893,92 @@ Namespace Views
             'If Month(Now) = ArchiveMonth And Year(Now) = ArchiveYear Then
             '    PageNumber = 2
             'End If
-            IsEditing = cp.user.IsAuthoring("Blogs")
-            s = s & vbCrLf & Main.GetFormStart
+            IsEditing = cp.User.IsAuthoring("Blogs")
+            's = s & vbCrLf & Main.GetFormStart
             '
             ' List Blog Entries
             '
-            CS = Main.OpenCSContent(cnBlogEntries, "(Month(DateAdded)=" & ArchiveMonth & ")and(year(DateAdded)=" & ArchiveYear & ")and(BlogID=" & blogId & ")", "DateAdded Desc", , , , , PostsToDisplay, PageNumber)
-            If Not Main.csok(CS) Then
-                s = s & cr & "<div class=""aoBlogProblem"">There are no blog archives for " & ArchiveMonth & "/" & ArchiveYear & "</div>"
+            Dim BlogEntryModelList As List(Of Models.BlogEntryModel) = Models.BlogEntryModel.createList(cp, "(Month(DateAdded) = " & ArchiveMonth & ")And(year(DateAdded)=" & ArchiveYear & ")And(BlogID=" & blogId & ")", "DateAdded Desc",  , , , PostsToDisplay, PageNumber)
+            Dim BlogEntry As Models.BlogEntryModel = Models.BlogEntryModel.add(cp)
+            If cp.CSNew.OK() Then
+                s = s & cr & "<div Class=""aoBlogProblem"">There are no blog archives For " & ArchiveMonth & "/" & ArchiveYear & "</div>"
             Else
                 EntryPtr = 0
                 entryEditLink = ""
-                Do While Main.csok(CS)
-                    EntryID = Main.GetCSInteger(CS, "ID")
-                    AuthorMemberID = Main.GetCSInteger(CS, "AuthorMemberID")
+                Do While cp.CSNew.OK()
+                    EntryID = cp.Doc.GetInteger("ID")
+                    AuthorMemberID = cp.Doc.GetInteger("AuthorMemberID")
                     If AuthorMemberID = 0 Then
-                        AuthorMemberID = Main.GetCSInteger(CS, "createdBy")
+                        AuthorMemberID = cp.Doc.GetInteger("createdBy")
                     End If
-                    DateAdded = Main.GetCSText(CS, "DateAdded")
-                    EntryName = Main.GetCSText(CS, "Name")
+                    DateAdded = cp.Doc.GetText("DateAdded")
+                    EntryName = cp.Doc.GetText("Name")
                     If IsEditing Then
-                        entryEditLink = Main.GetCSRecordEditLink(CS)
+                        entryEditLink = cp.Content.GetEditLink(EntryName, EntryID, 1, EntryName, 1) 'Main.GetCSRecordEditLink(CS)
                     End If
-                    EntryCopy = Main.GetCSText(CS, "Copy")
-                    'EntryCopyOverview = Main.GetCSText(CS, "copyOverview")
-                    allowComments = cp.Site.GetBoolean(CS, "allowComments")
-                    PodcastMediaLink = Main.GetCS(CS, "PodcastMediaLink")
-                    PodcastSize = Main.GetCS(CS, "PodcastSize")
-                    BlogTagList = Main.GetCS(CS, "TagList")
-                    imageDisplayTypeId = Main.GetCSInteger(CS, "imageDisplayTypeId")
-                    primaryImagePositionId = Main.GetCSInteger(CS, "primaryImagePositionId")
-                    articlePrimaryImagePositionId = Main.GetCSInteger(CS, "articlePrimaryImagePositionId")
-                    s = s & GetBlogEntryCell(EntryPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, DateAdded, False, False, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, entryEditLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, imageDisplayTypeId, primaryImagePositionId, articlePrimaryImagePositionId, blogListQs, AuthorMemberID)
-                    Call Main.NextCSRecord(CS)
-                    s = s & cr & "<div class=""aoBlogEntryDivider"">&nbsp;</div>"
+                    EntryCopy = cp.Doc.GetText("Copy")
+                    'EntryCopyOverview = cp.Doc.GetText(CS, "copyOverview")
+                    allowComments = cp.Site.GetBoolean("allowComments")
+                    PodcastMediaLink = cp.Doc.GetText("PodcastMediaLink")
+                    PodcastSize = cp.Doc.GetText("PodcastSize")
+                    BlogTagList = cp.Doc.GetText("TagList")
+                    imageDisplayTypeId = cp.Doc.GetInteger("imageDisplayTypeId")
+                    primaryImagePositionId = cp.Doc.GetInteger("primaryImagePositionId")
+                    articlePrimaryImagePositionId = cp.Doc.GetInteger("articlePrimaryImagePositionId")
+                    s = s & GetBlogEntryCell(cp, EntryPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, DateAdded, False, False, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, entryEditLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, imageDisplayTypeId, primaryImagePositionId, articlePrimaryImagePositionId, blogListQs, AuthorMemberID)
+                    Call cp.CSNew.GoNext()
+                    s = s & cr & "<div Class=""aoBlogEntryDivider"">&nbsp;</div>"
                     EntryPtr = EntryPtr + 1
                 Loop
             End If
+
+
+            'CS = Main.OpenCSContent(cnBlogEntries, "(Month(DateAdded) = " & ArchiveMonth & ")And(year(DateAdded)=" & ArchiveYear & ")And(BlogID=" & blogId & ")", "DateAdded Desc", , , , , PostsToDisplay, PageNumber)
+            'If Not Main.csok(CS) Then
+            '    s = s & cr & "<div Class=""aoBlogProblem"">There are no blog archives For " & ArchiveMonth & "/" & ArchiveYear & "</div>"
+            'Else
+            '    EntryPtr = 0
+            '    entryEditLink = ""
+            '    Do While Main.csok(CS)
+            '        EntryID = cp.Doc.GetInteger(CS, "ID")
+            '        AuthorMemberID = cp.Doc.GetInteger(CS, "AuthorMemberID")
+            '        If AuthorMemberID = 0 Then
+            '            AuthorMemberID = cp.Doc.GetInteger(CS, "createdBy")
+            '        End If
+            '        DateAdded = cp.Doc.GetText(CS, "DateAdded")
+            '        EntryName = cp.Doc.GetText(CS, "Name")
+            '        If IsEditing Then
+            '            entryEditLink = Main.GetCSRecordEditLink(CS)
+            '        End If
+            '        EntryCopy = cp.Doc.GetText(CS, "Copy")
+            '        'EntryCopyOverview = cp.Doc.GetText(CS, "copyOverview")
+            '        allowComments = cp.Site.GetBoolean(CS, "allowComments")
+            '        PodcastMediaLink = Main.GetCS(CS, "PodcastMediaLink")
+            '        PodcastSize = Main.GetCS(CS, "PodcastSize")
+            '        BlogTagList = Main.GetCS(CS, "TagList")
+            '        imageDisplayTypeId = cp.Doc.GetInteger(CS, "imageDisplayTypeId")
+            '        primaryImagePositionId = cp.Doc.GetInteger(CS, "primaryImagePositionId")
+            '        articlePrimaryImagePositionId = cp.Doc.GetInteger(CS, "articlePrimaryImagePositionId")
+            '        s = s & GetBlogEntryCell(EntryPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, DateAdded, False, False, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, entryEditLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, imageDisplayTypeId, primaryImagePositionId, articlePrimaryImagePositionId, blogListQs, AuthorMemberID)
+            '        Call Main.NextCSRecord(CS)
+            '        s = s & cr & "<div Class=""aoBlogEntryDivider"">&nbsp;</div>"
+            '        EntryPtr = EntryPtr + 1
+            '    Loop
+            'End If
             qs = blogListQs
             qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogSearch)
             s = s & cr & "<div>&nbsp;</div>"
-            s = s & cr & "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>"
-            qs = Main.RefreshQueryString()
+            s = s & cr & "<div Class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>"
+            qs = cp.Doc.RefreshQueryString()
             qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, "", True)
             qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostList)
-            s = s & cr & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
-            Call Main.CloseCS(CS)
+            s = s & cr & "<div Class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
+            Call cp.CSNew.Close()
+            'Call Main.CloseCS(CS)
             '
             's = s & Main.GetFormInputHidden(RequestNameBlogEntryID, CommentBlogID)
-            s = s & Main.GetFormInputHidden(RequestNameSourceFormID, FormBlogArchivedBlogs)
-            s = s & Main.GetFormEnd
+            s = s & cp.Html.Hidden(RequestNameSourceFormID, FormBlogArchivedBlogs)
+            s = s & cp.Html.Form(s)
             '
             GetFormBlogArchivedBlogs = s
             '
@@ -885,7 +988,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Private Function GetFormTableRow(FieldCaption As String, Innards As String, Optional AlignLeft As Boolean)
+        Friend Function GetFormTableRow(FieldCaption As String, Innards As String, AlignLeft As Boolean) As Object
             '
             Dim Stream As String
             Dim AlignmentString As String
@@ -897,8 +1000,8 @@ Namespace Views
             End If
             '
             Stream = Stream & "<tr>"
-            Stream = Stream & "<td class=""aoBlogTableRowCellLeft"" " & AlignmentString & ">" & FieldCaption & "<img src=""/cclib/images/spacer.gif"" width=100 height=1 alt="" ""></TD>"
-            Stream = Stream & "<td class=""aoBlogTableRowCellRight"">" & Innards & "</TD>"
+            Stream = Stream & "<td Class=""aoBlogTableRowCellLeft"" " & AlignmentString & ">" & FieldCaption & "<img src=""/cclib/images/spacer.gif"" width=100 height=1 alt="" ""></TD>"
+            Stream = Stream & "<td Class=""aoBlogTableRowCellRight"">" & Innards & "</TD>"
             Stream = Stream & "</tr>"
             '
             GetFormTableRow = Stream
@@ -924,7 +1027,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Private Function GetField(RequestName As String, Optional Height As String, Optional Width As String, Optional MaxLenghth As String, Optional DefaultValue As String) As String
+        Private Function GetField(cp As CPBaseClass, RequestName As String, Height As String, Width As String, MaxLenghth As String, DefaultValue As String) As String
             '
             Dim Stream As String
             '
@@ -934,8 +1037,8 @@ Namespace Views
             If Width = "" Then
                 Width = 25
             End If
-            '
-            Stream = Main.GetFormInputText(RequestName, DefaultValue, Height, Width, RequestName)
+            '           
+            Stream = cp.Html.InputText(RequestName, DefaultValue, Height, Width, RequestName)
             Stream = Replace(Stream, "<INPUT ", "<INPUT maxlength=""" & MaxLenghth & """ ", 1, 99, 1)
             '
             GetField = Stream
@@ -1015,12 +1118,12 @@ Namespace Views
             End If
             '
             If blogCaption <> "" Then
-                s = s & vbCrLf & "<h2 class=""aoBlogCaption"">" & blogCaption & "</h2>"
+                s = s & vbCrLf & "<h2 Class=""aoBlogCaption"">" & blogCaption & "</h2>"
             End If
             If blogDescription <> "" Then
-                s = s & vbCrLf & "<div class=""aoBlogDescription"">" & blogDescription & "</div>"
+                s = s & vbCrLf & "<div Class=""aoBlogDescription"">" & blogDescription & "</div>"
             End If
-            s = s & vbCrLf & Main.GetFormStart
+            ' s = s & vbCrLf & Main.GetFormStart
             '
             ' List Blog Entries
             '
@@ -1030,18 +1133,18 @@ Namespace Views
             '
             If AllowCategories And (BlogCategoryID <> 0) Then
                 BlogCategoryName = Main.GetRecordName("Blog Categories", BlogCategoryID)
-                CS = Main.OpenCSContent(cnBlogEntries, "(BlogID=" & blogId & ")and(BlogCategoryID=" & BlogCategoryID & ")", "DateAdded Desc")
-                s = s & cr & "<div class=""aoBlogCategoryCaption"">Category " & BlogCategoryName & "</div>"
-                NoneMsg = "There are no blog posts available in the category " & BlogCategoryName
+                CS = Main.OpenCSContent(cnBlogEntries, "(BlogID=" & blogId & ")And(BlogCategoryID=" & BlogCategoryID & ")", "DateAdded Desc")
+                s = s & cr & "<div Class=""aoBlogCategoryCaption"">Category " & BlogCategoryName & "</div>"
+                NoneMsg = "There are no blog posts available In the category " & BlogCategoryName
             Else
                 CS = Main.OpenCSContent(cnBlogEntries, "(BlogID=" & blogId & ")", "DateAdded Desc")
                 NoneMsg = "There are no blog posts available"
             End If
             If Not Main.csok(CS) Then
-                s = s & cr & "<div class=""aoBlogProblem"">" & NoneMsg & "</div>"
+                s = s & cr & "<div Class=""aoBlogProblem"">" & NoneMsg & "</div>"
             Else
                 Do While Main.csok(CS) And EntryPtr < PostsToDisplay
-                    TestCategoryID = Main.GetCSInteger(CS, "BlogCategoryid")
+                    TestCategoryID = cp.Doc.GetInteger(CS, "BlogCategoryid")
                     If TestCategoryID <> 0 Then
                         '
                         ' Check that this member has access to this category
@@ -1080,27 +1183,27 @@ Namespace Views
                         '
                         '
                     Else
-                        EntryID = Main.GetCSInteger(CS, "ID")
-                        AuthorMemberID = Main.GetCSInteger(CS, "AuthorMemberID")
+                        EntryID = cp.Doc.GetInteger(CS, "ID")
+                        AuthorMemberID = cp.Doc.GetInteger(CS, "AuthorMemberID")
                         If AuthorMemberID = 0 Then
-                            AuthorMemberID = Main.GetCSInteger(CS, "createdBy")
+                            AuthorMemberID = cp.Doc.GetInteger(CS, "createdBy")
                         End If
-                        DateAdded = Main.GetCSText(CS, "DateAdded")
-                        EntryName = Main.GetCSText(CS, "Name")
+                        DateAdded = cp.Doc.GetText(CS, "DateAdded")
+                        EntryName = cp.Doc.GetText(CS, "Name")
                         If IsEditing Then
                             entryEditLink = Main.GetCSRecordEditLink(CS)
                         End If
-                        EntryCopy = Main.GetCSText(CS, "Copy")
-                        'EntryCopyOverview = Main.GetCSText(CS, "CopyOverview")
+                        EntryCopy = cp.Doc.GetText(CS, "Copy")
+                        'EntryCopyOverview = cp.Doc.GetText(CS, "CopyOverview")
                         allowComments = cp.Site.GetBoolean(CS, "AllowComments")
                         PodcastMediaLink = Main.GetCS(CS, "PodcastMediaLink")
                         PodcastSize = Main.GetCS(CS, "PodcastSize")
                         BlogTagList = Main.GetCS(CS, "BlogTagList")
-                        imageDisplayTypeId = Main.GetCSInteger(CS, "imageDisplayTypeId")
-                        primaryImagePositionId = Main.GetCSInteger(CS, "primaryImagePositionId")
-                        articlePrimaryImagePositionId = Main.GetCSInteger(CS, "articlePrimaryImagePositionId")
+                        imageDisplayTypeId = cp.Doc.GetInteger(CS, "imageDisplayTypeId")
+                        primaryImagePositionId = cp.Doc.GetInteger(CS, "primaryImagePositionId")
+                        articlePrimaryImagePositionId = cp.Doc.GetInteger(CS, "articlePrimaryImagePositionId")
                         s = s & GetBlogEntryCell(EntryPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, DateAdded, False, False, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, entryEditLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, imageDisplayTypeId, primaryImagePositionId, articlePrimaryImagePositionId, blogListQs, AuthorMemberID)
-                        s = s & cr & "<div class=""aoBlogEntryDivider"">&nbsp;</div>"
+                        s = s & cr & "<div Class=""aoBlogEntryDivider"">&nbsp;</div>"
                         EntryPtr = EntryPtr + 1
                     End If
                     Call Main.NextCSRecord(CS)
@@ -1110,8 +1213,8 @@ Namespace Views
             ' Build Footers
             '
             If cp.User.IsAdmin() And AllowCategories Then
-                qs = "cid=" & Main.GetContentID("Blog Categories") & "&af=4"
-                CategoryFooter = CategoryFooter & cr & "<div class=""aoBlogFooterLink""><a href=""" & Main.SiteProperty_AdminURL & "?" & qs & """>Add a new category</a></div>"
+                qs = "cid=" & cp.Content.GetID("Blog Categories") & "&af=4"
+                CategoryFooter = CategoryFooter & cr & "<div Class=""aoBlogFooterLink""><a href=""" & Main.SiteProperty_AdminURL & "?" & qs & """>Add a New category</a></div>"
             End If
             ReturnFooter = ""
             If AllowCategories Then
@@ -1119,17 +1222,17 @@ Namespace Views
                 '
                 ' View all categories
                 '
-                qs = Main.RefreshQueryString
+                qs = cp.Doc.RefreshQueryString
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogCategoryIDSet, "0", True)
-                CategoryFooter = CategoryFooter & cr & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>See posts in all categories</a></div>"
+                CategoryFooter = CategoryFooter & cr & "<div Class=""aoBlogFooterLink""><a href=""" & blogListLink & """>See posts In all categories</a></div>"
                 'Else
                 '
                 ' select a category
                 '
-                qs = Main.RefreshQueryString
+                qs = cp.Doc.RefreshQueryString
                 CS = Main.OpenCSContent(cnBlogCategories)
                 Do While Main.IsCSOK(CS)
-                    BlogCategoryID = Main.GetCSInteger(CS, "id")
+                    BlogCategoryID = cp.Doc.GetInteger(CS, "id")
                     IsBlocked = Csv.GetCSBoolean(CS, "UserBlocking")
                     If IsBlocked Then
                         IsBlocked = Not cp.User.IsAdmin()
@@ -1146,7 +1249,7 @@ Namespace Views
                     If Not IsBlocked Then
                         'qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogCategoryIDSet, CStr(BlogCategoryID), True)
                         categoryLink = kmaModifyLinkQuery(blogListLink, RequestNameBlogCategoryIDSet, CStr(BlogCategoryID), True)
-                        CategoryFooter = CategoryFooter & cr & "<div class=""aoBlogFooterLink""><a href=""" & categoryLink & """>See posts in the category " & Main.GetCS(CS, "name") & "</a></div>"
+                        CategoryFooter = CategoryFooter & cr & "<div Class=""aoBlogFooterLink""><a href=""" & categoryLink & """>See posts In the category " & Main.GetCS(CS, "name") & "</a></div>"
                     End If
                     Call Main.NextCSRecord(CS)
                 Loop
@@ -1159,24 +1262,24 @@ Namespace Views
             '
             s = s & cr & "<div>&nbsp;</div>"
             If IsBlogOwner Then
-                Call Main.testpoint("Blogs.GetFormBlogPostList, IsBlogOwner=true, appending 'create' message")
-                '
-                ' Create a new entry if this is the Blog Owner
-                '
-                qs = Main.RefreshQueryString
+                Call Main.testpoint("Blogs.GetFormBlogPostList, IsBlogOwner = True, appending 'create' message")
+            '
+            ' Create a new entry if this is the Blog Owner
+            '
+            qs = cp.Doc.RefreshQueryString
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor, True)
                 s = s & cr & "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Create new post</a></div>"
                 '
                 ' Create a link to edit the blog record
                 '
-                qs = "cid=" & Main.GetContentID("Blogs") & "&af=4&id=" & blogId
+                qs = "cid=" & cp.Content.GetID("Blogs") & "&af=4&id=" & blogId
                 s = s & cr & "<div class=""aoBlogFooterLink""><a href=""" & Main.SiteProperty_AdminURL & "?" & qs & """>Edit blog features</a></div>"
                 '
                 ' Create a link to edit the rss record
                 '
                 If RSSFeedId = 0 Then
                 Else
-                    qs = "cid=" & Main.GetContentID("RSS Feeds") & "&af=4&id=" & RSSFeedId
+                    qs = "cid=" & cp.Content.GetID("RSS Feeds") & "&af=4&id=" & RSSFeedId
                     s = s & cr & "<div class=""aoBlogFooterLink""><a href=""" & Main.SiteProperty_AdminURL & "?" & qs & """>Edit rss feed features</a></div>"
                 End If
             End If
@@ -1185,13 +1288,13 @@ Namespace Views
             '
             ' Search
             '
-            qs = Main.RefreshQueryString
+            qs = cp.Doc.RefreshQueryString
             qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogSearch, True)
             s = s & cr & "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>"
             '
             ' Link to archives
             '
-            qs = Main.RefreshQueryString
+            qs = cp.Doc.RefreshQueryString
             qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogArchiveDateList, True)
             s = s & cr & "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>See archives</a></div>"
             '
@@ -1261,9 +1364,9 @@ Namespace Views
                 ' New Entry that is being saved
                 '
                 s = s & GetFormTableRow2(Main.GetContentCopy2("Blog Create Header for " & BlogName, , "<h2>Create a new blog post</h2>"))
-                BlogTitle = Main.GetStreamText(RequestNameBlogTitle)
-                BlogCopy = Main.GetStreamText(RequestNameBlogCopy)
-                BlogTagList = Main.GetStreamText(RequestNameBlogTagList)
+                BlogTitle = cp.Doc.getText(RequestNameBlogTitle)
+                BlogCopy = cp.Doc.getText(RequestNameBlogCopy)
+                BlogTagList = cp.Doc.getText(RequestNameBlogTagList)
             Else
                 hint = "3"
                 '
@@ -1271,10 +1374,10 @@ Namespace Views
                 '
                 CS = Main.OpenCSContentRecord(cnBlogEntries, EntryID)
                 If Main.IsCSOK(CS) Then
-                    BlogTitle = Main.GetCSText(CS, "Name")
-                    BlogCopy = Main.GetCSText(CS, "Copy")
-                    BlogCategoryID = Main.GetCSInteger(CS, "BlogCategoryID")
-                    BlogTagList = Main.GetCSText(CS, "TagList")
+                    BlogTitle = cp.Doc.GetText(CS, "Name")
+                    BlogCopy = cp.Doc.GetText(CS, "Copy")
+                    BlogCategoryID = cp.doc.getinteger(CS, "BlogCategoryID")
+                    BlogTagList = cp.Doc.GetText(CS, "TagList")
                 End If
                 Call Main.CloseCS(CS)
                 If BlogCopy = "" Then
@@ -1293,9 +1396,9 @@ Namespace Views
                 '
                 editor = Main.GetFormInputHTML3(RequestNameBlogCopy, BlogCopy, 500, "100%", False, True)
             End If
-            s = s & GetFormTableRow("<div style=""padding-top:3px"">Title: </div>", Main.GetFormInputText(RequestNameBlogTitle, BlogTitle, 1, 50))
+            s = s & GetFormTableRow("<div style=""padding-top:3px"">Title: </div>", cp.Html.InputText(RequestNameBlogTitle, BlogTitle, 1, 50))
             s = s & GetFormTableRow("<div style=""padding-top:108px"">Post: </div>", editor)
-            s = s & GetFormTableRow("<div style=""padding-top:3px"">Tag List: </div>", Main.GetFormInputText(RequestNameBlogTagList, BlogTagList, 5, 50))
+            s = s & GetFormTableRow("<div style=""padding-top:3px"">Tag List: </div>", cp.Html.InputText(RequestNameBlogTagList, BlogTagList, 5, 50))
             If AllowCategories Then
                 hint = "5"
                 CategorySelect = Main.GetFormInputSelect(RequestNameBlogCategoryIDSet, BlogCategoryID, "Blog Categories")
@@ -1320,10 +1423,10 @@ Namespace Views
             CS = Main.OpenCSSQL("default", SQL)
             Ptr = 1
             Do While Main.IsCSOK(CS)
-                ImageID = Main.GetCSInteger(CS, "id")
+                ImageID = cp.doc.getinteger(CS, "id")
                 Call GetBlogImage(ImageID, 200, 0, imageFilename, "", "", "")
-                imageDescription = Main.GetCSText(CS, "description")
-                imageName = Main.GetCSText(CS, "name")
+                imageDescription = cp.Doc.GetText(CS, "description")
+                imageName = cp.Doc.GetText(CS, "name")
                 '
                 '   row delimiter
                 '
@@ -1358,7 +1461,7 @@ Namespace Views
                 '
                 c = c _
         & "<tr>" _
-        & "<td>Name<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageName & "." & Ptr & """ SIZE=""25"" value=""" & kmaEncodeHTML(imageName) & """></TD>" _
+        & "<td>Name<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageName & "." & Ptr & """ SIZE=""25"" value=""" & cp.Utils.EncodeHTML(imageName) & """></TD>" _
         & "</tr>" _
         & ""
                 '
@@ -1366,7 +1469,7 @@ Namespace Views
                 '
                 c = c _
         & "<tr>" _
-        & "<td>Description<br><TEXTAREA NAME=""" & rnBlogImageDescription & "." & Ptr & """ ROWS=""5"" COLS=""50"">" & kmaEncodeHTML(imageDescription) & "</TEXTAREA><input type=""hidden"" name=""" & rnBlogImageID & "." & Ptr & """ value=""" & ImageID & """></TD>" _
+        & "<td>Description<br><TEXTAREA NAME=""" & rnBlogImageDescription & "." & Ptr & """ ROWS=""5"" COLS=""50"">" & cp.Utils.EncodeHTML(imageDescription) & "</TEXTAREA><input type=""hidden"" name=""" & rnBlogImageID & "." & Ptr & """ value=""" & ImageID & """></TD>" _
         & "</tr>" _
         & ""
                 '
@@ -1434,7 +1537,7 @@ Namespace Views
                 s = s & GetFormTableRow("", Main.GetFormButton(FormButtonPost) & "&nbsp;" & Main.GetFormButton(FormButtonCancel))
             End If
             hint = "8"
-            qs = Main.RefreshQueryString()
+            qs = cp.Doc.RefreshQueryString()
             qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, "", True)
             qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostList)
             hint = "9"
@@ -1457,7 +1560,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Private Function ProcessFormBlogPost(SourceFormID As Integer, blogId As Integer, EntryID As Integer, ButtonValue As String, BlogCategoryID As Integer, RSSFeedId As Integer, blogListLink As String, ThumbnailImageWidth As Integer, BuildVersion As String, ImageWidthMax As Integer) As Integer
+        Private Function ProcessFormBlogPost(cp As CPBaseClass, SourceFormID As Integer, blogId As Integer, EntryID As Integer, ButtonValue As String, BlogCategoryID As Integer, RSSFeedId As Integer, blogListLink As String, ThumbnailImageWidth As Integer, BuildVersion As String, ImageWidthMax As Integer) As Integer
             '
             Dim UploadCount As Integer
             Dim UploadPointer As Integer
@@ -1507,10 +1610,10 @@ Namespace Views
                     End If
                     CS = Main.OpenCSContent(cnBlogEntries, "(blogid=" & blogId & ")and(ID=" & EntryID & ")")
                     If Main.csok(CS) Then
-                        EntryName = Main.GetStreamText(RequestNameBlogTitle)
+                        EntryName = cp.Doc.GetText(RequestNameBlogTitle)
                         Call Main.SetCS(CS, "Name", EntryName)
-                        Call Main.SetCS(CS, "copy", Main.GetStreamText(RequestNameBlogCopy))
-                        Call Main.SetCS(CS, "TagList", Main.GetStreamText(RequestNameBlogTagList))
+                        Call Main.SetCS(CS, "copy", cp.Doc.GetText(RequestNameBlogCopy))
+                        Call Main.SetCS(CS, "TagList", cp.Doc.GetText(RequestNameBlogTagList))
                         ' if authormemberid=0, use createdby
                         'Call Main.SetCS(cs, "AuthorMemberID", Main.MemberID)
                         Call Main.SetCS(CS, "BlogCategoryID", BlogCategoryID)
@@ -1522,14 +1625,14 @@ Namespace Views
                     '
                     ' Upload files
                     '
-                    UploadCount = Main.GetStreamInteger("LibraryUploadCount")
+                    UploadCount = cp.Doc.GetInteger("LibraryUploadCount")
                     If UploadCount > 0 Then
                         For UploadPointer = 1 To UploadCount
-                            ImageID = Main.GetStreamInteger(rnBlogImageID & "." & UploadPointer)
-                            imageFilename = Main.GetStreamText(rnBlogUploadPrefix & "." & UploadPointer)
-                            imageOrder = Main.GetStreamInteger(rnBlogImageOrder & "." & UploadPointer)
-                            imageName = Main.GetStreamText(rnBlogImageName & "." & UploadPointer)
-                            imageDescription = Main.GetStreamText(rnBlogImageDescription & "." & UploadPointer)
+                            ImageID = cp.Doc.GetInteger(rnBlogImageID & "." & UploadPointer)
+                            imageFilename = cp.Doc.GetText(rnBlogUploadPrefix & "." & UploadPointer)
+                            imageOrder = cp.Doc.GetInteger(rnBlogImageOrder & "." & UploadPointer)
+                            imageName = cp.Doc.GetText(rnBlogImageName & "." & UploadPointer)
+                            imageDescription = cp.Doc.GetText(rnBlogImageDescription & "." & UploadPointer)
                             If ImageID <> 0 Then
                                 '
                                 ' edit image
@@ -1551,7 +1654,7 @@ Namespace Views
                                 '
                                 CS = Main.InsertCSRecord(cnBlogImages)
                                 If Main.IsCSOK(CS) Then
-                                    BlogImageID = Main.GetCSInteger(CS, "id")
+                                    BlogImageID = cp.Doc.GetInteger(CS, "id")
                                     'If Copy = "" Then
                                     '    Copy = ImageFilename
                                     'End If
@@ -1571,11 +1674,11 @@ Namespace Views
                                     VirtualFilePath = Replace(VirtualFilePathPage, imageFilename, "")
                                     Call Main.ProcessFormInputFile(rnBlogUploadPrefix & "." & UploadPointer, VirtualFilePath)
                                     If BuildVersion > "3.4.190" Then
-                            '
-                            ' add image resize values
-                            '
-                            Set sf = CreateObject("sfimageresize.imageresize")
-                            sf.Algorithm = 5
+                                        '
+                                        ' add image resize values
+                                        '
+                                        sf = CreateObject("sfimageresize.imageresize")
+                                        sf.Algorithm = 5
 
                                         sf.LoadFromFile(Main.PhysicalFilePath & VirtualFilePathPage)
                                         If Err.Number = 0 Then
@@ -1586,10 +1689,10 @@ Namespace Views
                                         Else
                                             Err.Clear()
                                         End If
-                            '
-                            Set sf = Nothing
-'                                Call Main.SetCS(CS, "AltSizeList", AltSizeList)
-                            Call Main.SetCS(CS, "sortorder", String(12 - Len(BlogImageID), "0") & BlogImageID)
+                                        '
+                                        sf = Nothing
+                                        '                                Call Main.SetCS(CS, "AltSizeList", AltSizeList)
+                                        Call Main.SetCS(CS, "sortorder", String(12 - Len(BlogImageID), "0") & BlogImageID)
                                     End If
                                 End If
                                 Call Main.CloseCS(CS)
@@ -1664,7 +1767,7 @@ Namespace Views
             '
             formKey = Main.EncodeKeyNumber(Main.VisitID, Now())
             s = s & vbCrLf & Main.GetFormInputHidden("FormKey", formKey)
-            'QSBack = Main.RefreshQueryString()
+            'QSBack = cp.Doc.RefreshQueryString()
             'QSBack = cp.Utils.ModifyQueryString(QSBack, RequestNameBlogEntryID, "", True)
             'QSBack = cp.Utils.ModifyQueryString(QSBack, RequestNameFormID, FormBlogPostList)
             s = s & cr & "<div class=""aoBlogHeaderLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
@@ -1676,18 +1779,18 @@ Namespace Views
             If Not Main.csok(CS) Then
                 s = s & cr & "<div class=""aoBlogProblem"">Sorry, the blog post you selected is not currently available</div>"
             Else
-                EntryID = Main.GetCSInteger(CS, "ID")
-                AuthorMemberID = Main.GetCSInteger(CS, "AuthorMemberID")
+                EntryID = cp.Doc.GetInteger(CS, "ID")
+                AuthorMemberID = cp.Doc.GetInteger(CS, "AuthorMemberID")
                 If AuthorMemberID = 0 Then
-                    AuthorMemberID = Main.GetCSInteger(CS, "createdBy")
+                    AuthorMemberID = cp.Doc.GetInteger(CS, "createdBy")
                 End If
-                DateAdded = Main.GetCSText(CS, "DateAdded")
-                EntryName = Main.GetCSText(CS, "Name")
+                DateAdded = cp.Doc.GetText(CS, "DateAdded")
+                EntryName = cp.Doc.GetText(CS, "Name")
                 If cp.User.IsAuthoring("Blogs") Then
                     entryEditLink = Main.GetCSRecordEditLink(CS)
                 End If
-                EntryCopy = Main.GetCSText(CS, "Copy")
-                'EntryCopyOverview = Main.GetCSText(CS, "copyOverview")
+                EntryCopy = cp.Doc.GetText(CS, "Copy")
+                'EntryCopyOverview = cp.Doc.GetText(CS, "copyOverview")
                 allowComments = cp.Site.GetBoolean(CS, "allowComments")
                 PodcastMediaLink = Main.GetCS(CS, "PodcastMediaLink")
                 PodcastSize = Main.GetCS(CS, "PodcastSize")
@@ -1696,14 +1799,14 @@ Namespace Views
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(EntryID))
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails)
                 Call Main.AddLinkAlias(EntryName, cp.Doc.PageId, qs)
-                Call Main.SetCS(CS, "viewings", 1 + Main.GetCSInteger(CS, "viewings"))
-                imageDisplayTypeId = Main.GetCSInteger(CS, "imageDisplayTypeId")
-                primaryImagePositionId = Main.GetCSInteger(CS, "primaryImagePositionId")
-                articlePrimaryImagePositionId = Main.GetCSInteger(CS, "articlePrimaryImagePositionId")
+                Call Main.SetCS(CS, "viewings", 1 + cp.Doc.GetInteger(CS, "viewings"))
+                imageDisplayTypeId = cp.Doc.GetInteger(CS, "imageDisplayTypeId")
+                primaryImagePositionId = cp.Doc.GetInteger(CS, "primaryImagePositionId")
+                articlePrimaryImagePositionId = cp.Doc.GetInteger(CS, "articlePrimaryImagePositionId")
                 s = s & GetBlogEntryCell(EntryPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, DateAdded, True, False, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, entryEditLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, imageDisplayTypeId, primaryImagePositionId, articlePrimaryImagePositionId, blogListQs, AuthorMemberID)
                 EntryPtr = EntryPtr + 1
                 '
-                blogId = Main.GetCSInteger(CS, "BlogID")
+                blogId = cp.Doc.GetInteger(CS, "BlogID")
                 '
             End If
             Call Main.CloseCS(CS)
@@ -1752,27 +1855,29 @@ Namespace Views
             '
             ' The new comment block
             '
+
             's = s & cr & "<div class=""aoBlogCommentDivider"">&nbsp;</div>"
             If allowComments And (Main.VisitCookieSupport) And (Not Main.VisitIsBot) Then
                 s = s & cr & "<div class=""aoBlogCommentHeader"">Post a Comment</div>"
                 '
                 If (Main.IsUserError()) Then
-                    s = s & "<div class=""aoBlogCommentError"">" & Main.GetUserError() & "</div>"
+                    s = s & "<div class=""aoBlogCommentError"">" & (cp.UserError.ToString) & "</div>"
                 End If
                 '
-                If (Not AllowAnonymous) And (Not Main.IsAuthenticated) Then
+
+                If (Not AllowAnonymous) And (Not cp.User.IsAuthenticated) Then
                     AllowPasswordEmail = cp.Utils.EncodeBoolean(cp.Site.GetProperty("AllowPasswordEmail", False))
                     AllowMemberJoin = cp.Utils.EncodeBoolean(cp.Site.GetProperty("AllowMemberJoin", False))
-                    Auth = Main.GetStreamInteger("auth")
+                    Auth = cp.Doc.GetInteger("auth")
                     If (Auth = 1) And (Not AllowPasswordEmail) Then
                         Auth = 3
                     ElseIf (Auth = 2) And (Not AllowMemberJoin) Then
                         Auth = 3
                     End If
-                    Call Main.AddRefreshQueryString(RequestNameFormID, FormBlogPostDetails)
-                    Call Main.AddRefreshQueryString(RequestNameBlogEntryID, EntryID)
-                    Call Main.AddRefreshQueryString("auth", "0")
-                    qs = Main.RefreshQueryString()
+                    Call cp.Doc.AddRefreshQueryString(RequestNameFormID, FormBlogPostDetails)
+                    Call cp.Doc.AddRefreshQueryString(RequestNameBlogEntryID, EntryID)
+                    Call cp.Doc.AddRefreshQueryString("auth", "0")
+                    qs = cp.Doc.RefreshQueryString()
                     Select Case Auth
                         Case 1
                             '
@@ -1832,15 +1937,15 @@ Namespace Views
                     s = s & cr & "<div>&nbsp;</div>"
                     s = s & cr & "<div class=""aoBlogCommentCopy"">Title</div>"
                     If RetryCommentPost Then
-                        s = s & cr & "<div class=""aoBlogCommentCopy"">" & GetField(RequestNameCommentTitle, , 35, , Main.GetStreamText(RequestNameCommentTitle)) & "</div>"
+                        s = s & cr & "<div class=""aoBlogCommentCopy"">" & GetField(RequestNameCommentTitle, , 35, , cp.Doc.GetText(RequestNameCommentTitle)) & "</div>"
                         s = s & cr & "<div>&nbsp;</div>"
                         s = s & cr & "<div class=""aoBlogCommentCopy"">Comment</div>"
-                        s = s & cr & "<div class=""aoBlogCommentCopy"">" & Main.GetFormInputText(RequestNameCommentCopy, Main.GetStreamText(RequestNameCommentCopy), 15, 70) & "</div>"
+                        s = s & cr & "<div class=""aoBlogCommentCopy"">" & cp.Html.InputText(RequestNameCommentCopy, cp.Doc.GetText(RequestNameCommentCopy), 15, 70) & "</div>"
                     Else
                         s = s & cr & "<div class=""aoBlogCommentCopy"">" & GetField(RequestNameCommentTitle, , 35) & "</div>"
                         s = s & cr & "<div>&nbsp;</div>"
                         s = s & cr & "<div class=""aoBlogCommentCopy"">Comment</div>"
-                        s = s & cr & "<div class=""aoBlogCommentCopy"">" & Main.GetFormInputText(RequestNameCommentCopy, "", 15, 70) & "</div>"
+                        s = s & cr & "<div class=""aoBlogCommentCopy"">" & cp.Html.InputText(RequestNameCommentCopy, "", 15, 70) & "</div>"
                     End If
                     's = s & cr & "<div class=""aoBlogCommentCopy"">Verify Text</div>"
                     '
@@ -1860,7 +1965,7 @@ Namespace Views
             ' edit link
             '
             If IsBlogOwner Then
-                qs = Main.RefreshQueryString()
+                qs = cp.Doc.RefreshQueryString()
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(EntryID))
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor)
                 s = s & cr & "<div class=""aoBlogToolLink""><a href=""?" & qs & """>Edit</a></div>"
@@ -1868,13 +1973,13 @@ Namespace Views
             '
             ' Search
             '
-            qs = Main.RefreshQueryString
+            qs = cp.Doc.RefreshQueryString
             qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogSearch, True)
             s = s & cr & "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>"
             '
             ' back to recent posts
             '
-            'QSBack = Main.RefreshQueryString()
+            'QSBack = cp.Doc.RefreshQueryString()
             'QSBack = cp.Utils.ModifyQueryString(QSBack, RequestNameBlogEntryID, "", True)
             'QSBack = cp.Utils.ModifyQueryString(QSBack, RequestNameFormID, FormBlogPostList)
             s = s & cr & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
@@ -1949,8 +2054,8 @@ Namespace Views
                         '
                         ' Process recaptcha
                         '
-                        optionStr = "Challenge=" + Main.GetStreamText("recaptcha_challenge_field")
-                        optionStr = optionStr & "&Response=" + Main.GetStreamText("recaptcha_response_field")
+                        optionStr = "Challenge=" + cp.Doc.getText("recaptcha_challenge_field")
+                        optionStr = optionStr & "&Response=" + cp.Doc.getText("recaptcha_response_field")
                         captchaResponse = Main.ExecuteAddon2(reCaptchaProcessGuid, optionStr)
                         Call Main.testpoint("output - reCaptchaProcessGuid, result=" & captchaResponse)
                         If captchaResponse <> "" Then
@@ -1962,9 +2067,9 @@ Namespace Views
                     ' Process comment post
                     '
                     RetryCommentPost = True
-                    formKey = Main.GetStreamText("formkey")
+                    formKey = cp.Doc.getText("formkey")
                     'formKey = Main.DecodeKeyNumber(formKey)
-                    Copy = Main.GetStreamText(RequestNameCommentCopy)
+                    Copy = cp.Doc.getText(RequestNameCommentCopy)
                     If Copy <> "" Then
                         Call Main.testpoint("blog -- adding comment [" & Copy & "]")
                         'If (Main.VisitID <> kmaEncodeInteger(Main.DecodeKeyNumber(formKey))) Then
@@ -1982,9 +2087,9 @@ Namespace Views
                             Call AppendLog("Trace", "testpoint3")
                         Else
                             Call Main.testpoint("blog -- adding comment, no user error")
-                            EntryID = Main.GetStreamInteger(RequestNameBlogEntryID)
+                            EntryID = cp.doc.getInteger(RequestNameBlogEntryID)
                             CSP = Main.InsertCSRecord(cnBlogComments)
-                            If AllowAnonymous And (Not Main.IsAuthenticated) Then
+                            If AllowAnonymous And (Not cp.User.IsAuthenticated) Then
                                 MemberID = 0
                                 MemberName = AnonymousMemberName
                             Else
@@ -1994,9 +2099,9 @@ Namespace Views
                             If Main.csok(CSP) Then
                                 Call Main.SetCS(CSP, "BlogID", blogId)
                                 Call Main.SetCS(CSP, "active", 1)
-                                'Call Main.SetCS(CSP, "Name", Main.GetStreamText(RequestNameAuthorName))
-                                'Call Main.SetCS(CSP, "AuthorEmail", Main.GetStreamText(RequestNameAuthorEmail))
-                                Call Main.SetCS(CSP, "Name", Main.GetStreamText(RequestNameCommentTitle))
+                                'Call Main.SetCS(CSP, "Name", cp.Doc.getText(RequestNameAuthorName))
+                                'Call Main.SetCS(CSP, "AuthorEmail", cp.Doc.getText(RequestNameAuthorEmail))
+                                Call Main.SetCS(CSP, "Name", cp.Doc.getText(RequestNameCommentTitle))
                                 '**** should have been copytext, not copy
                                 Call Main.SetCS(CSP, "Copytext", Copy)
                                 'Call Main.SetCS(CSP, "Copy", Copy)
@@ -2004,7 +2109,7 @@ Namespace Views
                                 'Call Main.SetCS(CSP, "AuthorMemberID", Main.MemberID)
                                 Call Main.SetCS(CSP, "Approved", IsBlogOwner Or autoApproveComments)
                                 Call Main.SetCS(CSP, "formkey", formKey)
-                                CommentID = Main.GetCSInteger(CSP, "ID")
+                                CommentID = cp.doc.getinteger(CSP, "ID")
                                 RetryCommentPost = False
                             End If
                             Call Main.CloseCS(CSP)
@@ -2029,7 +2134,7 @@ Namespace Views
                         & cr & "Post '" & EntryName & "'" _
                         & cr & "By " & Main.MemberName _
                         & vbCrLf _
-                        & vbCrLf & kmaEncodeHTML(Copy) _
+                        & vbCrLf & cp.Utils.EncodeHTML(Copy) _
                         & vbCrLf
                                 EmailFromAddress = cp.Site.GetProperty("EmailFromAddress", "info@" & Main.ServerDomain)
                                 Call Main.SendMemberEmail(BlogOwnerID, EmailFromAddress, "Blog comment notification for [" & BlogName & "]", EmailBody, False, False)
@@ -2038,7 +2143,7 @@ Namespace Views
                                     If authoringGroup <> "" Then
                                         CS = Main.OpenCSGroupMembers(authoringGroup, "(allowbulkemail<>0)and(email<>'')")
                                         Do While Main.IsCSOK(CS)
-                                            AuthoringMemberId = Main.GetCSInteger(CS, "id")
+                                            AuthoringMemberId = cp.doc.getinteger(CS, "id")
                                             Call Main.SendMemberEmail(AuthoringMemberId, EmailFromAddress, "Blog comment on " & BlogName, EmailBody, False, False)
                                             Call Main.NextCSRecord(CS)
                                         Loop
@@ -2055,14 +2160,14 @@ Namespace Views
                     ' Post approval changes if the person is the owner
                     '
                     If IsBlogOwner Then
-                        EntryCnt = Main.GetStreamInteger("EntryCnt")
+                        EntryCnt = cp.doc.getInteger("EntryCnt")
                         If EntryCnt > 0 Then
                             For EntryPtr = 0 To EntryCnt - 1
-                                CommentCnt = Main.GetStreamInteger("CommentCnt" & EntryPtr)
+                                CommentCnt = cp.doc.getInteger("CommentCnt" & EntryPtr)
                                 If CommentCnt > 0 Then
                                     For CommentPtr = 0 To CommentCnt - 1
                                         Suffix = EntryPtr & "." & CommentPtr
-                                        CommentID = Main.GetStreamInteger("CommentID" & Suffix)
+                                        CommentID = cp.doc.getInteger("CommentID" & Suffix)
                                         If Main.GetStreamBoolean("Delete" & Suffix) Then
                                             '
                                             ' Delete comment
@@ -2110,7 +2215,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Private Function GetBlogCommentCell(IsBlogOwner As Boolean, DateAdded As Date, Approved As Boolean, CommentName As String, CommentCopy As String, CommentID As Integer, EntryPtr As Integer, CommentPtr As Integer, AuthorMemberID As Integer, EntryID As Integer, IsSearchListing As Boolean, EntryName As String) As String
+        Private Function GetBlogCommentCell(cp As CPBaseClass, IsBlogOwner As Boolean, DateAdded As Date, Approved As Boolean, CommentName As String, CommentCopy As String, CommentID As Integer, EntryPtr As Integer, CommentPtr As Integer, AuthorMemberID As Integer, EntryID As Integer, IsSearchListing As Boolean, EntryName As String) As String
             '
             Dim Copy As String
             Dim s As String
@@ -2126,20 +2231,20 @@ Namespace Views
                 authorMemberName = users(userPtr).Name
             End If
             If IsSearchListing Then
-                qs = Main.RefreshQueryString
+                qs = cp.Doc.RefreshQueryString
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(EntryID))
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostList)
                 s = s & cr & "<div class=""aoBlogEntryName"">Comment to Blog Post " & EntryName & ", <a href=""?" & qs & """>View this post</a></div>"
                 s = s & cr & "<div class=""aoBlogCommentDivider"">&nbsp;</div>"
             End If
-            s = s & cr & "<div class=""aoBlogCommentName"">" & kmaEncodeHTML(CommentName) & "</div>"
+            s = s & cr & "<div class=""aoBlogCommentName"">" & cp.Utils.EncodeHTML(CommentName) & "</div>"
             Copy = CommentCopy
-            Copy = kmaEncodeHTML(Copy)
+            Copy = cp.Utils.EncodeHTML(Copy)
             Copy = Replace(Copy, vbCrLf, "<BR />")
             s = s & cr & "<div class=""aoBlogCommentCopy"">" & Copy & "</div>"
             RowCopy = ""
             If authorMemberName <> "" Then
-                RowCopy = RowCopy & "by " & kmaEncodeHTML(authorMemberName)
+                RowCopy = RowCopy & "by " & cp.Utils.EncodeHTML(authorMemberName)
                 If DateAdded <> CDate(0) Then
                     RowCopy = RowCopy & " | " & DateAdded
                 End If
@@ -2244,7 +2349,7 @@ Namespace Views
             SQL = "select i.id from BlogImages i,BlogImageRules r where r.BlogImageID=i.id and i.active<>0 and r.blogentryid=" & EntryID & " order by i.SortOrder"
             CS = Main.OpenCSSQL("default", SQL)
             Do While Main.IsCSOK(CS)
-                imageIDList = imageIDList & "," & Main.GetCSText(CS, "id")
+                imageIDList = imageIDList & "," & cp.Doc.GetText(CS, "id")
                 Call Main.NextCSRecord(CS)
             Loop
             Call Main.CloseCS(CS)
@@ -2314,7 +2419,7 @@ Namespace Views
                     If c <> "" Then
                         s = s _
                 & cr & "<div class=""aoBlogEntryImageSection"">" _
-                & kmaIndent(c) _
+                & cp.Html.Indent(c) _
                 & cr & "</div>"
                     End If
                 End If
@@ -2341,7 +2446,7 @@ Namespace Views
             & cr & "</div>"
                     TagListRow = "" _
             & cr & "<div class=""aoBlogTagListSection"">" _
-            & kmaIndent(c) _
+            & cp.Html.Indent(c) _
             & cr & "</div>"
                 End If
             Else
@@ -2493,7 +2598,7 @@ Namespace Views
                     '                s = s & cr & "<div class=""aoBlogToolLink"">" & ToolLine & "</div>"
                     '            End If
 
-                    's = s & cr & "<div><a class=""aoBlogFooterLink"" href=""" & Main.ServerPage & WorkingQueryString & RequestNameBlogEntryID & "=" & Main.GetCSInteger(CS, "ID") & "&" & RequestNameFormID & "=" & FormBlogPostDetails & """>Post a Comment</a></div>"
+                    's = s & cr & "<div><a class=""aoBlogFooterLink"" href=""" & Main.ServerPage & WorkingQueryString & RequestNameBlogEntryID & "=" & cp.doc.getinteger(CS, "ID") & "&" & RequestNameFormID & "=" & FormBlogPostDetails & """>Post a Comment</a></div>"
 
                 Else
                     '
@@ -2518,14 +2623,14 @@ Namespace Views
                         s = s & vbCrLf & Divider
                         CommentPtr = 0
                         Do While Main.csok(CS)
-                            CommentID = Main.GetCSInteger(CS, "ID")
-                            AuthorMemberID = Main.GetCSInteger(CS, "createdby")
-                            DateAdded = Main.GetCSDate(CS, "DateAdded")
+                            CommentID = cp.Doc.GetInteger(CS, "ID")
+                            AuthorMemberID = cp.Doc.GetInteger(CS, "createdby")
+                            DateAdded = cp.Doc.GetDate(CS, "DateAdded")
                             Approved = cp.Site.GetBoolean(CS, "Approved")
-                            CommentName = Main.GetCSText(CS, "Name")
-                            CommentCopy = Main.GetCSText(CS, "Copytext")
+                            CommentName = cp.Doc.GetText(CS, "Name")
+                            CommentCopy = cp.Doc.GetText(CS, "Copytext")
                             If CommentCopy = "" Then
-                                CommentCopy = Main.GetCSText(CS, "Copy")
+                                CommentCopy = cp.Doc.GetText(CS, "Copy")
                             End If
                             s = s & GetBlogCommentCell(IsBlogOwner, DateAdded, Approved, CommentName, CommentCopy, CommentID, EntryPtr, CommentPtr, AuthorMemberID, EntryID, False, EntryName)
                             s = s & vbCrLf & Divider
@@ -2740,7 +2845,7 @@ Namespace Views
                     '
                     CSFeed = Main.InsertCSContent(cnRSSFeeds)
                     If Main.IsCSOK(CSFeed) Then
-                        Return_RSSFeedID = Main.GetCSInteger(CSFeed, "ID")
+                        Return_RSSFeedID = cp.doc.getinteger(CSFeed, "ID")
                         Call Main.SetCS(CSBlog, "RSSFeedID", Return_RSSFeedID)
                         Call Main.SetCS(CSFeed, "Name", Return_RSSFeedName)
                         If blogDescription = "" Then
@@ -2758,8 +2863,8 @@ Namespace Views
                     '   only reset the link if it is blank (see desc at top of class)
                     '   only manage the RSSFeedFilename if it is blank
                     '
-                    Return_RSSFeedName = Main.GetCSText(CSFeed, "name")
-                    Return_RSSFeedID = Main.GetCSInteger(CSFeed, "id")
+                    Return_RSSFeedName = cp.Doc.GetText(CSFeed, "name")
+                    Return_RSSFeedID = cp.doc.getinteger(CSFeed, "id")
                     Return_RSSFeedFilename = Trim(Main.GetCS(CSFeed, "rssfilename"))
                     If Trim(Main.GetCS(CSFeed, "link")) = "" Then
                         rssLink = Main.serverProtocol & Main.ServerHost & blogListLink
@@ -2810,10 +2915,10 @@ Namespace Views
             '
             CS = Main.OpenCSContentRecord(cnBlogImages, BlogImageID, , , "name,description,filename,altsizelist")
             If Main.IsCSOK(CS) Then
-                Filename = Main.GetCSText(CS, "filename")
-                AltSizeList = Main.GetCSText(CS, "AltSizeList")
-                Return_ImageDescription = Main.GetCSText(CS, "description")
-                Return_Imagename = Main.GetCSText(CS, "name")
+                Filename = cp.Doc.GetText(CS, "filename")
+                AltSizeList = cp.Doc.GetText(CS, "AltSizeList")
+                Return_ImageDescription = cp.Doc.GetText(CS, "description")
+                Return_Imagename = cp.Doc.GetText(CS, "name")
                 '
                 Return_ThumbnailFilename = Filename
                 Return_ImageFilename = Filename
@@ -2844,8 +2949,8 @@ Namespace Views
                         ElseIf ThumbNailSize <> "" Then
                             Return_ThumbnailFilename = FilenameNoExtension & "-" & ThumbNailSize & "." & FilenameExtension
                         Else
-                Set sf = CreateObject("sfimageresize.imageresize")
-                sf.Algorithm = 5
+                            sf = CreateObject("sfimageresize.imageresize")
+                            sf.Algorithm = 5
 
                             sf.LoadFromFile(Main.PhysicalFilePath & Filename)
                             If Err.Number <> 0 Then
@@ -2867,8 +2972,8 @@ Namespace Views
                         ElseIf ImageSize <> "" Then
                             Return_ImageFilename = FilenameNoExtension & "-" & ImageSize & "." & FilenameExtension
                         Else
-                Set sf = CreateObject("sfimageresize.imageresize")
-                sf.Algorithm = 5
+                            sf = CreateObject("sfimageresize.imageresize")
+                            sf.Algorithm = 5
 
                             sf.LoadFromFile(Main.PhysicalFilePath & Filename)
                             If Err.Number <> 0 Then
@@ -2970,10 +3075,10 @@ ErrorTrap:
                     userCnt = userCnt + 1
                     ReDim Preserve users(userCnt)
                     users(userPtr).Id = userid
-                    users(userPtr).Name = Main.GetCSText(CS, "name")
+                    users(userPtr).Name = cp.Doc.GetText(CS, "name")
                     users(userPtr).authorInfoLink = ""
                     If allowAuthorInfoLink Then
-                        users(userPtr).authorInfoLink = Main.GetCSText(CS, "authorInfoLink")
+                        users(userPtr).authorInfoLink = cp.Doc.GetText(CS, "authorInfoLink")
                     End If
                 End If
                 Call Main.CloseCS(CS)

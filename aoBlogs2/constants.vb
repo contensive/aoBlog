@@ -21,6 +21,7 @@ Public Module constants
     Public Const imageDisplayTypeList As Integer = 2
     Public Const imageDisplayTypeFader As Integer = 3
     '
+    Public Const cr As String = vbCrLf
     Public Const cnPeople As String = "people"
     Public Const cnBlogs As String = "Blogs"
     Public Const cnBlogCopy As String = "Blog Copy"

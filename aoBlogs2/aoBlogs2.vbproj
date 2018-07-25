@@ -89,6 +89,10 @@
     <Compile Include="Models\blogModel.vb" />
     <Compile Include="Models\BlogEntryModel.vb" />
     <Compile Include="Models\LinkAliasesModel.vb" />
+    <Compile Include="Models\RSSFeedBlogRuleModel.vb" />
+    <Compile Include="Models\RSSFeedModel.vb" />
+    <Compile Include="Models\BlogCommentModel.vb" />
+    <Compile Include="Models\BlogCopyModel.vb" />
     <Compile Include="Models\_blankModel.vb" />
     <Compile Include="Views\vb6BlogsClass.vb" />
     <Compile Include="Controllers\vb6PatchClass.vb" />
