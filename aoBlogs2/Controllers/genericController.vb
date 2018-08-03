@@ -1,6 +1,8 @@
-﻿
-Option Explicit On
+﻿Option Explicit On
 Option Strict On
+
+Imports Contensive.Addons.Blog.Models
+Imports Contensive.BaseClasses
 
 Namespace Controllers
     Public NotInheritable Class genericController
@@ -64,7 +66,18 @@ Namespace Controllers
         Public Shared Function convertToUnixPath(sourcePath As String) As String
             Return sourcePath.Replace("\", "/")
         End Function
-
+        ''' <summary>
+        ''' is a member of a group in the group model list
+        ''' </summary>
+        ''' <param name="cp"></param>
+        ''' <param name="groupList"></param>
+        ''' <returns></returns>
+        Public Shared Function IsGroupListMember(cp As CPBaseClass, groupList As List(Of GroupModel)) As Boolean
+            For Each Group In groupList
+                If cp.User.IsInGroup(Group.name) Then Return True
+            Next
+            Return False
+        End Function
 
     End Class
 End Namespace

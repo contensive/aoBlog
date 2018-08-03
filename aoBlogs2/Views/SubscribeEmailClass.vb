@@ -3,7 +3,7 @@ Imports System.Collections.Generic
 Imports System.Text
 Imports Contensive.BaseClasses
 
-Namespace Contensive.Addons.aoBlogs2
+Namespace Contensive.Addons.Blog
     '
     ' Sample Vb addon
     '
@@ -44,7 +44,7 @@ Namespace Contensive.Addons.aoBlogs2
                             Call cs.SetField("publicjoin", "1")
                         End If
                         Call cs.Close()
-                        If cs.Open("blogs","id=" &  blogId) Then
+                        If cs.Open("blogs", "id=" & blogId) Then
                             Call cs.SetField("emailSubscribeGroupId", groupId.ToString())
                         End If
                     End If

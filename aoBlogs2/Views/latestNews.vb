@@ -3,7 +3,7 @@ Imports System.Collections.Generic
 Imports System.Text
 Imports Contensive.BaseClasses
 
-Namespace Contensive.Addons.aoBlogs2
+Namespace Contensive.Addons.Blog
     '
     ' Sample Vb addon
     '

@@ -130,6 +130,48 @@ Namespace Models
                 End If
             Next
         End Sub
+        '
+        ''' <summary>
+        ''' Return a list of Blog Copy
+        ''' </summary>
+        ''' <param name="cp"></param>
+        ''' <param name="blogId">The id of the Blog Copy</param>
+        ''' <returns></returns>
+        Public Shared Function createListFromBlogCopy(cp As CPBaseClass, blogId As Integer) As List(Of BlogCopyModel)
+            Dim result As New List(Of BlogCopyModel)
+            Try
+                Dim Sql As String = "select p.ID" _
+                        & " from (ccBlogCopy p" _
+                        & " left join BlogCategories c on c.id=p.blogCategoryID)" _
+                        & " where (p.blogid=" & blogId & ")" _
+                        & " and((c.id is null)or(c.UserBlocking=0)or(c.UserBlocking is null))"
+                result = createList(cp, "(id in (" & Sql & "))")
+            Catch ex As Exception
+                cp.Site.ErrorReport(ex)
+            End Try
+            Return result
+        End Function
+        '
+        ''' <summary>
+        ''' Return a list of Archive Blog Copy
+        ''' </summary>
+        ''' <param name="cp"></param>
+        ''' <param name="blogId">The id of the Blog Copy</param>
+        ''' <returns></returns>
+        Public Shared Function createArchiveListFromBlogCopy(cp As CPBaseClass, blogId As Integer) As List(Of BlogCopyModel)
+            Dim result As New List(Of BlogCopyModel)
+            Try
+                Dim SQL = "SELECT distinct Month(DateAdded) as ArchiveMonth, year(dateadded) as ArchiveYear " _
+                            & " From ccBlogCopy" _
+                            & " Where (ContentControlID = " & cp.Content.GetID(cnBlogEntries) & ") And (Active <> 0)" _
+                            & " AND (BlogID=" & blogId & ")" _
+                            & " ORDER BY year(dateadded) desc, Month(DateAdded) desc"
+                result = createList(cp, "(id in (" & Sql & "))")
+            Catch ex As Exception
+                cp.Site.ErrorReport(ex)
+            End Try
+            Return result
+        End Function
 
 
     End Class

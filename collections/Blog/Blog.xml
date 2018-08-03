@@ -6,7 +6,7 @@
 		<Copy></Copy>
 		<CopyText></CopyText>
 		<ActiveXProgramID></ActiveXProgramID>
-		<DotNetClass><![CDATA[Contensive.Addons.aoBlogs2.SubscribeEmailClass]]></DotNetClass>
+		<DotNetClass><![CDATA[Contensive.Addons.Blog.SubscribeEmailClass]]></DotNetClass>
 		<ArgumentList><![CDATA[BlogName=Default]]></ArgumentList>
 		<AsAjax>No</AsAjax>
 		<Filter>No</Filter>

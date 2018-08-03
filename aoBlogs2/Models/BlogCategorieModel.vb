@@ -1,4 +1,5 @@
 ﻿
+
 Option Explicit On
 Option Strict On
 
@@ -8,93 +9,90 @@ Imports System.Text
 Imports Contensive.BaseClasses
 
 Namespace Models
-    Public Class GroupModel
+    Public Class BlogCategorieModel        '<------ set set model Name and everywhere that matches this string
         Inherits baseModel
         Implements ICloneable
         '
         '====================================================================================================
         '-- const
-        Public Const contentName As String = "Groups"      '<------ set content name
-        Public Const contentTableName As String = "ccGroups"   '<------ set to tablename for the primary content (used for cache names)
+        Public Const contentName As String = "Blog Categories"      '<------ set content name
+        Public Const contentTableName As String = "BlogCategories"   '<------ set to tablename for the primary content (used for cache names)
         Private Shadows Const contentDataSource As String = "default"             '<------ set to datasource if not default
         '
         '====================================================================================================
         ' -- instance properties
-
-        Public Property AllowBulkEmail As Boolean
-        Public Property Caption As String
-        Public Property CopyFilename As String
-        Public Property PublicJoin As Boolean
+        'instancePropertiesGoHere
+        Public Property UserBlocking As Boolean
         '
         '====================================================================================================
-        Public Overloads Shared Function add(cp As CPBaseClass) As GroupModel
-            Return add(Of GroupModel)(cp)
+        Public Overloads Shared Function add(cp As CPBaseClass) As BlogCategorieModel
+            Return add(Of BlogCategorieModel)(cp)
         End Function
         '
         '====================================================================================================
-        Public Overloads Shared Function create(cp As CPBaseClass, recordId As Integer) As GroupModel
-            Return create(Of GroupModel)(cp, recordId)
+        Public Overloads Shared Function create(cp As CPBaseClass, recordId As Integer) As BlogCategorieModel
+            Return create(Of BlogCategorieModel)(cp, recordId)
         End Function
         '
         '====================================================================================================
-        Public Overloads Shared Function create(cp As CPBaseClass, recordGuid As String) As GroupModel
-            Return create(Of GroupModel)(cp, recordGuid)
+        Public Overloads Shared Function create(cp As CPBaseClass, recordGuid As String) As BlogCategorieModel
+            Return create(Of BlogCategorieModel)(cp, recordGuid)
         End Function
         '
         '====================================================================================================
-        Public Overloads Shared Function createByName(cp As CPBaseClass, recordName As String) As GroupModel
-            Return createByName(Of GroupModel)(cp, recordName)
+        Public Overloads Shared Function createByName(cp As CPBaseClass, recordName As String) As BlogCategorieModel
+            Return createByName(Of BlogCategorieModel)(cp, recordName)
         End Function
         '
         '====================================================================================================
         Public Overloads Sub save(cp As CPBaseClass)
-            MyBase.save(Of GroupModel)(cp)
+            MyBase.save(Of BlogCategorieModel)(cp)
         End Sub
         '
         '====================================================================================================
         Public Overloads Shared Sub delete(cp As CPBaseClass, recordId As Integer)
-            delete(Of GroupModel)(cp, recordId)
+            delete(Of BlogCategorieModel)(cp, recordId)
         End Sub
         '
         '====================================================================================================
         Public Overloads Shared Sub delete(cp As CPBaseClass, ccGuid As String)
-            delete(Of GroupModel)(cp, ccGuid)
+            delete(Of BlogCategorieModel)(cp, ccGuid)
         End Sub
         '
         '====================================================================================================
-        Public Overloads Shared Function createList(cp As CPBaseClass, sqlCriteria As String, Optional sqlOrderBy As String = "id") As List(Of GroupModel)
-            Return createList(Of GroupModel)(cp, sqlCriteria, sqlOrderBy)
+        Public Overloads Shared Function createList(cp As CPBaseClass, sqlCriteria As String, Optional sqlOrderBy As String = "id") As List(Of BlogCategorieModel)
+            Return createList(Of BlogCategorieModel)(cp, sqlCriteria, sqlOrderBy)
         End Function
         '
         '====================================================================================================
         Public Overloads Shared Function getRecordName(cp As CPBaseClass, recordId As Integer) As String
-            Return baseModel.getRecordName(Of GroupModel)(cp, recordId)
+            Return baseModel.getRecordName(Of BlogCategorieModel)(cp, recordId)
         End Function
         '
         '====================================================================================================
         Public Overloads Shared Function getRecordName(cp As CPBaseClass, ccGuid As String) As String
-            Return baseModel.getRecordName(Of GroupModel)(cp, ccGuid)
+            Return baseModel.getRecordName(Of BlogCategorieModel)(cp, ccGuid)
         End Function
         '
         '====================================================================================================
         Public Overloads Shared Function getRecordId(cp As CPBaseClass, ccGuid As String) As Integer
-            Return baseModel.getRecordId(Of GroupModel)(cp, ccGuid)
+            Return baseModel.getRecordId(Of BlogCategorieModel)(cp, ccGuid)
         End Function
         '
         '====================================================================================================
         Public Overloads Shared Function getCount(cp As CPBaseClass, sqlCriteria As String) As Integer
-            Return baseModel.getCount(Of GroupModel)(cp, sqlCriteria)
+            Return baseModel.getCount(Of BlogCategorieModel)(cp, sqlCriteria)
         End Function
         '
         '====================================================================================================
         Public Overloads Function getUploadPath(fieldName As String) As String
-            Return MyBase.getUploadPath(Of GroupModel)(fieldName)
+            Return MyBase.getUploadPath(Of BlogCategorieModel)(fieldName)
         End Function
         '
         '====================================================================================================
         '
-        Public Function Clone(cp As CPBaseClass) As GroupModel
-            Dim result As GroupModel = DirectCast(Me.Clone(), GroupModel)
+        Public Function Clone(cp As CPBaseClass) As BlogCategorieModel
+            Dim result As BlogCategorieModel = DirectCast(Me.Clone(), BlogCategorieModel)
             result.id = cp.Content.AddRecord(contentName)
             result.ccguid = cp.Utils.CreateGuid()
             result.save(cp)
@@ -107,15 +105,32 @@ Namespace Models
             Return Me.MemberwiseClone()
         End Function
         '
-        Public Shared Function GetBlockingGroups(cp As CPBaseClass, BlogCategoryID As Integer) As List(Of GroupModel)
-            '
-            Dim result As New List(Of GroupModel)
-            '           
-            For Each BlogCategoryGroupRule In Models.BlogCategoryGroupRulesModel.createList(cp, "BlogCategoryID=" & BlogCategoryID)
-                result.Add(GroupModel.create(cp, BlogCategoryGroupRule.GroupID))
+        '====================================================================================================
+        ''' <summary>
+        ''' Save a list of this model to the database, guid required, using the guid as a key for update/import, and ignoring the id.
+        ''' </summary>
+        ''' <param name="cp"></param>
+        ''' <param name="modelList">A dictionary with guid as key, and this model as object</param>
+        Public Shared Sub migrationImport(cp As CPBaseClass, modelList As Dictionary(Of String, BlogCategorieModel))
+            Dim ContentControlID As Integer = cp.Content.GetID(contentName)
+            For Each kvp In modelList
+                If (Not String.IsNullOrEmpty(kvp.Value.ccguid)) Then
+                    kvp.Value.id = 0
+                    Dim dbData As BlogCategorieModel = create(cp, kvp.Value.ccguid)
+                    If (dbData IsNot Nothing) Then
+                        kvp.Value.id = dbData.id
+                    Else
+                        kvp.Value.DateAdded = Now
+                        kvp.Value.CreatedBy = 0
+                    End If
+                    kvp.Value.ContentControlID = ContentControlID
+                    kvp.Value.ModifiedDate = Now
+                    kvp.Value.ModifiedBy = 0
+                    kvp.Value.save(cp)
+                End If
             Next
-            Return result
-        End Function
+        End Sub
+
 
     End Class
 End Namespace

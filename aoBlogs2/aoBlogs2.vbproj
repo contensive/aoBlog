@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,7 +10,7 @@
     <RootNamespace>Contensive.Addons.Blog</RootNamespace>
     <AssemblyName>aoBlogs2</AssemblyName>
     <MyType>Windows</MyType>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
@@ -41,6 +41,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DocumentationFile>aoBlogs2.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -50,6 +51,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DocumentationFile>aoBlogs2.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <OptionExplicit>On</OptionExplicit>
@@ -93,12 +95,16 @@
     <Compile Include="Models\RSSFeedModel.vb" />
     <Compile Include="Models\BlogCommentModel.vb" />
     <Compile Include="Models\BlogCopyModel.vb" />
+    <Compile Include="Models\BlogCategorieModel.vb" />
+    <Compile Include="Models\BlogImageModel.vb" />
+    <Compile Include="Models\BlogImageRuleModel.vb" />
+    <Compile Include="Models\VisitModel.vb" />
+    <Compile Include="Models\BlogViewingLogModel.vb" />
     <Compile Include="Models\_blankModel.vb" />
+    <Compile Include="Views\BlogClass.vb" />
     <Compile Include="Views\vb6BlogsClass.vb" />
-    <Compile Include="Controllers\vb6PatchClass.vb" />
     <Compile Include="Views\vb6CategoriesClass.vb" />
     <Compile Include="Views\_blankClass.vb" />
-    <Compile Include="Views\latestNews - Copy.vb" />
     <Compile Include="Views\latestNews.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
