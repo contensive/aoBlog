@@ -21,8 +21,23 @@ Namespace Models
         '
         '====================================================================================================
         ' -- instance properties
-        'instancePropertiesGoHere
-        ' sample instance property -- Public Property DataSourceID As Integer
+        Public Property AllowComments As Boolean
+        Public Property Anonymous As Boolean
+        Public Property Approved As Boolean
+        Public Property articlePrimaryImagePositionId As Integer
+        Public Property AuthorMemberID As Integer
+        Public Property blogCategoryID As Integer
+        Public Property BlogID As Integer
+        Public Property EntryID As Integer
+        Public Property FormKey As String
+        Public Property imageDisplayTypeId As Integer
+        Public Property primaryImagePositionId As Integer
+        Public Property Viewings As Integer
+        Public Property PodcastMediaLink As String
+        Public Property PodcastSize As Integer
+        Public Property TagList As String
+        Public Property Copy As String
+
         '
         '====================================================================================================
         Public Overloads Shared Function add(cp As CPBaseClass) As BlogCopyModel
@@ -161,12 +176,13 @@ Namespace Models
         Public Shared Function createArchiveListFromBlogCopy(cp As CPBaseClass, blogId As Integer) As List(Of BlogCopyModel)
             Dim result As New List(Of BlogCopyModel)
             Try
-                Dim SQL = "SELECT distinct Month(DateAdded) as ArchiveMonth, year(dateadded) as ArchiveYear " _
+                'result = createList(cp, "(BlogID=" & blogId & ")", "year(dateadded) desc, Month(DateAdded) desc")
+                Dim SQL = "SELECT  id " _
                             & " From ccBlogCopy" _
                             & " Where (ContentControlID = " & cp.Content.GetID(cnBlogEntries) & ") And (Active <> 0)" _
                             & " AND (BlogID=" & blogId & ")" _
                             & " ORDER BY year(dateadded) desc, Month(DateAdded) desc"
-                result = createList(cp, "(id in (" & Sql & "))")
+                result = createList(cp, "(id in (" & SQL & "))")
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)
             End Try

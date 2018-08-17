@@ -144,7 +144,10 @@ Namespace Models
             Dim result As New List(Of BlogImageModel)
             Try
                 For Each Rule In BlogImageRuleModel.createList(cp, "(BlogEntryID=" & entryId & ")")
-                    result.Add(BlogImageModel.create(cp, Rule.BlogEntryID))
+                    Dim blogimage As BlogImageModel = BlogImageModel.create(cp, Rule.BlogImageID)
+                    If (blogimage IsNot Nothing) Then
+                        result.Add(BlogImageModel.create(cp, Rule.BlogImageID))
+                    End If
                 Next
                 'Dim sql = "select i.id from BlogImages i left join BlogImageRules r on r.blogimageid=i.id where i.active<>0 and r.blogentryid=" & entryId & " order by i.SortOrder"
                 'Dim cs As CPCSBaseClass = cp.CSNew()
