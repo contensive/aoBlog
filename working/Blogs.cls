@@ -2284,11 +2284,11 @@ Private Function ProcessFormBlogPostDetails(SourceFormID As Long, blogId As Long
                 End If
             End If
 '            '
-          ' CommentInfo = "Submitted at " & Now() & " by " & AuthorName
-          '  EmailString = "<br>"
-           ' EmailString = EmailString & CommentInfo & "<br>"
-            'EmailString = EmailString & "<a href=""http://" & Main.ServerHost & Main.ServerAppRootPath & "admin/index.asp?cid=" & Main.GetContentID(cnBlogEntries) & "&id=" & CommentID & "&af=4"">click here</a>"
-           ' Call Main.SendSystemEmail(SystemEmailCommentNotification, EmailString)
+           CommentInfo = "Submitted at " & Now() & " by " & AuthorName
+            EmailString = "<br>"
+            EmailString = EmailString & CommentInfo & "<br>"
+            EmailString = EmailString & "<a href=""http://" & Main.ServerHost & Main.ServerAppRootPath & "admin/index.asp?cid=" & Main.GetContentID(cnBlogEntries) & "&id=" & CommentID & "&af=4"">click here</a>"
+            Call Main.SendSystemEmail(SystemEmailCommentNotification, EmailString)
             'test good
         End If
         Call Main.SetVisitProperty(SNBlogCommentName, "")

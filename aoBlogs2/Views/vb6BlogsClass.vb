@@ -1357,7 +1357,7 @@ Namespace Views
                             ' CS = Main.InsertCSRecord(cnBlogEntries)
                             EntryID = BlogEntry.id
                             BlogEntry.BlogID = blogId
-                            BlogEntry.save(cp)
+                            'BlogEntry.save(cp)
                         End If
                         'CS = Main.OpenCSContent(cnBlogEntries, "(blogid=" & blogId & ")and(ID=" & EntryID & ")")
                         BlogEntry = Models.BlogEntryModel.create(cp, EntryID)
@@ -1368,6 +1368,8 @@ Namespace Views
                             BlogEntry.TagList = cp.Doc.GetText(RequestNameBlogTagList)
                             BlogEntry.blogCategoryID = BlogCategoryID
                             ProcessFormBlogPost = FormBlogPostList
+                            BlogEntry.BlogID = blogId
+                            BlogEntry.save(cp)
                         End If
 
                         Call UpdateBlogFeed(cp, blogId, RSSFeedId, EntryID, blogListLink)
