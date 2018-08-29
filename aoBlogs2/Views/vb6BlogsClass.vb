@@ -84,6 +84,7 @@ Namespace Views
         Public Function GetContent(cp As CPBaseClass) As String
             '
             Dim result As String = ""
+            Dim instanceId As String = cp.Doc.GetText("instanceId")
             Try
                 Dim blogListQs As String
                 '
@@ -106,7 +107,7 @@ Namespace Views
                     BlogName = "Default"
                 End If
 
-                Dim blogList As List(Of Models.blogModel) = Models.blogModel.createList(cp, "(name=" & cp.Db.EncodeSQLText(BlogName) & ")", "ID")
+                Dim blog As blogModel = blogModel.create(cp, instanceId)
                 Dim blogCaption As String
                 Dim blogDescription As String
                 Dim ignoreLegacyInstanceOptions As Boolean
@@ -121,8 +122,7 @@ Namespace Views
                 Dim autoApproveComments As Boolean
                 Dim emailComment As Boolean
                 Dim allowRecaptcha As Boolean
-                If (blogList.Count > 0) Then
-                    Dim blog As Models.blogModel = blogList.First
+                If Not (blog Is Nothing) Then
                     blogId = blog.id
                     RSSFeedId = blog.RSSFeedID
                     BlogOwnerID = blog.OwnerMemberID
@@ -140,10 +140,10 @@ Namespace Views
                     blogCaption = blog.Caption
                     allowRecaptcha = blog.recaptcha
                 End If
-                Dim RSSFeedFilename As String
+                Dim RSSFeedFilename As String = ""
                 Dim IsBlogOwner As Boolean
                 Dim EntryID As Integer
-                Dim RSSFeedName As String
+                Dim RSSFeedName As String = ""
                 If blogId = 0 Then
                     '
                     ' Create New Blog
@@ -153,14 +153,13 @@ Namespace Views
                         '
                         ' BIG assumption - First hit by a content manager for this page is the author
                         '
-                        Dim blog As Models.blogModel = blogList.First
+                        blog = Models.blogModel.add(cp)
                         blogId = blog.id
                         BlogOwnerID = cp.User.Id
                         IsBlogOwner = True
                         blogCaption = BlogName
                         '
-                        blog = Models.blogModel.add(cp)
-                        blog.name = BlogName
+                        Blog.name = BlogName
                         blog.Caption = blogCaption
                         blog.OwnerMemberID = BlogOwnerID
                         blog.RSSFeedID = RSSFeedId
@@ -172,8 +171,9 @@ Namespace Views
                         blog.PostsToDisplay = PostsToDisplay
                         blog.OverviewLength = OverviewLength
                         blog.ThumbnailImageWidth = ThumbnailImageWidth
-                        blog.ImageWidthMax = ImageWidthMax
-                        blog.save(cp)
+                        Blog.ImageWidthMax = ImageWidthMax
+                        Blog.ccguid = instanceId
+                        Blog.save(cp)
                         '
                     End If
                     '
@@ -232,6 +232,7 @@ Namespace Views
                         RSSFeedBlogRules.RSSFeedID = RSSFeedId
                         RSSFeedBlogRules.BlogPostID = BlogPostID
                         RSSFeedBlogRules.name = "RSS Feed [" & RSSFeedName & "], Blog Post [" & Title & "]"
+                        RSSFeedBlogRules.save(cp)
 
                     End If
                 End If
@@ -255,13 +256,13 @@ Namespace Views
                     AllowAnonymous = cp.Doc.GetBoolean("Allow Anonymous Comments")
                     autoApproveComments = cp.Doc.GetBoolean("Auto-Approve New Comments")
                     AllowCategories = cp.Doc.GetBoolean("Allow Categories")
-                    PostsToDisplay = cp.Doc.GetText("Number of entries to display")
-                    OverviewLength = cp.Doc.GetText("Overview Character Length")
-                    ThumbnailImageWidth = cp.Doc.GetNumber("Thumbnail Image Width")
+                    PostsToDisplay = cp.Doc.GetInteger("Number of entries to display")
+                    OverviewLength = cp.Doc.GetInteger("Overview Character Length")
+                    ThumbnailImageWidth = cp.Doc.GetInteger("Thumbnail Image Width")
                     If ThumbnailImageWidth = 0 Then
                         ThumbnailImageWidth = 150
                     End If
-                    ImageWidthMax = cp.Doc.GetText("Image Width Max")
+                    ImageWidthMax = cp.Doc.GetInteger("Image Width Max")
                     If ImageWidthMax = 0 Then
                         ImageWidthMax = 400
                     End If
@@ -274,7 +275,7 @@ Namespace Views
                     Dim legacyblogList As List(Of Models.blogModel) = Models.blogModel.createList(cp, "(id=" & cp.Db.EncodeSQLText(blogId) & ")", "ID")
 
                     If (legacyblogList.Count > 0) Then
-                        Dim legacyblog As Models.blogModel = blogList.First
+                        Dim legacyblog As Models.blogModel = legacyblogList.First
                         legacyblog = Models.blogModel.add(cp)
                         legacyblog.ignoreLegacyInstanceOptions = True
                         legacyblog.AllowAnonymous = AllowAnonymous
@@ -310,9 +311,20 @@ Namespace Views
                     ' Get the Feed Args
                     '
                     Dim RSSFeedModelList As List(Of Models.RSSFeedModel) = Models.RSSFeedModel.createList(cp, "id=" & RSSFeedId)
-                    Dim RSSFeed As Models.RSSFeedModel = RSSFeedModelList.First
-                    RSSFeedName = RSSFeed.name
-                    RSSFeedFilename = RSSFeed.RSSFilename
+                    If (RSSFeedModelList.Count > 0) Then
+                        Dim RSSFeed As Models.RSSFeedModel = RSSFeedModelList.First
+                        RSSFeedName = RSSFeed.name
+                        RSSFeedFilename = RSSFeed.RSSFilename
+                    Else
+                        Dim RSSFeed As Models.RSSFeedModel = Models.RSSFeedModel.add(cp)
+                        If Not RSSFeedName <> "" Then
+                            RSSFeedName = "Default"
+                        End If
+                        RSSFeed.name = RSSFeedName
+                        RSSFeed.Description = "This is your First RssFeed"
+                        RSSFeed.save(cp)
+                    End If
+
                     '
                     If RSSFeedFilename = "" Then
                         'If BlogRootLink = "" Or RSSFeedFilename = "" Then
@@ -593,25 +605,25 @@ Namespace Views
                     End If
 
                     result = "" _
-                                & cr & "<div class=""aoBlogSearchResultsCon"">" _
-                                & cp.Html.Indent(result) _
-                                & cr & "</div>"
+                                    & cr & "<div class=""aoBlogSearchResultsCon"">" _
+                                    & cp.Html.Indent(result) _
+                                    & cr & "</div>"
                 End If
                 '
                 Dim searchForm As String = "" _
-                            & cr & "<table width=100% border=0 cellspacing=0 cellpadding=5 class=""aoBlogSearchTable"">" _
-                            & GetFormTableRow(cp, "Date:", GetField(cp, RequestNameDateSearch, 1, 10, 10, cp.Doc.GetText(RequestNameDateSearch).ToString) & " " & "&nbsp;(mm/yyyy)") _
-                            & GetFormTableRow(cp, "Keyword(s):", GetField(cp, RequestNameKeywordList, 1, 10, 30, cp.Doc.GetText(RequestNameKeywordList))) _
-                            & GetFormTableRow(cp, "", cp.Html.Button(rnButton, FormButtonSearch)) _
-                            & GetFormTableRow2(cp, "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>") _
-                            & cr & "</table>" _
-                            & ""
+                                & cr & "<table width=100% border=0 cellspacing=0 cellpadding=5 class=""aoBlogSearchTable"">" _
+                                & GetFormTableRow(cp, "Date:", GetField(cp, RequestNameDateSearch, 1, 10, 10, cp.Doc.GetText(RequestNameDateSearch).ToString) & " " & "&nbsp;(mm/yyyy)") _
+                                & GetFormTableRow(cp, "Keyword(s):", GetField(cp, RequestNameKeywordList, 1, 10, 30, cp.Doc.GetText(RequestNameKeywordList))) _
+                                & GetFormTableRow(cp, "", cp.Html.Button(rnButton, FormButtonSearch)) _
+                                & GetFormTableRow2(cp, "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>") _
+                                & cr & "</table>" _
+                                & ""
 
                 searchForm = "" _
-                            & cr & "<div  class=""aoBlogSearchFormCon"">" _
-                            & searchForm _
-                            & cr & "</div>" _
-                            & ""
+                                & cr & "<div  class=""aoBlogSearchFormCon"">" _
+                                & searchForm _
+                                & cr & "</div>" _
+                                & ""
                 result = result & searchForm
 
                 result = result & cr & "<input type=""hidden"" name=""" & RequestNameSourceFormID & """ value=""" & FormBlogSearch.ToString & """>"
@@ -979,7 +991,7 @@ Namespace Views
                             Dim PodcastMediaLink As String = ""
                             'EntryCopyOverview = cp.Doc.GetText(CS, "CopyOverview")
                             Dim allowComments As Boolean = 'cp.Site.GetBoolean("AllowComments")
-                                PodcastMediaLink = blogEntry.PodcastMediaLink 'cp.Doc.GetText("PodcastMediaLink")
+                                    PodcastMediaLink = blogEntry.PodcastMediaLink 'cp.Doc.GetText("PodcastMediaLink")
                             Dim PodcastSize As String = blogEntry.PodcastSize 'cp.Doc.GetText("PodcastSize")
                             'PodcastSize = Main.GetCS(CS, "PodcastSize")
                             Dim BlogTagList As String = blogEntry.TagList 'cp.Doc.GetText("BlogTagList")
@@ -1096,10 +1108,10 @@ Namespace Views
                 Else
                     FeedFooter = "<a href=""http://" & cp.Site.Domain & "/RSS/" & RSSFeedFilename & """>"
                     FeedFooter = "rss feed " _
-                & FeedFooter & RSSFeedName & "</a>" _
-                & "&nbsp;" _
-                & FeedFooter & "<img src=""/cclib/images/IconXML-25x13.gif"" width=25 height=13 class=""aoBlogRSSFeedImage""></a>" _
-                & ""
+                    & FeedFooter & RSSFeedName & "</a>" _
+                    & "&nbsp;" _
+                    & FeedFooter & "<img src=""/cclib/images/IconXML-25x13.gif"" width=25 height=13 class=""aoBlogRSSFeedImage""></a>" _
+                    & ""
                     result = result & cr & "<div class=""aoBlogFooterLink"">" & FeedFooter & "</div>"
                 End If
                 Dim CommentBlogID As Integer
@@ -1181,9 +1193,9 @@ Namespace Views
                 '
                 Dim c As String = ""
                 c = c _
-                        & "<TABLE id=""UploadInsert"" border=""0"" cellpadding=""0"" cellspacing=""1"" width=""100%"" class=""aoBlogImageTable"">" _
-                        & "<tr>" _
-                        & ""
+                            & "<TABLE id=""UploadInsert"" border=""0"" cellpadding=""0"" cellspacing=""1"" width=""100%"" class=""aoBlogImageTable"">" _
+                            & "<tr>" _
+                            & ""
                 '
 
                 'SQL = "select i.filename,i.description,i.name,i.id from BlogImages i left join BlogImageRules r on r.blogimageid=i.id where i.active<>0 and r.blogentryid=" & EntryID & " order by i.SortOrder"
@@ -1198,47 +1210,47 @@ Namespace Views
 
                     If Ptr <> 1 Then
                         c = c _
-                        & "<tr>" _
-                        & "<td><HR></TD>" _
-                        & "</tr>" _
-                        & ""
+                            & "<tr>" _
+                            & "<td><HR></TD>" _
+                            & "</tr>" _
+                            & ""
                     End If
                     '
                     '   image
                     '
                     c = c _
-                    & "<tr>" _
-                    & "<td><input type=""checkbox"" name=""" & rnBlogImageDelete & "." & Ptr & """>&nbsp;Delete</TD>" _
-                    & "</tr>" _
-                    & "<tr>" _
-                    & "<td align=""left"" class=""ccAdminSmall""><img alt=""" & imageName & """ title=""" & imageName & """ src=""" & cp.Site.PhysicalFilePath & imageFilename & """></TD>" _
-                    & "</tr>" _
-                    & ""
+                        & "<tr>" _
+                        & "<td><input type=""checkbox"" name=""" & rnBlogImageDelete & "." & Ptr & """>&nbsp;Delete</TD>" _
+                        & "</tr>" _
+                        & "<tr>" _
+                        & "<td align=""left"" class=""ccAdminSmall""><img alt=""" & imageName & """ title=""" & imageName & """ src=""" & cp.Site.PhysicalFilePath & imageFilename & """></TD>" _
+                        & "</tr>" _
+                        & ""
                     '
                     '   order
                     '
                     c = c _
-                    & "<tr>" _
-                    & "<td>Order<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageOrder & "." & Ptr & """ SIZE=""2"" value=""" & Ptr & """></TD>" _
-                    & "</tr>" _
-                    & ""
+                        & "<tr>" _
+                        & "<td>Order<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageOrder & "." & Ptr & """ SIZE=""2"" value=""" & Ptr & """></TD>" _
+                        & "</tr>" _
+                        & ""
                     '
                     '   name
                     '
                     c = c _
-                    & "<tr>" _
-                    & "<td>Name<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageName & "." & Ptr & """ SIZE=""25"" value=""" & cp.Utils.EncodeHTML(imageName) & """></TD>" _
-                    & "</tr>" _
-                    & ""
+                        & "<tr>" _
+                        & "<td>Name<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageName & "." & Ptr & """ SIZE=""25"" value=""" & cp.Utils.EncodeHTML(imageName) & """></TD>" _
+                        & "</tr>" _
+                        & ""
                     Dim ImageID As Integer
                     '
                     '   description
                     '
                     c = c _
-                    & "<tr>" _
-                    & "<td>Description<br><TEXTAREA NAME=""" & rnBlogImageDescription & "." & Ptr & """ ROWS=""5"" COLS=""50"">" & cp.Utils.EncodeHTML(imageDescription) & "</TEXTAREA><input type=""hidden"" name=""" & rnBlogImageID & "." & Ptr & """ value=""" & ImageID & """></TD>" _
-                    & "</tr>" _
-                    & ""
+                        & "<tr>" _
+                        & "<td>Description<br><TEXTAREA NAME=""" & rnBlogImageDescription & "." & Ptr & """ ROWS=""5"" COLS=""50"">" & cp.Utils.EncodeHTML(imageDescription) & "</TEXTAREA><input type=""hidden"" name=""" & rnBlogImageID & "." & Ptr & """ value=""" & ImageID & """></TD>" _
+                        & "</tr>" _
+                        & ""
                     '
                 Next
                 Ptr = Ptr + 1
@@ -1247,52 +1259,52 @@ Namespace Views
                 '   row delimiter
                 '
                 c = c _
-                    & "<TR style=""padding-bottom:10px; padding-bottom:10px;"">" _
-                    & "<td><HR></TD>" _
-                    & "</tr>" _
-                    & ""
+                        & "<TR style=""padding-bottom:10px; padding-bottom:10px;"">" _
+                        & "<td><HR></TD>" _
+                        & "</tr>" _
+                        & ""
                 '
                 '   order
                 '
                 c = c _
-                    & "<tr>" _
-                    & "<td align=""left"">Order<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageOrder & "." & Ptr & """ SIZE=""2"" value=""" & Ptr & """></TD>" _
-                    & "</tr>" _
-                    & ""
+                        & "<tr>" _
+                        & "<td align=""left"">Order<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageOrder & "." & Ptr & """ SIZE=""2"" value=""" & Ptr & """></TD>" _
+                        & "</tr>" _
+                        & ""
                 '
                 '   image
                 '
                 c = c _
-                    & "<tr>" _
-                    & "<td align=""left"">Image<br><INPUT TYPE=""file"" name=""LibraryUpload." & Ptr & """></TD>" _
-                    & "</tr>" _
-                    & ""
+                        & "<tr>" _
+                        & "<td align=""left"">Image<br><INPUT TYPE=""file"" name=""LibraryUpload." & Ptr & """></TD>" _
+                        & "</tr>" _
+                        & ""
                 '
                 '   name
                 '
                 c = c _
-                    & "<tr>" _
-                    & "<td align=""left"">Name<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageName & "." & Ptr & """ SIZE=""25""></TD>" _
-                    & "</tr>" _
-                    & ""
+                        & "<tr>" _
+                        & "<td align=""left"">Name<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageName & "." & Ptr & """ SIZE=""25""></TD>" _
+                        & "</tr>" _
+                        & ""
                 '
                 '   description
                 '
                 c = c _
-                    & "<tr>" _
-                    & "<td align=""left"">Description<br><TEXTAREA NAME=""" & rnBlogImageDescription & "." & Ptr & """ ROWS=""5"" COLS=""50""></TEXTAREA></TD>" _
-                    & "</tr>" _
-                    & ""
+                        & "<tr>" _
+                        & "<td align=""left"">Description<br><TEXTAREA NAME=""" & rnBlogImageDescription & "." & Ptr & """ ROWS=""5"" COLS=""50""></TEXTAREA></TD>" _
+                        & "</tr>" _
+                        & ""
                 '
                 c = c _
-                    & "</Table>" _
-                    & ""
+                        & "</Table>" _
+                        & ""
                 '
                 c = c _
-                    & "<TABLE border=""0"" cellpadding=""0"" cellspacing=""1"" width=""100%""  class=""aoBlogNewRowTable"">" _
-                    & "<tr><td Width=""30""><img src=/ResourceLibrary/spacer.gif width=30 height=1></TD><td align=""left""><a href=""#"" onClick=""blogNewRow();return false;"">+ upload more files</a></TD></tr>" _
-                    & "</Table>" & cp.Html.Hidden("LibraryUploadCount", Ptr, "LibraryUploadCount") _
-                    & ""
+                        & "<TABLE border=""0"" cellpadding=""0"" cellspacing=""1"" width=""100%""  class=""aoBlogNewRowTable"">" _
+                        & "<tr><td Width=""30""><img src=/ResourceLibrary/spacer.gif width=30 height=1></TD><td align=""left""><a href=""#"" onClick=""blogNewRow();return false;"">+ upload more files</a></TD></tr>" _
+                        & "</Table>" & cp.Html.Hidden("LibraryUploadCount", Ptr, "LibraryUploadCount") _
+                        & ""
                 '
                 result = result & GetFormTableRow(cp, "Images: ", c)
                 If EntryID <> 0 Then
@@ -1680,10 +1692,10 @@ Namespace Views
                                     Copy = Copy & " <a href=""?" & qs & """> Join?</a>"
                                 End If
                                 result = result _
-                                    & "<div class=""aoBlogLoginBox"">" _
-                                    & vbCrLf & vbTab & "<div class=""aoBlogCommentCopy"">" & Copy & "</div>" _
-                                    & vbCrLf & vbTab & "<div class=""aoBlogCommentCopy"">" & "send password form removed" & "</div>" _
-                                    & cr & "</div>"
+                                        & "<div class=""aoBlogLoginBox"">" _
+                                        & vbCrLf & vbTab & "<div class=""aoBlogCommentCopy"">" & Copy & "</div>" _
+                                        & vbCrLf & vbTab & "<div class=""aoBlogCommentCopy"">" & "send password form removed" & "</div>" _
+                                        & cr & "</div>"
                             Case 2
                                 '
                                 ' join
@@ -1696,10 +1708,10 @@ Namespace Views
                                     Copy = Copy & " <a href=""?" & qs & """> Forget your username or password?</a>"
                                 End If
                                 result = result _
-                                    & "<div class=""aoBlogLoginBox"">" _
-                                    & cr & "<div class=""aoBlogCommentCopy"">" & Copy & "</div>" _
-                                    & cr & "<div class=""aoBlogCommentCopy"">" & "Send join form removed" & "</div>" _
-                                    & cr & "</div>"
+                                        & "<div class=""aoBlogLoginBox"">" _
+                                        & cr & "<div class=""aoBlogCommentCopy"">" & Copy & "</div>" _
+                                        & cr & "<div class=""aoBlogCommentCopy"">" & "Send join form removed" & "</div>" _
+                                        & cr & "</div>"
                             Case Else
                                 '
                                 ' login
@@ -1716,10 +1728,10 @@ Namespace Views
                                 loginForm = "Get login Form removed"
                                 loginForm = Replace(loginForm, "LoginUsernameInput", "LoginUsernameInput-BlockFocus")
                                 result = result _
-                                    & cr & "<div class=""aoBlogCommentCopy"">" & Copy & "</div>" _
-                                    & cr & "<div class=""aoBlogLoginBox"">" _
-                                    & cr & "<div class=""aoBlogCommentCopy"">" & loginForm & "</div>" _
-                                    & cr & "</div>"
+                                        & cr & "<div class=""aoBlogCommentCopy"">" & Copy & "</div>" _
+                                        & cr & "<div class=""aoBlogLoginBox"">" _
+                                        & cr & "<div class=""aoBlogCommentCopy"">" & loginForm & "</div>" _
+                                        & cr & "</div>"
                         End Select
 
                     Else
@@ -1919,15 +1931,15 @@ Namespace Views
                                         End If
                                         EntryLink = EntryLink & "blogentryid=" & EntryID
                                         EmailBody = "" _
-                                                & cr & "The following blog comment was posted " & Now() _
-                                                & cr & "To approve this comment, go to " & EntryLink _
-                                                & vbCrLf _
-                                                & cr & "Blog '" & BlogName & "'" _
-                                                & cr & "Post '" & EntryName & "'" _
-                                                & cr & "By " & cp.User.Name _
-                                                & vbCrLf _
-                                                & vbCrLf & cp.Utils.EncodeHTML(Copy) _
-                                                & vbCrLf
+                                                    & cr & "The following blog comment was posted " & Now() _
+                                                    & cr & "To approve this comment, go to " & EntryLink _
+                                                    & vbCrLf _
+                                                    & cr & "Blog '" & BlogName & "'" _
+                                                    & cr & "Post '" & EntryName & "'" _
+                                                    & cr & "By " & cp.User.Name _
+                                                    & vbCrLf _
+                                                    & vbCrLf & cp.Utils.EncodeHTML(Copy) _
+                                                    & vbCrLf
                                         EmailFromAddress = cp.Site.GetProperty("EmailFromAddress", "info@" & cp.Site.Domain)
                                         'Call Main.SendMemberEmail(BlogOwnerID, EmailFromAddress, "Blog comment notification for [" & BlogName & "]", EmailBody, False, False)
                                         Call cp.Email.sendUser(BlogOwnerID, EmailFromAddress, "Blog comment notification for [" & BlogName & "]", EmailBody, False, False)
@@ -2078,14 +2090,14 @@ Namespace Views
                         RowCopy = RowCopy & " | "
                     End If
                     RowCopy = RowCopy _
-                    & cp.Html.Hidden("CommentID" & RequestSuffix, CommentID) _
-                    & cp.Html.CheckBox("Approve" & RequestSuffix, Approved) _
-                    & cp.Html.Hidden("Approved" & RequestSuffix, Approved) _
-                    & "&nbsp;Approved&nbsp;" _
-                    & " | " _
-                    & cp.Html.CheckBox("Delete" & RequestSuffix, False) _
-                    & "&nbsp;Delete" _
-                    & ""
+                        & cp.Html.Hidden("CommentID" & RequestSuffix, CommentID) _
+                        & cp.Html.CheckBox("Approve" & RequestSuffix, Approved) _
+                        & cp.Html.Hidden("Approved" & RequestSuffix, Approved) _
+                        & "&nbsp;Approved&nbsp;" _
+                        & " | " _
+                        & cp.Html.CheckBox("Delete" & RequestSuffix, False) _
+                        & "&nbsp;Delete" _
+                        & ""
                 End If
                 If RowCopy <> "" Then
                     result = result & cr & "<div class=""aoBlogCommentByLine"">Posted " & RowCopy & "</div>"
@@ -2213,8 +2225,8 @@ Namespace Views
                             Call GetBlogImage(cp, cp.Utils.EncodeInteger(ImageID(cnt)), 0, ImageWidthMax, ThumbnailFilename, imageFilename, imageDescription, imageName)
                             If imageFilename <> "" Then
                                 c = c _
-                            & cr & "<div class=""aoBlogEntryImageContainer"">" _
-                            & cr & "<img alt=""" & imageName & """ title=""" & imageName & """  src=""" & cp.Site.FilePath & imageFilename & """>"
+                                & cr & "<div class=""aoBlogEntryImageContainer"">" _
+                                & cr & "<img alt=""" & imageName & """ title=""" & imageName & """  src=""" & cp.Site.FilePath & imageFilename & """>"
                                 If imageName <> "" Then
                                     c = c & cr & "<h2>" & imageName & "</h2>"
                                 End If
@@ -2226,9 +2238,9 @@ Namespace Views
                         Next
                         If c <> "" Then
                             result = result _
-                        & cr & "<div class=""aoBlogEntryImageSection"">" _
-                        & cp.Html.Indent(c) _
-                        & cr & "</div>"
+                            & cr & "<div class=""aoBlogEntryImageSection"">" _
+                            & cp.Html.Indent(c) _
+                            & cr & "</div>"
                         End If
                     End If
                     hint = hint & ",5"
@@ -2247,16 +2259,16 @@ Namespace Views
                         Next
                         BlogTagList = Mid(BlogTagList, 3)
                         c = "" _
-                    & cr & "<div class=""aoBlogTagListHeader"">" _
-                    & cr & vbTab & "Tags" _
-                    & cr & "</div>" _
-                    & cr & "<div class=""aoBlogTagList"">" _
-                    & cr & vbTab & BlogTagList _
-                    & cr & "</div>"
+                        & cr & "<div class=""aoBlogTagListHeader"">" _
+                        & cr & vbTab & "Tags" _
+                        & cr & "</div>" _
+                        & cr & "<div class=""aoBlogTagList"">" _
+                        & cr & vbTab & BlogTagList _
+                        & cr & "</div>"
                         TagListRow = "" _
-                    & cr & "<div class=""aoBlogTagListSection"">" _
-                    & cp.Html.Indent(c) _
-                    & cr & "</div>"
+                        & cr & "<div class=""aoBlogTagListSection"">" _
+                        & cp.Html.Indent(c) _
+                        & cr & "</div>"
                     End If
                 Else
                     hint = hint & ",6"
@@ -2720,7 +2732,7 @@ Namespace Views
         '       run on every post
         '========================================================================
         '
-        Private Sub VerifyFeedReturnArgs(cp As CPBaseClass, blogId As Integer, blogListLink As String, Return_RSSFeedID As Integer, Return_RSSFeedName As String, Return_RSSFeedFilename As String)
+        Private Sub VerifyFeedReturnArgs(cp As CPBaseClass, blogId As Integer, blogListLink As String, ByRef Return_RSSFeedID As Integer, ByRef Return_RSSFeedName As String, ByRef Return_RSSFeedFilename As String)
             '
             Try
                 Dim qs As String
