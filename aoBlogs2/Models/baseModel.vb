@@ -176,8 +176,11 @@ Namespace Models
                     Dim tableName As String = derivedContentTableName(instanceType)
                     modelInstance = DirectCast(Activator.CreateInstance(instanceType), T)
                     For Each modelProperty As PropertyInfo In modelInstance.GetType().GetProperties(BindingFlags.Instance Or BindingFlags.Public)
-
+                        'cp.Utils.AppendLogFile("baseModel.loadRecord, modelProperty.Name [" & modelProperty.Name & "]")
                         Dim includeField As Boolean = True
+                        'If (modelProperty.Name = "imageDisplayTypeId") Then
+                        '    includeField = True
+                        'End If
                         If listOfLowerCaseFields IsNot Nothing Then
                             includeField = listOfLowerCaseFields.Contains(modelProperty.Name.ToLower())
                         End If

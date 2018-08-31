@@ -38,6 +38,7 @@ Namespace Models
         Public Property TagList As String
         Public Property Copy As String
 
+
         '
         '====================================================================================================
         Public Overloads Shared Function add(cp As CPBaseClass) As BlogCopyModel
@@ -173,22 +174,39 @@ Namespace Models
         ''' <param name="cp"></param>
         ''' <param name="blogId">The id of the Blog Copy</param>
         ''' <returns></returns>
-        Public Shared Function createArchiveListFromBlogCopy(cp As CPBaseClass, blogId As Integer) As List(Of BlogCopyModel)
-            Dim result As New List(Of BlogCopyModel)
+        Public Shared Function createArchiveListFromBlogCopy(cp As CPBaseClass, blogId As Integer) As List(Of ArchiveDateModel)
+            Dim result As New List(Of ArchiveDateModel)
             Try
                 'result = createList(cp, "(BlogID=" & blogId & ")", "year(dateadded) desc, Month(DateAdded) desc")
-                Dim SQL = "SELECT  id " _
+                Dim SQL = "SELECT DISTINCT month(dateadded) as archiveMonth, year(dateadded) as archiveYear" _
                             & " From ccBlogCopy" _
                             & " Where (ContentControlID = " & cp.Content.GetID(cnBlogEntries) & ") And (Active <> 0)" _
                             & " AND (BlogID=" & blogId & ")" _
-                            & " ORDER BY year(dateadded) desc, Month(DateAdded) desc"
-                result = createList(cp, "(id in (" & SQL & "))")
+                            & " ORDER BY year(dateadded) desc, month(dateadded) desc "
+                Dim cs As CPCSBaseClass = cp.CSNew()
+                cp.Utils.AppendLogFile("archiveQuery=" & SQL)
+                If (cs.OpenSQL(SQL)) Then
+                    Do
+                        Dim archiveDate As New ArchiveDateModel()
+                        archiveDate.Month = cs.GetInteger("archiveMonth")
+                        archiveDate.Year = cs.GetInteger("archiveYear")
+                        result.Add(archiveDate)
+                        cp.Utils.AppendLogFile("archiveDate=" & archiveDate.ToString)
+                        cs.GoNext()
+                    Loop While cs.OK()
+                End If
+
+                cs.Close()
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)
             End Try
             Return result
         End Function
 
+        Public Class ArchiveDateModel
+            Public Year As Integer
+            Public Month As Integer
+        End Class
 
     End Class
 End Namespace
