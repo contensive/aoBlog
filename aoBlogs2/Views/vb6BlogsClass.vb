@@ -1552,7 +1552,7 @@ Namespace Views
         '
         Private Function GetFormBlogPostDetails(cp As CPBaseClass, blogId As Integer, EntryID As Integer, IsBlogOwner As Boolean, AllowAnonymous As Boolean, AllowCategories As Boolean, BlogCategoryID As Integer, ThumbnailImageWidth As Integer, BuildVersion As String, ImageWidthMax As Integer, blogListLink As String, blogListQs As String, allowCaptcha As Boolean) As String
             '
-            Dim result As String
+            Dim result As String = ""
             Try
                 'Dim EntryCopyOverview As String
                 Dim BlogTagList As String
@@ -1617,30 +1617,26 @@ Namespace Views
                         EntryID = BlogEntry.id
                         AuthorMemberID = BlogEntry.AuthorMemberID
                         If AuthorMemberID = 0 Then
-                            AuthorMemberID = BlogEntry.CreatedBy 'cp.Doc.GetInteger(CS, "createdBy")
+                            AuthorMemberID = blogEntry.CreatedBy
                         End If
-                        DateAdded = BlogEntry.DateAdded 'cp.Doc.GetText(CS, "DateAdded")
-                        EntryName = BlogEntry.name 'cp.Doc.GetText(CS, "Name")
+                        DateAdded = blogEntry.DateAdded
+                        EntryName = blogEntry.name
                         If cp.User.IsAuthoring("Blogs") Then
-                            entryEditLink = cp.Content.GetEditLink(EntryName, EntryID, True, EntryName, True) 'Main.GetCSRecordEditLink(CS)
+                            entryEditLink = cp.Content.GetEditLink(EntryName, EntryID, True, EntryName, True)
                         End If
-                        EntryCopy = BlogEntry.Copy 'cp.Doc.GetText(CS, "Copy")
-                        'EntryCopyOverview = cp.Doc.GetText(CS, "copyOverview")
+                        EntryCopy = blogEntry.Copy
+
                         allowComments = blogEntry.AllowComments
-                        PodcastMediaLink = BlogEntry.PodcastMediaLink 'Main.GetCS(CS, "PodcastMediaLink")
-                        PodcastSize = BlogEntry.PodcastSize 'Main.GetCS(CS, "PodcastSize")
-                        BlogTagList = BlogEntry.TagList ' Main.GetCS(CS, "TagList")
+                        PodcastMediaLink = blogEntry.PodcastMediaLink
+                        PodcastSize = blogEntry.PodcastSize
+                        BlogTagList = blogEntry.TagList
                         qs = ""
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(EntryID))
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails)
-                        ' Call cp.Site.addLinkAlias(BlogEntry.name, cp.Doc.PageId, qs)
-
-                        'Call Main.SetCS(CS, "viewings", 1 + cp.Doc.GetInteger(CS, "viewings"))
-                        BlogEntry.Viewings = (1 + cp.Doc.GetInteger("viewings"))
+                        blogEntry.Viewings = (1 + cp.Doc.GetInteger("viewings"))
                         BlogEntry.imageDisplayTypeId = cp.Doc.GetInteger("imageDisplayTypeId")
                         BlogEntry.primaryImagePositionId = cp.Doc.GetInteger("primaryImagePositionId")
-                        BlogEntry.articlePrimaryImagePositionId = cp.Doc.GetInteger("articlePrimaryImagePositionId")
-                        'BlogEntry.save(cp)
+                        blogEntry.articlePrimaryImagePositionId = cp.Doc.GetInteger("articlePrimaryImagePositionId")
                         result = result & GetBlogEntryCell(cp, EntryPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, DateAdded, True, False, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, entryEditLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, imageDisplayTypeId, primaryImagePositionId, articlePrimaryImagePositionId, blogListQs, AuthorMemberID)
                         EntryPtr = EntryPtr + 1
                         '
@@ -1649,19 +1645,6 @@ Namespace Views
 
                     '
                 End If
-                'Call Main.CloseCS(CS)
-
-
-                ' contensive
-                ' cnBlogs
-                'CS = Main.OpenCSContentRecord(cnBlogs, blogId)
-                '
-                'allowCaptcha = Main.GetCSBoolean(CS, "recaptcha")
-                '
-                'Call Main.CloseCS(CS)
-
-                '
-                ' Add viewing log entry
                 '
                 Dim criteria As String = ""
                 Dim VisitModel As New Models.VisitModel
@@ -1669,9 +1652,7 @@ Namespace Views
 
                 If BuildVersion >= "4.1.161" Then
                     If (Not excludeFromAnalytics) Then
-                        'BlogViewingLogModel
                         Dim BlogViewingLog As Models.BlogViewingLogModel = Models.BlogViewingLogModel.add(cp)
-                        'CS = Main.InsertCSContent("Blog Viewing Log")
                         If (BlogViewingLog IsNot Nothing) Then
                             BlogViewingLog.name = cp.User.Name & ", post " & CStr(EntryID) & ", " & Now()
                             BlogViewingLog.BlogEntryID = EntryID
@@ -1679,16 +1660,8 @@ Namespace Views
                             BlogViewingLog.VisitID = cp.Visit.Id
                             BlogViewingLog.save(cp)
                         End If
-                        'If Main.IsCSOK(CS) Then
-                        '        Call Main.SetCS(CS, "Name", Main.MemberName & ", post " & CStr(EntryID) & ", " & Now())
-                        '        Call Main.SetCS(CS, "BlogEntryID", EntryID)
-                        '        Call Main.SetCS(CS, "MemberID", cp.User.Id)
-                        '        Call Main.SetCS(CS, "VisitID", Main.VisitID)
-                        '    End If
-                        '    Call Main.CloseCS(CS)
                     End If
                 End If
-
                 '
                 '
                 '
@@ -1696,20 +1669,10 @@ Namespace Views
                     result = result & cr & "<div class=""aoBlogCommentCopy"">" & cp.Html.Button(FormButtonApplyCommentChanges) & "</div>"
                 End If
                 '
-                '    s = s & cr & "<div class=""aoBlogCommentName"">" & CommentName & "</div>"
-                '    s = s & cr & "<div class=""aoBlogCommentCopy"">" & CommentCopy & "</div>"
-                '    Divider = "<div class=""aoBlogCommentDivider"">&nbsp;</div>"
-                '    s = s & cr & "<div class=""aoBlogCommentHeader"">Comments</div>"
-                '    s = s & vbCrLf & Divider
-                '
                 Dim Auth As Integer
                 Dim AllowPasswordEmail As Boolean
                 Dim AllowMemberJoin As Boolean
                 '
-                ' The new comment block
-                '
-
-                's = s & cr & "<div class=""aoBlogCommentDivider"">&nbsp;</div>"
                 If allowComments And (cp.Visit.CookieSupport) And (Not VisitModel.Bot()) Then
                     result = result & cr & "<div class=""aoBlogCommentHeader"">Post a Comment</div>"
                     '
@@ -3025,7 +2988,11 @@ Namespace Views
                                 sf = CreateObject("sfimageresize.imageresize")
                                 sf.Algorithm = 5
                                 Try
-                                    sf.LoadFromFile(cp.Site.PhysicalFilePath & Filename)
+                                    Try
+                                        sf.LoadFromFile(cp.Site.PhysicalFilePath & Filename)
+                                    Catch ex As Exception
+
+                                    End Try
                                     ' On Error GoTo ErrorTrap
                                     sf.Width = ThumbnailImageWidth
                                     Call sf.DoResize
