@@ -1027,7 +1027,7 @@ Namespace Views
                             Dim entryEditLink As String
 
                             If IsEditing Then
-                                entryEditLink = cp.Content.GetEditLink(EntryName, EntryID, True, EntryName, True)
+                                entryEditLink = cp.Content.GetEditLink("Blog Entries", EntryID, True, EntryName, True)
                                 ' entryEditLink = Main.GetCSRecordEditLink(CS)
                             End If
                             Dim EntryCopy As String = blogEntry.Copy   'cp.Doc.GetText("Copy")
