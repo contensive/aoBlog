@@ -127,7 +127,7 @@ Namespace Views
                 Dim emailComment As Boolean
                 Dim allowRecaptcha As Boolean
 
-                If Not (blog Is Nothing) Then
+                If (blog IsNot Nothing) Then
                     blogId = blog.id
                     RSSFeedId = blog.RSSFeedID
                     BlogOwnerID = blog.OwnerMemberID
@@ -269,10 +269,10 @@ Namespace Views
                 '
 
                 If Not ignoreLegacyInstanceOptions Then
-                    AllowAnonymous = cp.Doc.GetBoolean("Allow Anonymous Comments")
-                    autoApproveComments = cp.Doc.GetBoolean("Auto-Approve New Comments")
+                    AllowAnonymous = AllowAnonymous
+                    autoApproveComments = autoApproveComments
                     AllowCategories = cp.Doc.GetBoolean("Allow Categories")
-                    PostsToDisplay = cp.Doc.GetInteger("Number of entries to display")
+                    PostsToDisplay = PostsToDisplay
                     OverviewLength = cp.Doc.GetInteger("Overview Character Length")
                     ThumbnailImageWidth = cp.Doc.GetInteger("Thumbnail Image Width")
                     If ThumbnailImageWidth = 0 Then
@@ -290,7 +290,7 @@ Namespace Views
                     End If
 
                     Dim legacyblog As Models.blogModel = Models.blogModel.create(cp, blogId)
-                    If Not (legacyblog Is Nothing) Then
+                    If (legacyblog IsNot Nothing) Then
                         legacyblog = Models.blogModel.add(cp)
                         legacyblog.ignoreLegacyInstanceOptions = True
                         legacyblog.AllowAnonymous = AllowAnonymous
@@ -967,84 +967,86 @@ Namespace Views
                     'If Not Main.csok(CS) Then
                     result = result & cr & "<div Class=""aoBlogProblem"">" & NoneMsg & "</div>"
                 Else
-                    'Do While Main.csok(CS) And EntryPtr < PostsToDisplay
-
+                    'Do While BlogEntryModelList.Count > 0 And EntryPtr < PostsToDisplay
                     Dim blogEntry As Models.BlogEntryModel = BlogEntryModelList.First
                     For Each blogEntry In BlogEntryModelList
-                        TestCategoryID = blogEntry.blogCategoryID 'cp.Doc.GetInteger(CS, "BlogCategoryid")
-                        If TestCategoryID <> 0 Then
-                            '
-                            ' Check that this member has access to this category
-                            '
-                            IsBlocked = Not cp.User.IsAdmin()
+                        If EntryPtr < PostsToDisplay Then
+                            TestCategoryID = blogEntry.blogCategoryID 'cp.Doc.GetInteger(CS, "BlogCategoryid")
+                            If TestCategoryID <> 0 Then
+                                '
+                                ' Check that this member has access to this category
+                                '
+                                IsBlocked = Not cp.User.IsAdmin()
+                                If IsBlocked Then
+                                    '
+                                    'If IsBlocked Then
+                                    BuildVersion = cp.Site.GetProperty("BUILDVERSION")
+                                    If BuildVersion < "4.1.098" Then
+                                        Dim BlogCategorieModelList As List(Of Models.BlogCategorieModel) = Models.BlogCategorieModel.createList(cp, "id=" & TestCategoryID)
+                                        ' CSCat = Main.OpenCSContent(cnBlogCategories, "id=" & TestCategoryID)
+                                        Dim blogCat As Models.BlogCategorieModel = BlogCategorieModelList.First
+                                        'If cp.CSNew.OK() Then
+                                        IsBlocked = blogCat.UserBlocking 'cp.Site.GetBoolean("UserBlocking")
+                                        'End If
+                                        'Call Main.CloseCS(CSCat)
+                                        '
+                                        If IsBlocked Then
+                                            GroupList = GroupModel.GetBlockingGroups(cp, TestCategoryID)
+                                            IsBlocked = Not genericController.IsGroupListMember(cp, GroupList)
+                                        End If
+                                    Else
+
+                                        Dim BlogCategorieModelList As List(Of Models.BlogCategorieModel) = Models.BlogCategorieModel.createList(cp, "id=" & TestCategoryID)
+                                        ' CSCat = Main.OpenCSContent(cnBlogCategories, "id=" & TestCategoryID)
+                                        Dim blogCat As Models.BlogCategorieModel = BlogCategorieModelList.First
+                                        'If cp.CSNew.OK() Then
+                                        IsBlocked = blogCat.UserBlocking 'cp.Site.GetBoolean("UserBlocking")
+                                        If IsBlocked Then
+                                            GroupList = GroupModel.GetBlockingGroups(cp, blogCat.id) 'cp.Doc.GetText("BlockingGroups")
+                                            IsBlocked = Not genericController.IsGroupListMember(cp, GroupList)
+                                        End If
+                                        'End If
+                                        ' Call Main.CloseCS(CSCat)
+                                    End If
+                                    'End If
+                                End If
+                            End If
                             If IsBlocked Then
                                 '
-                                'If IsBlocked Then
-                                BuildVersion = cp.Site.GetProperty("BUILDVERSION")
-                                If BuildVersion < "4.1.098" Then
-                                    Dim BlogCategorieModelList As List(Of Models.BlogCategorieModel) = Models.BlogCategorieModel.createList(cp, "id=" & TestCategoryID)
-                                    ' CSCat = Main.OpenCSContent(cnBlogCategories, "id=" & TestCategoryID)
-                                    Dim blogCat As Models.BlogCategorieModel = BlogCategorieModelList.First
-                                    'If cp.CSNew.OK() Then
-                                    IsBlocked = blogCat.UserBlocking 'cp.Site.GetBoolean("UserBlocking")
-                                    'End If
-                                    'Call Main.CloseCS(CSCat)
-                                    '
-                                    If IsBlocked Then
-                                        GroupList = GroupModel.GetBlockingGroups(cp, TestCategoryID)
-                                        IsBlocked = Not genericController.IsGroupListMember(cp, GroupList)
-                                    End If
-                                Else
-
-                                    Dim BlogCategorieModelList As List(Of Models.BlogCategorieModel) = Models.BlogCategorieModel.createList(cp, "id=" & TestCategoryID)
-                                    ' CSCat = Main.OpenCSContent(cnBlogCategories, "id=" & TestCategoryID)
-                                    Dim blogCat As Models.BlogCategorieModel = BlogCategorieModelList.First
-                                    'If cp.CSNew.OK() Then
-                                    IsBlocked = blogCat.UserBlocking 'cp.Site.GetBoolean("UserBlocking")
-                                    If IsBlocked Then
-                                        GroupList = GroupModel.GetBlockingGroups(cp, blogCat.id) 'cp.Doc.GetText("BlockingGroups")
-                                        IsBlocked = Not genericController.IsGroupListMember(cp, GroupList)
-                                    End If
-                                    'End If
-                                    ' Call Main.CloseCS(CSCat)
+                                '
+                                '
+                            Else
+                                EntryID = blogEntry.id 'cp.Doc.GetInteger("ID")
+                                Dim AuthorMemberID As Integer = blogEntry.AuthorMemberID ' cp.Doc.GetInteger("AuthorMemberID")
+                                If AuthorMemberID = 0 Then
+                                    AuthorMemberID = blogEntry.CreatedBy 'cp.Doc.GetInteger("createdBy")
                                 End If
-                                'End If
-                            End If
-                        End If
-                        If IsBlocked Then
-                            '
-                            '
-                            '
-                        Else
+                                Dim DateAdded As Date = blogEntry.DateAdded    'cp.Doc.GetText("DateAdded")
+                                Dim EntryName As String = blogEntry.name  'cp.Doc.GetText("Name")
+                                Dim entryEditLink As String
 
-                            EntryID = blogEntry.id 'cp.Doc.GetInteger("ID")
-                            Dim AuthorMemberID As Integer = blogEntry.AuthorMemberID ' cp.Doc.GetInteger("AuthorMemberID")
-                            If AuthorMemberID = 0 Then
-                                AuthorMemberID = blogEntry.CreatedBy 'cp.Doc.GetInteger("createdBy")
-                            End If
-                            Dim DateAdded As Date = blogEntry.DateAdded    'cp.Doc.GetText("DateAdded")
-                            Dim EntryName As String = blogEntry.name  'cp.Doc.GetText("Name")
-                            Dim entryEditLink As String
+                                If IsEditing Then
+                                    entryEditLink = cp.Content.GetEditLink("Blog Entries", EntryID, True, EntryName, True)
+                                    ' entryEditLink = Main.GetCSRecordEditLink(CS)
+                                End If
+                                Dim EntryCopy As String = blogEntry.Copy   'cp.Doc.GetText("Copy")
+                                Dim PodcastMediaLink As String = ""
+                                'EntryCopyOverview = cp.Doc.GetText(CS, "CopyOverview")
+                                Dim allowComments As Boolean = 'cp.Site.GetBoolean("AllowComments")
+                                        PodcastMediaLink = blogEntry.PodcastMediaLink 'cp.Doc.GetText("PodcastMediaLink")
+                                Dim PodcastSize As String = blogEntry.PodcastSize 'cp.Doc.GetText("PodcastSize")
+                                'PodcastSize = Main.GetCS(CS, "PodcastSize")
+                                Dim BlogTagList As String = blogEntry.TagList 'cp.Doc.GetText("BlogTagList")
+                                Dim imageDisplayTypeId As Integer = blogEntry.imageDisplayTypeId 'cp.Doc.GetInteger("imageDisplayTypeId")
+                                Dim primaryImagePositionId As Integer = blogEntry.primaryImagePositionId 'cp.Doc.GetInteger("primaryImagePositionId")
+                                Dim articlePrimaryImagePositionId As Integer = blogEntry.articlePrimaryImagePositionId 'cp.Doc.GetInteger("articlePrimaryImagePositionId")
+                                Dim Return_CommentCnt As Integer
 
-                            If IsEditing Then
-                                entryEditLink = cp.Content.GetEditLink("Blog Entries", EntryID, True, EntryName, True)
-                                ' entryEditLink = Main.GetCSRecordEditLink(CS)
-                            End If
-                            Dim EntryCopy As String = blogEntry.Copy   'cp.Doc.GetText("Copy")
-                            Dim PodcastMediaLink As String = ""
-                            'EntryCopyOverview = cp.Doc.GetText(CS, "CopyOverview")
-                            Dim allowComments As Boolean = 'cp.Site.GetBoolean("AllowComments")
-                                    PodcastMediaLink = blogEntry.PodcastMediaLink 'cp.Doc.GetText("PodcastMediaLink")
-                            Dim PodcastSize As String = blogEntry.PodcastSize 'cp.Doc.GetText("PodcastSize")
-                            'PodcastSize = Main.GetCS(CS, "PodcastSize")
-                            Dim BlogTagList As String = blogEntry.TagList 'cp.Doc.GetText("BlogTagList")
-                            Dim imageDisplayTypeId As Integer = blogEntry.imageDisplayTypeId 'cp.Doc.GetInteger("imageDisplayTypeId")
-                            Dim primaryImagePositionId As Integer = blogEntry.primaryImagePositionId 'cp.Doc.GetInteger("primaryImagePositionId")
-                            Dim articlePrimaryImagePositionId As Integer = blogEntry.articlePrimaryImagePositionId 'cp.Doc.GetInteger("articlePrimaryImagePositionId")
-                            Dim Return_CommentCnt As Integer
+                                result = result & GetBlogEntryCell(cp, EntryPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, DateAdded, False, False, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, entryEditLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, imageDisplayTypeId, primaryImagePositionId, articlePrimaryImagePositionId, blogListQs, AuthorMemberID)
+                                result = result & cr & "<div Class=""aoBlogEntryDivider"">&nbsp;</div>"
 
-                            result = result & GetBlogEntryCell(cp, EntryPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, DateAdded, False, False, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, entryEditLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, imageDisplayTypeId, primaryImagePositionId, articlePrimaryImagePositionId, blogListQs, AuthorMemberID)
-                            result = result & cr & "<div Class=""aoBlogEntryDivider"">&nbsp;</div>"
+                            End If
+                            If EntryPtr = PostsToDisplay Then Exit For
                             EntryPtr = EntryPtr + 1
                         End If
 
@@ -1072,44 +1074,46 @@ Namespace Views
                     '
                     qs = cp.Doc.RefreshQueryString
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogCategoryIDSet, "0", True)
-                    CategoryFooter = CategoryFooter & cr & "<div Class=""aoBlogFooterLink""><a href=""" & blogListLink & """>See posts In all categories</a></div>"
+                    CategoryFooter = CategoryFooter & cr & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>See posts in all categories</a></div>"
                     'Else
                     '
                     ' select a category
                     '
                     qs = cp.Doc.RefreshQueryString
                     Dim BlogCategorieModelList As List(Of Models.BlogCategorieModel) = Models.BlogCategorieModel.createList(cp, "id=" & TestCategoryID)
-                    Dim blogCat As Models.BlogCategorieModel = BlogCategorieModelList.First
-
-                    For Each blogCat In BlogCategorieModelList
-                        BlogCategoryID = blogCat.id
-                        IsBlocked = blogCat.UserBlocking
-                        If IsBlocked Then
-                            IsBlocked = Not cp.User.IsAdmin()
-                        End If
-
-                        If IsBlocked Then
-                            If BuildVersion < "4.1.098" Then
-                                GroupList = GroupModel.GetBlockingGroups(cp, BlogCategoryID)
-                                IsBlocked = Not genericController.IsGroupListMember(cp, GroupList)
-                            Else
-                                GroupList = GroupModel.GetBlockingGroups(cp, BlogCategoryID)
-                                IsBlocked = Not genericController.IsGroupListMember(cp, GroupList)
+                    If (BlogCategorieModelList.Count > 0) Then
+                        Dim blogCat As Models.BlogCategorieModel = BlogCategorieModelList.First
+                        For Each blogCat In BlogCategorieModelList
+                            BlogCategoryID = blogCat.id
+                            IsBlocked = blogCat.UserBlocking
+                            If IsBlocked Then
+                                IsBlocked = Not cp.User.IsAdmin()
                             End If
-                        End If
-                        If Not IsBlocked Then
-                            'qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogCategoryIDSet, CStr(BlogCategoryID), True)
-                            Dim categoryLink As String = cp.Content.GetEditLink(qs, CStr(BlogCategoryID), True, "", True)
-                            CategoryFooter = CategoryFooter & cr & "<div Class=""aoBlogFooterLink""><a href=""" & categoryLink & """>See posts In the category " & cp.Doc.GetText("name") & "</a></div>"
-                        End If
-                        ' Call Main.NextCSRecord(CS)
-                    Next
+
+                            If IsBlocked Then
+                                If BuildVersion < "4.1.098" Then
+                                    GroupList = GroupModel.GetBlockingGroups(cp, BlogCategoryID)
+                                    IsBlocked = Not genericController.IsGroupListMember(cp, GroupList)
+                                Else
+                                    GroupList = GroupModel.GetBlockingGroups(cp, BlogCategoryID)
+                                    IsBlocked = Not genericController.IsGroupListMember(cp, GroupList)
+                                End If
+                            End If
+                            If Not IsBlocked Then
+                                Dim categoryLink As String = cp.Utils.ModifyQueryString(qs, RequestNameBlogCategoryIDSet, CStr(BlogCategoryID), True)
+                                'categoryLink = kmaModifyLinkQuery(blogListLink, RequestNameBlogCategoryIDSet, CStr(BlogCategoryID), True)
+                                'Dim categoryLink As String = cp.Content.GetEditLink(qs, CStr(BlogCategoryID), True, "", True)
+                                CategoryFooter = CategoryFooter & cr & "<div class=""aoBlogFooterLink""><a href=""?" & categoryLink & """> See posts in the category " & blogCat.name & "</a></div>"
+                            End If
+                            ' Call Main.NextCSRecord(CS)
+                        Next
+                    End If
                 End If
-                'Call Main.CloseCS(CS)
-                '
-                ' Footer
-                '
-                result = result & cr & "<div>&nbsp;</div>"
+                    'Call Main.CloseCS(CS)
+                    '
+                    ' Footer
+                    '
+                    result = result & cr & "<div>&nbsp;</div>"
 
                 If IsBlogOwner Then
                     Call cp.Site.TestPoint("Blogs.GetFormBlogPostList, IsBlogOwner = True, appending 'create' message")
@@ -1636,7 +1640,7 @@ Namespace Views
                         blogEntry.Viewings = (1 + cp.Doc.GetInteger("viewings"))
                         BlogEntry.imageDisplayTypeId = cp.Doc.GetInteger("imageDisplayTypeId")
                         BlogEntry.primaryImagePositionId = cp.Doc.GetInteger("primaryImagePositionId")
-                        blogEntry.articlePrimaryImagePositionId = cp.Doc.GetInteger("articlePrimaryImagePositionId")
+                        ' blogEntry.articlePrimaryImagePositionId = cp.Doc.GetInteger("articlePrimaryImagePositionId")
                         result = result & GetBlogEntryCell(cp, EntryPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, DateAdded, True, False, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, entryEditLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, imageDisplayTypeId, primaryImagePositionId, articlePrimaryImagePositionId, blogListQs, AuthorMemberID)
                         EntryPtr = EntryPtr + 1
                         '
@@ -1740,13 +1744,14 @@ Namespace Views
                                     qs = cp.Utils.ModifyQueryString(qs, "auth", "2")
                                     Copy = Copy & "<div class=""aoBlogRegisterLink""><a href=""?" & qs & """>Need to Register?</a></div>"
                                 End If
-                                loginForm = "Get login Form removed"
-                                loginForm = Replace(loginForm, "LoginUsernameInput", "LoginUsernameInput-BlockFocus")
+                                'loginForm = "Get login Form removed"
+                                'loginForm = Replace(loginForm, "LoginUsernameInput", "LoginUsernameInput-BlockFocus")
                                 result = result _
                                         & cr & "<div class=""aoBlogCommentCopy"">" & Copy & "</div>" _
-                                        & cr & "<div class=""aoBlogLoginBox"">" _
-                                        & cr & "<div class=""aoBlogCommentCopy"">" & loginForm & "</div>" _
-                                        & cr & "</div>"
+                                         & cr & "</div>"
+                                '& cr & "<div class=""aoBlogLoginBox"">" _
+                                '& cr & "<div class=""aoBlogCommentCopy"">" & loginForm & "</div>" _
+                                '& cr & "</div>"
                         End Select
 
                     Else
@@ -1848,7 +1853,7 @@ Namespace Views
                 Dim CommentInfo As String
                 Dim CommentID As Integer
                 Dim RandomSerialNumber As Integer
-                Dim EntryName As String
+                'Dim EntryName As String
                 Dim CommentTitle As String
                 Dim AuthorName As String
                 Dim AuthorEmail As String
@@ -1912,6 +1917,7 @@ Namespace Views
                             Else
                                 Call cp.Site.TestPoint("blog -- adding comment, no user error")
                                 EntryID = cp.Doc.GetInteger(RequestNameBlogEntryID)
+                                Dim BlogEntry As Models.BlogEntryModel = Models.BlogEntryModel.create(cp, EntryID)
                                 Dim BlogComment As Models.BlogCommentModel = Models.BlogCommentModel.add(cp)
                                 'CSP = Main.InsertCSRecord(cnBlogComments)
                                 If AllowAnonymous And (Not cp.User.IsAuthenticated) Then
@@ -1939,28 +1945,25 @@ Namespace Views
                                     '
                                     ' Send Comment Notification
                                     '
-                                    Dim blogEntryList As List(Of Models.BlogEntryModel) = Models.BlogEntryModel.createList(cp, "id=" & EntryID)
-                                    If (blogEntryList.Count <> 0) Then
-                                        Dim BlogEntry As Models.BlogEntryModel = blogEntryList.First
-                                        EntryName = BlogEntry.name
-                                        EntryLink = BlogEntry.RSSLink 'Main.ServerLink
-                                        If InStr(1, EntryLink, "?") = 0 Then
-                                            EntryLink = EntryLink & "?"
-                                        Else
-                                            EntryLink = EntryLink & "&"
-                                        End If
-                                        EntryLink = EntryLink & "blogentryid=" & EntryID
-                                        EmailBody = "" _
+                                    'EntryName = Main.GetRecordName(cnBlogEntries, EntryID)
+                                    EntryLink = BlogEntry.RSSLink
+                                    If InStr(1, EntryLink, "?") = 0 Then
+                                        EntryLink = EntryLink & "?"
+                                    Else
+                                        EntryLink = EntryLink & "&"
+                                    End If
+                                    EntryLink = EntryLink & "blogentryid=" & EntryID
+                                    EmailBody = "" _
                                                     & cr & "The following blog comment was posted " & Now() _
                                                     & cr & "To approve this comment, go to " & EntryLink _
                                                     & vbCrLf _
                                                     & cr & "Blog '" & BlogName & "'" _
-                                                    & cr & "Post '" & EntryName & "'" _
+                                                    & cr & "Post '" & BlogEntry.name & "'" _
                                                     & cr & "By " & cp.User.Name _
                                                     & vbCrLf _
                                                     & vbCrLf & cp.Utils.EncodeHTML(Copy) _
                                                     & vbCrLf
-                                        EmailFromAddress = cp.Site.GetProperty("EmailFromAddress", "info@" & cp.Site.Domain)
+                                    EmailFromAddress = cp.Site.GetProperty("EmailFromAddress", "info@" & cp.Site.Domain)
                                         'Call Main.SendMemberEmail(BlogOwnerID, EmailFromAddress, "Blog comment notification for [" & BlogName & "]", EmailBody, False, False)
                                         Call cp.Email.sendUser(BlogOwnerID, EmailFromAddress, "Blog comment notification for [" & BlogName & "]", EmailBody, False, False)
                                         authoringGroupId = blog.AuthoringGroupID
@@ -1985,7 +1988,7 @@ Namespace Views
                                             'Call Main.CloseCS(CS)
                                         End If
                                     End If
-                                End If
+
                             End If
                         End If
                         ProcessFormBlogPostDetails = FormBlogPostDetails
@@ -2181,7 +2184,6 @@ Namespace Views
                     imageName = BlogImage.name
                     ThumbnailFilename = BlogImage.Filename
                     imageFilename = BlogImage.Filename
-
                 Next
 
                 'Do While Main.IsCSOK(CS)
@@ -2201,6 +2203,8 @@ Namespace Views
                     Call GetBlogImage(cp, cp.Utils.EncodeInteger(ImageID(0)), ThumbnailImageWidth, 0, ThumbnailFilename, imageFilename, imageDescription, imageName)
                 End If
                 '
+                Dim blogCopy As Models.BlogCopyModel = Models.BlogCopyModel.create(cp, EntryID)
+                articlePrimaryImagePositionId = blogCopy.articlePrimaryImagePositionId
                 result = ""
                 hint = hint & ",3"
                 Dim TagListRow As String
@@ -2215,12 +2219,14 @@ Namespace Views
                                 '
                                 ' align right
                                 '
-                                result = result & "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;"">"
+                                'result = result & "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;"">"
+                                result = result & "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:40%;"">"
                             Case 3
                                 '
                                 ' align left
                                 '
-                                result = result & "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;"">"
+                                'result = result & "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;"">"
+                                result = result & "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:40%;"">"
                             Case 4
                                 '
                                 ' hide
@@ -2229,7 +2235,7 @@ Namespace Views
                                 '
                                 ' 1 and none align per stylesheet
                                 '
-                                result = result & "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;"">"
+                                result = result & "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:40%;"">"
                         End Select
                     End If
                     hint = hint & ",4"
@@ -2300,12 +2306,14 @@ Namespace Views
                                 '
                                 ' align right
                                 '
-                                result = result & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;""></a>"
+                                'result = result & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;""></a>"
+                                result = result & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:25%;""></a>"
                             Case 3
                                 '
                                 ' align left
                                 '
-                                result = result & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;""></a>"
+                                ' result = result & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;""></a>"
+                                result = result & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:25%;""></a>"
                             Case 4
                                 '
                                 ' hide
@@ -2314,7 +2322,9 @@ Namespace Views
                                 '
                                 ' 1 and none align per stylesheet
                                 '
-                                result = result & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;""></a>"
+                                'result = result & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & ThumbnailImageWidth & "px;""></a>"
+                                result = result & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:25%;""></a>"
+
                         End Select
                     End If
                     result = result & "<p>" & filterCopy(cp, EntryCopy, OverviewLength) & "</p></div>"
@@ -2995,17 +3005,25 @@ Namespace Views
                                     End Try
                                     ' On Error GoTo ErrorTrap
                                     sf.Width = ThumbnailImageWidth
-                                    Call sf.DoResize
+                                    Try
+                                        Call sf.DoResize
+                                    Catch ex As Exception
+
+                                    End Try
                                     ThumbNailSize = ThumbnailImageWidth & "x" & sf.Height
                                     Return_ThumbnailFilename = FilenameNoExtension & "-" & ThumbNailSize & "." & FilenameExtension
-                                    Call sf.SaveToFile(cp.Site.PhysicalFilePath & Return_ThumbnailFilename)
+                                    Try
+                                        sf.SaveToFile(cp.Site.PhysicalFilePath & Return_ThumbnailFilename)
+                                    Catch ex As Exception
+
+                                    End Try
                                     AltSizeList = AltSizeList & vbCrLf & ThumbNailSize
-                                    BlogImage.AltSizeList = AltSizeList
-                                    'Call Main.SetCS(CS, "altsizelist", AltSizeList)
-                                    cp.Utils.AppendLogFile("Return_ThumbnailFilename=" & Return_ThumbnailFilename)
-                                Catch ex As Exception
-                                    '
-                                End Try
+                                        BlogImage.AltSizeList = AltSizeList
+                                        'Call Main.SetCS(CS, "altsizelist", AltSizeList)
+                                        cp.Utils.AppendLogFile("Return_ThumbnailFilename=" & Return_ThumbnailFilename)
+                                    Catch ex As Exception
+                                        '
+                                    End Try
                             End If
                             If ImageWidthMax = 0 Then
                                 '
@@ -3140,7 +3158,11 @@ Namespace Views
                 Dim RandomBase As Long
                 Dim RandomLimit As Long
                 '
-                RandomBase = App.ThreadID
+                Try
+                    RandomBase = App.ThreadID
+                Catch ex As Exception
+
+                End Try
                 RandomBase = RandomBase And ((2 ^ 30) - 1)
                 RandomLimit = (2 ^ 31) - RandomBase - 1
                 Randomize()

@@ -73,7 +73,7 @@ Namespace Models
         Public Property ShipState As String
         Public Property ShipZip As String
         Public Property State As String
-        Public Property StyleFilename As String
+        'Public Property StyleFilename As String
         Public Property ThumbnailFilename As String
         Public Property Title As String
         Public Property Username As String

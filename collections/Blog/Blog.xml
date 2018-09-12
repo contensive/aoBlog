@@ -2375,6 +2375,8 @@ end function]]></Code>
 	</Addon>
 	<data>
 		<record content="Layouts" guid="{58788483-D050-4464-9261-627278A57B35}" name="Blog Layout">
+			<field name="Active">True</field>
+			<field name="SortOrder"></field>
 			<field name="Layout"><![CDATA[<div class="blogWrapper">
 	<div class="blogColumn1-Wrap">
 		<div class="blogColumn1">
@@ -2396,8 +2398,6 @@ end function]]></Code>
 	</div>
 </div>]]></field>
 			<field name="StylesFilename"></field>
-			<field name="Active">True</field>
-			<field name="SortOrder"></field>
 		</record>
 	</data>
 	<CDef Name="Blog Viewing Log" Active="1" AdminOnly="0" AllowAdd="1" AllowCalendarEvents="0" AllowContentChildTool="0" AllowContentTracking="0" AllowDelete="1" AllowTopicRules="0" AllowWorkflowAuthoring="0" AuthoringDataSourceName="Default" AuthoringTableName="BlogViewingLog" ContentDataSourceName="Default" ContentTableName="BlogViewingLog" DefaultSortMethod="By Name" DeveloperOnly="0" DropDownFieldList="Name" EditorGroupName="" Parent="" IconLink="" IconHeight="0" IconWidth="0" IconSprites="0" isbasecontent="0" guid="{5DBF96E0-52E0-4E2E-8E9B-29780273FD7C}" >
@@ -2743,6 +2743,5 @@ end function]]></Code>
 	<Resource name="pinterest.jpg" type="www" path="blogs" />
 	<Resource name="rss.png" type="www" path="blogs" />
 	<Resource name="twitter.jpg" type="www" path="blogs" />
-	<Resource name="aoblogs.dll" type="executable" path="" />
 	<Resource name="aoblogs2.dll" type="executable" path="" />
 </Collection>
