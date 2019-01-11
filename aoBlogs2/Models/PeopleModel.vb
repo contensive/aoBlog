@@ -9,7 +9,7 @@ Imports Contensive.BaseClasses
 
 Namespace Models
     Public Class PeopleModel
-        Inherits baseModel
+        Inherits DbModel
         Implements ICloneable
         '
         '====================================================================================================
@@ -124,22 +124,22 @@ Namespace Models
         '
         '====================================================================================================
         Public Overloads Shared Function getRecordName(cp As CPBaseClass, recordId As Integer) As String
-            Return baseModel.getRecordName(Of PeopleModel)(cp, recordId)
+            Return DbModel.getRecordName(Of PeopleModel)(cp, recordId)
         End Function
         '
         '====================================================================================================
         Public Overloads Shared Function getRecordName(cp As CPBaseClass, ccGuid As String) As String
-            Return baseModel.getRecordName(Of PeopleModel)(cp, ccGuid)
+            Return DbModel.getRecordName(Of PeopleModel)(cp, ccGuid)
         End Function
         '
         '====================================================================================================
         Public Overloads Shared Function getRecordId(cp As CPBaseClass, ccGuid As String) As Integer
-            Return baseModel.getRecordId(Of PeopleModel)(cp, ccGuid)
+            Return DbModel.getRecordId(Of PeopleModel)(cp, ccGuid)
         End Function
         '
         '====================================================================================================
         Public Overloads Shared Function getCount(cp As CPBaseClass, sqlCriteria As String) As Integer
-            Return baseModel.getCount(Of PeopleModel)(cp, sqlCriteria)
+            Return DbModel.getCount(Of PeopleModel)(cp, sqlCriteria)
         End Function
         '
         '====================================================================================================
@@ -153,7 +153,7 @@ Namespace Models
             Dim result As PeopleModel = DirectCast(Me.Clone(), PeopleModel)
             result.id = cp.Content.AddRecord(contentName)
             result.ccguid = cp.Utils.CreateGuid()
-            result.save(cp)
+            result.save(of BlogModel)(cp)
             Return result
         End Function
         '

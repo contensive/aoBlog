@@ -9,8 +9,7 @@ Imports Contensive.BaseClasses
 
 Namespace Models
     Public Class GroupRuleModel
-        Inherits baseModel
-        Implements ICloneable
+        Inherits DbModel
         '
         '====================================================================================================
         '-- const
@@ -25,88 +24,6 @@ Namespace Models
         Public Property AllowDelete As Boolean
         Public Property ContentID As Integer
         Public Property GroupID As Integer
-
-        '
-        '====================================================================================================
-        Public Overloads Shared Function add(cp As CPBaseClass) As GroupRuleModel
-            Return add(Of GroupRuleModel)(cp)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function create(cp As CPBaseClass, recordId As Integer) As GroupRuleModel
-            Return create(Of GroupRuleModel)(cp, recordId)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function create(cp As CPBaseClass, recordGuid As String) As GroupRuleModel
-            Return create(Of GroupRuleModel)(cp, recordGuid)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function createByName(cp As CPBaseClass, recordName As String) As GroupRuleModel
-            Return createByName(Of GroupRuleModel)(cp, recordName)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Sub save(cp As CPBaseClass)
-            MyBase.save(Of GroupRuleModel)(cp)
-        End Sub
-        '
-        '====================================================================================================
-        Public Overloads Shared Sub delete(cp As CPBaseClass, recordId As Integer)
-            delete(Of GroupRuleModel)(cp, recordId)
-        End Sub
-        '
-        '====================================================================================================
-        Public Overloads Shared Sub delete(cp As CPBaseClass, ccGuid As String)
-            delete(Of GroupRuleModel)(cp, ccGuid)
-        End Sub
-        '
-        '====================================================================================================
-        Public Overloads Shared Function createList(cp As CPBaseClass, sqlCriteria As String, Optional sqlOrderBy As String = "id") As List(Of GroupRuleModel)
-            Return createList(Of GroupRuleModel)(cp, sqlCriteria, sqlOrderBy)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getRecordName(cp As CPBaseClass, recordId As Integer) As String
-            Return baseModel.getRecordName(Of GroupRuleModel)(cp, recordId)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getRecordName(cp As CPBaseClass, ccGuid As String) As String
-            Return baseModel.getRecordName(Of GroupRuleModel)(cp, ccGuid)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getRecordId(cp As CPBaseClass, ccGuid As String) As Integer
-            Return baseModel.getRecordId(Of GroupRuleModel)(cp, ccGuid)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getCount(cp As CPBaseClass, sqlCriteria As String) As Integer
-            Return baseModel.getCount(Of GroupRuleModel)(cp, sqlCriteria)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Function getUploadPath(fieldName As String) As String
-            Return MyBase.getUploadPath(Of GroupRuleModel)(fieldName)
-        End Function
-        '
-        '====================================================================================================
-        '
-        Public Function Clone(cp As CPBaseClass) As GroupRuleModel
-            Dim result As GroupRuleModel = DirectCast(Me.Clone(), GroupRuleModel)
-            result.id = cp.Content.AddRecord(contentName)
-            result.ccguid = cp.Utils.CreateGuid()
-            result.save(cp)
-            Return result
-        End Function
-        '
-        '====================================================================================================
-        '
-        Public Function Clone() As Object Implements ICloneable.Clone
-            Return Me.MemberwiseClone()
-        End Function
 
     End Class
 End Namespace

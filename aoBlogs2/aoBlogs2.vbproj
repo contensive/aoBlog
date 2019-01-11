@@ -10,7 +10,7 @@
     <RootNamespace>Contensive.Addons.Blog</RootNamespace>
     <AssemblyName>aoBlogs2</AssemblyName>
     <MyType>Windows</MyType>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
@@ -66,6 +66,9 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CPBase, Version=4.1.2.0, Culture=neutral, PublicKeyToken=10b3c53389b845fb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Contensive.CPBaseClass.5.0.5\lib\net461\CPBase.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -80,8 +83,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="constants.vb" />
+    <Compile Include="Controllers\InstanceIdController.vb" />
     <Compile Include="Controllers\genericController.vb" />
-    <Compile Include="Models\baseModel.vb" />
+    <Compile Include="Models\DbModel.vb" />
     <Compile Include="Models\EmailModel.vb" />
     <Compile Include="Models\GroupModel.vb" />
     <Compile Include="Models\GroupRuleModel.vb" />
@@ -100,9 +104,11 @@
     <Compile Include="Models\BlogImageRuleModel.vb" />
     <Compile Include="Models\VisitModel.vb" />
     <Compile Include="Models\BlogViewingLogModel.vb" />
+    <Compile Include="Models\BlogEntryCtaRules.vb" />
+    <Compile Include="Models\CallsToActionModel.vb" />
     <Compile Include="Models\_blankModel.vb" />
     <Compile Include="Views\BlogClass.vb" />
-    <Compile Include="Views\vb6BlogsClass.vb" />
+    <Compile Include="Views\BlogInnerClass.vb" />
     <Compile Include="Views\vb6CategoriesClass.vb" />
     <Compile Include="Views\_blankClass.vb" />
     <Compile Include="Views\latestNews.vb" />
@@ -141,6 +147,7 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -169,11 +176,6 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="contensive.clib">
-      <Version>4.1.2</Version>
-    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Models\modelData.txt" />

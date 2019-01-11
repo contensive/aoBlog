@@ -4,19 +4,20 @@ Option Strict On
 
 Imports System
 Imports System.Collections.Generic
+Imports System.Linq
 Imports System.Text
+Imports Contensive.Addons.Blog.Controllers
 Imports Contensive.BaseClasses
 
 Namespace Models
-    Public Class blogModel        '<------ set set model Name and everywhere that matches this string
-        Inherits baseModel
-        Implements ICloneable
+    Public Class blogModel
+        Inherits DbModel
         '
         '====================================================================================================
         '-- const
-        Public Const contentName As String = "Blogs"      '<------ set content name
-        Public Const contentTableName As String = "ccBlogs"   '<------ set to tablename for the primary content (used for cache names)
-        Private Shadows Const contentDataSource As String = "default"             '<------ set to datasource if not default
+        Public Const contentName As String = "Blogs"
+        Public Const contentTableName As String = "ccBlogs"
+        Private Shadows Const contentDataSource As String = "default"
         '
         '====================================================================================================
         ' -- instance properties
@@ -52,112 +53,66 @@ Namespace Models
         Public Property twitterLink As String
         '
         '====================================================================================================
-        Public Overloads Shared Function add(cp As CPBaseClass) As blogModel
-            Return add(Of blogModel)(cp)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function create(cp As CPBaseClass, recordId As Integer) As blogModel
-            Return create(Of blogModel)(cp, recordId)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function create(cp As CPBaseClass, recordGuid As String) As blogModel
-            Return create(Of blogModel)(cp, recordGuid)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function createByName(cp As CPBaseClass, recordName As String) As blogModel
-            Return createByName(Of blogModel)(cp, recordName)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Sub save(cp As CPBaseClass)
-            MyBase.save(Of blogModel)(cp)
-        End Sub
-        '
-        '====================================================================================================
-        Public Overloads Shared Sub delete(cp As CPBaseClass, recordId As Integer)
-            delete(Of blogModel)(cp, recordId)
-        End Sub
-        '
-        '====================================================================================================
-        Public Overloads Shared Sub delete(cp As CPBaseClass, ccGuid As String)
-            delete(Of blogModel)(cp, ccGuid)
-        End Sub
-        '
-        '====================================================================================================
-        Public Overloads Shared Function createList(cp As CPBaseClass, sqlCriteria As String, Optional sqlOrderBy As String = "id") As List(Of blogModel)
-            Return createList(Of blogModel)(cp, sqlCriteria, sqlOrderBy)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getRecordName(cp As CPBaseClass, recordId As Integer) As String
-            Return baseModel.getRecordName(Of blogModel)(cp, recordId)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getRecordName(cp As CPBaseClass, ccGuid As String) As String
-            Return baseModel.getRecordName(Of blogModel)(cp, ccGuid)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getRecordId(cp As CPBaseClass, ccGuid As String) As Integer
-            Return baseModel.getRecordId(Of blogModel)(cp, ccGuid)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getCount(cp As CPBaseClass, sqlCriteria As String) As Integer
-            Return baseModel.getCount(Of blogModel)(cp, sqlCriteria)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Function getUploadPath(fieldName As String) As String
-            Return MyBase.getUploadPath(Of blogModel)(fieldName)
-        End Function
-        '
-        '====================================================================================================
-        '
-        Public Function Clone(cp As CPBaseClass) As blogModel
-            Dim result As blogModel = DirectCast(Me.Clone(), blogModel)
-            result.id = cp.Content.AddRecord(contentName)
-            result.ccguid = cp.Utils.CreateGuid()
-            result.save(cp)
-            Return result
-        End Function
-        '
-        '====================================================================================================
-        '
-        Public Function Clone() As Object Implements ICloneable.Clone
-            Return Me.MemberwiseClone()
-        End Function
-        '
-        '====================================================================================================
         ''' <summary>
-        ''' Save a list of this model to the database, guid required, using the guid as a key for update/import, and ignoring the id.
+        ''' Create a new default blog, ready to use. Must be an administrator. If not, returns null
         ''' </summary>
         ''' <param name="cp"></param>
-        ''' <param name="modelList">A dictionary with guid as key, and this model as object</param>
-        Public Shared Sub migrationImport(cp As CPBaseClass, modelList As Dictionary(Of String, blogModel))
-            Dim ContentControlID As Integer = cp.Content.GetID(contentName)
-            For Each kvp In modelList
-                If (Not String.IsNullOrEmpty(kvp.Value.ccguid)) Then
-                    kvp.Value.id = 0
-                    Dim dbData As blogModel = create(cp, kvp.Value.ccguid)
-                    If (dbData IsNot Nothing) Then
-                        kvp.Value.id = dbData.id
-                    Else
-                        kvp.Value.DateAdded = Now
-                        kvp.Value.CreatedBy = 0
+        ''' <returns></returns>
+        Public Shared Function verifyBlog(cp As CPBaseClass, instanceId As String) As blogModel
+            Try
+                If (Not cp.User.IsAdmin) Then Return Nothing
+
+                Dim Blog = DbModel.add(Of blogModel)(cp)
+                Blog.name = "Default Blog"
+                Blog.Caption = "The New Blog"
+                Blog.OwnerMemberID = cp.User.Id
+                Blog.AuthoringGroupID = cp.Group.GetId("Site Managers")
+                Blog.ignoreLegacyInstanceOptions = True
+                Blog.AllowAnonymous = True
+                Blog.autoApproveComments = False
+                Blog.AllowCategories = True
+                Blog.PostsToDisplay = 5
+                Blog.OverviewLength = 500
+                Blog.ThumbnailImageWidth = 200
+                Blog.ImageWidthMax = 400
+                Blog.ccguid = instanceId
+                Blog.save(Of blogModel)(cp)
+                Dim rssFeed = RSSFeedModel.verifyFeed(cp, Blog)
+                Blog.RSSFeedID = If(rssFeed IsNot Nothing, rssFeed.id, 0)
+                Blog.save(Of blogModel)(cp)
+
+                Dim blogEntry As BlogEntryModel = DbModel.add(Of BlogEntryModel)(cp)
+                If (blogEntry IsNot Nothing) Then
+                    blogEntry.BlogID = Blog.id
+                    blogEntry.name = "Welcome to the New Blog!"
+                    blogEntry.RSSTitle = ""
+                    blogEntry.Copy = cp.WwwFiles.Read("blogs\DefaultPostCopy.txt")
+
+                    Dim qs As String = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
+                    qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
+                    Call cp.Site.addLinkAlias(Blog.Caption, cp.Doc.PageId, qs)
+                    Dim LinkAlias As List(Of LinkAliasesModel) = DbModel.createList(Of LinkAliasesModel)(cp, "(pageid=" & cp.Doc.PageId & ")and(QueryStringSuffix=" & cp.Db.EncodeSQLText(qs) & ")")
+                    If (LinkAlias.Count > 0) Then
+                        Dim EntryLink As String = LinkAlias.First().name
                     End If
-                    kvp.Value.ContentControlID = ContentControlID
-                    kvp.Value.ModifiedDate = Now
-                    kvp.Value.ModifiedBy = 0
-                    kvp.Value.save(cp)
+                    blogEntry.RSSDescription = genericController.filterCopy(cp, blogEntry.Copy, 150)
+                    blogEntry.save(Of BlogEntryModel)(cp)
                 End If
-            Next
-        End Sub
-
-
+                '
+                ' Add this new default post to the new feed
+                '
+                Dim RSSFeedBlogRules As RSSFeedBlogRuleModel = RSSFeedBlogRuleModel.add(cp)
+                If (RSSFeedBlogRules IsNot Nothing) Then
+                    RSSFeedBlogRules.RSSFeedID = rssFeed.id
+                    RSSFeedBlogRules.BlogPostID = blogEntry.id
+                    RSSFeedBlogRules.name = "RSS Feed [" & rssFeed.name & "], Blog Post [" & blogEntry.name & "]"
+                    RSSFeedBlogRules.save(Of blogModel)(cp)
+                End If
+                Return Blog
+            Catch ex As Exception
+                cp.Site.ErrorReport(ex)
+                Throw New ApplicationException("Exception creating default blog")
+            End Try
+        End Function
     End Class
 End Namespace

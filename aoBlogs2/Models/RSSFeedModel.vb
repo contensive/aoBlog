@@ -9,9 +9,8 @@ Imports System.Text
 Imports Contensive.BaseClasses
 
 Namespace Models
-    Public Class RSSFeedModel        '<------ set set model Name and everywhere that matches this string
-        Inherits baseModel
-        Implements ICloneable
+    Public Class RSSFeedModel
+        Inherits DbModel
         '
         '====================================================================================================
         '-- const
@@ -21,120 +20,192 @@ Namespace Models
         '
         '====================================================================================================
         ' -- instance properties
-        Public Property Copyright As String
-        Public Property Description As String
-        Public Property Link As String
-        Public Property LogoFilename As String
-        Public Property RSSDateUpdated As Date
-        Public Property RSSFilename As String
+        Public Property copyright As String
+        Public Property description As String
+        Public Property link As String
+        Public Property logoFilename As String
+        Public Property rssDateUpdated As Date
+        Public Property rssFilename As String
         '
-        '====================================================================================================
-        Public Overloads Shared Function add(cp As CPBaseClass) As RSSFeedModel
-            Return add(Of RSSFeedModel)(cp)
-        End Function
+        '========================================================================
+        '   Verify the RSSFeed and return the ID and the Link
+        '       run when a new blog is created
+        '       run on every post
+        '========================================================================
         '
-        '====================================================================================================
-        Public Overloads Shared Function create(cp As CPBaseClass, recordId As Integer) As RSSFeedModel
-            Return create(Of RSSFeedModel)(cp, recordId)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function create(cp As CPBaseClass, recordGuid As String) As RSSFeedModel
-            Return create(Of RSSFeedModel)(cp, recordGuid)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function createByName(cp As CPBaseClass, recordName As String) As RSSFeedModel
-            Return createByName(Of RSSFeedModel)(cp, recordName)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Sub save(cp As CPBaseClass)
-            MyBase.save(Of RSSFeedModel)(cp)
-        End Sub
-        '
-        '====================================================================================================
-        Public Overloads Shared Sub delete(cp As CPBaseClass, recordId As Integer)
-            delete(Of RSSFeedModel)(cp, recordId)
-        End Sub
-        '
-        '====================================================================================================
-        Public Overloads Shared Sub delete(cp As CPBaseClass, ccGuid As String)
-            delete(Of RSSFeedModel)(cp, ccGuid)
-        End Sub
-        '
-        '====================================================================================================
-        Public Overloads Shared Function createList(cp As CPBaseClass, sqlCriteria As String, Optional sqlOrderBy As String = "id") As List(Of RSSFeedModel)
-            Return createList(Of RSSFeedModel)(cp, sqlCriteria, sqlOrderBy)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getRecordName(cp As CPBaseClass, recordId As Integer) As String
-            Return baseModel.getRecordName(Of RSSFeedModel)(cp, recordId)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getRecordName(cp As CPBaseClass, ccGuid As String) As String
-            Return baseModel.getRecordName(Of RSSFeedModel)(cp, ccGuid)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getRecordId(cp As CPBaseClass, ccGuid As String) As Integer
-            Return baseModel.getRecordId(Of RSSFeedModel)(cp, ccGuid)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getCount(cp As CPBaseClass, sqlCriteria As String) As Integer
-            Return baseModel.getCount(Of RSSFeedModel)(cp, sqlCriteria)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Function getUploadPath(fieldName As String) As String
-            Return MyBase.getUploadPath(Of RSSFeedModel)(fieldName)
-        End Function
-        '
-        '====================================================================================================
-        '
-        Public Function Clone(cp As CPBaseClass) As RSSFeedModel
-            Dim result As RSSFeedModel = DirectCast(Me.Clone(), RSSFeedModel)
-            result.id = cp.Content.AddRecord(contentName)
-            result.ccguid = cp.Utils.CreateGuid()
-            result.save(cp)
-            Return result
-        End Function
-        '
-        '====================================================================================================
-        '
-        Public Function Clone() As Object Implements ICloneable.Clone
-            Return Me.MemberwiseClone()
-        End Function
-        '
-        '====================================================================================================
-        ''' <summary>
-        ''' Save a list of this model to the database, guid required, using the guid as a key for update/import, and ignoring the id.
-        ''' </summary>
-        ''' <param name="cp"></param>
-        ''' <param name="modelList">A dictionary with guid as key, and this model as object</param>
-        Public Shared Sub migrationImport(cp As CPBaseClass, modelList As Dictionary(Of String, RSSFeedModel))
-            Dim ContentControlID As Integer = cp.Content.GetID(contentName)
-            For Each kvp In modelList
-                If (Not String.IsNullOrEmpty(kvp.Value.ccguid)) Then
-                    kvp.Value.id = 0
-                    Dim dbData As RSSFeedModel = create(cp, kvp.Value.ccguid)
-                    If (dbData IsNot Nothing) Then
-                        kvp.Value.id = dbData.id
-                    Else
-                        kvp.Value.DateAdded = Now
-                        kvp.Value.CreatedBy = 0
-                    End If
-                    kvp.Value.ContentControlID = ContentControlID
-                    kvp.Value.ModifiedDate = Now
-                    kvp.Value.ModifiedBy = 0
-                    kvp.Value.save(cp)
+        Friend Shared Function verifyFeed(cp As CPBaseClass, blog As blogModel) As RSSFeedModel
+            Try
+                Dim rssFeed As RSSFeedModel
+                If (blog.RSSFeedID > 0) Then
+                    rssFeed = DbModel.create(Of RSSFeedModel)(cp, blog.RSSFeedID)
+                    If (rssFeed IsNot Nothing) Then Return rssFeed
                 End If
-            Next
-        End Sub
+                rssFeed = DbModel.add(Of RSSFeedModel)(cp)
+                rssFeed.copyright = "Copyright " & Now.Year
+                rssFeed.description = ""
+                rssFeed.link = ""
+                rssFeed.logoFilename = ""
+                rssFeed.name = "RSS Feed for Blog #" & blog.id & ", " & blog.Caption
+                rssFeed.rssDateUpdated = Date.MinValue
+                rssFeed.rssFilename = "RSS" & rssFeed.id & ".xml"
+                Return rssFeed
+                'If Not (blog Is Nothing) Then
+                '    ' Dim blog As blogModel = blogList.First
+                '    BlogName = blog.name 'Csv.GetCSText(CSBlog, "name")
+                '    blogDescription = Trim(blog.Copy)
+                '    Return_RSSFeedID = blog.RSSFeedID 'Csv.GetCSInteger(CSBlog, "RSSFeedID")
+                '    If Trim(BlogName) = "" Then
+                '        Return_RSSFeedName = "Feed for Blog " & blog.id
+                '    Else
+                '        Return_RSSFeedName = BlogName
+                '    End If
+                '    blog.save(Of blogModel)(cp)
+                '    Dim RssFeed As RSSFeedModel = RSSFeedModel.create(cp, Return_RSSFeedID)
+                '    If Return_RSSFeedID <> 0 Then
+                '        '
+                '        ' Make sure the record exists
+                '        '
+                '        If Not cnRSSFeeds Then
+                '            Return_RSSFeedID = 0
+                '            'CSFeed = Main.OpenCSContentRecord("RSS Feeds", Return_RSSFeedID)
+                '            'If Not Main.IsCSOK(CSFeed) Then
+                '            '    Return_RSSFeedID = 0
+                '            'End If
+                '        End If
+                '        '
+                '        RssFeed = RSSFeedModel.add(cp)
+                '        Return_RSSFeedID = cp.Doc.GetInteger(CSFeed, "ID")
+                '        RssFeed.id = Return_RSSFeedID
+                '        RssFeed.name = Return_RSSFeedName
+                '        If blogDescription = "" Then
+                '            blogDescription = Trim(Return_RSSFeedName)
+                '        End If
+                '        RssFeed.Description = blogDescription
 
+                '        Return_RSSFeedFilename = cp.Db.EncodeSQLText(Return_RSSFeedName) & ".xml"
+                '        RssFeed.RSSFilename = Return_RSSFeedFilename
+                '        RssFeed.save(Of blogModel)(cp)
+                '    End If
+                '    RssFeed = RSSFeedModel.create(cp, Return_RSSFeedID)
+                '    RssFeed = RSSFeedModel.add(cp)
+                '    Return_RSSFeedName = RssFeed.name
+                '    Return_RSSFeedID = RssFeed.id 'cp.Doc.GetInteger("id")
+                '    Return_RSSFeedFilename = Trim(RssFeed.RSSFilename)
+                '    If Trim(RssFeed.Link) = "" Then
+                '        rssLink = cp.Request.Protocol & cp.Request.Host & blogListLink
+                '        RssFeed.Link = rssLink
 
+                '    End If
+                '    'If Main.IsCSOK(CSFeed) Then
+                '    '    '
+                '    '    ' Manage the Feed name, title and description
+                '    '    '   because it is associated to this blog'
+                '    '    '   only reset the link if it is blank (see desc at top of class)
+                '    '    '   only manage the RSSFeedFilename if it is blank
+                '    '    '
+                '    '    Return_RSSFeedName = rssfeed.  'cp.Doc.GetText(CSFeed, "name")
+                '    '    Return_RSSFeedID = cp.Doc.GetInteger(CSFeed, "id")
+                '    '    Return_RSSFeedFilename = Trim(Main.GetCS(CSFeed, "rssfilename"))
+                '    '    If Trim(Main.GetCS(CSFeed, "link")) = "" Then
+                '    '        rssLink = Main.serverProtocol & Main.ServerHost & blogListLink
+                '    '        Call Main.SetCS(CSFeed, "link", rssLink)
+                '    '    End If
+                '    '    'Return_BlogRootLink = Trim(Main.GetCS(CSFeed, "link"))
+                '    '    'If Return_BlogRootLink = "" Then
+                '    '    '    '
+                '    '    '    ' set blog link to current link without forms/categories
+                '    '    '    '   exclude admin
+                '    '    '    '   exclude a post
+                '    '    '    '
+                '    '    '    Return_BlogRootLink = Main.ServerLink
+                '    '    '    If (InStr(1, Return_BlogRootLink, "admin", vbTextCompare) = 0) And (Main.ServerForm = "") Then
+                '    '    '        Return_BlogRootLink = cp.Utils.ModifyQueryString(Return_BlogRootLink, RequestNameFormID, "", False)
+                '    '    '        Return_BlogRootLink = cp.Utils.ModifyQueryString(Return_BlogRootLink, RequestNameSourceFormID, "", False)
+                '    '    '        Return_BlogRootLink = cp.Utils.ModifyQueryString(Return_BlogRootLink, RequestNameBlogCategoryID, "", False)
+                '    '    '        Return_BlogRootLink = cp.Utils.ModifyQueryString(Return_BlogRootLink, RequestNameBlogCategoryIDSet, "", False)
+                '    '    '        Call Main.SetCS(CSFeed, "link", Return_BlogRootLink)
+                '    '    '    End If
+                '    '    'End If
+                '    'End If
+                '    ' Call Main.CloseCS(CSFeed)
+                'End If
+                '' Call Csv.CloseCS(CSBlog)
+                ''CSBlog = Csv.OpenCSContent(cnBlogs, "ID=" & blogId)
+                ''If Csv.IsCSOK(CSBlog) Then
+                ''    BlogName = Csv.GetCSText(CSBlog, "name")
+                ''    blogDescription = Trim(Csv.GetCS(CSBlog, "copy"))
+                ''    Return_RSSFeedID = Csv.GetCSInteger(CSBlog, "RSSFeedID")
+                ''    If Trim(BlogName) = "" Then
+                ''        Return_RSSFeedName = "Feed for Blog " & blogId
+                ''    Else
+                ''        Return_RSSFeedName = BlogName
+                ''    End If
+                ''    If Return_RSSFeedID <> 0 Then
+                ''        '
+                ''        ' Make sure the record exists
+                ''        '
+                ''        CSFeed = Main.OpenCSContentRecord("RSS Feeds", Return_RSSFeedID)
+                ''        If Not Main.IsCSOK(CSFeed) Then
+                ''            Return_RSSFeedID = 0
+                ''        End If
+                ''    End If
+                ''    If Return_RSSFeedID = 0 Then
+                ''
+                '' new blog was created, now create new feed
+                ''   set name and description from the blog
+                ''
+                ''        CSFeed = Main.InsertCSContent(cnRSSFeeds)
+                ''    If Main.IsCSOK(CSFeed) Then
+                ''        Return_RSSFeedID = cp.Doc.GetInteger(CSFeed, "ID")
+                ''        Call Main.SetCS(CSBlog, "RSSFeedID", Return_RSSFeedID)
+                ''        Call Main.SetCS(CSFeed, "Name", Return_RSSFeedName)
+                ''        If blogDescription = "" Then
+                ''            blogDescription = Trim(Return_RSSFeedName)
+                ''        End If
+                ''        Call Main.SetCS(CSFeed, "description", blogDescription)
+                ''        Return_RSSFeedFilename = encodeFilename(Return_RSSFeedName) & ".xml"
+                ''        Call Main.SetCS(CSFeed, "rssfilename", Return_RSSFeedFilename)
+                ''    End If
+                ''End If
+                ''If Main.IsCSOK(CSFeed) Then
+                ''    '
+                ''    ' Manage the Feed name, title and description
+                ''    '   because it is associated to this blog'
+                ''    '   only reset the link if it is blank (see desc at top of class)
+                ''    '   only manage the RSSFeedFilename if it is blank
+                ''    '
+                ''    Return_RSSFeedName = cp.Doc.GetText(CSFeed, "name")
+                ''    Return_RSSFeedID = cp.Doc.GetInteger(CSFeed, "id")
+                ''    Return_RSSFeedFilename = Trim(Main.GetCS(CSFeed, "rssfilename"))
+                ''    If Trim(Main.GetCS(CSFeed, "link")) = "" Then
+                ''        rssLink = Main.serverProtocol & Main.ServerHost & blogListLink
+                ''        Call Main.SetCS(CSFeed, "link", rssLink)
+                ''    End If
+                ''    'Return_BlogRootLink = Trim(Main.GetCS(CSFeed, "link"))
+                ''    'If Return_BlogRootLink = "" Then
+                ''    '    '
+                ''    '    ' set blog link to current link without forms/categories
+                ''    '    '   exclude admin
+                ''    '    '   exclude a post
+                ''    '    '
+                ''    '    Return_BlogRootLink = Main.ServerLink
+                ''    '    If (InStr(1, Return_BlogRootLink, "admin", vbTextCompare) = 0) And (Main.ServerForm = "") Then
+                ''    '        Return_BlogRootLink = cp.Utils.ModifyQueryString(Return_BlogRootLink, RequestNameFormID, "", False)
+                ''    '        Return_BlogRootLink = cp.Utils.ModifyQueryString(Return_BlogRootLink, RequestNameSourceFormID, "", False)
+                ''    '        Return_BlogRootLink = cp.Utils.ModifyQueryString(Return_BlogRootLink, RequestNameBlogCategoryID, "", False)
+                ''    '        Return_BlogRootLink = cp.Utils.ModifyQueryString(Return_BlogRootLink, RequestNameBlogCategoryIDSet, "", False)
+                ''    '        Call Main.SetCS(CSFeed, "link", Return_BlogRootLink)
+                ''    '    End If
+                ''    'End If
+                ''End If
+                ''Call Main.CloseCS(CSFeed)
+                ''End If
+                ''Call Csv.CloseCS(CSBlog)
+                ''
+            Catch ex As Exception
+                cp.Site.ErrorReport(ex)
+                Return Nothing
+            End Try
+        End Function
     End Class
 End Namespace

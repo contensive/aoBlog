@@ -9,8 +9,7 @@ Imports Contensive.BaseClasses
 
 Namespace Models
     Public Class EmailModel
-        Inherits baseModel
-        Implements ICloneable
+        Inherits DbModel
         '
         '====================================================================================================
         '-- const
@@ -41,88 +40,6 @@ Namespace Models
         Public Property TestMemberID As Integer
         Public Property ToAll As Boolean
 
-
-        '
-        '====================================================================================================
-        Public Overloads Shared Function add(cp As CPBaseClass) As EmailModel
-            Return add(Of EmailModel)(cp)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function create(cp As CPBaseClass, recordId As Integer) As EmailModel
-            Return create(Of EmailModel)(cp, recordId)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function create(cp As CPBaseClass, recordGuid As String) As EmailModel
-            Return create(Of EmailModel)(cp, recordGuid)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function createByName(cp As CPBaseClass, recordName As String) As EmailModel
-            Return createByName(Of EmailModel)(cp, recordName)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Sub save(cp As CPBaseClass)
-            MyBase.save(Of EmailModel)(cp)
-        End Sub
-        '
-        '====================================================================================================
-        Public Overloads Shared Sub delete(cp As CPBaseClass, recordId As Integer)
-            delete(Of EmailModel)(cp, recordId)
-        End Sub
-        '
-        '====================================================================================================
-        Public Overloads Shared Sub delete(cp As CPBaseClass, ccGuid As String)
-            delete(Of EmailModel)(cp, ccGuid)
-        End Sub
-        '
-        '====================================================================================================
-        Public Overloads Shared Function createList(cp As CPBaseClass, sqlCriteria As String, Optional sqlOrderBy As String = "id") As List(Of EmailModel)
-            Return createList(Of EmailModel)(cp, sqlCriteria, sqlOrderBy)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getRecordName(cp As CPBaseClass, recordId As Integer) As String
-            Return baseModel.getRecordName(Of EmailModel)(cp, recordId)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getRecordName(cp As CPBaseClass, ccGuid As String) As String
-            Return baseModel.getRecordName(Of EmailModel)(cp, ccGuid)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getRecordId(cp As CPBaseClass, ccGuid As String) As Integer
-            Return baseModel.getRecordId(Of EmailModel)(cp, ccGuid)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getCount(cp As CPBaseClass, sqlCriteria As String) As Integer
-            Return baseModel.getCount(Of EmailModel)(cp, sqlCriteria)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Function getUploadPath(fieldName As String) As String
-            Return MyBase.getUploadPath(Of EmailModel)(fieldName)
-        End Function
-        '
-        '====================================================================================================
-        '
-        Public Function Clone(cp As CPBaseClass) As EmailModel
-            Dim result As EmailModel = DirectCast(Me.Clone(), EmailModel)
-            result.id = cp.Content.AddRecord(contentName)
-            result.ccguid = cp.Utils.CreateGuid()
-            result.save(cp)
-            Return result
-        End Function
-        '
-        '====================================================================================================
-        '
-        Public Function Clone() As Object Implements ICloneable.Clone
-            Return Me.MemberwiseClone()
-        End Function
 
     End Class
 End Namespace

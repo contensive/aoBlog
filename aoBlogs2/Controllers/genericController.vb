@@ -78,7 +78,28 @@ Namespace Controllers
             Next
             Return False
         End Function
-
+        '
+        '====================================================================================================
+        ''' <summary>
+        ''' Return a shortened version of the copy
+        ''' </summary>
+        ''' <param name="cp"></param>
+        ''' <param name="rawCopy"></param>
+        ''' <param name="MaxLength"></param>
+        ''' <returns></returns>
+        Friend Shared Function filterCopy(cp As CPBaseClass, rawCopy As String, MaxLength As Integer) As String
+            Try
+                Dim Copy As String = rawCopy
+                If Len(Copy) > MaxLength Then
+                    Copy = Left(Copy, MaxLength)
+                    Copy = Copy & "..."
+                End If
+                Return Copy
+            Catch ex As Exception
+                cp.Site.ErrorReport(ex)
+                Return ""
+            End Try
+        End Function
     End Class
 End Namespace
 

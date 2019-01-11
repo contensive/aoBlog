@@ -9,7 +9,7 @@ Imports Contensive.BaseClasses
 Imports System.Reflection
 
 Namespace Models
-    Public MustInherit Class baseModel
+    Public MustInherit Class DbModel
         '
         '====================================================================================================
         '-- const must be set in derived clases
@@ -77,7 +77,7 @@ Namespace Models
         ''' </summary>
         ''' <param name="cp"></param>
         ''' <returns></returns>
-        Protected Shared Function add(Of T As baseModel)(cp As CPBaseClass) As T
+        Friend Shared Function add(Of T As DbModel)(cp As CPBaseClass) As T
             Dim result As T = Nothing
             Try
                 Dim instanceType As Type = GetType(T)
@@ -96,7 +96,7 @@ Namespace Models
         ''' </summary>
         ''' <param name="cp"></param>
         ''' <param name="recordId">The id of the record to be read into the new object</param>
-        Protected Shared Function create(Of T As baseModel)(cp As CPBaseClass, recordId As Integer) As T
+        Friend Shared Function create(Of T As DbModel)(cp As CPBaseClass, recordId As Integer) As T
             Dim result As T = Nothing
             Try
                 If recordId > 0 Then
@@ -121,7 +121,7 @@ Namespace Models
         ''' </summary>
         ''' <param name="cp"></param>
         ''' <param name="recordGuid"></param>
-        Protected Shared Function create(Of T As baseModel)(cp As CPBaseClass, recordGuid As String) As T
+        Friend Shared Function create(Of T As DbModel)(cp As CPBaseClass, recordGuid As String) As T
             Dim result As T = Nothing
             Try
                 Dim instanceType As Type = GetType(T)
@@ -144,7 +144,7 @@ Namespace Models
         ''' </summary>
         ''' <param name="cp"></param>
         ''' <param name="recordName"></param>
-        Protected Shared Function createByName(Of T As baseModel)(cp As CPBaseClass, recordName As String) As T
+        Friend Shared Function createByName(Of T As DbModel)(cp As CPBaseClass, recordName As String) As T
             Dim result As T = Nothing
             Try
                 If Not String.IsNullOrEmpty(recordName) Then
@@ -168,7 +168,7 @@ Namespace Models
         ''' </summary>
         ''' <param name="cp"></param>
         ''' <param name="cs"></param>
-        Private Shared Function loadRecord(Of T As baseModel)(cp As CPBaseClass, cs As CPCSBaseClass, Optional listOfLowerCaseFields As List(Of String) = Nothing) As T
+        Private Shared Function loadRecord(Of T As DbModel)(cp As CPBaseClass, cs As CPCSBaseClass, Optional listOfLowerCaseFields As List(Of String) = Nothing) As T
             Dim modelInstance As T = Nothing
             Try
                 If cs.OK() Then
@@ -176,7 +176,7 @@ Namespace Models
                     Dim tableName As String = derivedContentTableName(instanceType)
                     modelInstance = DirectCast(Activator.CreateInstance(instanceType), T)
                     For Each modelProperty As PropertyInfo In modelInstance.GetType().GetProperties(BindingFlags.Instance Or BindingFlags.Public)
-                        'cp.Utils.AppendLogFile("baseModel.loadRecord, modelProperty.Name [" & modelProperty.Name & "]")
+                        'cp.Utils.AppendLog("baseModel.loadRecord, modelProperty.Name [" & modelProperty.Name & "]")
                         Dim includeField As Boolean = True
                         'If (modelProperty.Name = "imageDisplayTypeId") Then
                         '    includeField = True
@@ -222,8 +222,9 @@ Namespace Models
                                             Case "fieldTypeTextFile"
                                                 '
                                                 ' -- cdn files
-                                                Dim instanceFileType As New fieldTypeTextFile
-                                                instanceFileType.filename = cs.GetFilename(modelProperty.Name)
+                                                Dim instanceFileType As New fieldTypeTextFile With {
+                                                    .filename = cs.GetFilename(modelProperty.Name)
+                                                }
                                                 modelProperty.SetValue(modelInstance, instanceFileType, Nothing)
                                             Case "fieldTypeJavascriptFile"
                                                 '
@@ -264,7 +265,7 @@ Namespace Models
         ''' </summary>
         ''' <param name="cp"></param>
         ''' <returns></returns>
-        Protected Function save(Of T As baseModel)(cp As CPBaseClass) As Integer
+        Friend Function save(Of T As DbModel)(cp As CPBaseClass) As Integer
             Dim cs As CPCSBaseClass = cp.CSNew()
             Try
                 Dim instanceType As Type = Me.GetType()
@@ -411,7 +412,7 @@ Namespace Models
         ''' </summary>
         ''' <param name="cp"></param>
         ''' <param name="recordId"></param>
-        Protected Shared Sub delete(Of T As baseModel)(cp As CPBaseClass, recordId As Integer)
+        Friend Shared Sub delete(Of T As DbModel)(cp As CPBaseClass, recordId As Integer)
             Try
                 If (recordId > 0) Then
                     Dim instanceType As Type = GetType(T)
@@ -431,12 +432,12 @@ Namespace Models
         ''' </summary>
         ''' <param name="cp"></param>
         ''' <param name="ccguid"></param>
-        Protected Shared Sub delete(Of T As baseModel)(cp As CPBaseClass, ccguid As String)
+        Friend Shared Sub delete(Of T As DbModel)(cp As CPBaseClass, ccguid As String)
             Try
                 If (Not String.IsNullOrEmpty(ccguid)) Then
                     Dim instanceType As Type = GetType(T)
                     Dim contentName As String = derivedContentName(instanceType)
-                    Dim instance As baseModel = create(Of baseModel)(cp, ccguid)
+                    Dim instance As DbModel = create(Of DbModel)(cp, ccguid)
                     If (instance IsNot Nothing) Then
                         cp.Content.Delete(contentName, "(ccguid=" & cp.Db.EncodeSQLText(ccguid) & ")")
                     End If
@@ -454,7 +455,7 @@ Namespace Models
         ''' <param name="cp"></param>
         ''' <param name="sqlCriteria"></param>
         ''' <returns></returns>
-        Protected Shared Function createList(Of T As baseModel)(cp As CPBaseClass, sqlCriteria As String, sqlOrderBy As String) As List(Of T)
+        Friend Shared Function createList(Of T As DbModel)(cp As CPBaseClass, sqlCriteria As String, sqlOrderBy As String) As List(Of T)
             Dim result As New List(Of T)
             Try
                 Dim cs As CPCSBaseClass = cp.CSNew()
@@ -478,6 +479,10 @@ Namespace Models
             Return result
         End Function
         '
+        Friend Shared Function createList(Of T As DbModel)(cp As CPBaseClass, sqlCriteria As String) As List(Of T)
+            Return createList(Of T)(cp, sqlCriteria, "")
+        End Function
+        '
         '====================================================================================================
         ''' <summary>
         ''' pattern get a list of objects from this model
@@ -485,7 +490,7 @@ Namespace Models
         ''' <param name="cp"></param>
         ''' <param name="sqlCriteria"></param>
         ''' <returns></returns>
-        Protected Shared Function createList(Of T As baseModel)(cp As CPBaseClass, sqlCriteria As String, sqlOrderBy As String, pageSize As Integer, pageNumber As Integer, Optional listOfLowerCaseFields As List(Of String) = Nothing) As List(Of T)
+        Friend Shared Function createList(Of T As DbModel)(cp As CPBaseClass, sqlCriteria As String, sqlOrderBy As String, pageSize As Integer, pageNumber As Integer, Optional listOfLowerCaseFields As List(Of String) = Nothing) As List(Of T)
             Dim result As New List(Of T)
             Try
                 Dim cs As CPCSBaseClass = cp.CSNew()
@@ -517,7 +522,7 @@ Namespace Models
         ''' <param name="cp"></param>
         ''' <param name="recordId"></param>record
         ''' <returns></returns>
-        Protected Shared Function getRecordName(Of T As baseModel)(cp As CPBaseClass, recordId As Integer) As String
+        Friend Shared Function getRecordName(Of T As DbModel)(cp As CPBaseClass, recordId As Integer) As String
             Try
                 If (recordId > 0) Then
                     Dim instanceType As Type = GetType(T)
@@ -541,7 +546,7 @@ Namespace Models
         ''' <param name="cp"></param>
         ''' <param name="ccGuid"></param>record
         ''' <returns></returns>
-        Protected Shared Function getRecordName(Of T As baseModel)(cp As CPBaseClass, ccGuid As String) As String
+        Friend Shared Function getRecordName(Of T As DbModel)(cp As CPBaseClass, ccGuid As String) As String
             Try
                 If (Not String.IsNullOrEmpty(ccGuid)) Then
                     Dim instanceType As Type = GetType(T)
@@ -565,7 +570,7 @@ Namespace Models
         ''' <param name="cp"></param>
         ''' <param name="ccGuid"></param>record
         ''' <returns></returns>
-        Protected Shared Function getRecordId(Of T As baseModel)(cp As CPBaseClass, ccGuid As String) As Integer
+        Friend Shared Function getRecordId(Of T As DbModel)(cp As CPBaseClass, ccGuid As String) As Integer
             Try
                 If (Not String.IsNullOrEmpty(ccGuid)) Then
                     Dim instanceType As Type = GetType(T)
@@ -583,7 +588,7 @@ Namespace Models
         End Function
         '
         '====================================================================================================
-        Protected Shared Function getCount(Of T As baseModel)(cp As CPBaseClass, sqlCriteria As String) As Integer
+        Friend Shared Function getCount(Of T As DbModel)(cp As CPBaseClass, sqlCriteria As String) As Integer
             Dim result As Integer = 0
             Try
                 Dim instanceType As Type = GetType(T)
@@ -610,7 +615,7 @@ Namespace Models
         ''' </summary>
         ''' <param name="fieldName"></param>
         ''' <returns></returns>
-        Protected Function getUploadPath(Of T As baseModel)(fieldName As String) As String
+        Friend Function getUploadPath(Of T As DbModel)(fieldName As String) As String
             Dim instanceType As Type = GetType(T)
             Dim tableName As String = derivedContentTableName(instanceType)
             Return tableName.ToLower() & "/" & fieldName.ToLower() & "/" & id.ToString().PadLeft(12, CChar("0")) & "/"

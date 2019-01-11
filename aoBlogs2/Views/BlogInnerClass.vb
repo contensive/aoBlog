@@ -10,17 +10,39 @@ Imports Contensive.BaseClasses
 
 Namespace Views
     '
-    Public Class vb6BlogsClass
+    Public Class BlogPostListClass
         Inherits AddonBaseClass
+        ' todo - remove globals
+        Const StreamUpgradeTimeout = 1800
         '
+        Private ErrorString As String
+        Private RetryCommentPost As Boolean                 ' when true, the comment post page prepopulates with the previous comment post. set by process comment
+        Private OverviewLength As Integer
+        Private PostsToDisplay As Integer
+        Private users() As UserCacheStruct
+        Private userCnt As Integer
+        '
+        Private allowAuthorInfoLink As Boolean
+        Private ReadOnly App As Object
+        '
+        Public Class UserCacheStruct
+            Public Id As Integer
+            Public Name As String
+            Public authorInfoLink As String
+        End Class
+        '
+        '========================================================================
+        ''' <summary>
+        ''' Addon interface, if needed (this is the old legacy blog so this will likely not be used)
+        ''' </summary>
+        ''' <param name="CP"></param>
+        ''' <returns></returns>
         Public Overrides Function Execute(ByVal CP As CPBaseClass) As Object
             Dim returnHtml As String = ""
             Try
-                '
-
-                returnHtml = GetContent(CP)
-
-                '
+                Dim instanceId As String = CP.Doc.GetText("instanceId")
+                Dim blog = DbModel.create(Of blogModel)(CP, instanceId)
+                returnHtml = GetContent(CP, blog)
             Catch ex As Exception
                 CP.Site.ErrorReport(ex)
             End Try
@@ -28,69 +50,17 @@ Namespace Views
         End Function
         '
         '========================================================================
-        '   Blog
-        '
-        '   The blog and the RSS feed work together.
-        '       The feed code identies which tables to search through by looking
-        '       in the ccfields table for any CDef with a "RSSFeeds" many-to-many.
-        '       If found, this many-to-many is used to find the records for this feed
-        '
-        '   Each blog has
-        '       RSSFeedID - this is the RSS feed used by the blog code to automatically
-        '           add a post when it is made. You can manually set a blog entry to any
-        '           post later. The blog code also manages the Feed's description, link, etc.
-        '
-        '   Each blog post (entries) have several fields that the feed uses directly:
-        '       RSSFeeds - many-to-many field that associates this post to a feed
-        '       RSSTitle - set from the name of the blog post
-        '       RSSLink - link to this post, created from the RSSFeed Link each time
-        '       RSSDescription - created from teh blog post copy
-        '       RSSDateExpire - not support automatically yet, need Addon Execute Events
-        '           that can be saved in a table, and run in the future.
-        '       RSSDatePublic - same as expire
-        '
-        '   When a new blog is created, an RSS Feed is created for it with a blank Link.
-        '       > VerifyFeed
-        '   When the blog is first viewed publically, the link is picked up and put
-        '       in the RSSFeed record.
-        '   Each time a post is saved, the entire feed is rebuilt if the RSS Link is
-        '       not null. The RSSFeeds Link is used as the base URL to the posts.
-        '       > UpdateBlogFeed
-        '   The Post form should have a 'set RSS feed to this URL' button.
-        '
-        '========================================================================
-        '
-        '
-        'Private WorkingQueryString As String
-        Private ErrorString As String
-        Private RetryCommentPost As Boolean                 ' when true, the comment post page prepopulates with the previous comment post. set by process comment
-
-        Private OverviewLength As Integer
-        Private PostsToDisplay As Integer
-
-        Const StreamUpgradeTimeout = 1800
-
-        '
-        Public Class userCacheStruct
-            Public Id As Integer
-            Public Name As String
-            Public authorInfoLink As String
-        End Class
-        '
-        Private users() As userCacheStruct
-        Private userCnt As Integer
-        '
-        Private allowAuthorInfoLink As Boolean
-        Private ReadOnly App As Object
-
-        Public Function GetContent(cp As CPBaseClass) As String
-            '
+        ''' <summary>
+        ''' Inner Blog - the list of posts without sidebar
+        ''' </summary>
+        ''' <param name="cp"></param>
+        ''' <param name="blog"></param>
+        ''' <returns></returns>
+        Public Function GetContent(cp As CPBaseClass, blog As blogModel) As String
             Dim result As String = ""
-            Dim instanceId As String = cp.Doc.GetText("instanceId")
             Try
                 Dim blogListQs As String
                 '
-
                 ' get blogListLink - link to the main list page
                 '
                 blogListQs = cp.Doc.RefreshQueryString()
@@ -111,7 +81,6 @@ Namespace Views
                     BlogName = "Default"
                 End If
 
-                Dim blog As blogModel = blogModel.create(cp, instanceId)
                 Dim blogCaption As String
                 Dim blogDescription As String
                 Dim ignoreLegacyInstanceOptions As Boolean
@@ -151,102 +120,6 @@ Namespace Views
                 Dim EntryID As Integer
                 Dim RSSFeedName As String = ""
                 If blogId = 0 Then
-                    '
-                    ' Create New Blog
-                    '
-
-                    Dim IsContentManager As Boolean = cp.User.IsContentManager("Page Content")
-                    If IsContentManager Then
-                        '
-                        ' BIG assumption - First hit by a content manager for this page is the author
-                        '
-                        blog = Models.blogModel.add(cp)
-                        blogId = blog.id
-                        BlogOwnerID = cp.User.Id
-                        IsBlogOwner = True
-                        blogCaption = BlogName
-                        '
-                        Blog.name = BlogName
-                        blog.Caption = blogCaption
-                        blog.OwnerMemberID = BlogOwnerID
-                        blog.RSSFeedID = RSSFeedId
-                        blog.AuthoringGroupID = authoringGroupId
-                        blog.ignoreLegacyInstanceOptions = ignoreLegacyInstanceOptions
-                        blog.AllowAnonymous = AllowAnonymous
-                        blog.autoApproveComments = autoApproveComments
-                        blog.AllowCategories = AllowCategories
-                        blog.PostsToDisplay = PostsToDisplay
-                        blog.OverviewLength = OverviewLength
-                        blog.ThumbnailImageWidth = ThumbnailImageWidth
-                        Blog.ImageWidthMax = ImageWidthMax
-                        Blog.ccguid = instanceId
-                        Blog.save(cp)
-                        '
-                    End If
-
-                    '
-                    ' Create the Feed for the new blog
-                    '
-                    Call VerifyFeedReturnArgs(cp, blogId, blogListLink, RSSFeedId, RSSFeedName, RSSFeedFilename)
-                    '
-                    Dim Title As String = "Welcome to the " & BlogName
-                    If InStr(1, BlogName, " Blog", vbTextCompare) = 0 Then
-                        Title = Title & " blog"
-                    End If
-                    Title = Title & "!"
-                    '
-                    'CS = Main.InsertCSRecord(cnBlogEntries)
-
-                    Dim blogEntry As Models.BlogEntryModel = Models.BlogEntryModel.add(cp)
-                    Dim BlogPostID As Integer
-                    If (blogEntry IsNot Nothing) Then
-
-                        blogEntry.id = BlogPostID
-                        blogEntry.BlogID = blogId.ToString
-                        blogEntry.name = Title
-
-                        '
-                        Dim RSSTitle As String = Trim(Title)
-                        If RSSTitle = "" Then
-                            RSSTitle = "Blog Post " & EntryID
-                        End If
-                        blogEntry.RSSTitle = RSSTitle
-
-                        '
-                        Dim NewPostCopy As String = cp.File.ReadVirtual("blogs/DefaultPostCopy.txt")
-                        If NewPostCopy = "" Then
-                            NewPostCopy = DefaultPostCopy
-                        End If
-                        blogEntry.Copy = NewPostCopy
-
-                        '
-
-                        Dim qs As String = ""
-                        qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(BlogPostID))
-                        qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails)
-                        Call cp.Site.addLinkAlias(Title, cp.Doc.PageId, qs)
-                        'Dim LinkAlias As Models.LinkAliasesModel = Models.LinkAliasesModel.add(cp)
-                        Dim LinkAlias As List(Of Models.LinkAliasesModel) = Models.LinkAliasesModel.createList(cp, "(pageid=" & cp.Doc.PageId & ")and(QueryStringSuffix=" & cp.Db.EncodeSQLText(qs) & ")")
-                        If (LinkAlias.Count > 0) Then
-                            Dim EntryLink As String = LinkAlias.First.name
-                        End If
-                        blogEntry.RSSDescription = filterCopy(cp, NewPostCopy, 150)
-                        blogEntry.save(cp)
-                    End If
-
-                    '
-                    ' Add this new default post to the new feed
-                    '
-
-                    Dim RSSFeedBlogRules As Models.RSSFeedBlogRuleModel = Models.RSSFeedBlogRuleModel.add(cp)
-                    If (RSSFeedBlogRules IsNot Nothing) Then
-                        RSSFeedBlogRules.RSSFeedID = RSSFeedId
-                        RSSFeedBlogRules.BlogPostID = BlogPostID
-                        RSSFeedBlogRules.name = "RSS Feed [" & RSSFeedName & "], Blog Post [" & Title & "]"
-                        RSSFeedBlogRules.save(cp)
-
-                    End If
-
                 End If
 
                 'End If
@@ -289,9 +162,9 @@ Namespace Views
                         PostsToDisplay = 5
                     End If
 
-                    Dim legacyblog As Models.blogModel = Models.blogModel.create(cp, blogId)
+                    Dim legacyblog As blogModel = DbModel.create(Of blogModel)(cp, blogId)
                     If (legacyblog IsNot Nothing) Then
-                        legacyblog = Models.blogModel.add(cp)
+                        legacyblog = DbModel.add(Of blogModel)(cp)
                         legacyblog.ignoreLegacyInstanceOptions = True
                         legacyblog.AllowAnonymous = AllowAnonymous
                         legacyblog.autoApproveComments = autoApproveComments
@@ -300,7 +173,7 @@ Namespace Views
                         legacyblog.OverviewLength = OverviewLength
                         legacyblog.ThumbnailImageWidth = ThumbnailImageWidth
                         legacyblog.ImageWidthMax = ImageWidthMax
-                        legacyblog.save(cp)
+                        legacyblog.save(Of blogModel)(cp)
 
                     End If
                 End If
@@ -328,31 +201,20 @@ Namespace Views
                     ' Get the Feed Args
                     '
 
-                    Dim RSSFeedModelList As List(Of Models.RSSFeedModel) = Models.RSSFeedModel.createList(cp, "id=" & RSSFeedId)
+                    Dim RSSFeedModelList As List(Of RSSFeedModel) = DbModel.createList(Of RSSFeedModel)(cp, "id=" & RSSFeedId)
                     If (RSSFeedModelList.Count > 0) Then
-                        Dim RSSFeed As Models.RSSFeedModel = RSSFeedModelList.First
+                        Dim RSSFeed As RSSFeedModel = RSSFeedModelList.First
                         RSSFeedName = RSSFeed.name
                         RSSFeedFilename = RSSFeed.RSSFilename
                     Else
-                        Dim RSSFeed As Models.RSSFeedModel = Models.RSSFeedModel.add(cp)
+                        Dim RSSFeed As RSSFeedModel = DbModel.add(Of RSSFeedModel)(cp)
                         If Not RSSFeedName <> "" Then
                             RSSFeedName = "Default"
                         End If
                         RSSFeed.name = RSSFeedName
-                        RSSFeed.Description = "This is your First RssFeed"
-                        RSSFeed.save(cp)
+                        RSSFeed.description = "This is your First RssFeed"
+                        RSSFeed.save(Of blogModel)(cp)
                     End If
-
-                    '
-
-                    If RSSFeedFilename = "" Then
-                        'If BlogRootLink = "" Or RSSFeedFilename = "" Then
-                        '
-                        ' feed has not been initialized yet, call it now
-                        '
-                        Call VerifyFeedReturnArgs(cp, blogId, blogListLink, RSSFeedId, RSSFeedName, RSSFeedFilename)
-                    End If
-
                     '
                     ' Process Input
                     '
@@ -410,8 +272,8 @@ Namespace Views
 
                 ' Dim Csv As Object = Nothing
 
-                Dim PeopleModelList As List(Of Models.PeopleModel) = Models.PeopleModel.createList(cp, "id=" & cp.User.Id)
-                Dim user As Models.PeopleModel = PeopleModelList.First
+                Dim PeopleModelList As List(Of PeopleModel) = PeopleModel.createList(cp, "id=" & cp.User.Id)
+                Dim user As PeopleModel = PeopleModelList.First
 
                 allowAuthorInfoLink = True
                 '
@@ -570,10 +432,10 @@ Namespace Views
                         Subcaption = Subcaption & cp.Html.ul(cp.UserError.GetList)
                     End If
                     '
-                    Dim BlogCopyList As New List(Of Models.BlogCopyModel)
+                    Dim BlogCopyList As New List(Of BlogCopyModel)
                     If Criteria <> "" Then
-                        BlogCopyList = Models.BlogCopyModel.createList(cp, Criteria)
-                        cp.Utils.AppendLogFile("search list criteria=" & Criteria)
+                        BlogCopyList = DbModel.createList(Of BlogCopyModel)(cp, Criteria)
+                        cp.Utils.AppendLog("search list criteria=" & Criteria)
                     End If
                     '
                     ' Display the results
@@ -581,12 +443,12 @@ Namespace Views
                     result = result & cr & "<div class=""aoBlogEntryCopy"">" & Subcaption & "</div>"
                     '
                     If (BlogCopyList.Count = 0) Then
-                        cp.Utils.AppendLogFile("search list count" & BlogCopyList.Count)
+                        cp.Utils.AppendLog("search list count" & BlogCopyList.Count)
                         result = result & "</br>" & "<div class=""aoBlogProblem"">There were no matches to your search</div>"
                     Else
-                        cp.Utils.AppendLogFile("search list count" & BlogCopyList.Count)
+                        cp.Utils.AppendLog("search list count" & BlogCopyList.Count)
                         result = result & "</br>" & "<div class=""aoBlogEntryDivider"">&nbsp;</div>"
-                        For Each blogCopy In Models.BlogCopyModel.createList(cp, Criteria)
+                        For Each blogCopy In DbModel.createList(Of BlogCopyModel)(cp, Criteria)
                             Dim ParentID As Integer = cp.Doc.GetInteger("EntryID")
                             Dim AuthorMemberID As Integer
                             Dim ResultPtr As Integer
@@ -597,19 +459,19 @@ Namespace Views
                                 '
                                 ' Entry
                                 '
-                                AuthorMemberID = blogCopy.AuthorMemberID
+                                AuthorMemberID = blogCopy.authorMemberID
                                 If AuthorMemberID = 0 Then
                                     AuthorMemberID = blogCopy.CreatedBy
                                 End If
                                 EntryID = blogCopy.id
                                 EntryName = blogCopy.name
-                                Dim EntryCopy As String = blogCopy.Copy
+                                Dim EntryCopy As String = blogCopy.copy
                                 'EntryCopyOverview = cp.Doc.GetText(CSPointer, "copyOverview")
                                 DateAdded = blogCopy.DateAdded
-                                Dim allowComments As Boolean = blogCopy.AllowComments
-                                Dim PodcastMediaLink As String = blogCopy.PodcastMediaLink
-                                Dim PodcastSize As String = blogCopy.PodcastSize
-                                Dim BlogTagList As String = blogCopy.TagList
+                                Dim allowComments As Boolean = blogCopy.allowComments
+                                Dim PodcastMediaLink As String = blogCopy.podcastMediaLink
+                                Dim PodcastSize As String = blogCopy.podcastSize
+                                Dim BlogTagList As String = blogCopy.tagList
                                 Dim imageDisplayTypeId As Integer = blogCopy.imageDisplayTypeId
                                 Dim primaryImagePositionId As Integer = blogCopy.primaryImagePositionId
                                 Dim articlePrimaryImagePositionId As Integer = blogCopy.articlePrimaryImagePositionId
@@ -683,12 +545,12 @@ Namespace Views
                 Dim OpenSQL As String = ""
                 Dim contentControlId As String = cp.Content.GetID(cnBlogEntries).ToString
                 '
-                cp.Utils.AppendLogFile("entering GetFormBlogArchiveDateList")
+                cp.Utils.AppendLog("entering GetFormBlogArchiveDateList")
                 result = vbCrLf & cp.Content.GetCopy("Blogs Archives Header for " & BlogName, "<h2>" & BlogName & " Blog Archive</h2>")
                 ' 
                 'Dim BlogCopyModelList As List(Of BlogCopyModel) = BlogCopyModel.createList(cp, "(BlogID=" & blogId & ")", "year(dateadded) desc, Month(DateAdded) desc")
-                Dim archiveDateList As List(Of Models.BlogCopyModel.ArchiveDateModel) = Models.BlogCopyModel.createArchiveListFromBlogCopy(cp, blogId)
-                cp.Utils.AppendLogFile("open archive date list")
+                Dim archiveDateList As List(Of BlogCopyModel.ArchiveDateModel) = BlogCopyModel.createArchiveListFromBlogCopy(cp, blogId)
+                cp.Utils.AppendLog("open archive date list")
                 If (archiveDateList.Count = 0) Then
                     '
                     ' No archives, give them an error
@@ -702,15 +564,15 @@ Namespace Views
                     If archiveDateList.Count = 1 Then
                         '
                         ' one archive - just display it
-                        cp.Utils.AppendLogFile("display one archive count 1")
+                        cp.Utils.AppendLog("display one archive count 1")
                         '
                         ArchiveMonth = archiveDateList.First.Month
                         ArchiveYear = archiveDateList.First.Year
                         result = result & GetFormBlogArchivedBlogs(cp, blogId, BlogName, ArchiveMonth, ArchiveYear, IsEditing, IsBlogOwner, AllowCategories, BlogCategoryID, ThumbnailImageWidth, BuildVersion, ImageWidthMax, blogListLink, blogListQs)
-                        cp.Utils.AppendLogFile("after display one archive count 1")
+                        cp.Utils.AppendLog("after display one archive count 1")
                     Else
                         '
-                        cp.Utils.AppendLogFile("enter display list of archive")
+                        cp.Utils.AppendLog("enter display list of archive")
                         ' Display List of archive
                         '
                         Dim qs As String = cp.Utils.ModifyQueryString(blogListQs, RequestNameSourceFormID, FormBlogArchiveDateList)
@@ -726,7 +588,7 @@ Namespace Views
                             's = s & vbCrLf & vbTab & vbTab & "<div class=""aoBlogArchiveLink""><a href=""?" & qs & RequestNameFormID & "=" & FormBlogArchivedBlogs & "&" & RequestNameArchiveMonth & "=" & ArchiveMonth & "&" & RequestNameArchiveYear & "=" & ArchiveYear & "&" & RequestNameSourceFormID & "=" & FormBlogArchiveDateList & """>" & NameOfMonth & " " & ArchiveYear & "</a></div>"
 
                         Next
-                        cp.Utils.AppendLogFile("exit display list of archive")
+                        cp.Utils.AppendLog("exit display list of archive")
                         result = result & vbCrLf & vbTab & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
                     End If
                 End If
@@ -759,8 +621,8 @@ Namespace Views
                 '
                 ' List Blog Entries
                 '
-                Dim BlogEntryModelList As List(Of Models.BlogEntryModel) = Models.BlogEntryModel.createList(cp, "(Month(DateAdded) = " & ArchiveMonth & ")And(year(DateAdded)=" & ArchiveYear & ")And(BlogID=" & blogId & ")", "DateAdded Desc")
-                Dim BlogEntry As Models.BlogEntryModel = Models.BlogEntryModel.add(cp)
+                Dim BlogEntryModelList As List(Of BlogEntryModel) = DbModel.createList(Of BlogEntryModel)(cp, "(Month(DateAdded) = " & ArchiveMonth & ")And(year(DateAdded)=" & ArchiveYear & ")And(BlogID=" & blogId & ")", "DateAdded Desc")
+                Dim BlogEntry As BlogEntryModel = DbModel.add(Of BlogEntryModel)(cp)
                 If Not (BlogEntry IsNot Nothing) Then 'If cp.CSNew.OK() Then
                     result = "<div Class=""aoBlogProblem"">There are no blog archives For " & ArchiveMonth & "/" & ArchiveYear & "</div>"
                 Else
@@ -941,20 +803,20 @@ Namespace Views
                 '
                 ' Display the most recent entries
                 '
-                cp.Utils.AppendLogFile(" GetFormBlogPostList 300")
-                Dim BlogEntryModelList As List(Of Models.BlogEntryModel)
+                cp.Utils.AppendLog(" GetFormBlogPostList 300")
+                Dim BlogEntryModelList As List(Of BlogEntryModel)
                 Dim NoneMsg As String
                 If AllowCategories And (BlogCategoryID <> 0) Then
 
                     Dim BlogCategoryName As String = cp.Doc.GetText("Blog Categories", BlogCategoryID)
-                    BlogEntryModelList = Models.BlogEntryModel.createList(cp, "(BlogID=" & blogId & ")And(BlogCategoryID=" & BlogCategoryID & ")", "DateAdded Desc")
+                    BlogEntryModelList = DbModel.createList(Of BlogEntryModel)(cp, "(BlogID=" & blogId & ")And(BlogCategoryID=" & BlogCategoryID & ")", "DateAdded Desc")
 
                     'CS = Main.OpenCSContent(cnBlogEntries, "(BlogID=" & blogId & ")And(BlogCategoryID=" & BlogCategoryID & ")", "DateAdded Desc")
                     result = result & cr & "<div Class=""aoBlogCategoryCaption"">Category " & BlogCategoryName & "</div>"
                     NoneMsg = "There are no blog posts available In the category " & BlogCategoryName
 
                 Else
-                    BlogEntryModelList = Models.BlogEntryModel.createList(cp, "(BlogID=" & blogId & ")", "DateAdded Desc")
+                    BlogEntryModelList = DbModel.createList(Of BlogEntryModel)(cp, "(BlogID=" & blogId & ")", "DateAdded Desc")
                     'CS = Main.OpenCSContent(cnBlogEntries, "(BlogID=" & blogId & ")", "DateAdded Desc")
                     NoneMsg = "There are no blog posts available"
                 End If
@@ -968,7 +830,7 @@ Namespace Views
                     result = result & cr & "<div Class=""aoBlogProblem"">" & NoneMsg & "</div>"
                 Else
                     'Do While BlogEntryModelList.Count > 0 And EntryPtr < PostsToDisplay
-                    Dim blogEntry As Models.BlogEntryModel = BlogEntryModelList.First
+                    Dim blogEntry As BlogEntryModel = BlogEntryModelList.First
                     For Each blogEntry In BlogEntryModelList
                         If EntryPtr < PostsToDisplay Then
                             TestCategoryID = blogEntry.blogCategoryID 'cp.Doc.GetInteger(CS, "BlogCategoryid")
@@ -982,9 +844,9 @@ Namespace Views
                                     'If IsBlocked Then
                                     BuildVersion = cp.Site.GetProperty("BUILDVERSION")
                                     If BuildVersion < "4.1.098" Then
-                                        Dim BlogCategorieModelList As List(Of Models.BlogCategorieModel) = Models.BlogCategorieModel.createList(cp, "id=" & TestCategoryID)
+                                        Dim BlogCategorieModelList As List(Of BlogCategorieModel) = DbModel.createList(Of BlogCategorieModel)(cp, "id=" & TestCategoryID)
                                         ' CSCat = Main.OpenCSContent(cnBlogCategories, "id=" & TestCategoryID)
-                                        Dim blogCat As Models.BlogCategorieModel = BlogCategorieModelList.First
+                                        Dim blogCat As BlogCategorieModel = BlogCategorieModelList.First
                                         'If cp.CSNew.OK() Then
                                         IsBlocked = blogCat.UserBlocking 'cp.Site.GetBoolean("UserBlocking")
                                         'End If
@@ -996,9 +858,9 @@ Namespace Views
                                         End If
                                     Else
 
-                                        Dim BlogCategorieModelList As List(Of Models.BlogCategorieModel) = Models.BlogCategorieModel.createList(cp, "id=" & TestCategoryID)
+                                        Dim BlogCategorieModelList As List(Of BlogCategorieModel) = DbModel.createList(Of BlogCategorieModel)(cp, "id=" & TestCategoryID)
                                         ' CSCat = Main.OpenCSContent(cnBlogCategories, "id=" & TestCategoryID)
-                                        Dim blogCat As Models.BlogCategorieModel = BlogCategorieModelList.First
+                                        Dim blogCat As BlogCategorieModel = BlogCategorieModelList.First
                                         'If cp.CSNew.OK() Then
                                         IsBlocked = blogCat.UserBlocking 'cp.Site.GetBoolean("UserBlocking")
                                         If IsBlocked Then
@@ -1080,9 +942,9 @@ Namespace Views
                     ' select a category
                     '
                     qs = cp.Doc.RefreshQueryString
-                    Dim BlogCategorieModelList As List(Of Models.BlogCategorieModel) = Models.BlogCategorieModel.createList(cp, "id=" & TestCategoryID)
+                    Dim BlogCategorieModelList As List(Of BlogCategorieModel) = DbModel.createList(Of BlogCategorieModel)(cp, "id=" & TestCategoryID)
                     If (BlogCategorieModelList.Count > 0) Then
-                        Dim blogCat As Models.BlogCategorieModel = BlogCategorieModelList.First
+                        Dim blogCat As BlogCategorieModel = BlogCategorieModelList.First
                         For Each blogCat In BlogCategorieModelList
                             BlogCategoryID = blogCat.id
                             IsBlocked = blogCat.UserBlocking
@@ -1109,11 +971,11 @@ Namespace Views
                         Next
                     End If
                 End If
-                    'Call Main.CloseCS(CS)
-                    '
-                    ' Footer
-                    '
-                    result = result & cr & "<div>&nbsp;</div>"
+                'Call Main.CloseCS(CS)
+                '
+                ' Footer
+                '
+                result = result & cr & "<div>&nbsp;</div>"
 
                 If IsBlogOwner Then
                     Call cp.Site.TestPoint("Blogs.GetFormBlogPostList, IsBlogOwner = True, appending 'create' message")
@@ -1214,7 +1076,7 @@ Namespace Views
                     ' Edit an entry
                     '
                     'CS = Main.OpenCSContentRecord(cnBlogEntries, EntryID)
-                    Dim blogEntry As Models.BlogEntryModel = Models.BlogEntryModel.create(cp, EntryID)
+                    Dim blogEntry As BlogEntryModel = DbModel.create(Of BlogEntryModel)(cp, EntryID)
                     If blogEntry.EntryID <> 0 Then
                         BlogTitle = blogEntry.name
                         BlogCopy = blogEntry.Copy
@@ -1255,7 +1117,7 @@ Namespace Views
 
                 'SQL = "select i.filename,i.description,i.name,i.id from BlogImages i left join BlogImageRules r on r.blogimageid=i.id where i.active<>0 and r.blogentryid=" & EntryID & " order by i.SortOrder"
                 'CS = cp.CSNew.OpenSQL(SQL)
-                Dim BlogImageModelList As List(Of Models.BlogImageModel) = Models.BlogImageModel.createListFromBlogEntry(cp, EntryID)
+                Dim BlogImageModelList As List(Of BlogImageModel) = BlogImageModel.createListFromBlogEntry(cp, EntryID)
                 Dim Ptr As Integer
                 For Each BlogImage In BlogImageModelList
                     Dim imageFilename As String = BlogImage.Filename
@@ -1418,16 +1280,16 @@ Namespace Views
                         '
                         ' Post
                         '
-                        Dim BlogEntry As Models.BlogEntryModel
+                        Dim BlogEntry As BlogEntryModel
                         If EntryID = 0 Then
-                            BlogEntry = Models.BlogEntryModel.add(cp)
+                            BlogEntry = DbModel.add(Of BlogEntryModel)(cp)
                             ' CS = Main.InsertCSRecord(cnBlogEntries)
                             EntryID = BlogEntry.id
                             BlogEntry.BlogID = blogId
-                            'BlogEntry.save(cp)
+                            'BlogEntry.save(of BlogModel)(cp)
                         End If
                         'CS = Main.OpenCSContent(cnBlogEntries, "(blogid=" & blogId & ")and(ID=" & EntryID & ")")
-                        BlogEntry = Models.BlogEntryModel.create(cp, EntryID)
+                        BlogEntry = DbModel.create(Of BlogEntryModel)(cp, EntryID)
                         If (BlogEntry IsNot Nothing) Then
                             Dim EntryName As String = cp.Doc.GetText(RequestNameBlogTitle)
                             BlogEntry.name = EntryName
@@ -1436,7 +1298,7 @@ Namespace Views
                             BlogEntry.blogCategoryID = BlogCategoryID
                             ProcessFormBlogPost = FormBlogPostList
                             BlogEntry.BlogID = blogId
-                            BlogEntry.save(cp)
+                            BlogEntry.save(Of BlogEntryModel)(cp)
                         End If
 
                         Call UpdateBlogFeed(cp, blogId, RSSFeedId, EntryID, blogListLink)
@@ -1459,7 +1321,7 @@ Namespace Views
                                     '
                                     ' edit image
                                     '
-                                    Dim BlogImage As Models.BlogImageModel = Models.BlogImageModel.add(cp)
+                                    Dim BlogImage As BlogImageModel = DbModel.add(Of BlogImageModel)(cp)
                                     If cp.Doc.GetBoolean(rnBlogImageDelete & "." & UploadPointer) Then
                                         Call cp.Content.Delete(cnBlogImages, ImageID)
                                     Else
@@ -1468,7 +1330,7 @@ Namespace Views
                                             BlogImage.name = imageName
                                             BlogImage.description = imageDescription
                                             BlogImage.SortOrder = New String("0", 12 - imageOrder.ToString().Length) & imageOrder.ToString() ' String.Empty.PadLeft((12 - Len(imageOrder.ToString())), "0") & imageOrder
-                                            BlogEntry.save(cp)
+                                            BlogEntry.save(Of BlogEntryModel)(cp)
                                         End If
                                     End If
                                 ElseIf imageFilename <> "" Then
@@ -1477,7 +1339,7 @@ Namespace Views
                                     '
                                     'CS = Main.InsertCSRecord(cnBlogImages)
                                     'If Main.IsCSOK(CS) Then
-                                    Dim BlogImage As Models.BlogImageModel = Models.BlogImageModel.add(cp)
+                                    Dim BlogImage As BlogImageModel = DbModel.add(Of BlogImageModel)(cp)
                                     If (BlogImage IsNot Nothing) Then
                                         BlogImageID = BlogImage.id
                                         BlogImage.name = imageName
@@ -1492,10 +1354,10 @@ Namespace Views
 
                                         'BlogImage.getUploadPath("filename")
                                         'Dim VirtualFilePathPage As String = cp.Doc.GetText(cnBlogImages, imageFilename)
-                                        Dim VirtualFilePath As String = BlogImage.getUploadPath("filename")
+                                        Dim VirtualFilePath As String = BlogImage.getUploadPath(Of BlogImageModel)("filename")
                                         Call cp.Html.ProcessInputFile(rnBlogUploadPrefix & "." & UploadPointer, VirtualFilePath)
                                         BlogImage.Filename = VirtualFilePath & imageFilename
-                                        BlogImage.save(cp)
+                                        BlogImage.save(Of BlogImageModel)(cp)
 
                                         'If BuildVersion > "3.4.190" Then
                                         '
@@ -1521,11 +1383,11 @@ Namespace Views
                                         'End If
                                     End If
                                     '
-                                    Dim ImageRule As Models.BlogImageRuleModel = Models.BlogImageRuleModel.add(cp)
+                                    Dim ImageRule As BlogImageRuleModel = BlogImageRuleModel.add(Of BlogImageRuleModel)(cp)
                                     If (ImageRule IsNot Nothing) Then
                                         ImageRule.BlogEntryID = EntryID
                                         ImageRule.BlogImageID = BlogImageID
-                                        ImageRule.save(cp)
+                                        ImageRule.save(Of BlogImageRuleModel)(cp)
                                     End If
                                     'CS = Main.InsertCSRecord(cnBlogImageRules)
                                     '    Call Main.SetCS(CS, "BlogEntryID", EntryID)
@@ -1538,7 +1400,7 @@ Namespace Views
                         '
                         ' Delete
                         '
-                        Models.BlogEntryModel.delete(cp, EntryID)
+                        DbModel.delete(Of BlogEntryModel)(cp, EntryID)
                         ProcessFormBlogPost = FormBlogPostList
                         Call UpdateBlogFeed(cp, blogId, RSSFeedId, EntryID, blogListLink)
                         ProcessFormBlogPost = FormBlogPostList
@@ -1611,15 +1473,15 @@ Namespace Views
 
                 'CS = Main.OpenCSContentRecord(cnBlogEntries, EntryID)
                 'If Not Main.csok(CS) Then
-                Dim blogEntry As Models.BlogEntryModel = Models.BlogEntryModel.create(cp, EntryID)
+                Dim blogEntry As BlogEntryModel = DbModel.create(Of BlogEntryModel)(cp, EntryID)
                 If (blogEntry IsNot Nothing) Then
 
-                    'Dim BlogEntry As Models.BlogEntryModel = blogEntryList.First
-                    If Not (BlogEntry IsNot Nothing) Then
+                    'Dim BlogEntry As BlogEntryModel = blogEntryList.First
+                    If Not (blogEntry IsNot Nothing) Then
                         result = result & cr & "<div class=""aoBlogProblem"">Sorry, the blog post you selected is not currently available</div>"
                     Else
-                        EntryID = BlogEntry.id
-                        AuthorMemberID = BlogEntry.AuthorMemberID
+                        EntryID = blogEntry.id
+                        AuthorMemberID = blogEntry.AuthorMemberID
                         If AuthorMemberID = 0 Then
                             AuthorMemberID = blogEntry.CreatedBy
                         End If
@@ -1638,8 +1500,8 @@ Namespace Views
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(EntryID))
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails)
                         blogEntry.Viewings = (1 + cp.Doc.GetInteger("viewings"))
-                        BlogEntry.imageDisplayTypeId = cp.Doc.GetInteger("imageDisplayTypeId")
-                        BlogEntry.primaryImagePositionId = cp.Doc.GetInteger("primaryImagePositionId")
+                        blogEntry.imageDisplayTypeId = cp.Doc.GetInteger("imageDisplayTypeId")
+                        blogEntry.primaryImagePositionId = cp.Doc.GetInteger("primaryImagePositionId")
                         ' blogEntry.articlePrimaryImagePositionId = cp.Doc.GetInteger("articlePrimaryImagePositionId")
                         result = result & GetBlogEntryCell(cp, EntryPtr, IsBlogOwner, EntryID, EntryName, EntryCopy, DateAdded, True, False, Return_CommentCnt, allowComments, PodcastMediaLink, PodcastSize, entryEditLink, ThumbnailImageWidth, BuildVersion, ImageWidthMax, BlogTagList, imageDisplayTypeId, primaryImagePositionId, articlePrimaryImagePositionId, blogListQs, AuthorMemberID)
                         EntryPtr = EntryPtr + 1
@@ -1651,18 +1513,18 @@ Namespace Views
                 End If
                 '
                 Dim criteria As String = ""
-                Dim VisitModel As New Models.VisitModel
+                Dim VisitModel As New VisitModel
                 Dim excludeFromAnalytics As Boolean = VisitModel.ExcludeFromAnalytics
 
                 If BuildVersion >= "4.1.161" Then
                     If (Not excludeFromAnalytics) Then
-                        Dim BlogViewingLog As Models.BlogViewingLogModel = Models.BlogViewingLogModel.add(cp)
+                        Dim BlogViewingLog As BlogViewingLogModel = DbModel.add(Of BlogViewingLogModel)(cp)
                         If (BlogViewingLog IsNot Nothing) Then
                             BlogViewingLog.name = cp.User.Name & ", post " & CStr(EntryID) & ", " & Now()
                             BlogViewingLog.BlogEntryID = EntryID
                             BlogViewingLog.MemberID = cp.User.Id
                             BlogViewingLog.VisitID = cp.Visit.Id
-                            BlogViewingLog.save(cp)
+                            BlogViewingLog.save(Of blogModel)(cp)
                         End If
                     End If
                 End If
@@ -1865,7 +1727,7 @@ Namespace Views
                 Dim formKey As String
                 Dim optionStr As String
                 Dim captchaResponse As String
-                Dim blog As Models.blogModel = Models.blogModel.create(cp, blogId)
+                Dim blog As blogModel = DbModel.create(Of blogModel)(cp, blogId)
                 'Dim allowCaptcha As Boolean
                 '
                 ProcessFormBlogPostDetails = SourceFormID
@@ -1894,7 +1756,7 @@ Namespace Views
                             Call cp.Site.TestPoint("output - reCaptchaProcessGuid, result=" & captchaResponse)
                             If captchaResponse <> "" Then
                                 Call cp.UserError.Add("The verify text you entered did not match correctly. Please try again.")
-                                Call cp.Utils.AppendLogFile("testpoint1")
+                                Call cp.Utils.AppendLog("testpoint1")
                             End If
                         End If
                         '
@@ -1909,16 +1771,16 @@ Namespace Views
                             'If (Main.VisitID <> kmaEncodeInteger(Main.DecodeKeyNumber(formKey))) Then
                             '    Call Main.AddUserError("<p>This comment has already been accepted.</p>")
                             'End If
-                            Dim BlogCommentModelList As List(Of Models.BlogCommentModel) = Models.BlogCommentModel.createList(cp, "(formkey=" & cp.Db.EncodeSQLText(formKey) & ")", "ID")
+                            Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(formkey=" & cp.Db.EncodeSQLText(formKey) & ")", "ID")
                             If (BlogCommentModelList.Count <> 0) Then
                                 Call cp.UserError.Add("<p>This comment has already been accepted.</p>")
                                 RetryCommentPost = False
-                                Call cp.Utils.AppendLogFile("testpoint2")
+                                Call cp.Utils.AppendLog("testpoint2")
                             Else
                                 Call cp.Site.TestPoint("blog -- adding comment, no user error")
                                 EntryID = cp.Doc.GetInteger(RequestNameBlogEntryID)
-                                Dim BlogEntry As Models.BlogEntryModel = Models.BlogEntryModel.create(cp, EntryID)
-                                Dim BlogComment As Models.BlogCommentModel = Models.BlogCommentModel.add(cp)
+                                Dim BlogEntry As BlogEntryModel = DbModel.create(Of BlogEntryModel)(cp, EntryID)
+                                Dim BlogComment As BlogCommentModel = DbModel.add(Of BlogCommentModel)(cp)
                                 'CSP = Main.InsertCSRecord(cnBlogComments)
                                 If AllowAnonymous And (Not cp.User.IsAuthenticated) Then
                                     MemberID = 0
@@ -1927,7 +1789,7 @@ Namespace Views
                                     MemberID = cp.User.Id
                                     MemberName = cp.User.Name
                                 End If
-                                cp.Utils.AppendLog("subscript test", "test1")
+                                cp.Utils.AppendLog("test1")
                                 BlogComment.BlogID = blogId
                                 BlogComment.Active = 1
                                 BlogComment.name = cp.Doc.GetText(RequestNameCommentTitle)
@@ -1935,11 +1797,11 @@ Namespace Views
                                 BlogComment.EntryID = EntryID
                                 BlogComment.Approved = IsBlogOwner Or autoApproveComments
                                 BlogComment.FormKey = formKey
-                                BlogComment.save(cp)
+                                BlogComment.save(Of BlogCommentModel)(cp)
                                 CommentID = BlogComment.id
                                 RetryCommentPost = False
                                 '
-                                cp.Utils.AppendLog("subscript test", "test2")
+                                cp.Utils.AppendLog("test2")
                                 If (emailComment) Then
                                     'If (Not IsBlogOwner) And (emailComment) Then
                                     '
@@ -1964,30 +1826,30 @@ Namespace Views
                                                     & vbCrLf & cp.Utils.EncodeHTML(Copy) _
                                                     & vbCrLf
                                     EmailFromAddress = cp.Site.GetProperty("EmailFromAddress", "info@" & cp.Site.Domain)
-                                        'Call Main.SendMemberEmail(BlogOwnerID, EmailFromAddress, "Blog comment notification for [" & BlogName & "]", EmailBody, False, False)
-                                        Call cp.Email.sendUser(BlogOwnerID, EmailFromAddress, "Blog comment notification for [" & BlogName & "]", EmailBody, False, False)
-                                        authoringGroupId = blog.AuthoringGroupID
-                                        If authoringGroupId <> 0 Then
-                                            Dim MemberRuleList As List(Of Models.MemberRuleModel) = Models.MemberRuleModel.createList(cp, "GroupId=" & authoringGroupId)
-                                            For Each MemberRule In MemberRuleList
-                                                Call cp.Email.sendUser(MemberRule.MemberID, EmailFromAddress, "Blog comment on " & BlogName, EmailBody, False, False)
-                                            Next
-                                            'authoringGroup = cp.Group.GetName(authoringGroupId)
-                                            'If authoringGroup <> "" Then
-                                            '        Dim blogModelList As List(Of Models.blogModel) = Models.blogModel.createList(cp, "(allowbulkemail<>0)and(email<>'')")
-                                            '        For Each blogModel In blogModelList
-                                            '            AuthoringMemberId = cp.Doc.GetInteger(CS, "id")
-                                            '            Call cp.Email.sendUser(AuthoringMemberId, EmailFromAddress, "Blog comment on " & BlogName, EmailBody, False, False)
-                                            '        Next
-                                            'CS = Main.OpenCSGroupMembers(authoringGroup, "(allowbulkemail<>0)and(email<>'')")
-                                            'Do While Main.IsCSOK(CS)
-                                            '    AuthoringMemberId = cp.Doc.GetInteger(CS, "id")
-                                            '    Call cp.Email.sendUser(AuthoringMemberId, EmailFromAddress, "Blog comment on " & BlogName, EmailBody, False, False)
-                                            '    Call Main.NextCSRecord(CS)
-                                            'Loop
-                                            'Call Main.CloseCS(CS)
-                                        End If
+                                    'Call Main.SendMemberEmail(BlogOwnerID, EmailFromAddress, "Blog comment notification for [" & BlogName & "]", EmailBody, False, False)
+                                    Call cp.Email.sendUser(BlogOwnerID, EmailFromAddress, "Blog comment notification for [" & BlogName & "]", EmailBody, False, False)
+                                    authoringGroupId = blog.AuthoringGroupID
+                                    If authoringGroupId <> 0 Then
+                                        Dim MemberRuleList As List(Of MemberRuleModel) = DbModel.createList(Of MemberRuleModel)(cp, "GroupId=" & authoringGroupId)
+                                        For Each MemberRule In MemberRuleList
+                                            Call cp.Email.sendUser(MemberRule.MemberID, EmailFromAddress, "Blog comment on " & BlogName, EmailBody, False, False)
+                                        Next
+                                        'authoringGroup = cp.Group.GetName(authoringGroupId)
+                                        'If authoringGroup <> "" Then
+                                        '        Dim blogModelList As List(Of blogModel) = DbModel.create(of blogModel)List(cp, "(allowbulkemail<>0)and(email<>'')")
+                                        '        For Each blogModel In blogModelList
+                                        '            AuthoringMemberId = cp.Doc.GetInteger(CS, "id")
+                                        '            Call cp.Email.sendUser(AuthoringMemberId, EmailFromAddress, "Blog comment on " & BlogName, EmailBody, False, False)
+                                        '        Next
+                                        'CS = Main.OpenCSGroupMembers(authoringGroup, "(allowbulkemail<>0)and(email<>'')")
+                                        'Do While Main.IsCSOK(CS)
+                                        '    AuthoringMemberId = cp.Doc.GetInteger(CS, "id")
+                                        '    Call cp.Email.sendUser(AuthoringMemberId, EmailFromAddress, "Blog comment on " & BlogName, EmailBody, False, False)
+                                        '    Call Main.NextCSRecord(CS)
+                                        'Loop
+                                        'Call Main.CloseCS(CS)
                                     End If
+                                End If
 
                             End If
                         End If
@@ -2015,10 +1877,10 @@ Namespace Views
                                                 '
                                                 ' Approve Comment
                                                 '
-                                                Dim BlogCommentModelList As List(Of Models.BlogCommentModel) = Models.BlogCommentModel.createList(cp, "(name=" & cp.Utils.EncodeQueryString(BlogName) & ")", "ID")
+                                                Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(name=" & cp.Utils.EncodeQueryString(BlogName) & ")", "ID")
                                                 If (BlogCommentModelList.Count > 0) Then
                                                     ' CS = Main.OpenCSContent("Blog Comments", "(id=" & CommentID & ")and(BlogID=" & blogId & ")")
-                                                    Dim BlogComment As Models.BlogCommentModel = Models.BlogCommentModel.add(cp)
+                                                    Dim BlogComment As BlogCommentModel = DbModel.add(Of BlogCommentModel)(cp)
                                                     If cp.CSNew.OK() Then
                                                         BlogComment.Approved = True
                                                         ' Call Main.SetCS(CS, "Approved", True)
@@ -2029,7 +1891,7 @@ Namespace Views
                                                     ' Unapprove comment
                                                     '
                                                     'CS = Main.OpenCSContent("Blog Comments", "(id=" & CommentID & ")and(BlogID=" & blogId & ")")
-                                                    Dim BlogComment As Models.BlogCommentModel = Models.BlogCommentModel.add(cp)
+                                                    Dim BlogComment As BlogCommentModel = DbModel.add(Of BlogCommentModel)(cp)
                                                     If (BlogComment IsNot Nothing) Then
                                                         'Call Main.SetCS(CS, "Approved", True)
                                                         BlogComment.Approved = False
@@ -2144,7 +2006,7 @@ Namespace Views
             Dim result As String
             Try
                 Dim hint As String
-                Dim visit As Models.VisitModel = Models.VisitModel.create(cp, cp.Visit.Id)
+                Dim visit As VisitModel = VisitModel.create(cp, cp.Visit.Id)
 
                 '
                 hint = "enter"
@@ -2177,7 +2039,7 @@ Namespace Views
                 Dim imageName As String = ""
                 Dim ThumbnailFilename As String = ""
                 Dim imageFilename As String = ""
-                Dim BlogImageModelList As List(Of Models.BlogImageModel) = Models.BlogImageModel.createListFromBlogEntry(cp, EntryID)
+                Dim BlogImageModelList As List(Of BlogImageModel) = BlogImageModel.createListFromBlogEntry(cp, EntryID)
                 For Each BlogImage In BlogImageModelList
                     imageIDList = imageIDList & "," & BlogImage.id
                     imageDescription = BlogImage.description
@@ -2203,7 +2065,7 @@ Namespace Views
                     Call GetBlogImage(cp, cp.Utils.EncodeInteger(ImageID(0)), ThumbnailImageWidth, 0, ThumbnailFilename, imageFilename, imageDescription, imageName)
                 End If
                 '
-                Dim blogCopy As Models.BlogCopyModel = Models.BlogCopyModel.create(cp, EntryID)
+                Dim blogCopy As BlogCopyModel = DbModel.create(Of BlogCopyModel)(cp, EntryID)
                 articlePrimaryImagePositionId = blogCopy.articlePrimaryImagePositionId
                 result = ""
                 hint = hint & ",3"
@@ -2327,7 +2189,7 @@ Namespace Views
 
                         End Select
                     End If
-                    result = result & "<p>" & filterCopy(cp, EntryCopy, OverviewLength) & "</p></div>"
+                    result = result & "<p>" & genericController.filterCopy(cp, EntryCopy, OverviewLength) & "</p></div>"
                     result = result & cr & "<div class=""aoBlogEntryReadMore""><a href=""" & EntryLink & """>Read More</a></div>"
                     '        If Len(EntryCopyOverview) < 35 Then
                     '            EntryCopyOverview = EntryCopy
@@ -2382,7 +2244,7 @@ Namespace Views
                     '
                     Criteria = "(Approved<>0)and(EntryID=" & EntryID & ")"
                     ' CSCount = Main.OpenCSContent(cnBlogComments, "(Approved<>0)and(EntryID=" & EntryID & ")")
-                    Dim BlogCommentModelList As List(Of Models.BlogCommentModel) = Models.BlogCommentModel.createList(cp, "(Approved<>0)and(EntryID=" & EntryID & ")")
+                    Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(Approved<>0)and(EntryID=" & EntryID & ")")
                     CommentCount = BlogCommentModelList.Count
                     If DisplayFullEntry Then
                         If CommentCount = 1 Then
@@ -2427,7 +2289,7 @@ Namespace Views
                         '' Show comment count
                         ''
                         Criteria = "(Approved<>0)and(EntryID=" & EntryID & ")"
-                        Dim BlogCommentModelList As List(Of Models.BlogCommentModel) = Models.BlogCommentModel.createList(cp, "(Approved<>0)and(EntryID=" & EntryID & ")")
+                        Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(Approved<>0)and(EntryID=" & EntryID & ")")
                         CommentCount = BlogCommentModelList.Count
                         'CSCount = Main.OpenCSContent(cnBlogComments, "(Approved<>0)and(EntryID=" & EntryID & ")")
                         'CommentCount = Main.GetCSRowCount(CSCount)
@@ -2445,7 +2307,7 @@ Namespace Views
                         If IsBlogOwner Then
                             Criteria = "(EntryID=" & EntryID & ")"
                             'CSCount = Main.OpenCSContent(cnBlogComments, "((Approved is null)or(Approved=0))and(EntryID=" & EntryID & ")")
-                            BlogCommentModelList = Models.BlogCommentModel.createList(cp, "(Approved<>0)and(EntryID=" & EntryID & ")")
+                            BlogCommentModelList = DbModel.createList(Of BlogCommentModel)(cp, "(Approved<>0)and(EntryID=" & EntryID & ")")
                             CommentCount = BlogCommentModelList.Count
                             'Call Main.CloseCS(CSCount)
                             If ToolLine <> "" Then
@@ -2482,15 +2344,15 @@ Namespace Views
                             '
                             Criteria = "((Approved<>0)or(AuthorMemberID=" & cp.User.Id & "))and(EntryID=" & EntryID & ")"
                         End If
-                        Dim BlogCommentModelList As List(Of Models.BlogCommentModel) = Models.BlogCommentModel.createList(cp, Criteria, "DateAdded")
+                        Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, Criteria, "DateAdded")
                         If (BlogCommentModelList.Count > 0) Then
                             Dim Divider As String = "<div class=""aoBlogCommentDivider"">&nbsp;</div>"
                             result = result & cr & "<div class=""aoBlogCommentHeader"">Comments</div>"
                             result = result & vbCrLf & Divider
                             CommentPtr = 0
-                            Dim blogComment As Models.BlogCommentModel = Models.BlogCommentModel.add(cp)
+                            Dim blogComment As BlogCommentModel = DbModel.add(Of BlogCommentModel)(cp)
                             If (blogComment IsNot Nothing) Then
-                                For Each blogComment In Models.BlogCommentModel.createList(cp, Criteria)
+                                For Each blogComment In DbModel.createList(Of BlogCommentModel)(cp, Criteria)
 
                                     result = result & GetBlogCommentCell(cp, IsBlogOwner, blogComment.DateAdded, blogComment.Approved, blogComment.name, blogComment.CopyText, blogComment.id, EntryPtr, CommentPtr, AuthorMemberID, EntryID, False, EntryName)
                                     result = result & vbCrLf & Divider
@@ -2542,21 +2404,6 @@ Namespace Views
             End Try
         End Function
 
-        Private Function filterCopy(cp As CPBaseClass, rawCopy As String, MaxLength As Integer) As String
-            Try
-                Dim Copy As String
-                'Dim objHTML As New kmaHTML.DecodeClass
-
-                Copy = rawCopy
-                If Len(Copy) > MaxLength Then
-                    Copy = Left(Copy, MaxLength)
-                    Copy = Copy & "..."
-                End If
-                filterCopy = Copy
-            Catch ex As Exception
-                cp.Site.ErrorReport(ex)
-            End Try
-        End Function
         '
         '========================================================================
         '   Update the Blog Feed
@@ -2590,7 +2437,7 @@ Namespace Views
                     '
                     ' Gather all the current rules
                     '
-                    Dim RSSFeedBlogRuleList As List(Of Models.RSSFeedBlogRuleModel) = Models.RSSFeedBlogRuleModel.createList(cp, "RSSFeedID=" & RSSFeedId, "id,BlogPostID")
+                    Dim RSSFeedBlogRuleList As List(Of RSSFeedBlogRuleModel) = RSSFeedBlogRuleModel.createList(cp, "RSSFeedID=" & RSSFeedId, "id,BlogPostID")
                     RuleCnt = 0
                     For Each RSSFeedBlogRule In RSSFeedBlogRuleList
                         If RuleCnt >= RuleSize Then
@@ -2603,7 +2450,7 @@ Namespace Views
                         RuleCnt = RuleCnt + 1
                     Next
 
-                    Dim BlogCopyModelList As List(Of Models.BlogCopyModel) = Models.BlogCopyModel.createListFromBlogCopy(cp, blogId)
+                    Dim BlogCopyModelList As List(Of BlogCopyModel) = BlogCopyModel.createListFromBlogCopy(cp, blogId)
                     For Each BlogCopy In BlogCopyModelList
                         BlogPostID = BlogCopy.id 'Csv.GetCSInteger(CS, "id")
                         For RulePtr = 0 To RuleCnt - 1
@@ -2616,11 +2463,11 @@ Namespace Views
                             '
                             ' Rule not found, add it
                             '
-                            Dim RSSFeedBlogRule As Models.RSSFeedBlogRuleModel = Models.RSSFeedBlogRuleModel.add(cp)
+                            Dim RSSFeedBlogRule As RSSFeedBlogRuleModel = RSSFeedBlogRuleModel.add(cp)
                             If (RSSFeedBlogRule IsNot Nothing) Then
                                 RSSFeedBlogRule.RSSFeedID = RSSFeedId
                                 RSSFeedBlogRule.BlogPostID = BlogPostID
-                                RSSFeedBlogRule.save(cp)
+                                RSSFeedBlogRule.save(Of blogModel)(cp)
                             End If
                             'CSRule = Csv.InsertCSRecord(cnRSSFeedBlogRules, 0)
                             'If Csv.IsCSOK(CSRule) Then
@@ -2629,7 +2476,7 @@ Namespace Views
                             'Call Csv.SetCS(CSRule, "BlogPostID", BlogPostID)
                             'End If
                             'Call Csv.CloseCS(CSRule)
-                            Dim BlogEntry As Models.BlogEntryModel = Models.BlogEntryModel.add(cp)
+                            Dim BlogEntry As BlogEntryModel = DbModel.add(Of BlogEntryModel)(cp)
                             If (BlogEntry IsNot Nothing) Then
                                 EntryName = BlogEntry.name 'Csv.GetCSText(CSPost, "name")
                                 EntryID = BlogEntry.id 'Csv.GetCSInteger(CSPost, "id")
@@ -2649,7 +2496,7 @@ Namespace Views
                                     'Call Main.SetCS(CSPost, "RSSLink", EntryLink)
                                     BlogEntry.RSSLink = EntryLink
                                 End If
-                                BlogEntry.RSSDescription = filterCopy(cp, EntryCopy, 150)
+                                BlogEntry.RSSDescription = genericController.filterCopy(cp, EntryCopy, 150)
                                 ' Call Main.SetCS(CSPost, "RSSDescription", filterCopy(EntryCopy, 150))
                             End If
                             ' CSPost = Csv.OpenCSContentRecord(cnBlogEntries, BlogPostID)
@@ -2755,184 +2602,7 @@ Namespace Views
                 cp.Site.ErrorReport(ex)
             End Try
         End Sub
-        '
-        '========================================================================
-        '   Verify the RSSFeed and return the ID and the Link
-        '       run when a new blog is created
-        '       run on every post
-        '========================================================================
-        '
-        Private Sub VerifyFeedReturnArgs(cp As CPBaseClass, blogId As Integer, blogListLink As String, ByRef Return_RSSFeedID As Integer, ByRef Return_RSSFeedName As String, ByRef Return_RSSFeedFilename As String)
-            '
-            Try
-                Dim qs As String
-                Dim CSBlog As Integer
-                Dim BlogName As String = cp.Utils.EncodeQueryString("BlogName")
-                Dim blogDescription As String
-                Dim CSFeed As Integer
-                Dim rssLink As String
-                '
-                Dim blog As Models.blogModel = Models.blogModel.create(cp, BlogName)
-                ' Dim blogList As List(Of Models.blogModel) = Models.blogModel.createList(cp, "(name=" & cp.Utils.EncodeQueryString(BlogName) & ")", "ID")
-                If Not (blog Is Nothing) Then
-                    ' Dim blog As Models.blogModel = blogList.First
-                    BlogName = blog.name 'Csv.GetCSText(CSBlog, "name")
-                    blogDescription = Trim(blog.Copy)
-                    Return_RSSFeedID = blog.RSSFeedID 'Csv.GetCSInteger(CSBlog, "RSSFeedID")
-                    If Trim(BlogName) = "" Then
-                        Return_RSSFeedName = "Feed for Blog " & blog.id
-                    Else
-                        Return_RSSFeedName = BlogName
-                    End If
-                    blog.save(cp)
-                    Dim RssFeed As Models.RSSFeedModel = Models.RSSFeedModel.create(cp, Return_RSSFeedID)
-                    If Return_RSSFeedID <> 0 Then
-                        '
-                        ' Make sure the record exists
-                        '
-                        If Not cnRSSFeeds Then
-                            Return_RSSFeedID = 0
-                            'CSFeed = Main.OpenCSContentRecord("RSS Feeds", Return_RSSFeedID)
-                            'If Not Main.IsCSOK(CSFeed) Then
-                            '    Return_RSSFeedID = 0
-                            'End If
-                        End If
-                        '
-                        RssFeed = Models.RSSFeedModel.add(cp)
-                        Return_RSSFeedID = cp.Doc.GetInteger(CSFeed, "ID")
-                        RssFeed.id = Return_RSSFeedID
-                        RssFeed.name = Return_RSSFeedName
-                        If blogDescription = "" Then
-                            blogDescription = Trim(Return_RSSFeedName)
-                        End If
-                        RssFeed.Description = blogDescription
 
-                        Return_RSSFeedFilename = cp.Db.EncodeSQLText(Return_RSSFeedName) & ".xml"
-                        RssFeed.RSSFilename = Return_RSSFeedFilename
-                        RssFeed.save(cp)
-                    End If
-                    RssFeed = Models.RSSFeedModel.create(cp, Return_RSSFeedID)
-                    RssFeed = Models.RSSFeedModel.add(cp)
-                    Return_RSSFeedName = RssFeed.name
-                    Return_RSSFeedID = RssFeed.id 'cp.Doc.GetInteger("id")
-                    Return_RSSFeedFilename = Trim(RssFeed.RSSFilename)
-                    If Trim(RssFeed.Link) = "" Then
-                        rssLink = cp.Request.Protocol & cp.Request.Host & blogListLink
-                        RssFeed.Link = rssLink
-
-                    End If
-                    'If Main.IsCSOK(CSFeed) Then
-                    '    '
-                    '    ' Manage the Feed name, title and description
-                    '    '   because it is associated to this blog'
-                    '    '   only reset the link if it is blank (see desc at top of class)
-                    '    '   only manage the RSSFeedFilename if it is blank
-                    '    '
-                    '    Return_RSSFeedName = rssfeed.  'cp.Doc.GetText(CSFeed, "name")
-                    '    Return_RSSFeedID = cp.Doc.GetInteger(CSFeed, "id")
-                    '    Return_RSSFeedFilename = Trim(Main.GetCS(CSFeed, "rssfilename"))
-                    '    If Trim(Main.GetCS(CSFeed, "link")) = "" Then
-                    '        rssLink = Main.serverProtocol & Main.ServerHost & blogListLink
-                    '        Call Main.SetCS(CSFeed, "link", rssLink)
-                    '    End If
-                    '    'Return_BlogRootLink = Trim(Main.GetCS(CSFeed, "link"))
-                    '    'If Return_BlogRootLink = "" Then
-                    '    '    '
-                    '    '    ' set blog link to current link without forms/categories
-                    '    '    '   exclude admin
-                    '    '    '   exclude a post
-                    '    '    '
-                    '    '    Return_BlogRootLink = Main.ServerLink
-                    '    '    If (InStr(1, Return_BlogRootLink, "admin", vbTextCompare) = 0) And (Main.ServerForm = "") Then
-                    '    '        Return_BlogRootLink = cp.Utils.ModifyQueryString(Return_BlogRootLink, RequestNameFormID, "", False)
-                    '    '        Return_BlogRootLink = cp.Utils.ModifyQueryString(Return_BlogRootLink, RequestNameSourceFormID, "", False)
-                    '    '        Return_BlogRootLink = cp.Utils.ModifyQueryString(Return_BlogRootLink, RequestNameBlogCategoryID, "", False)
-                    '    '        Return_BlogRootLink = cp.Utils.ModifyQueryString(Return_BlogRootLink, RequestNameBlogCategoryIDSet, "", False)
-                    '    '        Call Main.SetCS(CSFeed, "link", Return_BlogRootLink)
-                    '    '    End If
-                    '    'End If
-                    'End If
-                    ' Call Main.CloseCS(CSFeed)
-                End If
-                ' Call Csv.CloseCS(CSBlog)
-                'CSBlog = Csv.OpenCSContent(cnBlogs, "ID=" & blogId)
-                'If Csv.IsCSOK(CSBlog) Then
-                '    BlogName = Csv.GetCSText(CSBlog, "name")
-                '    blogDescription = Trim(Csv.GetCS(CSBlog, "copy"))
-                '    Return_RSSFeedID = Csv.GetCSInteger(CSBlog, "RSSFeedID")
-                '    If Trim(BlogName) = "" Then
-                '        Return_RSSFeedName = "Feed for Blog " & blogId
-                '    Else
-                '        Return_RSSFeedName = BlogName
-                '    End If
-                '    If Return_RSSFeedID <> 0 Then
-                '        '
-                '        ' Make sure the record exists
-                '        '
-                '        CSFeed = Main.OpenCSContentRecord("RSS Feeds", Return_RSSFeedID)
-                '        If Not Main.IsCSOK(CSFeed) Then
-                '            Return_RSSFeedID = 0
-                '        End If
-                '    End If
-                '    If Return_RSSFeedID = 0 Then
-                '
-                ' new blog was created, now create new feed
-                '   set name and description from the blog
-                '
-                '        CSFeed = Main.InsertCSContent(cnRSSFeeds)
-                '    If Main.IsCSOK(CSFeed) Then
-                '        Return_RSSFeedID = cp.Doc.GetInteger(CSFeed, "ID")
-                '        Call Main.SetCS(CSBlog, "RSSFeedID", Return_RSSFeedID)
-                '        Call Main.SetCS(CSFeed, "Name", Return_RSSFeedName)
-                '        If blogDescription = "" Then
-                '            blogDescription = Trim(Return_RSSFeedName)
-                '        End If
-                '        Call Main.SetCS(CSFeed, "description", blogDescription)
-                '        Return_RSSFeedFilename = encodeFilename(Return_RSSFeedName) & ".xml"
-                '        Call Main.SetCS(CSFeed, "rssfilename", Return_RSSFeedFilename)
-                '    End If
-                'End If
-                'If Main.IsCSOK(CSFeed) Then
-                '    '
-                '    ' Manage the Feed name, title and description
-                '    '   because it is associated to this blog'
-                '    '   only reset the link if it is blank (see desc at top of class)
-                '    '   only manage the RSSFeedFilename if it is blank
-                '    '
-                '    Return_RSSFeedName = cp.Doc.GetText(CSFeed, "name")
-                '    Return_RSSFeedID = cp.Doc.GetInteger(CSFeed, "id")
-                '    Return_RSSFeedFilename = Trim(Main.GetCS(CSFeed, "rssfilename"))
-                '    If Trim(Main.GetCS(CSFeed, "link")) = "" Then
-                '        rssLink = Main.serverProtocol & Main.ServerHost & blogListLink
-                '        Call Main.SetCS(CSFeed, "link", rssLink)
-                '    End If
-                '    'Return_BlogRootLink = Trim(Main.GetCS(CSFeed, "link"))
-                '    'If Return_BlogRootLink = "" Then
-                '    '    '
-                '    '    ' set blog link to current link without forms/categories
-                '    '    '   exclude admin
-                '    '    '   exclude a post
-                '    '    '
-                '    '    Return_BlogRootLink = Main.ServerLink
-                '    '    If (InStr(1, Return_BlogRootLink, "admin", vbTextCompare) = 0) And (Main.ServerForm = "") Then
-                '    '        Return_BlogRootLink = cp.Utils.ModifyQueryString(Return_BlogRootLink, RequestNameFormID, "", False)
-                '    '        Return_BlogRootLink = cp.Utils.ModifyQueryString(Return_BlogRootLink, RequestNameSourceFormID, "", False)
-                '    '        Return_BlogRootLink = cp.Utils.ModifyQueryString(Return_BlogRootLink, RequestNameBlogCategoryID, "", False)
-                '    '        Return_BlogRootLink = cp.Utils.ModifyQueryString(Return_BlogRootLink, RequestNameBlogCategoryIDSet, "", False)
-                '    '        Call Main.SetCS(CSFeed, "link", Return_BlogRootLink)
-                '    '    End If
-                '    'End If
-                'End If
-                'Call Main.CloseCS(CSFeed)
-                'End If
-                'Call Csv.CloseCS(CSBlog)
-                '
-            Catch ex As Exception
-                cp.Site.ErrorReport(ex)
-            End Try
-
-        End Sub
-        '
         '
         '
         Private Function GetBlogImage(cp As CPBaseClass, BlogImageID As Integer, ThumbnailImageWidth As Integer, ImageWidthMax As Integer, ByRef Return_ThumbnailFilename As String, ByRef Return_ImageFilename As String, ByRef Return_ImageDescription As String, ByRef Return_Imagename As String) As String
@@ -2942,10 +2612,10 @@ Namespace Views
                 '
                 'CS = Main.OpenCSContentRecord(cnBlogImages, BlogImageID, , , "name,description,filename,altsizelist")
                 'If Main.IsCSOK(CS) Then
-                cp.Utils.AppendLogFile("entering GetBlogImage")
-                Dim BlogImage As Models.BlogImageModel = Models.BlogImageModel.create(cp, BlogImageID)
+                cp.Utils.AppendLog("entering GetBlogImage")
+                Dim BlogImage As BlogImageModel = DbModel.create(Of BlogImageModel)(cp, BlogImageID)
                 If (BlogImage IsNot Nothing) Then
-                    ' Dim blogImage As Models.BlogImageModel = blogImage.First
+                    ' Dim blogImage As BlogImageModel = blogImage.First
 
                     Dim Filename As String = BlogImage.Filename
                     Dim AltSizeList As String = BlogImage.AltSizeList
@@ -2954,7 +2624,7 @@ Namespace Views
                     '
                     Return_ThumbnailFilename = Filename
                     Return_ImageFilename = Filename
-                    cp.Utils.AppendLogFile("filename=" & Filename)
+                    cp.Utils.AppendLog("filename=" & Filename)
 
                     Dim ThumbNailSize As String
                     Dim ImageSize As String
@@ -2993,7 +2663,7 @@ Namespace Views
                                 '
                             ElseIf ThumbNailSize <> "" Then
                                 Return_ThumbnailFilename = FilenameNoExtension & "-" & ThumbNailSize & "." & FilenameExtension
-                                cp.Utils.AppendLogFile("Return_ThumbnailFilename=" & Return_ThumbnailFilename)
+                                cp.Utils.AppendLog("Return_ThumbnailFilename=" & Return_ThumbnailFilename)
                             Else
                                 sf = CreateObject("sfimageresize.imageresize")
                                 sf.Algorithm = 5
@@ -3018,12 +2688,12 @@ Namespace Views
 
                                     End Try
                                     AltSizeList = AltSizeList & vbCrLf & ThumbNailSize
-                                        BlogImage.AltSizeList = AltSizeList
-                                        'Call Main.SetCS(CS, "altsizelist", AltSizeList)
-                                        cp.Utils.AppendLogFile("Return_ThumbnailFilename=" & Return_ThumbnailFilename)
-                                    Catch ex As Exception
-                                        '
-                                    End Try
+                                    BlogImage.AltSizeList = AltSizeList
+                                    'Call Main.SetCS(CS, "altsizelist", AltSizeList)
+                                    cp.Utils.AppendLog("Return_ThumbnailFilename=" & Return_ThumbnailFilename)
+                                Catch ex As Exception
+                                    '
+                                End Try
                             End If
                             If ImageWidthMax = 0 Then
                                 '
@@ -3052,7 +2722,7 @@ Namespace Views
                         End If
                     End If
                 End If
-                cp.Utils.AppendLogFile("exiting GetBlogImage")
+                cp.Utils.AppendLog("exiting GetBlogImage")
 
                 'End If
                 'Call Main.CloseCS(CS)
@@ -3131,8 +2801,8 @@ Namespace Views
                     Next
                 End If
                 If userPtr >= userCnt Then
-                    Dim PeopleModelList As List(Of Models.PeopleModel) = Models.PeopleModel.createList(cp, "id=" & userid)
-                    Dim user As Models.PeopleModel = PeopleModelList.First
+                    Dim PeopleModelList As List(Of PeopleModel) = PeopleModel.createList(cp, "id=" & userid)
+                    Dim user As PeopleModel = PeopleModelList.First
                     'CS = Main.OpenCSContent("people", "id=" & userid)
                     'If Main.IsCSOK(CS) Then
                     userPtr = userCnt

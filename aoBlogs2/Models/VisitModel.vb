@@ -10,7 +10,7 @@ Imports Contensive.BaseClasses
 
 Namespace Models
     Public Class VisitModel        '<------ set set model Name and everywhere that matches this string
-        Inherits baseModel
+        Inherits DbModel
         Implements ICloneable
         '
         '====================================================================================================
@@ -89,22 +89,22 @@ Namespace Models
         '
         '====================================================================================================
         Public Overloads Shared Function getRecordName(cp As CPBaseClass, recordId As Integer) As String
-            Return baseModel.getRecordName(Of VisitModel)(cp, recordId)
+            Return DbModel.getRecordName(Of VisitModel)(cp, recordId)
         End Function
         '
         '====================================================================================================
         Public Overloads Shared Function getRecordName(cp As CPBaseClass, ccGuid As String) As String
-            Return baseModel.getRecordName(Of VisitModel)(cp, ccGuid)
+            Return DbModel.getRecordName(Of VisitModel)(cp, ccGuid)
         End Function
         '
         '====================================================================================================
         Public Overloads Shared Function getRecordId(cp As CPBaseClass, ccGuid As String) As Integer
-            Return baseModel.getRecordId(Of VisitModel)(cp, ccGuid)
+            Return DbModel.getRecordId(Of VisitModel)(cp, ccGuid)
         End Function
         '
         '====================================================================================================
         Public Overloads Shared Function getCount(cp As CPBaseClass, sqlCriteria As String) As Integer
-            Return baseModel.getCount(Of VisitModel)(cp, sqlCriteria)
+            Return DbModel.getCount(Of VisitModel)(cp, sqlCriteria)
         End Function
         '
         '====================================================================================================
@@ -118,7 +118,7 @@ Namespace Models
             Dim result As VisitModel = DirectCast(Me.Clone(), VisitModel)
             result.id = cp.Content.AddRecord(contentName)
             result.ccguid = cp.Utils.CreateGuid()
-            result.save(cp)
+            result.save(of BlogModel)(cp)
             Return result
         End Function
         '
@@ -149,7 +149,7 @@ Namespace Models
                     kvp.Value.ContentControlID = ContentControlID
                     kvp.Value.ModifiedDate = Now
                     kvp.Value.ModifiedBy = 0
-                    kvp.Value.save(cp)
+                    kvp.Value.save(of BlogModel)(cp)
                 End If
             Next
         End Sub

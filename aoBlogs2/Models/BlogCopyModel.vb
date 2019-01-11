@@ -9,9 +9,12 @@ Imports System.Text
 Imports Contensive.BaseClasses
 
 Namespace Models
-    Public Class BlogCopyModel        '<------ set set model Name and everywhere that matches this string
-        Inherits baseModel
-        Implements ICloneable
+    ''' <summary>
+    ''' Blog copy is the root content for the ccBlogCopy table. 
+    ''' Blog Entries (posts) and Blog Comments (comments to posts) are both stored in Blog Copy
+    ''' </summary>
+    Public Class BlogCopyModel
+        Inherits DbModel
         '
         '====================================================================================================
         '-- const
@@ -21,131 +24,22 @@ Namespace Models
         '
         '====================================================================================================
         ' -- instance properties
-        Public Property AllowComments As Boolean
-        Public Property Anonymous As Boolean
-        Public Property Approved As Boolean
+        '
+        Public Property allowComments As Boolean
+        Public Property anonymous As Boolean
+        Public Property approved As Boolean
         Public Property articlePrimaryImagePositionId As Integer
-        Public Property AuthorMemberID As Integer
+        Public Property authorMemberID As Integer
         Public Property blogCategoryID As Integer
-        Public Property BlogID As Integer
-        Public Property EntryID As Integer
-        Public Property FormKey As String
+        Public Property blogID As Integer
+        Public Property entryID As Integer
         Public Property imageDisplayTypeId As Integer
         Public Property primaryImagePositionId As Integer
-        Public Property Viewings As Integer
-        Public Property PodcastMediaLink As String
-        Public Property PodcastSize As Integer
-        Public Property TagList As String
-        Public Property Copy As String
-
-
-        '
-        '====================================================================================================
-        Public Overloads Shared Function add(cp As CPBaseClass) As BlogCopyModel
-            Return add(Of BlogCopyModel)(cp)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function create(cp As CPBaseClass, recordId As Integer) As BlogCopyModel
-            Return create(Of BlogCopyModel)(cp, recordId)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function create(cp As CPBaseClass, recordGuid As String) As BlogCopyModel
-            Return create(Of BlogCopyModel)(cp, recordGuid)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function createByName(cp As CPBaseClass, recordName As String) As BlogCopyModel
-            Return createByName(Of BlogCopyModel)(cp, recordName)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Sub save(cp As CPBaseClass)
-            MyBase.save(Of BlogCopyModel)(cp)
-        End Sub
-        '
-        '====================================================================================================
-        Public Overloads Shared Sub delete(cp As CPBaseClass, recordId As Integer)
-            delete(Of BlogCopyModel)(cp, recordId)
-        End Sub
-        '
-        '====================================================================================================
-        Public Overloads Shared Sub delete(cp As CPBaseClass, ccGuid As String)
-            delete(Of BlogCopyModel)(cp, ccGuid)
-        End Sub
-        '
-        '====================================================================================================
-        Public Overloads Shared Function createList(cp As CPBaseClass, sqlCriteria As String, Optional sqlOrderBy As String = "id") As List(Of BlogCopyModel)
-            Return createList(Of BlogCopyModel)(cp, sqlCriteria, sqlOrderBy)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getRecordName(cp As CPBaseClass, recordId As Integer) As String
-            Return baseModel.getRecordName(Of BlogCopyModel)(cp, recordId)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getRecordName(cp As CPBaseClass, ccGuid As String) As String
-            Return baseModel.getRecordName(Of BlogCopyModel)(cp, ccGuid)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getRecordId(cp As CPBaseClass, ccGuid As String) As Integer
-            Return baseModel.getRecordId(Of BlogCopyModel)(cp, ccGuid)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Shared Function getCount(cp As CPBaseClass, sqlCriteria As String) As Integer
-            Return baseModel.getCount(Of BlogCopyModel)(cp, sqlCriteria)
-        End Function
-        '
-        '====================================================================================================
-        Public Overloads Function getUploadPath(fieldName As String) As String
-            Return MyBase.getUploadPath(Of BlogCopyModel)(fieldName)
-        End Function
-        '
-        '====================================================================================================
-        '
-        Public Function Clone(cp As CPBaseClass) As BlogCopyModel
-            Dim result As BlogCopyModel = DirectCast(Me.Clone(), BlogCopyModel)
-            result.id = cp.Content.AddRecord(contentName)
-            result.ccguid = cp.Utils.CreateGuid()
-            result.save(cp)
-            Return result
-        End Function
-        '
-        '====================================================================================================
-        '
-        Public Function Clone() As Object Implements ICloneable.Clone
-            Return Me.MemberwiseClone()
-        End Function
-        '
-        '====================================================================================================
-        ''' <summary>
-        ''' Save a list of this model to the database, guid required, using the guid as a key for update/import, and ignoring the id.
-        ''' </summary>
-        ''' <param name="cp"></param>
-        ''' <param name="modelList">A dictionary with guid as key, and this model as object</param>
-        Public Shared Sub migrationImport(cp As CPBaseClass, modelList As Dictionary(Of String, BlogCopyModel))
-            Dim ContentControlID As Integer = cp.Content.GetID(contentName)
-            For Each kvp In modelList
-                If (Not String.IsNullOrEmpty(kvp.Value.ccguid)) Then
-                    kvp.Value.id = 0
-                    Dim dbData As BlogCopyModel = create(cp, kvp.Value.ccguid)
-                    If (dbData IsNot Nothing) Then
-                        kvp.Value.id = dbData.id
-                    Else
-                        kvp.Value.DateAdded = Now
-                        kvp.Value.CreatedBy = 0
-                    End If
-                    kvp.Value.ContentControlID = ContentControlID
-                    kvp.Value.ModifiedDate = Now
-                    kvp.Value.ModifiedBy = 0
-                    kvp.Value.save(cp)
-                End If
-            Next
-        End Sub
+        Public Property viewings As Integer
+        Public Property podcastMediaLink As String
+        Public Property podcastSize As Integer
+        Public Property tagList As String
+        Public Property copy As String
         '
         ''' <summary>
         ''' Return a list of Blog Copy
@@ -161,7 +55,7 @@ Namespace Models
                         & " left join BlogCategories c on c.id=p.blogCategoryID)" _
                         & " where (p.blogid=" & blogId & ")" _
                         & " and((c.id is null)or(c.UserBlocking=0)or(c.UserBlocking is null))"
-                result = createList(cp, "(id in (" & Sql & "))")
+                result = createList(Of BlogCopyModel)(cp, "(id in (" & Sql & "))")
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)
             End Try
@@ -184,14 +78,14 @@ Namespace Models
                             & " AND (BlogID=" & blogId & ")" _
                             & " ORDER BY year(dateadded) desc, month(dateadded) desc "
                 Dim cs As CPCSBaseClass = cp.CSNew()
-                cp.Utils.AppendLogFile("archiveQuery=" & SQL)
+                cp.Utils.AppendLog("archiveQuery=" & SQL)
                 If (cs.OpenSQL(SQL)) Then
                     Do
                         Dim archiveDate As New ArchiveDateModel()
                         archiveDate.Month = cs.GetInteger("archiveMonth")
                         archiveDate.Year = cs.GetInteger("archiveYear")
                         result.Add(archiveDate)
-                        cp.Utils.AppendLogFile("archiveDate=" & archiveDate.ToString)
+                        cp.Utils.AppendLog("archiveDate=" & archiveDate.ToString)
                         cs.GoNext()
                     Loop While cs.OK()
                 End If

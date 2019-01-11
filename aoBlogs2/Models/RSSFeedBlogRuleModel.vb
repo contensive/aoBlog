@@ -10,7 +10,7 @@ Imports Contensive.BaseClasses
 
 Namespace Models
     Public Class RSSFeedBlogRuleModel        '<------ set set model Name and everywhere that matches this string
-        Inherits baseModel
+        Inherits DbModel
         Implements ICloneable
         '
         '====================================================================================================
@@ -67,22 +67,22 @@ Namespace Models
         '
         '====================================================================================================
         Public Overloads Shared Function getRecordName(cp As CPBaseClass, recordId As Integer) As String
-            Return baseModel.getRecordName(Of RSSFeedBlogRuleModel)(cp, recordId)
+            Return DbModel.getRecordName(Of RSSFeedBlogRuleModel)(cp, recordId)
         End Function
         '
         '====================================================================================================
         Public Overloads Shared Function getRecordName(cp As CPBaseClass, ccGuid As String) As String
-            Return baseModel.getRecordName(Of RSSFeedBlogRuleModel)(cp, ccGuid)
+            Return DbModel.getRecordName(Of RSSFeedBlogRuleModel)(cp, ccGuid)
         End Function
         '
         '====================================================================================================
         Public Overloads Shared Function getRecordId(cp As CPBaseClass, ccGuid As String) As Integer
-            Return baseModel.getRecordId(Of RSSFeedBlogRuleModel)(cp, ccGuid)
+            Return DbModel.getRecordId(Of RSSFeedBlogRuleModel)(cp, ccGuid)
         End Function
         '
         '====================================================================================================
         Public Overloads Shared Function getCount(cp As CPBaseClass, sqlCriteria As String) As Integer
-            Return baseModel.getCount(Of RSSFeedBlogRuleModel)(cp, sqlCriteria)
+            Return DbModel.getCount(Of RSSFeedBlogRuleModel)(cp, sqlCriteria)
         End Function
         '
         '====================================================================================================
@@ -96,7 +96,7 @@ Namespace Models
             Dim result As RSSFeedBlogRuleModel = DirectCast(Me.Clone(), RSSFeedBlogRuleModel)
             result.id = cp.Content.AddRecord(contentName)
             result.ccguid = cp.Utils.CreateGuid()
-            result.save(cp)
+            result.save(of BlogModel)(cp)
             Return result
         End Function
         '
@@ -127,7 +127,7 @@ Namespace Models
                     kvp.Value.ContentControlID = ContentControlID
                     kvp.Value.ModifiedDate = Now
                     kvp.Value.ModifiedBy = 0
-                    kvp.Value.save(cp)
+                    kvp.Value.save(of BlogModel)(cp)
                 End If
             Next
         End Sub

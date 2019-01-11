@@ -1,299 +1,150 @@
 ﻿
 Imports System
 Imports System.Collections.Generic
+Imports System.Linq
 Imports System.Text
+Imports Contensive.Addons.Blog.Models
 Imports Contensive.BaseClasses
 
-Namespace Contensive.Addons.aoBlogs2
-    '
-    ' Sample Vb addon
-    '
-    Public Class blogClass
+Namespace Views
+    Public Class BlogClass
         Inherits AddonBaseClass
         '
-        ' - Create a Contensive Addon record, set the dotnet class full name to yourNameSpaceName.yourClassName
-        '
         '=====================================================================================
-        ' addon api
-        '=====================================================================================
-        '
+        ''' <summary>
+        ''' Blog Addon
+        ''' </summary>
+        ''' <param name="CP"></param>
+        ''' <returns></returns>
         Public Overrides Function Execute(ByVal CP As CPBaseClass) As Object
             Dim returnHtml As String = ""
             Try
-                Dim layout As CPBlockBaseClass = CP.BlockNew()
-                Dim sidebarCell As CPBlockBaseClass = CP.BlockNew()
-                Dim legacyBlog As String
-                Dim blogName As String = CP.Doc.GetText("blogname")
-                Dim blogId As Integer = 0
-                Dim cs As CPCSBaseClass = CP.CSNew()
-                Dim cs2 As CPCSBaseClass = CP.CSNew()
-                Dim allowArticleCTA As Boolean = False
-                Dim allowArchiveList As Boolean = False
-                Dim allowEmailSubscribe As Boolean = False
-                Dim allowRSSSubscribe As Boolean = False
-                Dim allowFacebookLink As Boolean = False
-                Dim facebookLink As String = ""
-                Dim allowTwitterLink As Boolean = False
-                Dim twitterLink As String = ""
-                Dim allowGooglePlusLink As Boolean = False
-                Dim googlePlusLink As String = ""
-                Dim allowListSidebar As Boolean = False
-                Dim allowArticleSidebar As Boolean = False
-                Dim srcFormId As Integer = CP.Doc.GetInteger(RequestNameSourceFormID)
-                Dim dstFormId As Integer = CP.Doc.GetInteger(RequestNameFormID)
-                Dim isArticlePage As Boolean = False
+                Dim instanceId As String = CP.Doc.GetText("instanceId")
+                Dim blog As blogModel = blogModel.verifyBlog(CP, Controllers.InstanceIdController.getInstanceId(CP))
+                If (blog Is Nothing) Then Return "<!-- Could not find or create blog from instanceId [" & instanceid & "] -->"
+                '
+                ' -- get the post list (blog list of posts without sidebar)
+                Dim postListController As New BlogPostListClass()
+                Dim postList As String = postListController.GetContent(CP, blog)
                 Dim blogEntryId As Integer = CP.Doc.GetInteger(RequestNameBlogEntryID)
-                Dim allowSidebar As Boolean = False
-                Dim sidebarCnt As Integer = 0
-                Dim cellList As String = ""
-                Dim cellTemplate As String = ""
-                Dim copy As String = ""
-                Dim link As String
-                Dim js As String = ""
-                Dim emailSubscribeGroupId As Integer
-                Dim rssFeedId As Integer
-                Dim RSSFilename As String = ""
-                Dim followUsCaption As String = ""
-                Dim subscribed As Boolean = False
-                Dim sql As String
-                Dim imageFilename As String
-                Dim siteName As String
-                Dim blogEntryName As String
-                Dim blogEntryBrief As String
-                Dim adminSuggestions As String = ""
-                Dim blogEntryCID As Integer = 0
-                Dim MetaKeywordList As String
-                Dim blogTagList As String = ""
-                Dim blogListQs As String = ""
-                Dim blogListLink As String = ""
+                Dim isArticlePage As Boolean = (blogEntryId <> 0)
                 Dim archiveList As String = ""
-                Dim allowSearch As String = ""
-                Dim ptr As Integer
-                '
-                blogListQs = CP.Doc.RefreshQueryString()
-                blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameSourceFormID, "")
-                blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameFormID, "")
-                blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameBlogCategoryID, "")
-                blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameBlogEntryID, "")
-                blogListLink = CP.Content.GetLinkAliasByPageID(CP.Doc.PageId, blogListQs, "?" & blogListQs)
-                '
-                If blogName = "" Then
-                    blogName = "Default"
-                End If
-                If cs.Open("blogs", "name=" & CP.Db.EncodeSQLText(blogName)) Then
-                    blogId = cs.GetInteger("id")
-                    allowArticleCTA = cs.GetBoolean("allowArticleCTA")
-                    allowEmailSubscribe = cs.GetBoolean("allowEmailSubscribe")
-                    allowFacebookLink = cs.GetBoolean("allowFacebookLink")
-                    allowTwitterLink = cs.GetBoolean("allowTwitterLink")
-                    allowGooglePlusLink = cs.GetBoolean("allowGooglePlusLink")
-                    facebookLink = cs.GetText("facebookLink")
-                    twitterLink = cs.GetText("twitterLink")
-                    googlePlusLink = cs.GetText("googlePlusLink")
-                    emailSubscribeGroupId = cs.GetInteger("emailSubscribeGroupId")
-                    rssFeedId = cs.GetInteger("rssFeedId")
-                    allowRSSSubscribe = cs.GetBoolean("allowRSSSubscribe")
-                    followUsCaption = cs.GetText("followUsCaption")
-                    allowArchiveList = cs.GetBoolean("allowArchiveList")
-                    allowSearch = cs.GetBoolean("allowSearch")
-                End If
-                Call cs.Close()
-                '
-                ' execute legaacy 
-                '
-                Call CP.Doc.SetProperty("blogId", blogId.ToString())
-                legacyBlog = CP.Utils.ExecuteAddon(LegacyBlogAddon)
-                isArticlePage = (blogEntryId <> 0)
-                If allowArchiveList Then
+                If blog.allowArchiveList Then
                     '
                     ' create the article list now - if only the current month, turn if off before setting allowListSidebar
                     '
-                    archiveList = GetFormBlogArchiveDateList(CP, blogId, blogListQs)
+                    Dim blogListQs As String = CP.Doc.RefreshQueryString()
+                    blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameSourceFormID, "")
+                    blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameFormID, "")
+                    blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameBlogCategoryID, "")
+                    blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameBlogEntryID, "")
+                    Dim blogListLink As String = CP.Content.GetLinkAliasByPageID(CP.Doc.PageId, blogListQs, "?" & blogListQs)
+                    archiveList = GetFormBlogArchiveDateList(CP, blog.id, blogListQs)
                     If archiveList = "" Then
-                        allowArchiveList = False
+                        blog.allowArchiveList = False
                     End If
                 End If
-                If allowRSSSubscribe Then
-                    '
-                    ' check if RSS exists
-                    '
-                    allowRSSSubscribe = False
-                    If (rssFeedId <> 0) Then
-                        RSSFilename = ""
-                        If cs.Open("rss feeds", "id=" & rssFeedId) Then
-                            RSSFilename = cs.GetText("RSSFilename ")
-                        End If
-                        Call cs.Close()
-                        If RSSFilename <> "" Then
-                            allowRSSSubscribe = True
-                        End If
-                    End If
-                End If
-                allowListSidebar = allowEmailSubscribe Or allowFacebookLink Or allowGooglePlusLink Or allowGooglePlusLink Or allowRSSSubscribe Or allowTwitterLink Or allowArchiveList Or allowSearch
-                allowArticleSidebar = allowListSidebar Or allowArticleCTA
-                allowSidebar = Not (dstFormId = FormBlogEntryEditor) And ((isArticlePage And allowArticleSidebar) Or (Not isArticlePage And allowListSidebar))
+                Dim rssFeed = DbModel.create(Of RSSFeedModel)(CP, blog.RSSFeedID)
+                Dim allowListSidebar As Boolean = blog.allowEmailSubscribe Or blog.allowFacebookLink Or blog.allowGooglePlusLink Or blog.allowGooglePlusLink Or blog.allowRSSSubscribe Or blog.allowTwitterLink Or blog.allowArchiveList Or blog.allowSearch
+                Dim allowArticleSidebar As Boolean = allowListSidebar Or blog.allowArticleCTA
+                Dim dstFormId As Integer = CP.Doc.GetInteger(RequestNameFormID)
+                Dim allowSidebar As Boolean = Not (dstFormId = FormBlogEntryEditor) And ((isArticlePage And allowArticleSidebar) Or (Not isArticlePage And allowListSidebar))
                 '
-                cellList = ""
+                Dim cellList As String = ""
+                Dim layout As CPBlockBaseClass = CP.BlockNew()
                 layout.OpenLayout(BlogListLayout)
+                Dim sidebarCell As CPBlockBaseClass = CP.BlockNew()
                 sidebarCell.Load(layout.GetOuter(".blogSidebarCellWrap"))
-                cellTemplate = sidebarCell.GetHtml()
+                Dim cellTemplate As String = sidebarCell.GetHtml()
+                Dim adminSuggestions As String = ""
                 '
                 If isArticlePage Then
                     '
-                    ' article page
-                    '
-                    imageFilename = ""
-                    sql = "select filename from blogImages i inner join blogImageRules r on r.blogImageId=i.id where r.blogentryId=" & blogEntryId & " order by r.sortOrder"
-                    If cs.OpenSQL(sql) Then
-                        imageFilename = cs.GetText("filename")
-                    End If
-                    Call cs.Close()
-                    '
-                    blogEntryName = ""
-                    blogEntryBrief = ""
-                    If cs.Open("blog entries", "id=" & blogEntryId) Then
-                        blogEntryName = cs.GetText("name")
-                        blogTagList = cs.GetText("tagList")
-                        blogEntryBrief = cs.GetText("rssDescription")
-                        If blogEntryBrief = "" Then
-                            blogEntryBrief = CP.Utils.DecodeHTML(cs.GetText("copy"))
-                            If blogEntryBrief.Length > 300 Then
-                                ptr = blogEntryBrief.IndexOf(" ", 290)
-                                If ptr < 0 Then
-                                    ptr = 300
-                                End If
-                                blogEntryBrief = blogEntryBrief.Substring(1, ptr - 1) & "..."
-                            End If
+                    ' -- article page
+                    Dim blogImageList As List(Of BlogImageModel) = BlogImageModel.createListFromBlogEntry(CP, blogEntryId)
+                    Dim blogEntry = DbModel.create(Of BlogEntryModel)(CP, blogEntryId)
+                    Dim blogEntryBrief As String = blogEntry.RSSDescription
+                    If blogEntryBrief = "" Then
+                        blogEntryBrief = CP.Utils.DecodeHTML(blogEntry.Copy)
+                        If blogEntryBrief.Length > 300 Then
+                            Dim ptr As Integer = blogEntryBrief.IndexOf(" ", 290)
+                            If ptr < 0 Then ptr = 300
+                            blogEntryBrief = blogEntryBrief.Substring(1, ptr - 1) & "..."
                         End If
                     End If
-                    Call cs.Close()
                     '
-                    ' Set Open Graph
-                    '
-                    If blogEntryName <> "" Then
-                        siteName = CP.Site.GetProperty("facebook site_name")
+                    ' -- Set Open Graph
+                    If blogEntry.name <> "" Then
+                        Dim siteName As String = CP.Site.GetProperty("facebook site_name")
                         If siteName = "" Then
                             Call CP.Site.LogWarning("Facebook site name is not set", "", "Facebook site name missing", "")
                             siteName = CP.Site.Name
                         End If
-                        If imageFilename <> "" Then
-                            Call CP.Doc.SetProperty("Open Graph Image", "http://" & CP.Site.Domain & CP.Site.FilePath & imageFilename)
+                        If (blogImageList.Count > 0) Then
+                            Call CP.Doc.SetProperty("Open Graph Image", "http://" & CP.Site.Domain & CP.Site.FilePath & blogImageList.First().Filename)
                         Else
                             adminSuggestions &= CP.Html.li("This blog entry has no image. Adding an image will improve your social media appeal.")
                         End If
                         Call CP.Doc.SetProperty("Open Graph Site Name", CP.Utils.EncodeHTML(siteName))
                         Call CP.Doc.SetProperty("Open Graph Content Type", "website")
                         Call CP.Doc.SetProperty("Open Graph URL", CP.Content.GetPageLink(CP.Doc.PageId, "BlogEntryID=" & blogEntryId & "&FormID=300"))
-                        Call CP.Doc.SetProperty("Open Graph Title", blogEntryName)
+                        Call CP.Doc.SetProperty("Open Graph Title", blogEntry.name)
                         Call CP.Doc.SetProperty("Open Graph Description", blogEntryBrief)
                     End If
                     '
-                    ' set article meta data
-                    '
-                    Dim metaTitle As String = ""
-                    Dim metaDescription = ""
-
-                    blogEntryCID = CP.Content.GetID("blog entries")
-                    If cs.Open("meta content", "(contentid=" & blogEntryCID & ")and(recordid=" & blogEntryId & ")") Then
-                        metaTitle = cs.GetText("name")
-                        If metaTitle = "" Then
-                            metaTitle = blogEntryName
-                        End If
-                        Call CP.Doc.AddTitle(metaTitle)
-                        '
-                        metaDescription = cs.GetText("MetaDescription")
-                        If metaDescription = "" Then
-                            metaDescription = blogEntryBrief
-                        End If
-                        Call CP.Doc.AddMetaDescription(metaDescription)
-                        '
-                        Call CP.Doc.AddHeadTag(cs.GetText("otherHeadTags"))
-                        '
-                        MetaKeywordList = cs.GetText("MetaKeywordList") & "," & blogTagList
-                        MetaKeywordList = Replace(MetaKeywordList, vbCrLf, ",")
-                        MetaKeywordList = Replace(MetaKeywordList, vbLf, ",")
-                        MetaKeywordList = Replace(MetaKeywordList, vbCr, ",")
-                        MetaKeywordList = Replace(MetaKeywordList, ",,", ",")
-                        Call CP.Doc.AddMetaKeywordList(MetaKeywordList)
-                    End If
-                    Call cs.Close()
-                Else
-                    '
-                    ' main blog will be handled by the content page
-                    '
+                    ' -- set article meta data
+                    Call CP.Doc.AddTitle(blogEntry.metaTitle)
+                    Call CP.Doc.AddMetaDescription(blogEntry.metaDescription)
+                    Call CP.Doc.AddMetaKeywordList((blogEntry.metaDescription & "," & blogEntry.TagList).Replace(vbCrLf, ",").Replace(vbCr, ",").Replace(vbLf, ",").Replace(",,", ","))
                 End If
                 '
-                ' social media likes
-                '
+                ' -- social media likes
                 Call sidebarCell.SetOuter(".blogSidebarCellHeadline", "")
                 Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
                 Call sidebarCell.SetInner(".blogSidebarCellInputCaption", CP.Utils.ExecuteAddon(facebookLikeAddonGuid))
                 Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
                 Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
-                copy = sidebarCell.GetHtml()
+                Dim copy As String = sidebarCell.GetHtml()
                 If isArticlePage Then
-                    legacyBlog = Replace(legacyBlog, "<div class=""aoBlogEntryCopy"">", copy & "<div class=""aoBlogEntryCopy"">")
+                    postList = Replace(postList, "<div class=""aoBlogEntryCopy"">", copy & "<div class=""aoBlogEntryCopy"">")
                 End If
+                Dim sidebarCnt As Integer = 0
                 '
                 ' Sidebar
                 '
                 If allowSidebar Then
                     '
-                    If allowArticleCTA And isArticlePage Then
+                    If blog.allowArticleCTA And isArticlePage Then
                         '
                         ' CTA cells
                         '
-                        If cs.Open("blog entry cta rules", "blogEntryid=" & blogEntryId) Then
-                            Do While cs.OK()
-                                If cs2.Open(cnCTA, "id=" & cs.GetInteger("CallToActionId")) Then
-                                    sidebarCell.Load(cellTemplate)
-                                    '
-                                    copy = cs2.GetText("headline")
-                                    If copy = "" Then
-                                        Call sidebarCell.SetOuter(".blogSidebarCellHeadline", "")
-                                    Else
-                                        Call sidebarCell.SetInner(".blogSidebarCellHeadline", copy)
-                                    End If
-                                    '
-                                    copy = cs2.GetText("brief")
-                                    If copy = "" Then
-                                        Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
-                                    Else
-                                        Call sidebarCell.SetInner(".blogSidebarCellCopy", copy)
-                                    End If
-                                    '
-                                    Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
-                                    Call sidebarCell.SetOuter(".blogSidebarCellInputCaption", "")
-                                    '
-                                    copy = cs2.GetText("name")
-                                    link = cs2.GetText("link")
-                                    If (copy = "") Or (link = "") Then
-                                        Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
-                                    Else
-                                        Call sidebarCell.SetInner(".blogSidebarCellButton", "<a target=""_blank"" href=""" & link & """>" & copy & "</a>")
-                                    End If
-
-                                    'Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By Email")
-                                    'Call sidebarCell.SetInner(".blogSidebarCellCopy", "")
-                                    'Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "Email*")
-                                    'Call sidebarCell.SetInner(".blogSidebarCellButton a", "Subscribe")
-                                    cellList &= vbCrLf & vbTab & sidebarCell.GetHtml()
-                                    sidebarCnt += 1
+                        Dim blogEntryCtaRuleList = DbModel.createList(Of BlogEntryCTARuleModel)(CP, "blogEntryid=" & blogEntryId)
+                        For Each rule In blogEntryCtaRuleList
+                            Dim cta = DbModel.create(Of CallsToActionModel)(CP, 1)
+                            If (cta IsNot Nothing) Then
+                                sidebarCell.Load(cellTemplate)
+                                Call sidebarCell.SetInner(".blogSidebarCellHeadline", cta.headline)
+                                Call sidebarCell.SetInner(".blogSidebarCellCopy", cta.brief)
+                                Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
+                                Call sidebarCell.SetOuter(".blogSidebarCellInputCaption", "")
+                                If (cta.name = "") Or (cta.link = "") Then
+                                    Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
+                                Else
+                                    Call sidebarCell.SetInner(".blogSidebarCellButton", "<a target=""_blank"" href=""" & cta.link & """>" & cta.name & "</a>")
                                 End If
-                                Call cs2.Close()
-                                Call cs.GoNext()
-                            Loop
-                        End If
-                        Call cs.Close()
+                                cellList &= vbCrLf & vbTab & sidebarCell.GetHtml()
+                                sidebarCnt += 1
+                            End If
+                        Next
                     End If
                     '
-                    If allowEmailSubscribe Then
+                    If blog.allowEmailSubscribe Then
                         '
                         ' Subscribe by email
                         '
-                        subscribed = CP.Visit.GetBoolean("EmailSubscribed-Blog" & blogId & "-user" & CP.User.Id)
+                        Dim subscribed As Boolean = CP.Visit.GetBoolean("EmailSubscribed-Blog" & blog.id & "-user" & CP.User.Id)
                         If Not subscribed Then
-                            subscribed = CP.User.IsInGroup(emailSubscribeGroupId)
+                            subscribed = CP.User.IsInGroup(blog.emailSubscribeGroupId)
                         End If
                         sidebarCell.Load(cellTemplate)
                         Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By Email")
@@ -313,9 +164,9 @@ Namespace Contensive.Addons.aoBlogs2
                         sidebarCnt += 1
                     End If
                     '
-                    If allowRSSSubscribe Then
+                    If blog.allowRSSSubscribe Then
                         '
-                        If RSSFilename = "" Then
+                        If ((rssFeed Is Nothing) Or (rssFeed.RSSFilename = "")) Then
                             adminSuggestions &= CP.Html.li("This blog includes an RSS Feed, but no feed has been created. It his persists, please contact the site developer. Disable RSS feeds for this blog to hide this message.")
                         Else
                             '
@@ -323,56 +174,45 @@ Namespace Contensive.Addons.aoBlogs2
                             Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By RSS")
                             Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
                             'Call sidebarCell.SetInner(".blogSidebarCellCopy", "You are subscribed to this Feed.")
-                            Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""http://" & CP.Site.DomainPrimary & "/rss/" & RSSFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & blogName & " Feed" & "</a>")
+                            Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""http://" & CP.Site.DomainPrimary & "/rss/" & rssFeed.RSSFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & blog.name & " Feed" & "</a>")
                             Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
                             Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
                             cellList &= vbCrLf & vbTab & "<div id=""blogSidebarRSSCell"">" & sidebarCell.GetHtml() & "</div>"
                             sidebarCnt += 1
                         End If
-                        'sidebarCell.Load(cellTemplate)
-                        'Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By RSS")
-                        'Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
-                        ''Call sidebarCell.SetInner(".blogSidebarCellCopy", "You are subscribed to this Feed.")
-                        'Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""http://" & CP.Site.DomainPrimary & "/rss/" & RSSFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & blogName & " Feed" & "</a>")
-                        'Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
-                        'Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
-                        'cellList &= vbCrLf & vbTab & "<div id=""blogSidebarRSSCell"">" & sidebarCell.GetHtml() & "</div>"
-                        'sidebarCnt += 1
                     End If
                     '
-                    If allowFacebookLink Or allowGooglePlusLink Or allowTwitterLink Then
+                    If blog.allowFacebookLink Or blog.allowGooglePlusLink Or blog.allowTwitterLink Then
                         '
                         ' Social Links
-                        '
-                        '
                         copy = ""
-                        If allowFacebookLink And (facebookLink <> "") Then
-                            copy &= "<a href=""" & facebookLink & """ target=""_blank""><img class=""blogSidebarSocialLogo"" src=""/blogs/facebook.jpg"" width=""32"" height=""32""></a>"
-                        ElseIf allowFacebookLink Then
+                        If blog.allowFacebookLink And (blog.facebookLink <> "") Then
+                            copy &= "<a href=""" & blog.facebookLink & """ target=""_blank""><img class=""blogSidebarSocialLogo"" src=""/blogs/facebook.jpg"" width=""32"" height=""32""></a>"
+                        ElseIf blog.allowFacebookLink Then
                             If CP.User.IsAdmin Then
                                 copy &= "<div class=""blogAdminWarning""><h2>Administrator</h2><p>Add a facebook link for this blog, or disable the Allow Facebook Sidebar checkbox.</p></div>"
                             End If
                         End If
-                        If allowTwitterLink And (twitterLink <> "") Then
-                            copy &= "<a href=""" & twitterLink & """ target=""_blank""><img class=""blogSidebarSocialLogo"" src=""/blogs/twitter.jpg"" width=""32"" height=""32""></a>"
-                        ElseIf allowTwitterLink Then
+                        If blog.allowTwitterLink And (blog.twitterLink <> "") Then
+                            copy &= "<a href=""" & blog.twitterLink & """ target=""_blank""><img class=""blogSidebarSocialLogo"" src=""/blogs/twitter.jpg"" width=""32"" height=""32""></a>"
+                        ElseIf blog.allowTwitterLink Then
                             If CP.User.IsAdmin Then
                                 copy &= "<div class=""blogAdminWarning""><h2>Administrator</h2><p>Add a twitter link for this blog, or disable the Allow Twitter Sidebar checkbox.</p></div>"
                             End If
                         End If
-                        If allowTwitterLink And (googlePlusLink <> "") Then
-                            copy &= "<a href=""" & googlePlusLink & """ target=""_blank""><img class=""blogSidebarSocialLogo"" src=""/blogs/GooglePlus.jpg"" width=""32"" height=""32""></a>"
-                        ElseIf allowGooglePlusLink Then
+                        If blog.allowTwitterLink And (blog.googlePlusLink <> "") Then
+                            copy &= "<a href=""" & blog.googlePlusLink & """ target=""_blank""><img class=""blogSidebarSocialLogo"" src=""/blogs/GooglePlus.jpg"" width=""32"" height=""32""></a>"
+                        ElseIf blog.allowGooglePlusLink Then
                             If CP.User.IsAdmin Then
                                 copy &= "<div class=""blogAdminWarning""><h2>Administrator</h2><p>Add a GooglePlus link for this blog, or disable the Allow Google Plus Sidebar checkbox.</p></div>"
                             End If
                         End If
                         If copy <> "" Then
-                            If followUsCaption = "" Then
-                                followUsCaption = "Follow Us"
+                            If blog.followUsCaption = "" Then
+                                blog.followUsCaption = "Follow Us"
                             End If
                             sidebarCell.Load(cellTemplate)
-                            Call sidebarCell.SetInner(".blogSidebarCellHeadline", followUsCaption)
+                            Call sidebarCell.SetInner(".blogSidebarCellHeadline", blog.followUsCaption)
                             Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
                             Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
                             Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
@@ -382,7 +222,7 @@ Namespace Contensive.Addons.aoBlogs2
                         End If
                     End If
                     '
-                    If allowSearch Then
+                    If blog.allowSearch Then
                         '
                         ' Search 
                         '
@@ -402,7 +242,7 @@ Namespace Contensive.Addons.aoBlogs2
                         sidebarCnt += 1
                     End If
                     '
-                    If allowArchiveList Then
+                    If blog.allowArchiveList Then
                         '
                         ' Archive List
                         '
@@ -417,12 +257,13 @@ Namespace Contensive.Addons.aoBlogs2
                     End If
                 End If
                 layout.SetInner(".blogSidebar", cellList)
-                layout.Append(CP.Html.Hidden("blogId", blogId.ToString(), "", "blogId"))
+                layout.Append(CP.Html.Hidden("blogId", blog.id, "", "blogId"))
                 If sidebarCnt = 0 Then
                     layout.SetInner(".blogWrapper", layout.GetInner(".blogColumn1"))
                 End If
                 returnHtml = layout.GetHtml()
-                returnHtml = returnHtml.Replace("{{legacyBlog}}", legacyBlog)
+                returnHtml = returnHtml.Replace("{{legacyBlog}}", postList)
+                Dim js As String = ""
                 If js <> "" Then
                     CP.Doc.AddHeadJavascript(js)
                 End If
