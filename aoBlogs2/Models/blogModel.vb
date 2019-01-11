@@ -2,15 +2,12 @@
 Option Explicit On
 Option Strict On
 
-Imports System
-Imports System.Collections.Generic
 Imports System.Linq
-Imports System.Text
 Imports Contensive.Addons.Blog.Controllers
 Imports Contensive.BaseClasses
 
 Namespace Models
-    Public Class blogModel
+    Public Class BlogModel
         Inherits DbModel
         '
         '====================================================================================================
@@ -58,11 +55,11 @@ Namespace Models
         ''' </summary>
         ''' <param name="cp"></param>
         ''' <returns></returns>
-        Public Shared Function verifyBlog(cp As CPBaseClass, instanceId As String) As blogModel
+        Public Shared Function verifyBlog(cp As CPBaseClass, instanceId As String) As BlogModel
             Try
                 If (Not cp.User.IsAdmin) Then Return Nothing
 
-                Dim Blog = DbModel.add(Of blogModel)(cp)
+                Dim Blog = DbModel.add(Of BlogModel)(cp)
                 Blog.name = "Default Blog"
                 Blog.Caption = "The New Blog"
                 Blog.OwnerMemberID = cp.User.Id
@@ -76,10 +73,10 @@ Namespace Models
                 Blog.ThumbnailImageWidth = 200
                 Blog.ImageWidthMax = 400
                 Blog.ccguid = instanceId
-                Blog.save(Of blogModel)(cp)
+                Blog.save(Of BlogModel)(cp)
                 Dim rssFeed = RSSFeedModel.verifyFeed(cp, Blog)
                 Blog.RSSFeedID = If(rssFeed IsNot Nothing, rssFeed.id, 0)
-                Blog.save(Of blogModel)(cp)
+                Blog.save(Of BlogModel)(cp)
 
                 Dim blogEntry As BlogEntryModel = DbModel.add(Of BlogEntryModel)(cp)
                 If (blogEntry IsNot Nothing) Then
@@ -88,7 +85,7 @@ Namespace Models
                     blogEntry.RSSTitle = ""
                     blogEntry.Copy = cp.WwwFiles.Read("blogs\DefaultPostCopy.txt")
 
-                    Dim qs As String = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
+                    Dim qs As String = cp.Utils.ModifyQueryString(cp.Doc.RefreshQueryString, RequestNameBlogEntryID, CStr(blogEntry.id))
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
                     Call cp.Site.addLinkAlias(Blog.Caption, cp.Doc.PageId, qs)
                     Dim LinkAlias As List(Of LinkAliasesModel) = DbModel.createList(Of LinkAliasesModel)(cp, "(pageid=" & cp.Doc.PageId & ")and(QueryStringSuffix=" & cp.Db.EncodeSQLText(qs) & ")")
@@ -106,7 +103,7 @@ Namespace Models
                     RSSFeedBlogRules.RSSFeedID = rssFeed.id
                     RSSFeedBlogRules.BlogPostID = blogEntry.id
                     RSSFeedBlogRules.name = "RSS Feed [" & rssFeed.name & "], Blog Post [" & blogEntry.name & "]"
-                    RSSFeedBlogRules.save(Of blogModel)(cp)
+                    RSSFeedBlogRules.save(Of BlogModel)(cp)
                 End If
                 Return Blog
             Catch ex As Exception

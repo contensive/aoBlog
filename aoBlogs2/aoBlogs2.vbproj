@@ -92,7 +92,7 @@
     <Compile Include="Models\MemberRuleModel.vb" />
     <Compile Include="Models\PeopleModel.vb" />
     <Compile Include="Models\BlogCategoryGroupRulesModel.vb" />
-    <Compile Include="Models\blogModel.vb" />
+    <Compile Include="Models\BlogModel.vb" />
     <Compile Include="Models\BlogEntryModel.vb" />
     <Compile Include="Models\LinkAliasesModel.vb" />
     <Compile Include="Models\RSSFeedBlogRuleModel.vb" />

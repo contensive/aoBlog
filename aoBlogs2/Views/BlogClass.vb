@@ -20,7 +20,7 @@ Namespace Views
             Dim returnHtml As String = ""
             Try
                 Dim instanceId As String = CP.Doc.GetText("instanceId")
-                Dim blog As blogModel = blogModel.verifyBlog(CP, Controllers.InstanceIdController.getInstanceId(CP))
+                Dim blog As BlogModel = BlogModel.verifyBlog(CP, Controllers.InstanceIdController.getInstanceId(CP))
                 If (blog Is Nothing) Then Return "<!-- Could not find or create blog from instanceId [" & instanceid & "] -->"
                 '
                 ' -- get the post list (blog list of posts without sidebar)

@@ -41,7 +41,7 @@ Namespace Views
             Dim returnHtml As String = ""
             Try
                 Dim instanceId As String = CP.Doc.GetText("instanceId")
-                Dim blog = DbModel.create(Of blogModel)(CP, instanceId)
+                Dim blog = DbModel.create(Of BlogModel)(CP, instanceId)
                 returnHtml = GetContent(CP, blog)
             Catch ex As Exception
                 CP.Site.ErrorReport(ex)
@@ -56,7 +56,7 @@ Namespace Views
         ''' <param name="cp"></param>
         ''' <param name="blog"></param>
         ''' <returns></returns>
-        Public Function GetContent(cp As CPBaseClass, blog As blogModel) As String
+        Public Function GetContent(cp As CPBaseClass, blog As BlogModel) As String
             Dim result As String = ""
             Try
                 Dim blogListQs As String
@@ -162,9 +162,9 @@ Namespace Views
                         PostsToDisplay = 5
                     End If
 
-                    Dim legacyblog As blogModel = DbModel.create(Of blogModel)(cp, blogId)
+                    Dim legacyblog As BlogModel = DbModel.create(Of BlogModel)(cp, blogId)
                     If (legacyblog IsNot Nothing) Then
-                        legacyblog = DbModel.add(Of blogModel)(cp)
+                        legacyblog = DbModel.add(Of BlogModel)(cp)
                         legacyblog.ignoreLegacyInstanceOptions = True
                         legacyblog.AllowAnonymous = AllowAnonymous
                         legacyblog.autoApproveComments = autoApproveComments
@@ -173,7 +173,7 @@ Namespace Views
                         legacyblog.OverviewLength = OverviewLength
                         legacyblog.ThumbnailImageWidth = ThumbnailImageWidth
                         legacyblog.ImageWidthMax = ImageWidthMax
-                        legacyblog.save(Of blogModel)(cp)
+                        legacyblog.save(Of BlogModel)(cp)
 
                     End If
                 End If
@@ -213,7 +213,7 @@ Namespace Views
                         End If
                         RSSFeed.name = RSSFeedName
                         RSSFeed.description = "This is your First RssFeed"
-                        RSSFeed.save(Of blogModel)(cp)
+                        RSSFeed.save(Of BlogModel)(cp)
                     End If
                     '
                     ' Process Input
@@ -1524,7 +1524,7 @@ Namespace Views
                             BlogViewingLog.BlogEntryID = EntryID
                             BlogViewingLog.MemberID = cp.User.Id
                             BlogViewingLog.VisitID = cp.Visit.Id
-                            BlogViewingLog.save(Of blogModel)(cp)
+                            BlogViewingLog.save(Of BlogModel)(cp)
                         End If
                     End If
                 End If
@@ -1727,7 +1727,7 @@ Namespace Views
                 Dim formKey As String
                 Dim optionStr As String
                 Dim captchaResponse As String
-                Dim blog As blogModel = DbModel.create(Of blogModel)(cp, blogId)
+                Dim blog As BlogModel = DbModel.create(Of BlogModel)(cp, blogId)
                 'Dim allowCaptcha As Boolean
                 '
                 ProcessFormBlogPostDetails = SourceFormID
@@ -2467,7 +2467,7 @@ Namespace Views
                             If (RSSFeedBlogRule IsNot Nothing) Then
                                 RSSFeedBlogRule.RSSFeedID = RSSFeedId
                                 RSSFeedBlogRule.BlogPostID = BlogPostID
-                                RSSFeedBlogRule.save(Of blogModel)(cp)
+                                RSSFeedBlogRule.save(Of BlogModel)(cp)
                             End If
                             'CSRule = Csv.InsertCSRecord(cnRSSFeedBlogRules, 0)
                             'If Csv.IsCSOK(CSRule) Then

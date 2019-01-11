@@ -33,7 +33,7 @@ Namespace Models
         '       run on every post
         '========================================================================
         '
-        Friend Shared Function verifyFeed(cp As CPBaseClass, blog As blogModel) As RSSFeedModel
+        Friend Shared Function verifyFeed(cp As CPBaseClass, blog As BlogModel) As RSSFeedModel
             Try
                 Dim rssFeed As RSSFeedModel
                 If (blog.RSSFeedID > 0) Then
