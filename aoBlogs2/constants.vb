@@ -4,24 +4,18 @@ Option Strict On
 
 Public Module constants
     '
-    Public Const AnonymousMemberName As String = "Anonymous"
-    Public Const reCaptchaDisplayGuid As String = "{E9E51C6E-9152-4284-A44F-D3ABC423AB90}"
-    Public Const reCaptchaProcessGuid As String = "{030AC5B0-F796-4EA4-B94C-986B1C29C16C}"
-    Public Const reCaptchaWorkingGuid As String = "{500A1F57-86A2-4D47-B747-4EF4D30A83E2}"
+    Public Const AnonymousMemberName = "Anonymous"
+    Public Const reCaptchaDisplayGuid = "{E9E51C6E-9152-4284-A44F-D3ABC423AB90}"
+    Public Const reCaptchaProcessGuid = "{030AC5B0-F796-4EA4-B94C-986B1C29C16C}"
     '
-    Public Const BackToRecentPostsMsg As String = "« Back to recent posts"
+    Public Const BackToRecentPostsMsg = "« Back to recent posts"
     '
-    Public Const RSSProcessAddonGuid As String = "{2119C2DA-1D57-4C32-B13C-28CD2D85EDF5}"
+    Public Const RSSProcessAddonGuid = "{2119C2DA-1D57-4C32-B13C-28CD2D85EDF5}"
     '
     ' copy that will be used as the automatic first post if the virtual file blogs/DefaultPostCopy.txt is not found
     '
-    Public Const DefaultPostCopy As String = "This post has been created automatically for you by the system. Verify the blog is set up properly by viewing the blog settings available after turning on Advanced Edit in the toolbar."
+    Public Const DefaultPostCopy = "This post has been created automatically for you by the system. Verify the blog is set up properly by viewing the blog settings available after turning on Advanced Edit in the toolbar."
     '
-    Public Const imageDisplayTypeNone As Integer = 1
-    Public Const imageDisplayTypeList As Integer = 2
-    Public Const imageDisplayTypeFader As Integer = 3
-    '
-    Public Const cr As String = vbCrLf
     Public Const cnPeople As String = "people"
     Public Const cnBlogs As String = "Blogs"
     Public Const cnBlogCopy As String = "Blog Copy"
@@ -34,12 +28,13 @@ Public Module constants
     Public Const cnRSSFeedBlogRules As String = "RSS Feed Blog Rules"
     Public Const cnBlogImages As String = "Blog Images"
     Public Const cnBlogImageRules As String = "Blog Image Rules"
+    Public Const cnCTA As String = "Calls to Action"
+
     '
     Public Const TableNameBlogCategoryRules As String = "ccBlogCategoryGroupRules"
     '
     Public Const SNBlogEntryName As String = "Blog Entry Serial Number"
     Public Const SNBlogCommentName As String = "Blog Comment Serial Number"
-
     '
     Public Const RequestNameQueryTag As String = "qTag"
     Public Const RequestNameFormID As String = "FormID"
@@ -92,6 +87,18 @@ Public Module constants
     Public Const FormBlogPostDetails As Integer = 300
     Public Const FormBlogArchiveDateList As Integer = 400
     Public Const FormBlogArchivedBlogs As Integer = 600
+    '
+    Public Const BlogListLayout As String = "{58788483-D050-4464-9261-627278A57B35}"
+    Public Const LegacyBlogAddon As String = "{656E95EA-2799-45CD-9712-D4CEDF0E2D02}"
+    Public Const facebookLikeAddonGuid As String = "{17919A35-06B3-4F32-9607-4DB3228A15DF}"
+    '
+    Public Const reCaptchaWorkingGuid As String = "{500A1F57-86A2-4D47-B747-4EF4D30A83E2}"
+    '
+    Public Const imageDisplayTypeNone As Integer = 1
+    Public Const imageDisplayTypeList As Integer = 2
+    Public Const imageDisplayTypeFader As Integer = 3
+    '
+    Public Const cr As String = vbCrLf
     '
     ' -- errors for resultErrList
     Public Enum resultErrorEnum

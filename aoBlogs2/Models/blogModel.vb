@@ -39,7 +39,6 @@ Namespace Models
         Public Property followUsCaption As String
         Public Property googlePlusLink As String
         Public Property HideContributer As Boolean
-        Public Property ignoreLegacyInstanceOptions As Boolean
         Public Property ImageWidthMax As Integer
         Public Property OverviewLength As Integer
         Public Property OwnerMemberID As Integer
@@ -57,14 +56,15 @@ Namespace Models
         ''' <returns></returns>
         Public Shared Function verifyBlog(cp As CPBaseClass, instanceId As String) As BlogModel
             Try
+                Dim Blog = DbModel.create(Of BlogModel)(cp, instanceId)
+                If (Blog IsNot Nothing) Then Return Blog
                 If (Not cp.User.IsAdmin) Then Return Nothing
 
-                Dim Blog = DbModel.add(Of BlogModel)(cp)
+                Blog = DbModel.add(Of BlogModel)(cp)
                 Blog.name = "Default Blog"
                 Blog.Caption = "The New Blog"
                 Blog.OwnerMemberID = cp.User.Id
                 Blog.AuthoringGroupID = cp.Group.GetId("Site Managers")
-                Blog.ignoreLegacyInstanceOptions = True
                 Blog.AllowAnonymous = True
                 Blog.autoApproveComments = False
                 Blog.AllowCategories = True

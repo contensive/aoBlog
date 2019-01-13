@@ -21,14 +21,15 @@ Namespace Views
             Try
                 Dim instanceId As String = CP.Doc.GetText("instanceId")
                 Dim blog As BlogModel = BlogModel.verifyBlog(CP, Controllers.InstanceIdController.getInstanceId(CP))
-                If (blog Is Nothing) Then Return "<!-- Could not find or create blog from instanceId [" & instanceid & "] -->"
+                If (blog Is Nothing) Then Return "<!-- Could not find or create blog from instanceId [" & instanceId & "] -->"
+                '
+                Dim blogEntry As BlogEntryModel = DbModel.create(Of BlogEntryModel)(CP, CP.Doc.GetInteger(RequestNameBlogEntryID))
                 '
                 ' -- get the post list (blog list of posts without sidebar)
-                Dim postListController As New BlogPostListClass()
-                Dim postList As String = postListController.GetContent(CP, blog)
-                Dim blogEntryId As Integer = CP.Doc.GetInteger(RequestNameBlogEntryID)
-                Dim isArticlePage As Boolean = (blogEntryId <> 0)
-                Dim archiveList As String = ""
+                Dim BlogBodyController As New BlogBodyClass()
+                Dim blogBody As String = BlogBodyController.getBlogBody(CP, blog)
+                Dim isBlogBodyDetailForm As Boolean = (blogEntry IsNot Nothing) AndAlso (blogEntry.id <> 0)
+                Dim sideBar_ArchiveList As String = ""
                 If blog.allowArchiveList Then
                     '
                     ' create the article list now - if only the current month, turn if off before setting allowListSidebar
@@ -39,8 +40,8 @@ Namespace Views
                     blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameBlogCategoryID, "")
                     blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameBlogEntryID, "")
                     Dim blogListLink As String = CP.Content.GetLinkAliasByPageID(CP.Doc.PageId, blogListQs, "?" & blogListQs)
-                    archiveList = GetFormBlogArchiveDateList(CP, blog.id, blogListQs)
-                    If archiveList = "" Then
+                    sideBar_ArchiveList = GetFormBlogArchiveDateList(CP, blog.id, blogListQs)
+                    If sideBar_ArchiveList = "" Then
                         blog.allowArchiveList = False
                     End If
                 End If
@@ -48,8 +49,9 @@ Namespace Views
                 Dim allowListSidebar As Boolean = blog.allowEmailSubscribe Or blog.allowFacebookLink Or blog.allowGooglePlusLink Or blog.allowGooglePlusLink Or blog.allowRSSSubscribe Or blog.allowTwitterLink Or blog.allowArchiveList Or blog.allowSearch
                 Dim allowArticleSidebar As Boolean = allowListSidebar Or blog.allowArticleCTA
                 Dim dstFormId As Integer = CP.Doc.GetInteger(RequestNameFormID)
-                Dim allowSidebar As Boolean = Not (dstFormId = FormBlogEntryEditor) And ((isArticlePage And allowArticleSidebar) Or (Not isArticlePage And allowListSidebar))
+                Dim allowSidebar As Boolean = Not (dstFormId = FormBlogEntryEditor) And ((isBlogBodyDetailForm And allowArticleSidebar) Or (Not isBlogBodyDetailForm And allowListSidebar))
                 '
+                ' todo convert sidebar to mustache
                 Dim cellList As String = ""
                 Dim layout As CPBlockBaseClass = CP.BlockNew()
                 layout.OpenLayout(BlogListLayout)
@@ -58,11 +60,10 @@ Namespace Views
                 Dim cellTemplate As String = sidebarCell.GetHtml()
                 Dim adminSuggestions As String = ""
                 '
-                If isArticlePage Then
+                If isBlogBodyDetailForm Then
                     '
                     ' -- article page
-                    Dim blogImageList As List(Of BlogImageModel) = BlogImageModel.createListFromBlogEntry(CP, blogEntryId)
-                    Dim blogEntry = DbModel.create(Of BlogEntryModel)(CP, blogEntryId)
+                    Dim blogImageList As List(Of BlogImageModel) = BlogImageModel.createListFromBlogEntry(CP, blogEntry.id)
                     Dim blogEntryBrief As String = blogEntry.RSSDescription
                     If blogEntryBrief = "" Then
                         blogEntryBrief = CP.Utils.DecodeHTML(blogEntry.Copy)
@@ -87,7 +88,7 @@ Namespace Views
                         End If
                         Call CP.Doc.SetProperty("Open Graph Site Name", CP.Utils.EncodeHTML(siteName))
                         Call CP.Doc.SetProperty("Open Graph Content Type", "website")
-                        Call CP.Doc.SetProperty("Open Graph URL", CP.Content.GetPageLink(CP.Doc.PageId, "BlogEntryID=" & blogEntryId & "&FormID=300"))
+                        Call CP.Doc.SetProperty("Open Graph URL", CP.Content.GetPageLink(CP.Doc.PageId, "BlogEntryID=" & blogEntry.id & "&FormID=300"))
                         Call CP.Doc.SetProperty("Open Graph Title", blogEntry.name)
                         Call CP.Doc.SetProperty("Open Graph Description", blogEntryBrief)
                     End If
@@ -105,8 +106,8 @@ Namespace Views
                 Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
                 Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
                 Dim copy As String = sidebarCell.GetHtml()
-                If isArticlePage Then
-                    postList = Replace(postList, "<div class=""aoBlogEntryCopy"">", copy & "<div class=""aoBlogEntryCopy"">")
+                If isBlogBodyDetailForm Then
+                    blogBody = Replace(blogBody, "<div class=""aoBlogEntryCopy"">", copy & "<div class=""aoBlogEntryCopy"">")
                 End If
                 Dim sidebarCnt As Integer = 0
                 '
@@ -114,11 +115,11 @@ Namespace Views
                 '
                 If allowSidebar Then
                     '
-                    If blog.allowArticleCTA And isArticlePage Then
+                    If blog.allowArticleCTA And isBlogBodyDetailForm Then
                         '
                         ' CTA cells
                         '
-                        Dim blogEntryCtaRuleList = DbModel.createList(Of BlogEntryCTARuleModel)(CP, "blogEntryid=" & blogEntryId)
+                        Dim blogEntryCtaRuleList = DbModel.createList(Of BlogEntryCTARuleModel)(CP, "blogEntryid=" & blogEntry.id)
                         For Each rule In blogEntryCtaRuleList
                             Dim cta = DbModel.create(Of CallsToActionModel)(CP, 1)
                             If (cta IsNot Nothing) Then
@@ -144,7 +145,7 @@ Namespace Views
                         '
                         Dim subscribed As Boolean = CP.Visit.GetBoolean("EmailSubscribed-Blog" & blog.id & "-user" & CP.User.Id)
                         If Not subscribed Then
-                            subscribed = CP.User.IsInGroup(blog.emailSubscribeGroupId)
+                            subscribed = CP.User.IsInGroup(blog.emailSubscribeGroupId.ToString())
                         End If
                         sidebarCell.Load(cellTemplate)
                         Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By Email")
@@ -166,7 +167,7 @@ Namespace Views
                     '
                     If blog.allowRSSSubscribe Then
                         '
-                        If ((rssFeed Is Nothing) Or (rssFeed.RSSFilename = "")) Then
+                        If ((rssFeed Is Nothing) OrElse (rssFeed.rssFilename = "")) Then
                             adminSuggestions &= CP.Html.li("This blog includes an RSS Feed, but no feed has been created. It his persists, please contact the site developer. Disable RSS feeds for this blog to hide this message.")
                         Else
                             '
@@ -174,7 +175,7 @@ Namespace Views
                             Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By RSS")
                             Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
                             'Call sidebarCell.SetInner(".blogSidebarCellCopy", "You are subscribed to this Feed.")
-                            Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""http://" & CP.Site.DomainPrimary & "/rss/" & rssFeed.RSSFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & blog.name & " Feed" & "</a>")
+                            Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""http://" & CP.Site.DomainPrimary & "/rss/" & rssFeed.rssFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & blog.name & " Feed" & "</a>")
                             Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
                             Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
                             cellList &= vbCrLf & vbTab & "<div id=""blogSidebarRSSCell"">" & sidebarCell.GetHtml() & "</div>"
@@ -225,7 +226,6 @@ Namespace Views
                     If blog.allowSearch Then
                         '
                         ' Search 
-                        '
                         Dim formInput As String
                         formInput = CP.Html.InputText("keywordList", CP.Doc.GetText("keywordList"))
                         formInput += CP.Html.Hidden("formid", "120")
@@ -248,7 +248,7 @@ Namespace Views
                         '
                         sidebarCell.Load(cellTemplate)
                         Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Archives")
-                        Call sidebarCell.SetInner(".blogSidebarCellCopy", archiveList)
+                        Call sidebarCell.SetInner(".blogSidebarCellCopy", sideBar_ArchiveList)
                         Call sidebarCell.SetOuter(".blogSidebarCellInputCaption", "")
                         Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
                         Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
@@ -257,12 +257,12 @@ Namespace Views
                     End If
                 End If
                 layout.SetInner(".blogSidebar", cellList)
-                layout.Append(CP.Html.Hidden("blogId", blog.id, "", "blogId"))
+                layout.Append(CP.Html.Hidden("blogId", blog.id.ToString(), "", "blogId"))
                 If sidebarCnt = 0 Then
                     layout.SetInner(".blogWrapper", layout.GetInner(".blogColumn1"))
                 End If
                 returnHtml = layout.GetHtml()
-                returnHtml = returnHtml.Replace("{{legacyBlog}}", postList)
+                returnHtml = returnHtml.Replace("{{legacyBlog}}", blogBody)
                 Dim js As String = ""
                 If js <> "" Then
                     CP.Doc.AddHeadJavascript(js)
@@ -312,7 +312,7 @@ Namespace Views
                     & " ORDER BY year(dateadded) desc, Month(DateAdded) desc"
                 If cs.OpenSQL(SQL) Then
                     qs = blogListQs
-                    qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogArchivedBlogs)
+                    qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogArchivedBlogs.ToString())
                     Do While cs.OK
                         ArchiveMonth = cs.GetInteger("ArchiveMonth")
                         ArchiveYear = cs.GetInteger("ArchiveYear")
@@ -336,93 +336,5 @@ Namespace Views
             End Try
             Return returnHtml
         End Function
-        '
-        Private Const AnonymousMemberName = "Anonymous"
-        Private Const reCaptchaDisplayGuid = "{E9E51C6E-9152-4284-A44F-D3ABC423AB90}"
-        Private Const reCaptchaProcessGuid = "{030AC5B0-F796-4EA4-B94C-986B1C29C16C}"
-        '
-        Private Const BackToRecentPostsMsg = "« Back to recent posts"
-        '
-        Private Const RSSProcessAddonGuid = "{2119C2DA-1D57-4C32-B13C-28CD2D85EDF5}"
-        '
-        ' copy that will be used as the automatic first post if the virtual file blogs/DefaultPostCopy.txt is not found
-        '
-        Private Const DefaultPostCopy = "This post has been created automatically for you by the system. Verify the blog is set up properly by viewing the blog settings available after turning on Advanced Edit in the toolbar."
-        '
-        Private Const cnPeople As String = "people"
-        Private Const cnBlogs As String = "Blogs"
-        Private Const cnBlogCopy As String = "Blog Copy"
-        Private Const cnBlogEntries As String = "Blog Entries"
-        Private Const cnBlogComments As String = "Blog Comments"
-        Private Const cnBlogTypes As String = "Blog Types"
-        Private Const cnBlogCategories As String = "Blog Categories"
-        Private Const cnBlogCategoryRules As String = "Blog Category Group Rules"
-        Private Const cnRSSFeeds As String = "RSS Feeds"
-        Private Const cnRSSFeedBlogRules As String = "RSS Feed Blog Rules"
-        Private Const cnBlogImages As String = "Blog Images"
-        Private Const cnBlogImageRules As String = "Blog Image Rules"
-        Private Const cnCTA As String = "Calls to Action"
-
-        '
-        Private Const TableNameBlogCategoryRules As String = "ccBlogCategoryGroupRules"
-        '
-        Private Const SNBlogEntryName As String = "Blog Entry Serial Number"
-        Private Const SNBlogCommentName As String = "Blog Comment Serial Number"
-        '
-        Private Const RequestNameQueryTag As String = "qTag"
-        Private Const RequestNameFormID As String = "FormID"
-        Private Const RequestNameSourceFormID As String = "SourceFormID"
-        Private Const RequestNameBlogTitle As String = "BlogTitle"
-        Private Const RequestNameBlogCopy As String = "BlogCopy"
-        Private Const RequestNameBlogTagList As String = "BlogTagList"
-        Private Const RequestNameDateAdded As String = "DateAdded"
-        Private Const RequestNameBlogCategoryID As String = "BlogCategoryID"
-        Private Const RequestNameBlogCategoryIDSet As String = "SetBlogCategoryID"
-        Private Const RequestNameBlogPodcastMediaLink As String = "PodcastMediaLink"
-        Private Const RequestNameAuthorName As String = "AuthorName"
-        Private Const RequestNameAuthorEmail As String = "AuthorEmail"
-        Private Const RequestNameCommentCopy As String = "CommentCopy"
-        Private Const RequestNameCommentTitle As String = "CommentTitle"
-        Private Const RequestNameCommentDate As String = "CommentDate"
-        Private Const RequestNameApproved As String = "Approved"
-        Private Const RequestNameBlogEntryID As String = "BlogEntryID"
-        Private Const RequestNameCommentFormKey As String = "formkey"
-        Private Const RequestNameKeywordList As String = "keywordlist"
-        Private Const RequestNameDateSearch As String = "DateSearch"
-        Private Const RequestNameArchiveMonth As String = "ArchiveMonth"
-        Private Const RequestNameArchiveYear As String = "ArchiveYear"
-        Private Const rnButtonValue As String = "buttonvalue"
-        Private Const rnButton As String = "button"
-        Private Const rnBlogUploadPrefix As String = "LibraryUpload"
-        Private Const rnBlogImageName As String = "LibraryName"
-        Private Const rnBlogImageDescription As String = "LibraryDescription"
-        Private Const rnBlogImageOrder As String = "LibraryOrder"
-        Private Const rnBlogImageDelete As String = "LibraryUploadDelete"
-        Private Const rnBlogImageID As String = "LibraryID"
-        '
-        Private Const SystemEmailBlogNotification As String = "New Blog Notification"
-        Private Const SystemEmailCommentNotification As String = "New Blog Comment Notification"
-        '
-        Private Const VersionSiteProperty As String = "BlogsVersion"
-        '
-        Private Const FormButtonDelete As String = " Delete "
-        Private Const FormButtonCreate As String = " Create "
-        Private Const FormButtonPost As String = " Post "
-        Private Const FormButtonSearch As String = " Search Blogs "
-        Private Const FormButtonPostComment As String = " Post Comment "
-        Private Const FormButtonCancel As String = "  Cancel  "
-        Private Const FormButtonApply As String = "  Apply  "
-        Private Const FormButtonApplyCommentChanges As String = "  Apply Comment Changes  "
-        '
-        Private Const FormBlogPostList As Integer = 100
-        Private Const FormBlogEntryEditor As Integer = 110
-        Private Const FormBlogSearch As Integer = 120
-        Private Const FormBlogPostDetails As Integer = 300
-        Private Const FormBlogArchiveDateList As Integer = 400
-        Private Const FormBlogArchivedBlogs As Integer = 600
-        '
-        Private Const BlogListLayout As String = "{58788483-D050-4464-9261-627278A57B35}"
-        Private Const LegacyBlogAddon As String = "{656E95EA-2799-45CD-9712-D4CEDF0E2D02}"
-        Private Const facebookLikeAddonGuid As String = "{17919A35-06B3-4F32-9607-4DB3228A15DF}"
     End Class
 End Namespace

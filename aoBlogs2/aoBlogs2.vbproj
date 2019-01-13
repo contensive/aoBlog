@@ -40,8 +40,9 @@
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
     <DocumentationFile>aoBlogs2.xml</DocumentationFile>
-    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <NoWarn>42353,42354,42355</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -50,8 +51,9 @@
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DocumentationFile>aoBlogs2.xml</DocumentationFile>
-    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <NoWarn>42353,42354,42355</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
+    <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
     <OptionExplicit>On</OptionExplicit>
@@ -60,7 +62,7 @@
     <OptionCompare>Binary</OptionCompare>
   </PropertyGroup>
   <PropertyGroup>
-    <OptionStrict>Off</OptionStrict>
+    <OptionStrict>On</OptionStrict>
   </PropertyGroup>
   <PropertyGroup>
     <OptionInfer>On</OptionInfer>
@@ -90,7 +92,7 @@
     <Compile Include="Models\GroupModel.vb" />
     <Compile Include="Models\GroupRuleModel.vb" />
     <Compile Include="Models\MemberRuleModel.vb" />
-    <Compile Include="Models\PeopleModel.vb" />
+    <Compile Include="Models\PersonModel.vb" />
     <Compile Include="Models\BlogCategoryGroupRulesModel.vb" />
     <Compile Include="Models\BlogModel.vb" />
     <Compile Include="Models\BlogEntryModel.vb" />
@@ -108,7 +110,7 @@
     <Compile Include="Models\CallsToActionModel.vb" />
     <Compile Include="Models\_blankModel.vb" />
     <Compile Include="Views\BlogClass.vb" />
-    <Compile Include="Views\BlogInnerClass.vb" />
+    <Compile Include="Views\BlogBodyClass.vb" />
     <Compile Include="Views\vb6CategoriesClass.vb" />
     <Compile Include="Views\_blankClass.vb" />
     <Compile Include="Views\latestNews.vb" />

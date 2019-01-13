@@ -33,6 +33,11 @@ Namespace Models
         Public Property SortOrder As String
         '
         '====================================================================================================
+        ''' <summary>
+        ''' Get the name of the content meta data for the model instance
+        ''' </summary>
+        ''' <param name="derivedType"></param>
+        ''' <returns></returns>
         Private Shared Function derivedContentName(derivedType As Type) As String
             Dim fieldInfo As FieldInfo = derivedType.GetField("contentName")
             If (fieldInfo Is Nothing) Then
@@ -43,6 +48,11 @@ Namespace Models
         End Function
         '
         '====================================================================================================
+        ''' <summary>
+        ''' Get the name of the database table for this meta data
+        ''' </summary>
+        ''' <param name="derivedType"></param>
+        ''' <returns></returns>
         Private Shared Function derivedContentTableName(derivedType As Type) As String
             Dim fieldInfo As FieldInfo = derivedType.GetField("contentTableName")
             If (fieldInfo Is Nothing) Then
@@ -53,6 +63,11 @@ Namespace Models
         End Function
         '
         '====================================================================================================
+        ''' <summary>
+        ''' Get the name of the datasource for this metadata
+        ''' </summary>
+        ''' <param name="derivedType"></param>
+        ''' <returns></returns>
         Private Shared Function contentDataSource(derivedType As Type) As String
             Dim fieldInfo As FieldInfo = derivedType.GetField("contentTableName")
             If (fieldInfo Is Nothing) Then
