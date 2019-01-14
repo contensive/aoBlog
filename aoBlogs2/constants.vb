@@ -52,7 +52,6 @@ Public Module constants
     Public Const RequestNameCommentTitle As String = "CommentTitle"
     Public Const RequestNameCommentDate As String = "CommentDate"
     Public Const RequestNameApproved As String = "Approved"
-    Public Const RequestNameBlogEntryID As String = "BlogEntryID"
     Public Const RequestNameCommentFormKey As String = "formkey"
     Public Const RequestNameKeywordList As String = "keywordlist"
     Public Const RequestNameDateSearch As String = "DateSearch"
@@ -66,6 +65,12 @@ Public Module constants
     Public Const rnBlogImageOrder As String = "LibraryOrder"
     Public Const rnBlogImageDelete As String = "LibraryUploadDelete"
     Public Const rnBlogImageID As String = "LibraryID"
+    '
+    Public Const RequestNameBlogEntryID As String = "BlogEntryID"
+    Public Const RequestNameBlogEntryName As String = "blogEntryTitle"
+    Public Const RequestNameBlogEntryCopy As String = "blogEntryCopy"
+    Public Const RequestNameBlogEntryTagList As String = "blogEntryTagList"
+    Public Const RequestNameBlogEntryCategoryID As String = "blogEntryCategoryId"
     '
     Public Const SystemEmailBlogNotification As String = "New Blog Notification"
     Public Const SystemEmailCommentNotification As String = "New Blog Comment Notification"

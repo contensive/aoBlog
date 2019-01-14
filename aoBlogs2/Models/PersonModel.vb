@@ -162,6 +162,17 @@ Namespace Models
         Public Function Clone() As Object Implements ICloneable.Clone
             Return Me.MemberwiseClone()
         End Function
+        '
+        '====================================================================================================
+        ''' <summary>
+        ''' true if the person can edit the blog
+        ''' </summary>
+        ''' <param name="cp"></param>
+        ''' <param name="blog"></param>
+        ''' <returns></returns>
+        Public Function isBlogEditor(cp As CPBaseClass, blog As BlogModel) As Boolean
+            Return cp.User.IsAuthenticated And ((id.Equals(blog.OwnerMemberID)) OrElse (Admin) OrElse (cp.User.IsInGroupList(blog.AuthoringGroupID.ToString(), id)))
+        End Function
 
     End Class
 End Namespace

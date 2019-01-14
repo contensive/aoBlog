@@ -85,7 +85,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="constants.vb" />
-    <Compile Include="Controllers\InstanceIdController.vb" />
     <Compile Include="Controllers\genericController.vb" />
     <Compile Include="Models\DbModel.vb" />
     <Compile Include="Models\EmailModel.vb" />
@@ -104,11 +103,15 @@
     <Compile Include="Models\BlogCategorieModel.vb" />
     <Compile Include="Models\BlogImageModel.vb" />
     <Compile Include="Models\BlogImageRuleModel.vb" />
+    <Compile Include="Models\View\RequestModel.vb" />
     <Compile Include="Models\VisitModel.vb" />
     <Compile Include="Models\BlogViewingLogModel.vb" />
     <Compile Include="Models\BlogEntryCtaRules.vb" />
     <Compile Include="Models\CallsToActionModel.vb" />
     <Compile Include="Models\_blankModel.vb" />
+    <Compile Include="Views\BlogBodySearchClass.vb" />
+    <Compile Include="Views\BlogBodyDetailsClass.vb" />
+    <Compile Include="Views\BlogBodyPostClass.vb" />
     <Compile Include="Views\BlogClass.vb" />
     <Compile Include="Views\BlogBodyClass.vb" />
     <Compile Include="Views\vb6CategoriesClass.vb" />

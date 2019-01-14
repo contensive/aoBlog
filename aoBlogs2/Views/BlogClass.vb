@@ -19,15 +19,17 @@ Namespace Views
         Public Overrides Function Execute(ByVal CP As CPBaseClass) As Object
             Dim returnHtml As String = ""
             Try
-                Dim instanceId As String = CP.Doc.GetText("instanceId")
-                Dim blog As BlogModel = BlogModel.verifyBlog(CP, Controllers.InstanceIdController.getInstanceId(CP))
-                If (blog Is Nothing) Then Return "<!-- Could not find or create blog from instanceId [" & instanceId & "] -->"
+                Dim request = New View.RequestModel(CP)
+                Dim blog As BlogModel = BlogModel.verifyBlog(CP, request)
+                If (blog Is Nothing) Then Return "<!-- Could not find or create blog from instanceId [" & request.instanceId & "] -->"
                 '
-                Dim blogEntry As BlogEntryModel = DbModel.create(Of BlogEntryModel)(CP, CP.Doc.GetInteger(RequestNameBlogEntryID))
+                ' todo - this should only be created within BlogBody, but it is used here later and may be null
+                Dim blogEntry As BlogEntryModel = DbModel.create(Of BlogEntryModel)(CP, request.blogEntryId)
                 '
                 ' -- get the post list (blog list of posts without sidebar)
+                ' todo - this hould be static
                 Dim BlogBodyController As New BlogBodyClass()
-                Dim blogBody As String = BlogBodyController.getBlogBody(CP, blog)
+                Dim blogBody As String = BlogBodyController.getBlogBody(CP, blog, request)
                 Dim isBlogBodyDetailForm As Boolean = (blogEntry IsNot Nothing) AndAlso (blogEntry.id <> 0)
                 Dim sideBar_ArchiveList As String = ""
                 If blog.allowArchiveList Then
@@ -66,7 +68,7 @@ Namespace Views
                     Dim blogImageList As List(Of BlogImageModel) = BlogImageModel.createListFromBlogEntry(CP, blogEntry.id)
                     Dim blogEntryBrief As String = blogEntry.RSSDescription
                     If blogEntryBrief = "" Then
-                        blogEntryBrief = CP.Utils.DecodeHTML(blogEntry.Copy)
+                        blogEntryBrief = CP.Utils.DecodeHTML(blogEntry.copy)
                         If blogEntryBrief.Length > 300 Then
                             Dim ptr As Integer = blogEntryBrief.IndexOf(" ", 290)
                             If ptr < 0 Then ptr = 300
@@ -96,7 +98,7 @@ Namespace Views
                     ' -- set article meta data
                     Call CP.Doc.AddTitle(blogEntry.metaTitle)
                     Call CP.Doc.AddMetaDescription(blogEntry.metaDescription)
-                    Call CP.Doc.AddMetaKeywordList((blogEntry.metaDescription & "," & blogEntry.TagList).Replace(vbCrLf, ",").Replace(vbCr, ",").Replace(vbLf, ",").Replace(",,", ","))
+                    Call CP.Doc.AddMetaKeywordList((blogEntry.metaDescription & "," & blogEntry.tagList).Replace(vbCrLf, ",").Replace(vbCr, ",").Replace(vbLf, ",").Replace(",,", ","))
                 End If
                 '
                 ' -- social media likes

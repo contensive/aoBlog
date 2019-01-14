@@ -24,8 +24,8 @@ Namespace Models
         Public Property articlePrimaryImagePositionId As Integer
         Public Property AuthorMemberID As Integer
         Public Property blogCategoryID As Integer
-        Public Property BlogID As Integer
-        Public Property Copy As String
+        Public Property blogID As Integer
+        Public Property copy As String
         Public Property CopyText As String
         Public Property EntryID As Integer
         Public Property imageDisplayTypeId As Integer
@@ -37,7 +37,7 @@ Namespace Models
         Public Property RSSDescription As String
         Public Property RSSLink As String
         Public Property RSSTitle As String
-        Public Property TagList As String
+        Public Property tagList As String
         Public Property Viewings As Integer
 
         Public Property metaTitle As String

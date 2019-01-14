@@ -54,15 +54,16 @@ Namespace Models
         ''' </summary>
         ''' <param name="cp"></param>
         ''' <returns></returns>
-        Public Shared Function verifyBlog(cp As CPBaseClass, instanceId As String) As BlogModel
+        Public Shared Function verifyBlog(cp As CPBaseClass, request As View.RequestModel) As BlogModel
             Try
-                Dim Blog = DbModel.create(Of BlogModel)(cp, instanceId)
+                Dim Blog = DbModel.create(Of BlogModel)(cp, request.instanceId)
                 If (Blog IsNot Nothing) Then Return Blog
                 If (Not cp.User.IsAdmin) Then Return Nothing
 
                 Blog = DbModel.add(Of BlogModel)(cp)
                 Blog.name = "Default Blog"
                 Blog.Caption = "The New Blog"
+                Blog.Copy = "<p>This is the description of your new blog. It always appears at the top of your list of blog posts. Edit or remove this description by editing the blog features.</p>"
                 Blog.OwnerMemberID = cp.User.Id
                 Blog.AuthoringGroupID = cp.Group.GetId("Site Managers")
                 Blog.AllowAnonymous = True
@@ -72,7 +73,7 @@ Namespace Models
                 Blog.OverviewLength = 500
                 Blog.ThumbnailImageWidth = 200
                 Blog.ImageWidthMax = 400
-                Blog.ccguid = instanceId
+                Blog.ccguid = request.instanceId
                 Blog.save(Of BlogModel)(cp)
                 Dim rssFeed = RSSFeedModel.verifyFeed(cp, Blog)
                 Blog.RSSFeedID = If(rssFeed IsNot Nothing, rssFeed.id, 0)
@@ -80,10 +81,10 @@ Namespace Models
 
                 Dim blogEntry As BlogEntryModel = DbModel.add(Of BlogEntryModel)(cp)
                 If (blogEntry IsNot Nothing) Then
-                    blogEntry.BlogID = Blog.id
+                    blogEntry.blogID = Blog.id
                     blogEntry.name = "Welcome to the New Blog!"
                     blogEntry.RSSTitle = ""
-                    blogEntry.Copy = cp.WwwFiles.Read("blogs\DefaultPostCopy.txt")
+                    blogEntry.copy = cp.WwwFiles.Read("blogs\DefaultPostCopy.txt")
 
                     Dim qs As String = cp.Utils.ModifyQueryString(cp.Doc.RefreshQueryString, RequestNameBlogEntryID, CStr(blogEntry.id))
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
@@ -92,7 +93,7 @@ Namespace Models
                     If (LinkAlias.Count > 0) Then
                         Dim EntryLink As String = LinkAlias.First().name
                     End If
-                    blogEntry.RSSDescription = genericController.filterCopy(cp, blogEntry.Copy, 150)
+                    blogEntry.RSSDescription = genericController.filterCopy(cp, blogEntry.copy, 150)
                     blogEntry.save(Of BlogEntryModel)(cp)
                 End If
                 '
