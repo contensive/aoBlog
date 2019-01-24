@@ -12,6 +12,8 @@ Public Module constants
     '
     Public Const RSSProcessAddonGuid = "{2119C2DA-1D57-4C32-B13C-28CD2D85EDF5}"
     '
+    Public Const addonGuidWebcast As String = "{F6037DEE-023C-4A14-A972-ADAFA5538240}"
+    '
     ' copy that will be used as the automatic first post if the virtual file blogs/DefaultPostCopy.txt is not found
     '
     Public Const DefaultPostCopy = "This post has been created automatically for you by the system. Verify the blog is set up properly by viewing the blog settings available after turning on Advanced Edit in the toolbar."

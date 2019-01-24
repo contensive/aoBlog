@@ -516,51 +516,6 @@ end function]]></Code>
 		<styleslinkhref></styleslinkhref>
 		<Scripting Language="VBScript" EntryPoint="" Timeout="5000"/>
 	</Addon>
-	<Addon name="reCaptcha1" guid="{E0CD822C-B013-4F44-A29D-C85ED0B49C20}" type="Add-on">
-		<Copy></Copy>
-		<CopyText><![CDATA[<head> <script src='https://www.google.com/recaptcha/api.js'></script></head>
-<div class="g-recaptcha" data-sitekey="6LeywQsTAAAAACal78RbyR7s4xuKBOF5N8M5nxQK"></div>
-
-
-
-<!-- site key =6LeywQsTAAAAACal78RbyR7s4xuKBOF5N8M5nxQK, secret Key= 6LeywQsTAAAAAAe50AZE0q8Ih2guKECIN5fEg_5T -->]]></CopyText>
-		<ActiveXProgramID></ActiveXProgramID>
-		<DotNetClass></DotNetClass>
-		<ArgumentList></ArgumentList>
-		<AsAjax>No</AsAjax>
-		<Filter>No</Filter>
-		<Help></Help>
-		<HelpLink></HelpLink>
-		<Icon Link="" width="0" height="0" sprites="0" />
-		<InIframe>No</InIframe>
-		<BlockEditTools>No</BlockEditTools>
-		<FormXML></FormXML>
-		<IsInline>No</IsInline>
-		<JavascriptInHead></JavascriptInHead>
-		<javascriptForceHead>No</javascriptForceHead>
-		<JSHeadScriptSrc></JSHeadScriptSrc>
-		<!-- deprecated --><JSBodyScriptSrc></JSBodyScriptSrc>
-		<!-- deprecated --><JavascriptBodyEnd></JavascriptBodyEnd>
-		<!-- deprecated --><JavascriptOnLoad></JavascriptOnLoad>
-		<Content>Yes</Content>
-		<Template>Yes</Template>
-		<Email>No</Email>
-		<Admin>No</Admin>
-		<OnPageEndEvent>No</OnPageEndEvent>
-		<OnPageStartEvent>No</OnPageStartEvent>
-		<OnBodyStart>No</OnBodyStart>
-		<OnBodyEnd>No</OnBodyEnd>
-		<RemoteMethod>No</RemoteMethod>
-		<ProcessRunOnce>No</ProcessRunOnce>
-		<ProcessInterval>0</ProcessInterval>
-		<MetaDescription></MetaDescription>
-		<OtherHeadTags></OtherHeadTags>
-		<PageTitle></PageTitle>
-		<RemoteAssetLink></RemoteAssetLink>
-		<Styles></Styles>
-		<styleslinkhref></styleslinkhref>
-		<Scripting Language="VBScript" EntryPoint="" Timeout="5000"/>
-	</Addon>
 	<data>
 		<record content="Layouts" guid="{58788483-D050-4464-9261-627278A57B35}" name="Blog Layout">
 			<field name="active">True</field>
@@ -806,7 +761,7 @@ end function]]></Code>
 			<HelpDefault><![CDATA[The caption that displays at the top of the blog on the site.]]></HelpDefault>
 		</Field>
 		<Field Name="brieffilename" active="True" AdminOnly="False" Authorable="False" Caption="Overview (not used)" DeveloperOnly="False" EditSortPriority="1010" FieldType="TextFile" HTMLContent="False" IndexColumn="99" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
-		<Field Name="copy" active="True" AdminOnly="False" Authorable="True" Caption="Description" DeveloperOnly="False" EditSortPriority="1020" FieldType="HTML" HTMLContent="True" IndexColumn="99" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+		<Field Name="copy" active="True" AdminOnly="False" Authorable="True" Caption="Description" DeveloperOnly="False" EditSortPriority="1020" FieldType="HTML" HTMLContent="False" IndexColumn="99" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[The description is displayed on the first page of the blog above the list of entries. If you are including your blog in an RSS Feed, this description is included at the top of the Blog Feed.]]></HelpDefault>
 		</Field>
 		<Field Name="authoringgroupid" active="True" AdminOnly="False" Authorable="True" Caption="Authoring Group" DeveloperOnly="False" EditSortPriority="1022" FieldType="Lookup" HTMLContent="False" IndexColumn="30" IndexSortDirection="" IndexSortOrder="99" IndexWidth="13" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="Authors" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="Groups" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
@@ -888,7 +843,7 @@ end function]]></Code>
 		<Field Name="allowsearch" active="True" AdminOnly="False" Authorable="True" Caption="Allow Search" DeveloperOnly="False" EditSortPriority="1040" FieldType="Boolean" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="1" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="Sidebar" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[When checked, the sidebar will include a text search box]]></HelpDefault>
 		</Field>
-		<Field Name="recaptcha" active="True" AdminOnly="False" Authorable="True" Caption="Allow Recaptcha" DeveloperOnly="False" EditSortPriority="2012" FieldType="Boolean" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="0" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="Features" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+		<Field Name="recaptcha" active="True" AdminOnly="False" Authorable="false" Caption="Allow Recaptcha" DeveloperOnly="False" EditSortPriority="2012" FieldType="Boolean" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="0" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="Features" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[When Checked reCaptcha will be used]]></HelpDefault>
 		</Field>
 	</CDef>
@@ -913,8 +868,7 @@ end function]]></Code>
 		<Field Name="blogpostid" active="True" AdminOnly="False" Authorable="True" Caption="Blog Post" DeveloperOnly="False" EditSortPriority="1010" FieldType="Lookup" HTMLContent="False" IndexColumn="20" IndexSortDirection="" IndexSortOrder="99" IndexWidth="27" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroupID="0" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="Blog Entries" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 	</CDef>
 	<ImportCollection name="Social Media">{3B4362B9-5556-4890-B049-56B31B869C64}</ImportCollection>
-	<ImportCollection name="RSS Feed">{06791870-0EF8-48CB-AC54-2327FF5A1C40}</ImportCollection>
-	<ImportCollection name="Webcast and Podcast">{A651410B-5848-46BF-AFDB-3A8D3E895B9D}</ImportCollection>
+	<ImportCollection name="RSS">{06791870-0ef8-48cb-ac54-2327ff5a1c40}</ImportCollection>
 	<ImportCollection name="ReCaptcha V2">{B0330AE8-225D-429A-8985-B5F602E295E2}</ImportCollection>
 	<ImportCollection name="Call To Action">{7103AAC0-E1CF-424D-AD1F-8CB256FD5AFD}</ImportCollection>
 	<ImportCollection name="FaceBook Social Plug-ins">{507B7EB2-D3E5-4F9E-88BB-777FDA06EC65}</ImportCollection>
@@ -929,7 +883,5 @@ end function]]></Code>
 	<Resource name="twitter.jpg" type="www" path="blogs" />
 	<Resource name="blogs.css" type="www" path="blogs" />
 	<Resource name="blogs.js" type="www" path="blogs" />
-	<Resource name="defaultpostcopy.txt" type="www" path="blogs" />
 	<Resource name="aoBlogs2.dll" type="executable" path="" />
-	
 </Collection>

@@ -85,6 +85,10 @@ div.aoBlogCommentError
 	margin:0 10px 10px 0;
 	border:0;
 }
+.aoBlogEditImagePreview {
+    max-width: 200px;
+    max-height: 200px;
+}
 .aoBlogEntryCopy
 {
 	clear:both;

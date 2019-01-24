@@ -10,11 +10,11 @@ Imports Contensive.BaseClasses
 
 Namespace Views
     '
-    Public Class BlogBodyPostClass
+    Public Class BlogBodyEditClass
         '
         '====================================================================================
         '
-        Public Shared Function GetFormBlogPost(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, blogEntry As BlogEntryModel, request As View.RequestModel, user As PersonModel, blogListLink As String) As String
+        Public Shared Function GetFormBlogEdit(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, blogEntry As BlogEntryModel, request As View.RequestModel, user As PersonModel, blogListLink As String) As String
             Dim result As New StringBuilder()
             Try
                 Dim blogEntry_id As Integer = 0
@@ -85,7 +85,7 @@ Namespace Views
                         & "<td><input type=""checkbox"" name=""" & rnBlogImageDelete & "." & Ptr & """>&nbsp;Delete</td>" _
                         & "</tr>" _
                         & "<tr>" _
-                        & "<td align=""left"" class=""ccAdminSmall""><img alt=""" & imageName & """ title=""" & imageName & """ src=""" & cp.Site.PhysicalFilePath & imageFilename & """></td>" _
+                        & "<td align=""left"" class=""ccAdminSmall""><img class=""aoBlogEditImagePreview"" alt=""" & imageName & """ title=""" & imageName & """ src=""" & cp.Site.FilePath & imageFilename & """></td>" _
                         & "</tr>" _
                         & ""
                     '
@@ -195,7 +195,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function ProcessFormBlogPost(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, ByRef blogEntry As BlogEntryModel, request As View.RequestModel, blogListLink As String) As Integer
+        Public Shared Function ProcessFormBlogEdit(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, ByRef blogEntry As BlogEntryModel, request As View.RequestModel, blogListLink As String) As Integer
             Try
                 If cp.Visit.GetProperty(SNBlogEntryName) <> "" Then
                     Call cp.Visit.SetProperty(SNBlogEntryName, "")
@@ -225,7 +225,7 @@ Namespace Views
                         blogEntry.save(Of BlogEntryModel)(cp)
                         '
                         Call RSSFeedModel.UpdateBlogFeed(cp)
-                        ProcessFormBlogPost = FormBlogPostList
+                        ProcessFormBlogEdit = FormBlogPostList
                         '
                         ' Upload files
                         '

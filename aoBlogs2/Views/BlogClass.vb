@@ -270,7 +270,7 @@ Namespace Views
                     CP.Doc.AddHeadJavascript(js)
                 End If
                 If adminSuggestions <> "" And CP.User.IsAdmin() Then
-                    returnHtml = "<div class=""ccHintWrapper""><div class=""ccHintWrapperContent""><h2>Administrator</h2><ul>" & adminSuggestions & "</ul></div></div>" & returnHtml
+                    returnHtml &= "<div class=""ccHintWrapper""><div class=""ccHintWrapperContent""><h2>Administrator</h2><ul>" & adminSuggestions & "</ul></div></div>"
                 End If
                 '
             Catch ex As Exception

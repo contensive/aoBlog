@@ -78,7 +78,7 @@ Namespace Views
                     Case FormBlogArchivedBlogs
                         result.Append(GetFormBlogArchivedBlogs(cp, blog, rssFeed, blogEntry, request, user, blogListLink, blogListQs))
                     Case FormBlogEntryEditor
-                        result.Append(BlogBodyPostClass.GetFormBlogPost(cp, blog, rssFeed, blogEntry, request, user, blogListLink))
+                        result.Append(BlogBodyEditClass.GetFormBlogEdit(cp, blog, rssFeed, blogEntry, request, user, blogListLink))
                     Case FormBlogSearch
                         result.Append(BlogBodySearchClass.GetFormBlogSearch(cp, blog, rssFeed, blogEntry, request, user, blogListLink, blogListQs))
                     Case Else
@@ -110,7 +110,7 @@ Namespace Views
                         Case FormBlogPostList
                             ProcessForm = FormBlogPostList
                         Case FormBlogEntryEditor
-                            ProcessForm = BlogBodyPostClass.ProcessFormBlogPost(cp, blog, rssFeed, blogEntry, request, blogListLink)
+                            ProcessForm = BlogBodyEditClass.ProcessFormBlogEdit(cp, blog, rssFeed, blogEntry, request, blogListLink)
                         Case FormBlogPostDetails
                             ProcessForm = BlogBodyDetailsClass.ProcessBlogBodyDetails(cp, blog, rssFeed, request, user, RetryCommentPost)
                         Case FormBlogArchiveDateList

@@ -324,7 +324,7 @@ Namespace Controllers
                     cp.Doc.SetProperty("Hide Player", "True")
                     cp.Doc.SetProperty("Auto Start", "False")
                     '
-                    result = result & cp.Utils.ExecuteAddon("{F6037DEE-023C-4A14-A972-ADAFA5538240}")
+                    result = result & cp.Utils.ExecuteAddon(addonGuidWebcast)
                 End If
                 '
                 ' Author Row
@@ -503,15 +503,17 @@ Namespace Controllers
                 Copy = Replace(Copy, vbCrLf, "<BR />")
                 result = result & cr & "<div class=""aoBlogCommentCopy"">" & Copy & "</div>"
                 RowCopy = ""
-                Dim author = DbModel.create(Of PersonModel)(cp, blogEntry.AuthorMemberID)
-                If author.name <> "" Then
-                    RowCopy = RowCopy & "by " & cp.Utils.EncodeHTML(author.name)
-                    If blogComment.DateAdded <> Date.MinValue Then
-                        RowCopy = RowCopy & " | " & blogComment.DateAdded
-                    End If
-                Else
-                    If blogComment.DateAdded <> Date.MinValue Then
-                        RowCopy = RowCopy & blogComment.DateAdded
+                If (True) Then
+                    Dim author = DbModel.create(Of PersonModel)(cp, blogEntry.AuthorMemberID)
+                    If (author IsNot Nothing) AndAlso (author.name <> "") Then
+                        RowCopy = RowCopy & "by " & cp.Utils.EncodeHTML(author.name)
+                        If blogComment.DateAdded <> Date.MinValue Then
+                            RowCopy = RowCopy & " | " & blogComment.DateAdded
+                        End If
+                    Else
+                        If blogComment.DateAdded <> Date.MinValue Then
+                            RowCopy = RowCopy & blogComment.DateAdded
+                        End If
                     End If
                 End If
                 '

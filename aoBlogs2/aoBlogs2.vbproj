@@ -111,7 +111,7 @@
     <Compile Include="Models\_blankModel.vb" />
     <Compile Include="Views\BlogBodySearchClass.vb" />
     <Compile Include="Views\BlogBodyDetailsClass.vb" />
-    <Compile Include="Views\BlogBodyPostClass.vb" />
+    <Compile Include="Views\BlogBodyEditClass.vb" />
     <Compile Include="Views\BlogClass.vb" />
     <Compile Include="Views\BlogBodyClass.vb" />
     <Compile Include="Views\vb6CategoriesClass.vb" />
