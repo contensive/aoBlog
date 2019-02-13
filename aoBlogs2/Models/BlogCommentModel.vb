@@ -28,7 +28,7 @@ Namespace Models
         Public Property AuthorMemberID As Integer
         Public Property blogCategoryID As Integer
         Public Property BlogID As Integer
-        Public Property Copy As String
+        ' Public Property Copy As String
         Public Property EntryID As Integer
         Public Property FormKey As String
         Public Property imageDisplayTypeId As Integer

@@ -372,7 +372,7 @@ Namespace Views
                                                     & vbCrLf & cp.Utils.EncodeHTML(Copy) _
                                                     & vbCrLf
                                     EmailFromAddress = cp.Site.GetProperty("EmailFromAddress", "info@" & cp.Site.Domain)
-                                    'Call Main.SendMemberEmail(BlogOwnerID, EmailFromAddress, "Blog comment notification for [" & blog.name & "]", EmailBody, False, False)
+                                    Call cp.Email.sendUser(BlogEntry.AuthorMemberID.ToString, EmailFromAddress, "Blog comment notification for [" & blog.name & "]", EmailBody, True, False)
                                     Call cp.Email.sendUser(BlogEntry.AuthorMemberID.ToString(), EmailFromAddress, "Blog comment notification for [" & blog.name & "]", EmailBody, False, False)
                                     If blog.AuthoringGroupID <> 0 Then
                                         Dim MemberRuleList As List(Of MemberRuleModel) = DbModel.createList(Of MemberRuleModel)(cp, "GroupId=" & blog.AuthoringGroupID)

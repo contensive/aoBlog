@@ -174,16 +174,28 @@ Namespace Controllers
             Dim result As String = ""
             Try
                 If (blogEntry Is Nothing) Then Throw New ApplicationException("BlogEntryCell called without valid BlogEntry")
-                Dim qs As String = blogListQs
-                qs = If(blogEntry Is Nothing, qs, cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id)))
+
+
+                Dim qs As String = cp.Utils.ModifyQueryString("", RequestNameBlogEntryID, CStr(blogEntry.id))
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
-                Dim EntryLink As String = getLinkAlias(cp, "?" & qs)
-                If EntryLink = "" Then
-                    qs = blogListQs
-                    qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
-                    qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
-                    EntryLink = "?" & qs
-                End If
+                Call cp.Site.addLinkAlias(blogEntry.name, cp.Doc.PageId, qs)
+                Dim entryLink As String = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, qs, "?bid=" & cp.Doc.PageId & "&" & qs)
+
+
+
+
+
+                'Dim qs As String = blogListQs
+                'qs = If(blogEntry Is Nothing, qs, cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id)))
+                'qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
+                'Dim EntryLink As String = getLinkAlias(cp, "?" & qs)
+                'If EntryLink = "" Then
+                '    qs = blogListQs
+                '    qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
+                '    qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
+                '    EntryLink = "?" & qs
+                'End If
+                'cp.co
                 '
                 Dim TagListRow As String = ""
                 Dim blogImageList = BlogImageModel.createListFromBlogEntry(cp, blogEntry.id)
@@ -448,16 +460,16 @@ Namespace Controllers
                             result = result & cr & "<div class=""aoBlogCommentHeader"">Comments</div>"
                             result = result & vbCrLf & Divider
                             CommentPtr = 0
-                            Dim blogComment As BlogCommentModel = DbModel.add(Of BlogCommentModel)(cp)
-                            If (blogComment IsNot Nothing) Then
-                                For Each blogComment In DbModel.createList(Of BlogCommentModel)(cp, Criteria)
+                            'Dim blogComment As BlogCommentModel = DbModel.add(Of BlogCommentModel)(cp)
+                            'If (blogComment IsNot Nothing) Then
+                            For Each blogComment In DbModel.createList(Of BlogCommentModel)(cp, Criteria)
 
-                                    result = result & GetBlogCommentCell(cp, blog, rssFeed, blogEntry, blogComment, user, False)
-                                    result = result & vbCrLf & Divider
-                                    CommentPtr = CommentPtr + 1
-                                    'Call Main.NextCSRecord(CS)
-                                Next
-                            End If
+                                result = result & GetBlogCommentCell(cp, blog, rssFeed, blogEntry, blogComment, user, False)
+                                result = result & vbCrLf & Divider
+                                CommentPtr = CommentPtr + 1
+                                'Call Main.NextCSRecord(CS)
+                            Next
+                            'End If
 
                         End If
 
@@ -498,7 +510,7 @@ Namespace Controllers
                     result = result & cr & "<div class=""aoBlogCommentDivider"">&nbsp;</div>"
                 End If
                 result = result & cr & "<div class=""aoBlogCommentName"">" & cp.Utils.EncodeHTML(blogComment.name) & "</div>"
-                Copy = blogComment.Copy
+                Copy = blogComment.CopyText
                 Copy = cp.Utils.EncodeHTML(Copy)
                 Copy = Replace(Copy, vbCrLf, "<BR />")
                 result = result & cr & "<div class=""aoBlogCommentCopy"">" & Copy & "</div>"
