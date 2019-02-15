@@ -175,7 +175,9 @@ Namespace Controllers
             Try
                 If (blogEntry Is Nothing) Then Throw New ApplicationException("BlogEntryCell called without valid BlogEntry")
 
-
+                '
+                ' todo put this back when link alias connected
+                '
                 Dim qs As String = cp.Utils.ModifyQueryString("", RequestNameBlogEntryID, CStr(blogEntry.id))
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
                 Call cp.Site.addLinkAlias(blogEntry.name, cp.Doc.PageId, qs)

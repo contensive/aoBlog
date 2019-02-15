@@ -23,14 +23,12 @@ Namespace Views
                 Dim blog As BlogModel = BlogModel.verifyBlog(CP, request)
                 If (blog Is Nothing) Then Return "<!-- Could not find or create blog from instanceId [" & request.instanceId & "] -->"
                 '
-                ' todo - this should only be created within BlogBody, but it is used here later and may be null
-                Dim blogEntry As BlogEntryModel = DbModel.create(Of BlogEntryModel)(CP, request.blogEntryId)
-                '
+                ' Dim blogEntry As BlogEntryModel = DbModel.create(Of BlogEntryModel)(CP, request.blogEntryId)
                 ' -- get the post list (blog list of posts without sidebar)
                 ' todo - this hould be static
                 Dim BlogBodyController As New BlogBodyClass()
                 Dim blogBody As String = BlogBodyController.getBlogBody(CP, blog, request)
-                Dim isBlogBodyDetailForm As Boolean = (blogEntry IsNot Nothing) AndAlso (blogEntry.id <> 0)
+                Dim isBlogBodyDetailForm As Boolean = (request.blogEntryId > 0)
                 Dim sideBar_ArchiveList As String = ""
                 If blog.allowArchiveList Then
                     '
@@ -63,6 +61,8 @@ Namespace Views
                 Dim adminSuggestions As String = ""
                 '
                 If isBlogBodyDetailForm Then
+                    '
+                    Dim blogEntry As BlogEntryModel = DbModel.create(Of BlogEntryModel)(CP, request.blogEntryId)
                     '
                     ' -- article page
                     Dim blogImageList As List(Of BlogImageModel) = BlogImageModel.createListFromBlogEntry(CP, blogEntry.id)
@@ -121,12 +121,12 @@ Namespace Views
                         '
                         ' CTA cells
                         '
-                        Dim blogEntryCtaRuleList = DbModel.createList(Of BlogEntryCTARuleModel)(CP, "blogEntryid=" & blogEntry.id)
+                        Dim blogEntryCtaRuleList = DbModel.createList(Of BlogEntryCTARuleModel)(CP, "blogEntryid=" & request.blogEntryId)
                         For Each rule In blogEntryCtaRuleList
-                            Dim cta = DbModel.create(Of CallsToActionModel)(CP, 1)
+                            Dim cta = DbModel.create(Of CallsToActionModel)(CP, rule.calltoactionid)
                             If (cta IsNot Nothing) Then
                                 sidebarCell.Load(cellTemplate)
-                                Call sidebarCell.SetInner(".blogSidebarCellHeadline", cta.headline)
+                                Call sidebarCell.SetInner(".blogSidebarCellHeadline", cta.headline & "<br>")
                                 Call sidebarCell.SetInner(".blogSidebarCellCopy", cta.brief)
                                 Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
                                 Call sidebarCell.SetOuter(".blogSidebarCellInputCaption", "")
@@ -257,8 +257,40 @@ Namespace Views
                         cellList &= vbCrLf & vbTab & "<div id=""blogSidebarArchiveCell"">" & sidebarCell.GetHtml() & "</div>"
                         sidebarCnt += 1
                     End If
-                End If
-                layout.SetInner(".blogSidebar", cellList)
+                    '
+                    If isBlogBodyDetailForm Then
+                        Dim emtyblogEntryCtaRuleList = DbModel.createList(Of BlogEntryCTARuleModel)(CP, "blogEntryid=" & request.blogEntryId)
+                        If emtyblogEntryCtaRuleList.Count > 0 Then
+
+                        Else
+                            sidebarCell.Load(cellTemplate)
+                            Call sidebarCell.SetInner(".blogSidebarCellHeadline", "")
+                            Call sidebarCell.SetInner(".blogSidebarCellCopy", "")
+                            Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
+                            Call sidebarCell.SetOuter(".blogSidebarCellInputCaption", "")
+                            cellList &= vbCrLf & vbTab & "<div class=""aoBlogFooterLink"" style=""color:red;"">Blog Post has no CTA selected</a><br></div>"
+                        End If
+                    End If
+                    '
+                    If blog.allowArticleCTA Then
+                            '
+                            ' Call To action List
+                            '
+                            Dim cta = CP.Content.GetID("Calls To Action")
+                            Dim qs As String = ""
+                            sidebarCell.Load(cellTemplate)
+                            Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Call to Action")
+                            Call sidebarCell.SetInner(".blogSidebarCellCopy", "")
+                            Call sidebarCell.SetOuter(".blogSidebarCellInputCaption", "")
+                            Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
+                            Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
+                            qs = "cid=" & CP.Content.GetID("Calls To Action")
+                        '
+                        cellList &= vbCrLf & vbTab & "<div class=""aoBlogFooterLink""><a href=""" & CP.Site.GetProperty("adminUrl") & "?" & qs & """>Add/Edit Site Call-To-Actions</a></div>"
+                        sidebarCnt += 1
+                        End If
+                    End If
+                    layout.SetInner(".blogSidebar", cellList)
                 layout.Append(CP.Html.Hidden("blogId", blog.id.ToString(), "", "blogId"))
                 If sidebarCnt = 0 Then
                     layout.SetInner(".blogWrapper", layout.GetInner(".blogColumn1"))

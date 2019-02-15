@@ -107,6 +107,19 @@ Namespace Models
                     RSSFeedBlogRules.name = "RSS Feed [" & rssFeed.name & "], Blog Post [" & blogEntry.name & "]"
                     RSSFeedBlogRules.save(Of BlogModel)(cp)
                 End If
+                '
+                'Add this new Call to Action
+
+                Dim CallToAction As CallsToActionModel = DbModel.add(Of CallsToActionModel)(cp)
+                If (CallToAction IsNot Nothing) Then
+                    CallToAction.name = "Find Out More"
+                    CallToAction.link = "http://www.MemberBoss.com"
+                    CallToAction.headline = " Manage Your Membership Community"
+                    CallToAction.brief = "<p>The best all-in-one-place solution to build and manage your membership community.</p>"
+                    CallToAction.save(Of BlogModel)(cp)
+                End If
+                '
+                '
                 Return Blog
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)

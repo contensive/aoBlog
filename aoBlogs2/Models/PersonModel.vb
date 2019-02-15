@@ -27,7 +27,7 @@ Namespace Models
         Public Property AdminMenuModeID As Integer
         Public Property AllowBulkEmail As Boolean
         Public Property AllowToolsPanel As Boolean
-        Public Property authorInfoLink As String
+        'Public Property authorInfoLink As String
         Public Property AutoLogin As Boolean
         Public Property BillAddress As String
         Public Property BillAddress2 As String

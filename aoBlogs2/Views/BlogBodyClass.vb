@@ -210,29 +210,26 @@ Namespace Views
                 Else
                     Dim EntryPtr As Integer = 0
                     Dim entryEditLink As String = ""
-                    'Do While cp.CSNew.OK()
                     For Each blogEntry In BlogEntryModelList
-                        Dim EntryID As Integer = blogEntry.id ' cp.Doc.GetInteger("ID")
-                        Dim AuthorMemberID As Integer = blogEntry.AuthorMemberID ' cp.Doc.GetInteger("AuthorMemberID")
+                        Dim EntryID As Integer = blogEntry.id
+                        Dim AuthorMemberID As Integer = blogEntry.AuthorMemberID
                         If AuthorMemberID = 0 Then
-                            AuthorMemberID = blogEntry.CreatedBy ' cp.Doc.GetInteger("createdBy")
+                            AuthorMemberID = blogEntry.CreatedBy
                         End If
-                        Dim DateAdded As Date = blogEntry.DateAdded ' cp.Doc.GetText("DateAdded")
-                        Dim EntryName As String = blogEntry.name 'cp.Doc.GetText("Name")
+                        Dim DateAdded As Date = blogEntry.DateAdded
+                        Dim EntryName As String = blogEntry.name
                         If cp.User.IsAuthoring("Blogs") Then
                             entryEditLink = cp.Content.GetEditLink(EntryName, EntryID.ToString(), True, EntryName, True)
                         End If
-                        Dim EntryCopy As String = blogEntry.copy ' cp.Doc.GetText("Copy")
-                        'EntryCopyOverview = cp.Doc.GetText(CS, "copyOverview")
-                        Dim allowComments As Boolean = blogEntry.AllowComments ' cp.Site.GetBoolean("allowComments")
-                        Dim BlogTagList As String = blogEntry.tagList ' cp.Doc.GetText("TagList")
-                        Dim imageDisplayTypeId As Integer = blogEntry.imageDisplayTypeId ' cp.Doc.GetInteger("imageDisplayTypeId")
-                        Dim primaryImagePositionId As Integer = blogEntry.primaryImagePositionId ' cp.Doc.GetInteger("primaryImagePositionId")
-                        Dim articlePrimaryImagePositionId As Integer = blogEntry.articlePrimaryImagePositionId ' cp.Doc.GetInteger("articlePrimaryImagePositionId")
+                        Dim EntryCopy As String = blogEntry.copy
+                        Dim allowComments As Boolean = blogEntry.AllowComments
+                        Dim BlogTagList As String = blogEntry.tagList
+                        Dim imageDisplayTypeId As Integer = blogEntry.imageDisplayTypeId
+                        Dim primaryImagePositionId As Integer = blogEntry.primaryImagePositionId
+                        Dim articlePrimaryImagePositionId As Integer = blogEntry.articlePrimaryImagePositionId
                         Dim Return_CommentCnt As Integer
                         result = result & genericController.GetBlogEntryCell(cp, blog, rssFeed, blogEntry, user, False, False, Return_CommentCnt, BlogTagList, blogListQs)
                     Next
-                    'Call cp.CSNew.GoNext()
                     result = result & cr & "<div Class=""aoBlogEntryDivider"">&nbsp;</div>"
                     EntryPtr = EntryPtr + 1
 
@@ -248,9 +245,6 @@ Namespace Views
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostList.ToString())
                 result = result & cr & "<div Class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
                 Call cp.CSNew.Close()
-                'Call Main.CloseCS(CS)
-                '
-                's = s & Main.GetFormInputHidden(RequestNameBlogEntryID, Commentblog.id)
                 result = result & cp.Html.Hidden(RequestNameSourceFormID, FormBlogArchivedBlogs.ToString())
                 result = cp.Html.Form(result)
                 '
@@ -315,11 +309,6 @@ Namespace Views
                             If (cp.User.IsAuthoring("Blogs")) Then
                                 entryEditLink = cp.Content.GetEditLink("Blog Entries", blogEntry.id.ToString(), True, blogEntry.name, True)
                             End If
-                            'Dim EntryCopy As String = blogEntry.Copy   'cp.Doc.GetText("Copy")
-                            'Dim BlogTagList As String = blogEntry.TagList 'cp.Doc.GetText("BlogTagList")
-                            'Dim imageDisplayTypeId As Integer = blogEntry.imageDisplayTypeId 'cp.Doc.GetInteger("imageDisplayTypeId")
-                            'Dim primaryImagePositionId As Integer = blogEntry.primaryImagePositionId 'cp.Doc.GetInteger("primaryImagePositionId")
-                            'Dim articlePrimaryImagePositionId As Integer = blogEntry.articlePrimaryImagePositionId 'cp.Doc.GetInteger("articlePrimaryImagePositionId")
                             Dim Return_CommentCnt As Integer
                             result.Append(genericController.GetBlogEntryCell(cp, blog, rssFeed, blogEntry, user, False, True, Return_CommentCnt, "", blogListQs))
                             result.Append(cr & "<div Class=""aoBlogEntryDivider"">&nbsp;</div>")
@@ -373,12 +362,12 @@ Namespace Views
                     '
                     qs = cp.Doc.RefreshQueryString
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor.ToString(), True)
-                    result.Append(cr & "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Create new post</a></div>")
+                    result.Append(cr & "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Create new Blog Post</a></div>")
                     '
                     ' Create a link to edit the blog record
                     '
                     qs = "cid=" & cp.Content.GetID("Blogs") & "&af=4&id=" & blog.id
-                    result.Append(cr & "<div class=""aoBlogFooterLink""><a href=""" & cp.Site.GetProperty("adminUrl") & "?" & qs & """>Edit blog features</a></div>")
+                    result.Append(cr & "<div class=""aoBlogFooterLink""><a href=""" & cp.Site.GetProperty("adminUrl") & "?" & qs & """>Blog Settings</a></div>")
                     '
                     ' Create a link to edit the rss record
                     '
@@ -416,7 +405,6 @@ Namespace Views
                         & ""
                     result.Append(cr & "<div class=""aoBlogFooterLink"">" & FeedFooter & "</div>")
                 End If
-                'result.append( cp.Html.Hidden(RequestNameBlogEntryID, blogentry.id)
                 result.Append(cp.Html.Hidden(RequestNameSourceFormID, FormBlogPostList.ToString()))
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)
