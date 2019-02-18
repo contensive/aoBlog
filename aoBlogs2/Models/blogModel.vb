@@ -73,6 +73,7 @@ Namespace Models
                 Blog.OverviewLength = 500
                 Blog.ThumbnailImageWidth = 200
                 Blog.ImageWidthMax = 400
+                Blog.allowArticleCTA = True
                 Blog.ccguid = request.instanceId
                 Blog.save(Of BlogModel)(cp)
                 Dim rssFeed = RSSFeedModel.verifyFeed(cp, Blog)

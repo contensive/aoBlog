@@ -38,7 +38,7 @@ Namespace Views
                 '
                 Call cp.Site.TestPoint("blog -- getFormBlogPostDetails, enter ")
                 ' todo re-enable recaptcha 20190123
-                'Call cp.Site.TestPoint("blog -- getFormBlogPostDetails, blogEntry.recaptcha=[" & blog.recaptcha & "]")
+                Call cp.Site.TestPoint("blog -- getFormBlogPostDetails, blogEntry.recaptcha=[" & blog.recaptcha & "]")
                 '
                 ' setup form key
                 '
@@ -199,11 +199,11 @@ Namespace Views
                         's = s & cr & "<div class=""aoBlogCommentCopy"">Verify Text</div>"
                         '
                         ' todo re-enable recaptcha 20190123
-                        'If blog.recaptcha Then
-                        '    result = result & cr & "<div class=""aoBlogCommentCopy"">Verify Text</div>"
-                        '    result = result & cr & "<div class=""aoBlogCommentCopy"">" & cp.Utils.ExecuteAddon(reCaptchaDisplayGuid) & "</div>"
-                        '    Call cp.Site.TestPoint("output - reCaptchaDisplayGuid")
-                        'End If
+                        If blog.recaptcha Then
+                            result = result & cr & "<div class=""aoBlogCommentCopy"">Verify Text</div>"
+                            result = result & cr & "<div class=""aoBlogCommentCopy"">" & cp.Utils.ExecuteAddon(reCaptchaDisplayGuid) & "</div>"
+                            Call cp.Site.TestPoint("output - reCaptchaDisplayGuid")
+                        End If
                         '
                         result = result & cr & "<div class=""aoBlogCommentCopy"">" & cp.Html.Button(rnButton, FormButtonPostComment) & "&nbsp;" & cp.Html.Button(rnButton, FormButtonCancel) & "</div>"
                     End If
@@ -294,20 +294,20 @@ Namespace Views
                         result = FormBlogPostList
                     ElseIf request.ButtonValue = FormButtonPostComment Then
                         ' todo re-enable recaptcha 20190123
-                        'If blog.recaptcha Then
-                        '    '
-                        '    ' Process recaptcha
-                        '    '
-                        '    optionStr = "Challenge=" + cp.Doc.GetText("recaptcha_challenge_field")
-                        '    optionStr = optionStr & "&Response=" + cp.Doc.GetText("recaptcha_response_field")
-                        '    Dim WrapperId As Integer = Nothing
-                        '    captchaResponse = cp.Utils.ExecuteAddon(reCaptchaProcessGuid)
-                        '    Call cp.Site.TestPoint("output - reCaptchaProcessGuid, result=" & captchaResponse)
-                        '    If captchaResponse <> "" Then
-                        '        Call cp.UserError.Add("The verify text you entered did not match correctly. Please try again.")
-                        '        Call cp.Utils.AppendLog("testpoint1")
-                        '    End If
-                        'End If
+                        If blog.recaptcha Then
+                            '
+                            ' Process recaptcha
+                            '
+                            optionStr = "Challenge=" + cp.Doc.GetText("recaptcha_challenge_field")
+                            optionStr = optionStr & "&Response=" + cp.Doc.GetText("recaptcha_response_field")
+                            Dim WrapperId As Integer = Nothing
+                            captchaResponse = cp.Utils.ExecuteAddon(reCaptchaProcessGuid)
+                            Call cp.Site.TestPoint("output - reCaptchaProcessGuid, result=" & captchaResponse)
+                            If captchaResponse <> "" Then
+                                Call cp.UserError.Add("The verify text you entered did not match correctly. Please try again.")
+                                Call cp.Utils.AppendLog("testpoint1")
+                            End If
+                        End If
                         '
                         ' Process comment post
                         '

@@ -176,8 +176,10 @@ Namespace Views
                             sidebarCell.Load(cellTemplate)
                             Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By RSS")
                             Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
+                            'http://aoblog/aoblog/files/rssfeeds/RSSFeed8.xml
                             'Call sidebarCell.SetInner(".blogSidebarCellCopy", "You are subscribed to this Feed.")
-                            Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""http://" & CP.Site.DomainPrimary & "/rss/" & rssFeed.rssFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & blog.name & " Feed" & "</a>")
+                            ' Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""http://" & CP.Site.DomainPrimary & "/rss/" & rssFeed.rssFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & blog.name & " Feed" & "</a>")
+                            Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""http://" & CP.Site.DomainPrimary & CP.Site.FilePath & rssFeed.rssFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & blog.name & " Feed" & "</a>")
                             Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
                             Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
                             cellList &= vbCrLf & vbTab & "<div id=""blogSidebarRSSCell"">" & sidebarCell.GetHtml() & "</div>"
@@ -190,24 +192,24 @@ Namespace Views
                         ' Social Links
                         copy = ""
                         If blog.allowFacebookLink And (blog.facebookLink <> "") Then
-                            copy &= "<a href=""" & blog.facebookLink & """ target=""_blank""><img class=""blogSidebarSocialLogo"" src=""/blogs/facebook.jpg"" width=""32"" height=""32""></a>"
+                            copy &= "<a href=""" & blog.facebookLink & """ target=""_blank""><img Class=""blogSidebarSocialLogo"" src=""/blogs/facebook.jpg"" width=""32"" height=""32""></a>"
                         ElseIf blog.allowFacebookLink Then
                             If CP.User.IsAdmin Then
-                                copy &= "<div class=""blogAdminWarning""><h2>Administrator</h2><p>Add a facebook link for this blog, or disable the Allow Facebook Sidebar checkbox.</p></div>"
+                                copy &= "<div Class=""blogAdminWarning""><h2>Administrator</h2><p>Add a facebook link For this blog, Or disable the Allow Facebook Sidebar checkbox.</p></div>"
                             End If
                         End If
                         If blog.allowTwitterLink And (blog.twitterLink <> "") Then
-                            copy &= "<a href=""" & blog.twitterLink & """ target=""_blank""><img class=""blogSidebarSocialLogo"" src=""/blogs/twitter.jpg"" width=""32"" height=""32""></a>"
+                            copy &= "<a href=""" & blog.twitterLink & """ target=""_blank""><img Class=""blogSidebarSocialLogo"" src=""/blogs/twitter.jpg"" width=""32"" height=""32""></a>"
                         ElseIf blog.allowTwitterLink Then
                             If CP.User.IsAdmin Then
-                                copy &= "<div class=""blogAdminWarning""><h2>Administrator</h2><p>Add a twitter link for this blog, or disable the Allow Twitter Sidebar checkbox.</p></div>"
+                                copy &= "<div Class=""blogAdminWarning""><h2>Administrator</h2><p>Add a twitter link For this blog, Or disable the Allow Twitter Sidebar checkbox.</p></div>"
                             End If
                         End If
                         If blog.allowTwitterLink And (blog.googlePlusLink <> "") Then
-                            copy &= "<a href=""" & blog.googlePlusLink & """ target=""_blank""><img class=""blogSidebarSocialLogo"" src=""/blogs/GooglePlus.jpg"" width=""32"" height=""32""></a>"
+                            copy &= "<a href=""" & blog.googlePlusLink & """ target=""_blank""><img Class=""blogSidebarSocialLogo"" src=""/blogs/GooglePlus.jpg"" width=""32"" height=""32""></a>"
                         ElseIf blog.allowGooglePlusLink Then
                             If CP.User.IsAdmin Then
-                                copy &= "<div class=""blogAdminWarning""><h2>Administrator</h2><p>Add a GooglePlus link for this blog, or disable the Allow Google Plus Sidebar checkbox.</p></div>"
+                                copy &= "<div Class=""blogAdminWarning""><h2>Administrator</h2><p>Add a GooglePlus link For this blog, Or disable the Allow Google Plus Sidebar checkbox.</p></div>"
                             End If
                         End If
                         If copy <> "" Then
