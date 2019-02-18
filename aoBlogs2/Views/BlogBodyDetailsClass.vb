@@ -106,7 +106,7 @@ Namespace Views
                 Dim AllowMemberJoin As Boolean
                 '
                 If allowComments And (cp.Visit.CookieSupport) And (Not VisitModel.Bot()) Then
-                    result = result & cr & "<div class=""aoBlogCommentHeader"">Add a Comment</div>"
+                    result = result & cr & "<div class=""aoBlogCommentHeader"">Post a Comment</div>"
                     '
                     If Not (cp.UserError.OK()) Then
                         result = result & "<div class=""aoBlogCommentError"">" & (cp.UserError.OK()) & "</div>"
@@ -147,7 +147,7 @@ Namespace Views
                                 '
                                 ' join
                                 '
-                                Copy = "To comment on this post, please register. "
+                                Copy = "To post a comment to this blog, complete this form. "
                                 qs = cp.Utils.ModifyQueryString(qs, "auth", "0")
                                 Copy = Copy & " <a href=""?" & qs & """> Login?</a>"
                                 If AllowPasswordEmail Then
@@ -163,7 +163,7 @@ Namespace Views
                                 '
                                 ' login
                                 '
-                                Copy = "To comment on this post, please login."
+                                Copy = "To post a comment to this Blog, please login."
                                 'If AllowPasswordEmail Then
                                 '    qs = cp.Utils.ModifyQueryString(qs, "auth", "1")
                                 '    Copy = Copy & " <a href=""?" & qs & """> Forget your username or password?</a>"
