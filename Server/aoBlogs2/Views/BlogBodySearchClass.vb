@@ -79,7 +79,7 @@ Namespace Views
                             Dim AuthorMemberID As Integer = blogSearchEntry.AuthorMemberID
                             If AuthorMemberID = 0 Then AuthorMemberID = blogSearchEntry.CreatedBy
                             Dim Return_CommentCnt As Integer
-                            result.Append(genericController.GetBlogEntryCell(cp, blog, rssFeed, blogSearchEntry, user, False, True, Return_CommentCnt, "", blogListQs))
+                            result.Append(genericController.getBlogEntryCell(cp, blog, rssFeed, blogSearchEntry, user, False, True, Return_CommentCnt, "", blogListQs))
                             result.Append(cr & "<div class=""aoBlogEntryDivider"">&nbsp;</div>")
                         Next
                     End If

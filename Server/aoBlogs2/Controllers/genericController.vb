@@ -170,34 +170,20 @@ Namespace Controllers
         '
         '====================================================================================
         '
-        Public Shared Function GetBlogEntryCell(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, blogEntry As BlogEntryModel, user As PersonModel, DisplayFullEntry As Boolean, IsSearchListing As Boolean, Return_CommentCnt As Integer, entryEditLink As String, blogListQs As String) As String
+        Public Shared Function getBlogEntryCell(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, blogEntry As BlogEntryModel, user As PersonModel, DisplayFullEntry As Boolean, IsSearchListing As Boolean, Return_CommentCnt As Integer, entryEditLink As String, blogListQs As String) As String
             Dim result As String = ""
             Try
                 If (blogEntry Is Nothing) Then Throw New ApplicationException("BlogEntryCell called without valid BlogEntry")
-
-                '
-                ' todo put this back when link alias connected
                 '
                 Dim qs As String = cp.Utils.ModifyQueryString("", RequestNameBlogEntryID, CStr(blogEntry.id))
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
                 Call cp.Site.addLinkAlias(blogEntry.name, cp.Doc.PageId, qs)
-                Dim entryLink As String = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, qs, "?bid=" & cp.Doc.PageId & "&" & qs)
-
-
-
-
-
-                'Dim qs As String = blogListQs
-                'qs = If(blogEntry Is Nothing, qs, cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id)))
-                'qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
-                'Dim EntryLink As String = getLinkAlias(cp, "?" & qs)
-                'If EntryLink = "" Then
-                '    qs = blogListQs
-                '    qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
-                '    qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
-                '    EntryLink = "?" & qs
-                'End If
-                'cp.co
+                '
+                cp.Utils.AppendLog("getBlogEntryCell, addLinkAlias, blogEntry.name [" & blogEntry.name & "], pageId [" & cp.Doc.PageId & "], qs [" & qs & "]")
+                '
+                Dim entryLink As String = cp.Content.GetPageLink(cp.Doc.PageId, qs)
+                '
+                cp.Utils.AppendLog("getBlogEntryCell, GetPageLink, pageId [" & cp.Doc.PageId & "], qs [" & qs & "], entryLink [" & entryLink & "]")
                 '
                 Dim TagListRow As String = ""
                 Dim blogImageList = BlogImageModel.createListFromBlogEntry(cp, blogEntry.id)
@@ -234,7 +220,6 @@ Namespace Controllers
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor.ToString())
                     Dim c As String = ""
                     If (blogEntry.imageDisplayTypeId = imageDisplayTypeList) And (blogImageList.Count > 0) Then
-                        c = ""
                         '
                         ' Get ImageID List
                         For Each blogImage In blogImageList
@@ -290,7 +275,7 @@ Namespace Controllers
                         & cr & "</div>"
                     End If
                 Else
-                    result = result & vbCrLf & entryEditLink & "<h2 class=""aoBlogEntryName""><a href=""" & EntryLink & """>" & blogEntry.name & "</a></h2>"
+                    result = result & vbCrLf & entryEditLink & "<h2 class=""aoBlogEntryName""><a href=""" & entryLink & """>" & blogEntry.name & "</a></h2>"
                     result = result & cr & "<div class=""aoBlogEntryCopy"">"
                     If (blogImageList.Count > 0) Then
                         Dim ThumbnailFilename As String = ""
@@ -305,13 +290,13 @@ Namespace Controllers
                                     ' align right
                                     '
                                     'result = result & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & blog.ThumbnailImageWidth & "px;""></a>"
-                                    result = result & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:25%;""></a>"
+                                    result = result & "<a href=""" & entryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:25%;""></a>"
                                 Case 3
                                     '
                                     ' align left
                                     '
                                     ' result = result & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & blog.ThumbnailImageWidth & "px;""></a>"
-                                    result = result & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:25%;""></a>"
+                                    result = result & "<a href=""" & entryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:25%;""></a>"
                                 Case 4
                                     '
                                     ' hide
@@ -321,13 +306,13 @@ Namespace Controllers
                                     ' 1 and none align per stylesheet
                                     '
                                     'result = result & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & blog.ThumbnailImageWidth & "px;""></a>"
-                                    result = result & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:25%;""></a>"
+                                    result = result & "<a href=""" & entryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:25%;""></a>"
 
                             End Select
                         End If
                     End If
                     result = result & "<p>" & genericController.filterCopy(cp, blogEntry.copy, blog.OverviewLength) & "</p></div>"
-                    result = result & cr & "<div class=""aoBlogEntryReadMore""><a href=""" & EntryLink & """>Read More</a></div>"
+                    result = result & cr & "<div class=""aoBlogEntryReadMore""><a href=""" & entryLink & """>Read More</a></div>"
                 End If
                 '
                 ' Podcast link
@@ -375,9 +360,9 @@ Namespace Controllers
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
                         If CommentCount = 0 Then
-                            RowCopy = RowCopy & " | " & "<a href=""" & EntryLink & """>Comment</a>"
+                            RowCopy = RowCopy & " | " & "<a href=""" & entryLink & """>Comment</a>"
                         Else
-                            RowCopy = RowCopy & " | " & "<a href=""" & EntryLink & """>Comments</a>&nbsp;(" & CommentCount & ")"
+                            RowCopy = RowCopy & " | " & "<a href=""" & entryLink & """>Comments</a>&nbsp;(" & CommentCount & ")"
                         End If
                     End If
                 End If
@@ -485,7 +470,7 @@ Namespace Controllers
                 result = result & vbCrLf & cp.Html.Hidden("CommentCnt" & blogEntry.id, CommentPtr.ToString())
                 '
                 Return_CommentCnt = CommentPtr
-                GetBlogEntryCell = result
+                getBlogEntryCell = result
                 '
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)

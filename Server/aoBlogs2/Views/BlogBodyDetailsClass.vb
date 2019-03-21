@@ -74,7 +74,7 @@ Namespace Views
                         blogEntry.imageDisplayTypeId = cp.Doc.GetInteger("imageDisplayTypeId")
                         blogEntry.primaryImagePositionId = cp.Doc.GetInteger("primaryImagePositionId")
                         ' blogEntry.articlePrimaryImagePositionId = cp.Doc.GetInteger("articlePrimaryImagePositionId")
-                        result = result & genericController.GetBlogEntryCell(cp, blog, rssFeed, blogEntry, user, True, False, Return_CommentCnt, "", blogListQs)
+                        result = result & genericController.getBlogEntryCell(cp, blog, rssFeed, blogEntry, user, True, False, Return_CommentCnt, "", blogListQs)
                         EntryPtr = EntryPtr + 1
                         '
                         blog.id = cp.Doc.GetInteger("BlogID")

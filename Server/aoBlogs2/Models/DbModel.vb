@@ -512,7 +512,7 @@ Namespace Models
                 Dim ignoreCacheNames As New List(Of String)
                 Dim instanceType As Type = GetType(T)
                 Dim contentName As String = derivedContentName(instanceType)
-                If (cs.Open(contentName, sqlCriteria, sqlOrderBy,,, pageSize, pageNumber)) Then
+                If (cs.Open(contentName, sqlCriteria, sqlOrderBy, True, "", pageSize, pageNumber)) Then
                     Dim instance As T
                     Do
                         instance = loadRecord(Of T)(cp, cs, listOfLowerCaseFields)

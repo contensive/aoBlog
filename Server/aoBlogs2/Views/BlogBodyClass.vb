@@ -228,7 +228,7 @@ Namespace Views
                         Dim primaryImagePositionId As Integer = blogEntry.primaryImagePositionId
                         Dim articlePrimaryImagePositionId As Integer = blogEntry.articlePrimaryImagePositionId
                         Dim Return_CommentCnt As Integer
-                        result = result & genericController.GetBlogEntryCell(cp, blog, rssFeed, blogEntry, user, False, False, Return_CommentCnt, BlogTagList, blogListQs)
+                        result = result & genericController.getBlogEntryCell(cp, blog, rssFeed, blogEntry, user, False, False, Return_CommentCnt, BlogTagList, blogListQs)
                     Next
                     result = result & cr & "<div Class=""aoBlogEntryDivider"">&nbsp;</div>"
                     EntryPtr = EntryPtr + 1
@@ -310,7 +310,7 @@ Namespace Views
                                 entryEditLink = cp.Content.GetEditLink("Blog Entries", blogEntry.id.ToString(), True, blogEntry.name, True)
                             End If
                             Dim Return_CommentCnt As Integer
-                            result.Append(genericController.GetBlogEntryCell(cp, blog, rssFeed, blogEntry, user, False, True, Return_CommentCnt, "", blogListQs))
+                            result.Append(genericController.getBlogEntryCell(cp, blog, rssFeed, blogEntry, user, False, True, Return_CommentCnt, "", blogListQs))
                             result.Append(cr & "<div Class=""aoBlogEntryDivider"">&nbsp;</div>")
                         End If
                         EntryPtr += 1

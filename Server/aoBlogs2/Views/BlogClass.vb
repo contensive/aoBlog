@@ -88,7 +88,7 @@ Namespace Views
                         Else
                             adminSuggestions &= CP.Html.li("This blog entry has no image. Adding an image will improve your social media appeal.")
                         End If
-                        Call CP.Doc.SetProperty("Open Graph Site Name", CP.Utils.EncodeHTML(siteName))
+                        'Call CP.Doc.SetProperty("Open Graph Site Name", CP.Utils.EncodeHTML(siteName))
                         Call CP.Doc.SetProperty("Open Graph Content Type", "website")
                         Call CP.Doc.SetProperty("Open Graph URL", CP.Content.GetPageLink(CP.Doc.PageId, "BlogEntryID=" & blogEntry.id & "&FormID=300"))
                         Call CP.Doc.SetProperty("Open Graph Title", blogEntry.name)
