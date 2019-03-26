@@ -65,7 +65,7 @@ Namespace Views
                         End If
                         EntryCopy = blogEntry.copy
 
-                        allowComments = blogEntry.AllowComments
+                        allowComments = False 'blogEntry.AllowComments
                         BlogTagList = blogEntry.tagList
                         qs = ""
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))

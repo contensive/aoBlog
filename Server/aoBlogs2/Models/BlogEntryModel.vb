@@ -19,7 +19,7 @@ Namespace Models
         '
         '====================================================================================================
         ' -- instance properties
-        Public Property AllowComments As Boolean
+        Public Property AllowComments As Boolean = False
         Public Property Approved As Boolean
         Public Property articlePrimaryImagePositionId As Integer
         Public Property AuthorMemberID As Integer

@@ -397,7 +397,7 @@ Namespace Views
                 '
                 Dim FeedFooter As String = ""
                 If rssFeed.rssFilename <> "" Then
-                    FeedFooter = "<a href=""http://" & cp.Site.Domain & "/RSS/" & rssFeed.rssFilename & """>"
+                    FeedFooter = "<a href=""" & cp.Site.FilePath & rssFeed.rssFilename & """>"
                     FeedFooter = "rss feed " _
                         & FeedFooter & rssFeed.name & "</a>" _
                         & "&nbsp;" _

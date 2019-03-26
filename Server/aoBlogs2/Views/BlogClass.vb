@@ -177,8 +177,6 @@ Namespace Views
                             Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By RSS")
                             Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
                             'http://aoblog/aoblog/files/rssfeeds/RSSFeed8.xml
-                            'Call sidebarCell.SetInner(".blogSidebarCellCopy", "You are subscribed to this Feed.")
-                            ' Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""http://" & CP.Site.DomainPrimary & "/rss/" & rssFeed.rssFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & blog.name & " Feed" & "</a>")
                             Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""http://" & CP.Site.DomainPrimary & CP.Site.FilePath & rssFeed.rssFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & blog.name & " Feed" & "</a>")
                             Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
                             Call sidebarCell.SetOuter(".blogSidebarCellButton", "")

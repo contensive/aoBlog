@@ -120,6 +120,7 @@ Namespace Models
                     CallToAction.save(Of BlogModel)(cp)
                 End If
                 '
+                Call RSSFeedModel.UpdateBlogFeed(cp)
                 '
                 Return Blog
             Catch ex As Exception

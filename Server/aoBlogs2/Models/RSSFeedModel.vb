@@ -48,6 +48,7 @@ Namespace Models
                 rssFeed.name = "RSS Feed for Blog #" & blog.id & ", " & blog.Caption
                 rssFeed.rssDateUpdated = Date.MinValue
                 rssFeed.rssFilename = "RSS" & rssFeed.id & ".xml"
+                rssFeed.save(Of RSSFeedModel)(cp)
                 Return rssFeed
                 'If Not (blog Is Nothing) Then
                 '    ' Dim blog As blogModel = blogList.First
@@ -207,188 +208,16 @@ Namespace Models
                 Return Nothing
             End Try
         End Function
-
-
         '
+        '====================================================================================================
+        ''' <summary>
+        ''' 
+        ''' </summary>
+        ''' <param name="cp"></param>
         Public Shared Sub UpdateBlogFeed(cp As CPBaseClass)
             '
             Try
                 Call cp.Utils.ExecuteAddon(RSSProcessAddonGuid)
-                'Dim RSSTitle As String
-                'Dim EntryCopy As String
-                'Dim EntryLink As String
-                'Dim qs As String
-                'Dim RuleIDs() As Integer
-                'Dim RuleBlogPostIDs() As Integer
-                'Dim RuleCnt As Integer
-                'Dim RulePtr As Integer
-                'Dim RuleSize As Integer
-                'Dim BlogPostID As Integer
-                'Dim AdminURL As String
-                ''
-                'AdminURL = cp.Site.GetProperty("adminUrl")
-                'If rssFeed.id <> 0 Then
-                '    '
-                '    ' Gather all the current rules
-                '    '
-                '    Dim RSSFeedBlogRuleList As List(Of RSSFeedBlogRuleModel) = RSSFeedBlogRuleModel.createList(cp, "RSSFeedID=" & rssFeed.id, "id,BlogPostID")
-                '    RuleCnt = 0
-                '    For Each RSSFeedBlogRule In RSSFeedBlogRuleList
-                '        If RuleCnt >= RuleSize Then
-                '            RuleSize = RuleSize + 10
-                '            ReDim Preserve RuleIDs(RuleSize)
-                '            ReDim Preserve RuleBlogPostIDs(RuleSize)
-                '        End If
-                '        RuleIDs(RuleCnt) = RSSFeedBlogRule.id 'Csv.GetCSInteger(CS, "ID")
-                '        RuleBlogPostIDs(RuleCnt) = RSSFeedBlogRule.BlogPostID 'Csv.GetCSInteger(CS, "BlogPostID")
-                '        RuleCnt = RuleCnt + 1
-                '    Next
-
-                '    Dim BlogCopyModelList As List(Of BlogCopyModel) = BlogCopyModel.createListFromBlogCopy(cp, blog.id)
-                '    For Each BlogCopy In BlogCopyModelList
-                '        BlogPostID = BlogCopy.id 'Csv.GetCSInteger(CS, "id")
-                '        For RulePtr = 0 To RuleCnt - 1
-                '            If BlogPostID = RuleBlogPostIDs(RulePtr) Then
-                '                RuleIDs(RulePtr) = -1
-                '                Exit For
-                '            End If
-                '        Next
-                '        If RulePtr >= RuleCnt Then
-                '            '
-                '            ' Rule not found, add it
-                '            '
-                '            Dim RSSFeedBlogRule As RSSFeedBlogRuleModel = RSSFeedBlogRuleModel.add(cp)
-                '            If (RSSFeedBlogRule IsNot Nothing) Then
-                '                RSSFeedBlogRule.RSSFeedID = rssFeed.id
-                '                RSSFeedBlogRule.BlogPostID = BlogPostID
-                '                RSSFeedBlogRule.save(Of BlogModel)(cp)
-                '            End If
-                '            'CSRule = Csv.InsertCSRecord(cnRSSFeedBlogRules, 0)
-                '            'If Csv.IsCSOK(CSRule) Then
-
-                '            'Call Csv.SetCS(CSRule, "RSSFeedID", RSSFeed.id)
-                '            'Call Csv.SetCS(CSRule, "BlogPostID", BlogPostID)
-                '            'End If
-                '            'Call Csv.CloseCS(CSRule)
-                '            Dim BlogEntry As BlogEntryModel = DbModel.add(Of BlogEntryModel)(cp)
-                '            If (BlogEntry IsNot Nothing) Then
-                '                RSSTitle = Trim(BlogEntry.name)
-                '                If RSSTitle = "" Then
-                '                    RSSTitle = "Blog Post " & EntryID
-                '                End If
-                '                BlogEntry.RSSTitle = RSSTitle
-                '                'Call Main.SetCS(CSPost, "RSSTitle", RSSTitle)
-                '                '
-                '                qs = ""
-                '                qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(BlogPostID))
-                '                qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails)
-                '                EntryLink = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, qs, blogListLink & "?" & qs)
-                '                If InStr(1, EntryLink, AdminURL, vbTextCompare) = 0 Then
-                '                    'Call Main.SetCS(CSPost, "RSSLink", EntryLink)
-                '                    BlogEntry.RSSLink = EntryLink
-                '                End If
-                '                BlogEntry.RSSDescription = genericController.filterCopy(cp, EntryCopy, 150)
-                '                ' Call Main.SetCS(CSPost, "RSSDescription", filterCopy(EntryCopy, 150))
-                '            End If
-                '            ' CSPost = Csv.OpenCSContentRecord(cnBlogEntries, BlogPostID)
-                '            'If Csv.IsCSOK(CSPost) Then
-                '            '            blogEntry.Name = Csv.GetCSText(CSPost, "name")
-                '            '            EntryID = Csv.GetCSInteger(CSPost, "id")
-                '            '            EntryCopy = Csv.GetCSText(CSPost, "copy")
-                '            '            '
-                '            '            RSSTitle = Trim(blogEntry.Name)
-                '            '            If RSSTitle = "" Then
-                '            '                RSSTitle = "Blog Post " & EntryID
-                '            '            End If
-                '            '            Call Main.SetCS(CSPost, "RSSTitle", RSSTitle)
-                '            '            '
-                '            '            qs = ""
-                '            '            qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(BlogPostID))
-                '            '            qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails)
-                '            '            EntryLink = Main.GetLinkAliasByPageID(cp.Doc.PageId, qs, blogListLink & "?" & qs)
-                '            '            If InStr(1, EntryLink, AdminURL, vbTextCompare) = 0 Then
-                '            '                Call Main.SetCS(CSPost, "RSSLink", EntryLink)
-                '            '            End If
-                '            '            Call Main.SetCS(CSPost, "RSSDescription", filterCopy(EntryCopy, 150))
-                '        End If
-
-                '        ' Call Csv.CloseCS(CSPost)
-                '        '
-                '    Next
-                '    For RulePtr = 0 To RuleCnt - 1
-                '        If RuleIDs(RulePtr) <> -1 Then
-                '            'Call Csv.DeleteContentRecord(cnRSSFeedBlogRules, RuleIDs(RulePtr))
-                '            Call cp.Content.Delete(cnRSSFeedBlogRules, RuleIDs(RulePtr))
-                '        End If
-                '    Next
-                'End If
-                ''
-                'Dim BuildVersion As String = cp.Site.GetProperty("BuildVersion")
-                'If BuildVersion >= "4.1.098" Then
-                '    Call cp.Utils.ExecuteAddon(RSSProcessAddonGuid)
-                'End If
-                ''Do While Csv.IsCSOK(CS)
-                ''    BlogPostID = Csv.GetCSInteger(CS, "id")
-                ''    For RulePtr = 0 To RuleCnt - 1
-                ''        If BlogPostID = RuleBlogPostIDs(RulePtr) Then
-                ''            RuleIDs(RulePtr) = -1
-                ''            Exit For
-                ''        End If
-                ''    Next
-                ''If RulePtr >= RuleCnt Then
-                ''        '
-                ''        ' Rule not found, add it
-                ''        '
-                ''        CSRule = Csv.InsertCSRecord(cnRSSFeedBlogRules, 0)
-                ''        If Csv.IsCSOK(CSRule) Then
-                ''            Call Csv.SetCS(CSRule, "RSSFeedID", RSSFeed.id)
-                ''            Call Csv.SetCS(CSRule, "BlogPostID", BlogPostID)
-                ''        End If
-                ''        Call Csv.CloseCS(CSRule)
-                ''    End If
-                ''
-                '' Now update the Blog Post RSS fields, RSSLink, RSSTitle, RSSDescription, RSSPublish, RSSExpire
-                '' Should do this here because if RSS was installed after Blog, there is no link until a post is edited
-                ''
-                ''CSPost = Csv.OpenCSContentRecord(cnBlogEntries, BlogPostID)
-                ''    If Csv.IsCSOK(CSPost) Then
-                ''        blogEntry.Name = Csv.GetCSText(CSPost, "name")
-                ''        EntryID = Csv.GetCSInteger(CSPost, "id")
-                ''        EntryCopy = Csv.GetCSText(CSPost, "copy")
-                ''        '
-                ''        RSSTitle = Trim(blogEntry.Name)
-                ''        If RSSTitle = "" Then
-                ''            RSSTitle = "Blog Post " & EntryID
-                ''        End If
-                ''        Call Main.SetCS(CSPost, "RSSTitle", RSSTitle)
-                ''        '
-                ''        qs = ""
-                ''        qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(BlogPostID))
-                ''        qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails)
-                ''        EntryLink = Main.GetLinkAliasByPageID(cp.Doc.PageId, qs, blogListLink & "?" & qs)
-                ''        If InStr(1, EntryLink, AdminURL, vbTextCompare) = 0 Then
-                ''            Call Main.SetCS(CSPost, "RSSLink", EntryLink)
-                ''        End If
-                ''        Call Main.SetCS(CSPost, "RSSDescription", filterCopy(EntryCopy, 150))
-                ''    End If
-                ''    Call Csv.CloseCS(CSPost)
-                ''    '
-                ''    Call Csv.NextCSRecord(CS)
-                ''Loop
-                ''Call Csv.CloseCS(CS)
-                ''
-                '' Now delete all the rules that were not found in the blog
-                ''
-                ''For RulePtr = 0 To RuleCnt - 1
-                ''        If RuleIDs(RulePtr) <> -1 Then
-                ''            Call Csv.DeleteContentRecord(cnRSSFeedBlogRules, RuleIDs(RulePtr))
-                ''        End If
-                ''    Next
-                ''End If
-                ''
-                ''If Main.ContentServerVersion >= "4.1.098" Then
-                ''    Call cp.Utils.ExecuteAddon(RSSProcessAddonGuid)
-                ''End If
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)
             End Try
