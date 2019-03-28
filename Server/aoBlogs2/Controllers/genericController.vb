@@ -388,9 +388,6 @@ Namespace Controllers
                         Criteria = "(Approved<>0)and(EntryID=" & blogEntry.id & ")"
                         Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(Approved<>0)and(EntryID=" & blogEntry.id & ")")
                         CommentCount = BlogCommentModelList.Count
-                        'CSCount = Main.OpenCSContent(cnBlogComments, "(Approved<>0)and(EntryID=" & blogEntry.id & ")")
-                        'CommentCount = Main.GetCSRowCount(CSCount)
-                        'Call Main.CloseCS(CSCount)
                         '
                         qs = blogListQs
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
@@ -403,10 +400,8 @@ Namespace Controllers
                         End If
                         If user.isBlogEditor(cp, blog) Then
                             Criteria = "(EntryID=" & blogEntry.id & ")"
-                            'CSCount = Main.OpenCSContent(cnBlogComments, "((Approved is null)or(Approved=0))and(EntryID=" & blogEntry.id & ")")
                             BlogCommentModelList = DbModel.createList(Of BlogCommentModel)(cp, "(Approved<>0)and(EntryID=" & blogEntry.id & ")")
                             CommentCount = BlogCommentModelList.Count
-                            'Call Main.CloseCS(CSCount)
                             If ToolLine <> "" Then
                                 ToolLine = ToolLine & "&nbsp;|&nbsp;"
                             End If
@@ -419,12 +414,7 @@ Namespace Controllers
                             End If
                             ToolLine = ToolLine & "<a href=""?" & qs & """>Edit</a>"
                         End If
-                        '            If ToolLine <> "" Then
-                        '                s = s & cr & "<div class=""aoBlogToolLink"">" & ToolLine & "</div>"
-                        '            End If
-
-                        's = s & cr & "<div><a class=""aoBlogFooterLink"" href=""" & Main.ServerPage & WorkingQueryString & RequestNameBlogEntryID & "=" & cp.doc.getinteger(CS, "ID") & "&" & RequestNameFormID & "=" & FormBlogPostDetails & """>Post a Comment</a></div>"
-
+                        '
                     Else
                         '
                         ' Show all comments
@@ -447,16 +437,12 @@ Namespace Controllers
                             result = result & cr & "<div class=""aoBlogCommentHeader"">Comments</div>"
                             result = result & vbCrLf & Divider
                             CommentPtr = 0
-                            'Dim blogComment As BlogCommentModel = DbModel.add(Of BlogCommentModel)(cp)
-                            'If (blogComment IsNot Nothing) Then
                             For Each blogComment In DbModel.createList(Of BlogCommentModel)(cp, Criteria)
 
                                 result = result & GetBlogCommentCell(cp, blog, rssFeed, blogEntry, blogComment, user, False)
                                 result = result & vbCrLf & Divider
                                 CommentPtr = CommentPtr + 1
-                                'Call Main.NextCSRecord(CS)
                             Next
-                            'End If
 
                         End If
 

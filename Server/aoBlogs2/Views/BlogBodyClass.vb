@@ -389,9 +389,9 @@ Namespace Views
                 '
                 ' Link to archives
                 '
-                qs = cp.Doc.RefreshQueryString
-                qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogArchiveDateList.ToString(), True)
-                result.Append(cr & "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>See archives</a></div>")
+                'qs = cp.Doc.RefreshQueryString
+                'qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogArchiveDateList.ToString(), True)
+                'result.Append(cr & "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>See archives</a></div>")
                 '
                 ' Link to RSS Feed
                 '
