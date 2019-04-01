@@ -80,8 +80,9 @@ Namespace Views
                     If blogEntry.name <> "" Then
                         Dim siteName As String = CP.Site.GetProperty("facebook site_name")
                         If siteName = "" Then
-                            Call CP.Site.LogWarning("Facebook site name is not set", "", "Facebook site name missing", "")
                             siteName = CP.Site.Name
+                            Call CP.Site.LogWarning("Facebook site name is not set", "", "Blog found site property 'Facebook site_name' is blank, application name [] used instead", "")
+                            Call CP.Site.SetProperty("facebook site_name", CP.Site.Name)
                         End If
                         If (blogImageList.Count > 0) Then
                             Call CP.Doc.SetProperty("Open Graph Image", "http://" & CP.Site.Domain & CP.Site.FilePath & blogImageList.First().Filename)
