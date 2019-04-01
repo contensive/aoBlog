@@ -438,3 +438,10 @@ width: inherit;
 .aoBlogLoginBox { margin: 20px 0; padding: 10px; width: 100%; }
 .aoBlogCommentCopy { margin-left: 0; }
 }
+/*
+* make inline images max width 100%, so to make image that scales, upload a larger image
+*/
+.blogWrapper img 
+{
+	max-width: 100%;
+}
