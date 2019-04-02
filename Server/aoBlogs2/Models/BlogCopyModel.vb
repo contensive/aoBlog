@@ -78,14 +78,12 @@ Namespace Models
                             & " AND (BlogID=" & blogId & ")" _
                             & " ORDER BY year(dateadded) desc, month(dateadded) desc "
                 Dim cs As CPCSBaseClass = cp.CSNew()
-                cp.Utils.AppendLog("archiveQuery=" & SQL)
                 If (cs.OpenSQL(SQL)) Then
                     Do
                         Dim archiveDate As New ArchiveDateModel()
                         archiveDate.Month = cs.GetInteger("archiveMonth")
                         archiveDate.Year = cs.GetInteger("archiveYear")
                         result.Add(archiveDate)
-                        cp.Utils.AppendLog("archiveDate=" & archiveDate.ToString)
                         cs.GoNext()
                     Loop While cs.OK()
                 End If

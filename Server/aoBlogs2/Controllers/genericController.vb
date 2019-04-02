@@ -178,13 +178,7 @@ Namespace Controllers
                 Dim qs As String = cp.Utils.ModifyQueryString("", RequestNameBlogEntryID, CStr(blogEntry.id))
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
                 Call cp.Site.addLinkAlias(blogEntry.name, cp.Doc.PageId, qs)
-                '
-                cp.Utils.AppendLog("getBlogEntryCell, addLinkAlias, blogEntry.name [" & blogEntry.name & "], pageId [" & cp.Doc.PageId & "], qs [" & qs & "]")
-                '
                 Dim entryLink As String = cp.Content.GetPageLink(cp.Doc.PageId, qs)
-                '
-                cp.Utils.AppendLog("getBlogEntryCell, GetPageLink, pageId [" & cp.Doc.PageId & "], qs [" & qs & "], entryLink [" & entryLink & "]")
-                '
                 Dim TagListRow As String = ""
                 Dim blogImageList = BlogImageModel.createListFromBlogEntry(cp, blogEntry.id)
                 If DisplayFullEntry Then
@@ -546,100 +540,6 @@ Namespace Controllers
                     Return_Imagename = blogImage.name
                     Return_ThumbnailFilename = blogImage.Filename
                     Return_ImageFilename = blogImage.Filename
-                    '
-                    ' todo replace resize
-                    '
-                    'Dim Filename As String = blogImage.Filename
-                    'Dim AltSizeList As String = blogImage.AltSizeList
-                    'Dim ThumbNailSize As String = ""
-                    'Dim ImageSize As String = ""
-                    ''
-                    '' -- search for a version of this image resized for this blog's thumbnail
-                    'If AltSizeList <> "" Then
-                    '    AltSizeList = Replace(AltSizeList, ",", vbCrLf)
-                    '    Dim Sizes() As String = Split(AltSizeList, vbCrLf)
-                    '    Dim Ptr As Integer
-                    '    For Ptr = 0 To UBound(Sizes)
-                    '        If Sizes(Ptr) <> "" Then
-                    '            Dim Dims() As String = Split(Sizes(Ptr), "x")
-                    '            Dim DimWidth As Integer = cp.Utils.EncodeInteger(Dims(0))
-                    '            If (blog.ThumbnailImageWidth <> 0) And (DimWidth = blog.ThumbnailImageWidth) Then
-                    '                ThumbNailSize = Sizes(Ptr)
-                    '            End If
-                    '            If (blog.ImageWidthMax <> 0) And (DimWidth = blog.ImageWidthMax) Then
-                    '                ImageSize = Sizes(Ptr)
-                    '            End If
-                    '        End If
-                    '    Next
-                    'End If
-                    'If True Then
-                    '    Dim Pos As Integer = InStrRev(Filename, ".")
-                    '    If Pos <> 0 Then
-                    '        Dim FilenameNoExtension As String = Mid(Filename, 1, Pos - 1)
-                    '        Dim FilenameExtension As String = Mid(Filename, Pos + 1)
-                    '        Dim sf As Object
-                    '        If blog.ThumbnailImageWidth = 0 Then
-                    '            '
-                    '        ElseIf ThumbNailSize <> "" Then
-                    '            Return_ThumbnailFilename = FilenameNoExtension & "-" & ThumbNailSize & "." & FilenameExtension
-                    '            cp.Utils.AppendLog("Return_ThumbnailFilename=" & Return_ThumbnailFilename)
-                    '        Else
-                    '            sf = CreateObject("sfimageresize.imageresize")
-                    '            sf.Algorithm = 5
-                    '            Try
-                    '                Try
-                    '                    sf.LoadFromFile(cp.CdnFiles.cp.Site.PhysicalFilePath & Filename)
-                    '                Catch ex As Exception
-
-                    '                End Try
-                    '                ' On Error GoTo ErrorTrap
-                    '                sf.Width = blog.ThumbnailImageWidth
-                    '                Try
-                    '                    Call sf.DoResize
-                    '                Catch ex As Exception
-
-                    '                End Try
-                    '                ThumbNailSize = blog.ThumbnailImageWidth & "x" & sf.Height
-                    '                Return_ThumbnailFilename = FilenameNoExtension & "-" & ThumbNailSize & "." & FilenameExtension
-                    '                Try
-                    '                    sf.SaveToFile(cp.Site.PhysicalFilePath & Return_ThumbnailFilename)
-                    '                Catch ex As Exception
-
-                    '                End Try
-                    '                AltSizeList = AltSizeList & vbCrLf & ThumbNailSize
-                    '                blogImage.AltSizeList = AltSizeList
-                    '                'Call Main.SetCS(CS, "altsizelist", AltSizeList)
-                    '                cp.Utils.AppendLog("Return_ThumbnailFilename=" & Return_ThumbnailFilename)
-                    '            Catch ex As Exception
-                    '                '
-                    '            End Try
-                    '        End If
-                    '        If blog.ImageWidthMax = 0 Then
-                    '            '
-                    '        ElseIf ImageSize <> "" Then
-                    '            Return_ImageFilename = FilenameNoExtension & "-" & ImageSize & "." & FilenameExtension
-                    '        Else
-                    '            sf = CreateObject("sfimageresize.imageresize")
-                    '            sf.Algorithm = 5
-
-                    '            sf.LoadFromFile(cp.Site.PhysicalFilePath & Filename)
-                    '            If Err.Number <> 0 Then
-                    '                ' On Error GoTo ErrorTrap
-                    '                Err.Clear()
-                    '            Else
-                    '                ' On Error GoTo ErrorTrap
-                    '                sf.Width = blog.ImageWidthMax
-                    '                Call sf.DoResize
-                    '                ImageSize = blog.ImageWidthMax & "x" & sf.Height
-                    '                Return_ImageFilename = FilenameNoExtension & "-" & ImageSize & "." & FilenameExtension
-                    '                Call sf.SaveToFile(cp.Site.FilePath & Return_ImageFilename)
-                    '                AltSizeList = AltSizeList & vbCrLf & ImageSize
-                    '                blogImage.AltSizeList = AltSizeList
-                    '                'Call Main.SetCS(CS, "altsizelist", AltSizeList)
-                    '            End If
-                    '        End If
-                    '    End If
-                    'End If
                 End If
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)
@@ -654,9 +554,6 @@ Namespace Controllers
             '
             Dim result As String = ""
             Try
-                '
-                'Call Main.SaveVirtualFile("blog.log", "getLinkAlias(" & sourceLink & ")")
-                '
                 result = sourceLink
                 If cp.Utils.EncodeBoolean(cp.Site.GetProperty("allowLinkAlias", "1")) Then
                     Dim Link As String = sourceLink

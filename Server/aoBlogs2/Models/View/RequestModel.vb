@@ -24,7 +24,6 @@ Namespace Models.View
                 If (_instanceId Is Nothing) Then
                     _instanceId = cp.Doc.GetText("instanceId")
                     If (String.IsNullOrWhiteSpace(_instanceId)) Then _instanceId = "BlogWithoutinstanceId-PageId-" & cp.Doc.PageId
-                    cp.Utils.AppendLog("aoBlog, RequestModel, instanceId [" & _instanceId & "]")
                 End If
                 Return _instanceId
             End Get
@@ -44,7 +43,6 @@ Namespace Models.View
                     Else
                         _categoryId = cp.Doc.GetInteger(RequestNameBlogCategoryID)
                     End If
-                    cp.Utils.AppendLog("aoBlog, RequestModel, categoryId [" & _categoryId & "]")
                 End If
                 Return Convert.ToInt32(_categoryId)
             End Get
@@ -60,7 +58,6 @@ Namespace Models.View
             Get
                 If (_blogEntryId Is Nothing) Then
                     _blogEntryId = cp.Doc.GetInteger(RequestNameBlogEntryID)
-                    cp.Utils.AppendLog("aoBlog, RequestModel, _blogEntryId [" & _blogEntryId & "]")
                 End If
                 Return Convert.ToInt32(_blogEntryId)
             End Get
@@ -73,7 +70,6 @@ Namespace Models.View
             Get
                 If (_ButtonValue Is Nothing) Then
                     _ButtonValue = cp.Doc.GetText("button")
-                    cp.Utils.AppendLog("aoBlog, RequestModel, _ButtonValue [" & _ButtonValue & "]")
                 End If
                 Return Convert.ToString(_ButtonValue)
             End Get
@@ -86,7 +82,6 @@ Namespace Models.View
             Get
                 If (_FormID Is Nothing) Then
                     _FormID = cp.Doc.GetInteger(RequestNameFormID)
-                    cp.Utils.AppendLog("aoBlog, RequestModel, _FormID [" & _FormID & "]")
                 End If
                 Return Convert.ToInt32(_FormID)
             End Get
@@ -100,7 +95,6 @@ Namespace Models.View
             Get
                 If (_SourceFormID Is Nothing) Then
                     _SourceFormID = cp.Doc.GetInteger(RequestNameSourceFormID)
-                    cp.Utils.AppendLog("aoBlog, RequestModel, _SourceFormID [" & _SourceFormID & "]")
                 End If
                 Return Convert.ToInt32(_SourceFormID)
             End Get
@@ -113,7 +107,6 @@ Namespace Models.View
             Get
                 If (_KeywordList Is Nothing) Then
                     _KeywordList = cp.Doc.GetText(RequestNameKeywordList)
-                    cp.Utils.AppendLog("aoBlog, RequestModel, _KeywordList [" & _KeywordList & "]")
                 End If
                 Return Convert.ToString(_KeywordList)
             End Get
@@ -126,7 +119,6 @@ Namespace Models.View
             Get
                 If (_DateSearchText Is Nothing) Then
                     _DateSearchText = cp.Doc.GetText(RequestNameDateSearch)
-                    cp.Utils.AppendLog("aoBlog, RequestModel, _DateSearchText [" & _DateSearchText & "]")
                 End If
                 Return Convert.ToString(_DateSearchText)
             End Get
@@ -139,7 +131,6 @@ Namespace Models.View
             Get
                 If (_ArchiveMonth Is Nothing) Then
                     _ArchiveMonth = cp.Doc.GetInteger(RequestNameArchiveMonth)
-                    cp.Utils.AppendLog("aoBlog, RequestModel, _ArchiveMonth [" & _ArchiveMonth & "]")
                 End If
                 Return Convert.ToInt32(_ArchiveMonth)
             End Get
@@ -152,7 +143,6 @@ Namespace Models.View
             Get
                 If (_ArchiveYear Is Nothing) Then
                     _ArchiveYear = cp.Doc.GetInteger(RequestNameArchiveYear)
-                    cp.Utils.AppendLog("aoBlog, RequestModel, _ArchiveYear [" & _ArchiveYear & "]")
                 End If
                 Return Convert.ToInt32(_ArchiveYear)
             End Get
@@ -165,7 +155,6 @@ Namespace Models.View
             Get
                 If (_EntryID Is Nothing) Then
                     _EntryID = cp.Doc.GetInteger(RequestNameBlogEntryID)
-                    cp.Utils.AppendLog("aoBlog, RequestModel, _EntryID [" & _EntryID & "]")
                 End If
                 Return Convert.ToInt32(_EntryID)
             End Get
@@ -178,7 +167,6 @@ Namespace Models.View
             Get
                 If (_BlogEntryName Is Nothing) Then
                     _BlogEntryName = cp.Doc.GetText(RequestNameBlogEntryName)
-                    cp.Utils.AppendLog("aoBlog, RequestModel, _BlogEntryName [" & _BlogEntryName & "]")
                 End If
                 Return Convert.ToString(_BlogEntryName)
             End Get
@@ -191,7 +179,6 @@ Namespace Models.View
             Get
                 If (_BlogEntryCopy Is Nothing) Then
                     _BlogEntryCopy = cp.Doc.GetText(RequestNameBlogEntryCopy)
-                    cp.Utils.AppendLog("aoBlog, RequestModel, _BlogEntryCopy [" & _BlogEntryCopy & "]")
                 End If
                 Return Convert.ToString(_BlogEntryCopy)
             End Get
@@ -204,7 +191,6 @@ Namespace Models.View
             Get
                 If (_BlogEntryTagList Is Nothing) Then
                     _BlogEntryTagList = cp.Doc.GetText(RequestNameBlogEntryTagList)
-                    cp.Utils.AppendLog("aoBlog, RequestModel, _BlogEntryTagList [" & _BlogEntryTagList & "]")
                 End If
                 Return Convert.ToString(_BlogEntryTagList)
             End Get
@@ -217,7 +203,6 @@ Namespace Models.View
             Get
                 If (_BlogEntryCategoryId Is Nothing) Then
                     _BlogEntryCategoryId = cp.Doc.GetInteger(RequestNameBlogEntryCategoryID)
-                    cp.Utils.AppendLog("aoBlog, RequestModel, _BlogEntryCategoryId [" & _BlogEntryCategoryId & "]")
                 End If
                 Return Convert.ToInt32(_BlogEntryCategoryId)
             End Get

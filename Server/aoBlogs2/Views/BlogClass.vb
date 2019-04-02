@@ -3,6 +3,7 @@ Imports System
 Imports System.Collections.Generic
 Imports System.Linq
 Imports System.Text
+Imports Contensive.Addons.Blog.Controllers
 Imports Contensive.Addons.Blog.Models
 Imports Contensive.BaseClasses
 
@@ -19,16 +20,17 @@ Namespace Views
         Public Overrides Function Execute(ByVal CP As CPBaseClass) As Object
             Dim returnHtml As String = ""
             Try
+                '
                 Dim request = New View.RequestModel(CP)
                 Dim blog As BlogModel = BlogModel.verifyBlog(CP, request)
                 If (blog Is Nothing) Then Return "<!-- Could not find or create blog from instanceId [" & request.instanceId & "] -->"
                 '
-                ' Dim blogEntry As BlogEntryModel = DbModel.create(Of BlogEntryModel)(CP, request.blogEntryId)
-                ' -- get the post list (blog list of posts without sidebar)
-                ' todo - this hould be static
-                Dim BlogBodyController As New BlogBodyClass()
-                Dim blogBody As String = BlogBodyController.getBlogBody(CP, blog, request)
-                Dim isBlogBodyDetailForm As Boolean = (request.blogEntryId > 0)
+                ' -- get Blog Body -- the body is the area down the middle that includes the Blog View (Article View, List View, Edit View)
+                Dim blogEntry = DbModel.create(Of BlogEntryModel)(CP, request.EntryID)
+                Dim blogBody As String = BlogBodyController.getBlogBody(CP, blog, request, blogEntry)
+                '
+                ' -- wrap the blog body in the wrapper (sidebar, footer, etc)
+                Dim isArticleView As Boolean = (request.blogEntryId > 0)
                 Dim sideBar_ArchiveList As String = ""
                 If blog.allowArchiveList Then
                     '
@@ -49,7 +51,7 @@ Namespace Views
                 Dim allowListSidebar As Boolean = blog.allowEmailSubscribe Or blog.allowFacebookLink Or blog.allowGooglePlusLink Or blog.allowGooglePlusLink Or blog.allowRSSSubscribe Or blog.allowTwitterLink Or blog.allowArchiveList Or blog.allowSearch
                 Dim allowArticleSidebar As Boolean = allowListSidebar Or blog.allowArticleCTA
                 Dim dstFormId As Integer = CP.Doc.GetInteger(RequestNameFormID)
-                Dim allowSidebar As Boolean = Not (dstFormId = FormBlogEntryEditor) And ((isBlogBodyDetailForm And allowArticleSidebar) Or (Not isBlogBodyDetailForm And allowListSidebar))
+                Dim allowSidebar As Boolean = Not (dstFormId = FormBlogEntryEditor) And ((isArticleView And allowArticleSidebar) Or (Not isArticleView And allowListSidebar))
                 '
                 ' todo convert sidebar to mustache
                 Dim cellList As String = ""
@@ -60,48 +62,6 @@ Namespace Views
                 Dim cellTemplate As String = sidebarCell.GetHtml()
                 Dim adminSuggestions As String = ""
                 '
-                If isBlogBodyDetailForm Then
-                    '
-                    Dim blogEntry As BlogEntryModel = DbModel.create(Of BlogEntryModel)(CP, request.blogEntryId)
-                    '
-                    ' -- article page
-                    Dim blogImageList As List(Of BlogImageModel) = BlogImageModel.createListFromBlogEntry(CP, blogEntry.id)
-                    Dim blogEntryBrief As String = blogEntry.RSSDescription
-                    If blogEntryBrief = "" Then
-                        blogEntryBrief = CP.Utils.DecodeHTML(blogEntry.copy)
-                        If blogEntryBrief.Length > 300 Then
-                            Dim ptr As Integer = blogEntryBrief.IndexOf(" ", 290)
-                            If ptr < 0 Then ptr = 300
-                            blogEntryBrief = blogEntryBrief.Substring(1, ptr - 1) & "..."
-                        End If
-                    End If
-                    '
-                    ' -- Set Open Graph
-                    If blogEntry.name <> "" Then
-                        Dim siteName As String = CP.Site.GetProperty("facebook site_name")
-                        If siteName = "" Then
-                            siteName = CP.Site.Name
-                            Call CP.Site.LogWarning("Facebook site name is not set", "", "Blog found site property 'Facebook site_name' is blank, application name [] used instead", "")
-                            Call CP.Site.SetProperty("facebook site_name", CP.Site.Name)
-                        End If
-                        If (blogImageList.Count > 0) Then
-                            Call CP.Doc.SetProperty("Open Graph Image", "http://" & CP.Site.Domain & CP.Site.FilePath & blogImageList.First().Filename)
-                        Else
-                            adminSuggestions &= CP.Html.li("This blog entry has no image. Adding an image will improve your social media appeal.")
-                        End If
-                        'Call CP.Doc.SetProperty("Open Graph Site Name", CP.Utils.EncodeHTML(siteName))
-                        Call CP.Doc.SetProperty("Open Graph Content Type", "website")
-                        Call CP.Doc.SetProperty("Open Graph URL", CP.Content.GetPageLink(CP.Doc.PageId, "BlogEntryID=" & blogEntry.id & "&FormID=300"))
-                        Call CP.Doc.SetProperty("Open Graph Title", blogEntry.name)
-                        Call CP.Doc.SetProperty("Open Graph Description", blogEntryBrief)
-                    End If
-                    '
-                    ' -- set article meta data
-                    Call CP.Doc.AddTitle(blogEntry.metaTitle)
-                    Call CP.Doc.AddMetaDescription(blogEntry.metaDescription)
-                    Call CP.Doc.AddMetaKeywordList((blogEntry.metaDescription & "," & blogEntry.tagList).Replace(vbCrLf, ",").Replace(vbCr, ",").Replace(vbLf, ",").Replace(",,", ","))
-                End If
-                '
                 ' -- social media likes
                 Call sidebarCell.SetOuter(".blogSidebarCellHeadline", "")
                 Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
@@ -109,19 +69,17 @@ Namespace Views
                 Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
                 Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
                 Dim copy As String = sidebarCell.GetHtml()
-                If isBlogBodyDetailForm Then
+                If isArticleView Then
                     blogBody = Replace(blogBody, "<div class=""aoBlogEntryCopy"">", copy & "<div class=""aoBlogEntryCopy"">")
                 End If
                 Dim sidebarCnt As Integer = 0
                 '
                 ' Sidebar
-                '
                 If allowSidebar Then
                     '
-                    If blog.allowArticleCTA And isBlogBodyDetailForm Then
+                    If blog.allowArticleCTA And isArticleView Then
                         '
                         ' CTA cells
-                        '
                         Dim blogEntryCtaRuleList = DbModel.createList(Of BlogEntryCTARuleModel)(CP, "blogEntryid=" & request.blogEntryId)
                         For Each rule In blogEntryCtaRuleList
                             Dim cta = DbModel.create(Of CallsToActionModel)(CP, rule.calltoactionid)
@@ -259,7 +217,7 @@ Namespace Views
                         sidebarCnt += 1
                     End If
                     '
-                    If isBlogBodyDetailForm Then
+                    If isArticleView Then
                         Dim emtyblogEntryCtaRuleList = DbModel.createList(Of BlogEntryCTARuleModel)(CP, "blogEntryid=" & request.blogEntryId)
                         If emtyblogEntryCtaRuleList.Count > 0 Then
 
@@ -274,24 +232,25 @@ Namespace Views
                     End If
                     '
                     If blog.allowArticleCTA Then
-                            '
-                            ' Call To action List
-                            '
-                            Dim cta = CP.Content.GetID("Calls To Action")
-                            Dim qs As String = ""
-                            sidebarCell.Load(cellTemplate)
-                            Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Call to Action")
-                            Call sidebarCell.SetInner(".blogSidebarCellCopy", "")
-                            Call sidebarCell.SetOuter(".blogSidebarCellInputCaption", "")
-                            Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
-                            Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
-                            qs = "cid=" & CP.Content.GetID("Calls To Action")
+                        '
+                        ' Call To action List
+                        '
+                        Dim cta = CP.Content.GetID("Calls To Action")
+                        Dim qs As String = ""
+                        sidebarCell.Load(cellTemplate)
+                        Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Call to Action")
+                        Call sidebarCell.SetInner(".blogSidebarCellCopy", "")
+                        Call sidebarCell.SetOuter(".blogSidebarCellInputCaption", "")
+                        Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
+                        Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
+                        qs = "cid=" & CP.Content.GetID("Calls To Action")
                         '
                         cellList &= vbCrLf & vbTab & "<div class=""aoBlogFooterLink""><a href=""" & CP.Site.GetProperty("adminUrl") & "?" & qs & """>Add/Edit Site Call-To-Actions</a></div>"
                         sidebarCnt += 1
-                        End If
                     End If
-                    layout.SetInner(".blogSidebar", cellList)
+                End If
+                '
+                layout.SetInner(".blogSidebar", cellList)
                 layout.Append(CP.Html.Hidden("blogId", blog.id.ToString(), "", "blogId"))
                 If sidebarCnt = 0 Then
                     layout.SetInner(".blogWrapper", layout.GetInner(".blogColumn1"))
@@ -309,6 +268,7 @@ Namespace Views
             Catch ex As Exception
                 errorReport(CP, ex, "execute")
             End Try
+            '
             Return returnHtml
         End Function
         '

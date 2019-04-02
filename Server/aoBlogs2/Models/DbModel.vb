@@ -190,12 +190,9 @@ Namespace Models
                     Dim instanceType As Type = GetType(T)
                     Dim tableName As String = derivedContentTableName(instanceType)
                     modelInstance = DirectCast(Activator.CreateInstance(instanceType), T)
+                    '
                     For Each modelProperty As PropertyInfo In modelInstance.GetType().GetProperties(BindingFlags.Instance Or BindingFlags.Public)
-                        'cp.Utils.AppendLog("baseModel.loadRecord, modelProperty.Name [" & modelProperty.Name & "]")
                         Dim includeField As Boolean = True
-                        'If (modelProperty.Name = "imageDisplayTypeId") Then
-                        '    includeField = True
-                        'End If
                         If listOfLowerCaseFields IsNot Nothing Then
                             includeField = listOfLowerCaseFields.Contains(modelProperty.Name.ToLower())
                         End If
@@ -470,14 +467,14 @@ Namespace Models
         ''' <param name="cp"></param>
         ''' <param name="sqlCriteria"></param>
         ''' <returns></returns>
-        Friend Shared Function createList(Of T As DbModel)(cp As CPBaseClass, sqlCriteria As String, sqlOrderBy As String) As List(Of T)
+        Friend Shared Function createList(Of T As DbModel)(cp As CPBaseClass, sqlCriteria As String, sqlOrderBy As String, Optional pageSize As Integer = 9999, Optional pageNumber As Integer = 1) As List(Of T)
             Dim result As New List(Of T)
             Try
                 Dim cs As CPCSBaseClass = cp.CSNew()
                 Dim ignoreCacheNames As New List(Of String)
                 Dim instanceType As Type = GetType(T)
                 Dim contentName As String = derivedContentName(instanceType)
-                If (cs.Open(contentName, sqlCriteria, sqlOrderBy)) Then
+                If (cs.Open(contentName, sqlCriteria, sqlOrderBy, True, "", pageSize, pageNumber)) Then
                     Dim instance As T
                     Do
                         instance = loadRecord(Of T)(cp, cs)

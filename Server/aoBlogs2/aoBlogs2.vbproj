@@ -86,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="constants.vb" />
+    <Compile Include="Controllers\MetadataController.vb" />
     <Compile Include="Controllers\genericController.vb" />
     <Compile Include="Models\DbModel.vb" />
     <Compile Include="Models\EmailModel.vb" />
@@ -110,14 +111,12 @@
     <Compile Include="Models\BlogEntryCtaRules.vb" />
     <Compile Include="Models\CallsToActionModel.vb" />
     <Compile Include="Models\_blankModel.vb" />
-    <Compile Include="Views\BlogBodySearchClass.vb" />
-    <Compile Include="Views\BlogBodyDetailsClass.vb" />
-    <Compile Include="Views\BlogBodyEditClass.vb" />
+    <Compile Include="Views\ListView.vb" />
+    <Compile Include="Views\SearchView.vb" />
+    <Compile Include="Views\ArticleView.vb" />
+    <Compile Include="Views\EditView.vb" />
     <Compile Include="Views\BlogClass.vb" />
-    <Compile Include="Views\BlogBodyClass.vb" />
-    <Compile Include="Views\vb6CategoriesClass.vb" />
-    <Compile Include="Views\_blankClass.vb" />
-    <Compile Include="Views\latestNews.vb" />
+    <Compile Include="Controllers\BlogBodyController.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

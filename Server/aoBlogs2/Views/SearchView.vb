@@ -10,7 +10,7 @@ Imports Contensive.BaseClasses
 
 Namespace Views
     '
-    Public Class BlogBodySearchClass
+    Public Class SearchView
         '
         '====================================================================================
         '

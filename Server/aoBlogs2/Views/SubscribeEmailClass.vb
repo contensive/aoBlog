@@ -4,10 +4,6 @@ Imports System.Text
 Imports Contensive.BaseClasses
 
 Namespace Views
-
-    '
-    ' Sample Vb addon
-    '
     Public Class SubscribeEmailClass
         Inherits AddonBaseClass
         '
