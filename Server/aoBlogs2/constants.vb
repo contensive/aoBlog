@@ -31,6 +31,7 @@ Public Module constants
     Public Const cnBlogImages As String = "Blog Images"
     Public Const cnBlogImageRules As String = "Blog Image Rules"
     Public Const cnCTA As String = "Calls to Action"
+    Public Const guidDefaultCallToAction As String = "{3ab72599-bfec-4f8c-9801-a21fd7b6a084}"
 
     '
     Public Const TableNameBlogCategoryRules As String = "ccBlogCategoryGroupRules"

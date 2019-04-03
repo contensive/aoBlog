@@ -172,17 +172,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="aoBlogs">
-      <Guid>{145DB0EB-3293-4938-971E-CEBF25A774EC}</Guid>
-      <VersionMajor>3</VersionMajor>
-      <VersionMinor>1</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Models\modelData.txt" />
     <Content Include="Resources\LegacyVb6-ccCommonModule.txt" />
     <Content Include="Resources\LegacyVb6-KmaCommonModule.txt" />
@@ -196,8 +185,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetDir)"*.dll" "C:\Program Files\kma\Contensive\Addons"
-copy $(TargetDir)"*.dll" "C:\Program Files (x86)\kma\Contensive\Addons"
-</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

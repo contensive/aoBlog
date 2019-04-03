@@ -111,13 +111,16 @@ Namespace Models
                 '
                 'Add this new Call to Action
 
-                Dim CallToAction As CallsToActionModel = DbModel.add(Of CallsToActionModel)(cp)
-                If (CallToAction IsNot Nothing) Then
-                    CallToAction.name = "Find Out More"
-                    CallToAction.link = "http://www.MemberBoss.com"
-                    CallToAction.headline = " Manage Your Membership Community"
-                    CallToAction.brief = "<p>The best all-in-one-place solution to build and manage your membership community.</p>"
-                    CallToAction.save(Of BlogModel)(cp)
+
+                Dim callToAction = Models.CallsToActionModel.create(Of CallsToActionModel)(cp, guidDefaultCallToAction)
+                If (callToAction Is Nothing) Then
+                    callToAction = DbModel.add(Of CallsToActionModel)(cp)
+                    callToAction.name = "Find Out More"
+                    callToAction.link = "http://www.MemberBoss.com"
+                    callToAction.headline = " Manage Your Membership Community"
+                    callToAction.brief = "<p>The best all-in-one-place solution to build and manage your membership community.</p>"
+                    callToAction.ccguid = guidDefaultCallToAction
+                    callToAction.save(Of BlogModel)(cp)
                 End If
                 '
                 Call RSSFeedModel.UpdateBlogFeed(cp)
