@@ -1,120 +1,117 @@
-div.blogAdminWarning
+
+/*
+* warnings
+*/
+.blogWrapper div.blogAdminWarning
 {
 	margin: 0;
 	border: 1px dashed #844;
 	background-color: #fdd;
 	padding: 10px;
 }
-.blogAdminWarning h2
+.blogWrapper .blogAdminWarning h2
 {
 	color: #f00;
 }
-.blogAdminWarning p
+.blogWrapper .blogAdminWarning p
 {
 	color: #f00;
 }
-.aoBlogCommentError .ccError 
+.blogWrapper .aoBlogCommentError .ccError 
 {
 	font-size:inherit;
 }
-div.aoBlogCommentError 
+.blogWrapper div.aoBlogCommentError 
 {
 	 clear:both;
 	 margin:20px 0 0 20px;
 	 padding:10px;
-	font-weight:bold;
+	 /* font-weight:bold; */
 	 border: 1px solid red;
 	 border-radius: 5px;
 	 background-color: #fdd;
 }
-.aoBlogProblem
+.blogWrapper .aoBlogProblem
 {
 	padding: 40px 0 40px 0;
 }
-.aoBlogEntryDivider
+.blogWrapper .aoBlogEntryDivider
 {
 	clear:both;
 	border-bottom:1px solid black;
 	height:10px;
 	margin-bottom:10px;
 }
-.aoBlogEntryName
+.blogWrapper .aoBlogEntryName
 {
 	clear:both;
 	margin-top:10px;
 	margin-bottom:5px;
-	font-weight:bold;
+	/* font-weight:bold;
 	color:black;
-	font-size:120%;
+	font-size:120%; */
 }
-.aoBlogEntryName a 
+
+.blogWrapper .aoBlogEntryName a 
 {
 	text-decoration:none;
 	color:black
 }
-.aoBlogEntryName a:visited 
+.blogWrapper .aoBlogEntryName a:visited 
 {
 	text-decoration:none;
 	color:black
 }
-.aoBlogEntryName a:hover 
+.blogWrapper .aoBlogEntryName a:hover 
 {
 	text-decoration:none;
 	color:black
 }
-/*
-* This style is the customization style. Add it to the site's stylesheet or custom styles to create custom alignment.
-* the image size is determined by a setting, which creates an inline style in the image with width;
-* .blogWrapper .aoBlogEntryThumbnail 
-*/
-.aoBlogEntryThumbnail 
+.blogWrapper .aoBlogEntryThumbnail 
 {
 	float:left;
 	margin:0 10px 10px 0;
 	border:0;
 }
-.aoBlogEntryThumbnailRight
+.blogWrapper .aoBlogEntryThumbnailRight
 {
 	float:right;
 	margin:0 0 10px 10px;
 	border:0;
 }
-.aoBlogEntryThumbnailLeft
+.blogWrapper .aoBlogEntryThumbnailLeft
 {
 	float:left;
 	margin:0 10px 10px 0;
 	border:0;
 }
-.aoBlogEditImagePreview {
+.blogWrapper .aoBlogEditImagePreview {
     max-width: 200px;
     max-height: 200px;
 }
-.aoBlogEntryCopy
+.blogWrapper .aoBlogEntryCopy
 {
 	clear:both;
 	color:black;
 	margin-top:10px;
 	margin-bottom:10px;
 }
-.aoBlogEntryReadMore
+.blogWrapper .aoBlogEntryReadMore
 {
 	clear:both;
 	margin-bottom:10px;
 }
-.aoBlogEntryByLine 
+.blogWrapper .aoBlogEntryByLine 
 {
 	clear:both;
 	color:#9C9C9C
 }
-.aoBlogCommentHeader
+.blogWrapper .aoBlogCommentHeader
 {
 	clear:both;
 	 margin:20px 0 0 20px;
-	 font-weight:bold;
-	 color:black;
-	 font-size:120%;
 }
-.aoBlogCommentDivider
+.blogWrapper .aoBlogCommentDivider
 {
 	clear:both;
 	border-bottom:1px dotted #808080;
@@ -122,15 +119,13 @@ div.aoBlogCommentError
 	height:10px;
 	margin-bottom:10px;
 }
-.aoBlogCommentName
+.blogWrapper .aoBlogCommentName
 {
 	clear:both;
 	margin-left:20px;
 	margin-top:10px;
-	color:black;
-	font-weight:bold;
 }
-.aoBlogNewCommentName
+.blogWrapper .aoBlogNewCommentName
 {
 	clear:both;
 	margin-left:20px;
@@ -138,15 +133,15 @@ div.aoBlogCommentError
 	padding:5px;
 	border:2px inset;
 }
-.aoBlogCommentCopy
+.blogWrapper .aoBlogCommentCopy
 {
 	clear:both;
 	color:black;
 	margin-left:20px;
 	margin-top:10px;
 }
-.aoBlogCommentCopy>input,
-.aoBlogCommentCopy>textarea
+.blogWrapper .aoBlogCommentCopy>input,
+.blogWrapper .aoBlogCommentCopy>textarea
 {
 	width:100%;
 }
@@ -156,54 +151,54 @@ div.aoBlogCommentError
 	padding: 10px;
 	margin: 10px 10px 10px 0;
 }
-.aoBlogCommentByLine 
+.blogWrapper .aoBlogCommentByLine 
 {
 	clear:both;
 	color:#9C9C9C;
 	margin-left:20px;
 	margin-top:10px;
 }
-.aoBlogLoginBox 
+.blogWrapper .aoBlogLoginBox 
 {
 	width:300px;
 	padding:20px;
 	border:1px solid #9c9c9c;
 	margin: 20px;
 }
-.aoBlogLoginBox .aoBlogCommentCopy
+.blogWrapper .aoBlogLoginBox .aoBlogCommentCopy
 {
 	margin:0;
 }
-.aoBlogRSSFeedImage 
+.blogWrapper .aoBlogRSSFeedImage 
 {
 	vertical-align:middle;
 	border:0;
 }
-.aoBlogFooterLink 
+.blogWrapper .aoBlogFooterLink 
 {
 	border:1px solid #eef;
 	padding:4px;
 	background-color:#f8f8ff
 }
-.aoBlogToolLink 
+.blogWrapper .aoBlogToolLink 
 {
 	border:1px solid #eef;
 	padding:4px;
 	background-color:#f8f8ff
 }
-.aoBlogArchiveLink 
+.blogWrapper .aoBlogArchiveLink 
 {
 	padding:4px;
 	padding-left:20px;
 }
-.aoBlogHeaderLink 
+.blogWrapper .aoBlogHeaderLink 
 {
 	padding:4px 0 4px 0;
 }
-.aoBlogEntryImageSection 
+.blogWrapper .aoBlogEntryImageSection 
 {
 }
-.aoBlogEntryImageContainer 
+.blogWrapper .aoBlogEntryImageContainer 
 {
 	clear:both;
 	 border-top: 1px solid #eef;
@@ -212,34 +207,34 @@ div.aoBlogCommentError
 	 background-color: #f8f8ff;
 	 overflow:auto;
 }
-.aoBlogEntryImageContainer img 
+.blogWrapper .aoBlogEntryImageContainer img 
 {
 	float:left;
 	 border: 0;
 	 margin: 0 10px 0 0
 }
-.aoBlogEntryImageContainer h2 
+.blogWrapper .aoBlogEntryImageContainer h2 
 {
-	font-size:120%;
+	/* font-size:120%; */
 	margin-bottom:10px
 }
-.aoBlogEntryImageContainer div 
+.blogWrapper .aoBlogEntryImageContainer div 
 {
 }
-.aoBlogTagListHeader 
+.blogWrapper .aoBlogTagListHeader 
 {
 	clear:both;
 	 margin:20px 0 0 20px;
-	 font-weight:bold;
+	 /* font-weight:bold; */
 	 color:black;
-	 font-size:120%;
+	 /* font-size:120%; */
 }
-.aoBlogTagList 
+.blogWrapper .aoBlogTagList 
 {
 	padding:0 0 0 20px;
 	text-align:left;
 }
-.aoBlogTagListSection 
+.blogWrapper .aoBlogTagListSection 
 {
 	clear:both;
 	 border-top: 1px solid #9c9c9c;
@@ -247,52 +242,52 @@ div.aoBlogCommentError
 	 padding: 0;
 	 background-color: #f8f8ff;
 }
-.aoBlogLoginBox .ccLoginFormCon
+.blogWrapper .aoBlogLoginBox .ccLoginFormCon
 {
 width: inherit;
 }
 /*
 * Blog List Layout Record
 */
-.blogColumn1-Wrap
+.blogWrapper .blogColumn1-Wrap
 {
     float: left;
     width: 100%;
 }
-.blogColumn1
+.blogWrapper .blogColumn1
 {
     margin-right: 380px;
 	margin-bottom: 20px;
 }
-.blogSidebar
+.blogWrapper .blogSidebar
 {
     float: left;
     width: 340px;
     margin-left: -340px;
 }
-.blogClear
+.blogWrapper .blogClear
 {
     clear: both;
 }
 @media only screen and  (max-width: 768px)
 {
-	.blogColumn1-Wrap
+	.blogWrapper .blogColumn1-Wrap
 	{
 		float: none;
 		width: 100%;
 	}
-	.blogColumn1
+	.blogWrapper .blogColumn1
 	{
 		margin-right: 0;
 	}
-	.blogSidebar
+	.blogWrapper .blogSidebar
 	{
 		clear: both;
 		margin-left: 0;
 		width: 100%;
 		float: none;
 	}
-	.blogClear
+	.blogWrapper .blogClear
 	{
 		clear: both;
 	}
@@ -300,7 +295,7 @@ width: inherit;
 /*
 * Sidebar cell format
 */
-.blogSidebar .blogSidebarCellWrap .blogSidebarCell
+.blogWrapper .blogSidebar .blogSidebarCellWrap .blogSidebarCell
 {
 	background-color: #f6f6f6;
 	color: #666;
@@ -309,7 +304,7 @@ width: inherit;
 	padding: 0 24px 24px 24px;
 	margin: 0 0 20px 0;
 }
-.blogSidebar .blogSidebarCellWrap .blogSidebarCell h2.blogSidebarCellHeadline
+.blogWrapper .blogSidebar .blogSidebarCellWrap .blogSidebarCell h2.blogSidebarCellHeadline
 {
 	color: #495b67;
 	font-size: 24px;
@@ -317,20 +312,20 @@ width: inherit;
 	margin: 24px 0 5px 0;
 	font-weight: 300;
 }
-.blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellCopy
+.blogWrapper .blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellCopy
 {
 	margin: 5px 0 5px 0;
 	font-size: 14px;
 	line-height: 20px;
 }
-.blogSidebar .blogSidebarCellWrap .blogSidebarCell h3.blogSidebarCellInputCaption
+.blogWrapper .blogSidebar .blogSidebarCellWrap .blogSidebarCell h3.blogSidebarCellInputCaption
 {
 	color: #999;
 	font-size: 16px;
 	font-weight: 300;
 	line-height: 24px;
 }
-.blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellInput input
+.blogWrapper .blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellInput input
 {
 	-webkit-transition: border-color 0.3s,box-shadow 0.3s;
 	-moz-transition: border-color 0.3s,box-shadow 0.3s;
@@ -353,11 +348,11 @@ width: inherit;
 	border: 1px solid #b0b0b0;
 	outline: none;
 }
-.blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellButton
+.blogWrapper .blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellButton
 {
 	margin: 20px 0 0 0;
 }
-.blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellButton a
+.blogWrapper .blogSidebar .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellButton a
 {
 	display: inline-block;
 	padding: 5px 10px;
@@ -369,79 +364,68 @@ width: inherit;
 	cursor: pointer;
 	text-decoration: none;
 }
-/*
-.blogSidebar .blogSidebarCellWrap .blogSidebarCell  h3.blogSidebarRSSCopy
-{
-	color: #999;
-	font-size: 16px;
-	font-weight: 300;
-	line-height: 24px;
-	height: 24px;
-}
-*/
-.blogSidebar .blogSidebarCellWrap .blogSidebarCell  h3.blogSidebarCellInputCaption a
+.blogWrapper .blogSidebar .blogSidebarCellWrap .blogSidebarCell  h3.blogSidebarCellInputCaption a
 {
 	text-decoration: none;
 }
-.blogSidebar .blogSidebarCellWrap .blogSidebarCell  #blogSidebarRSSLogo
+.blogWrapper .blogSidebar .blogSidebarCellWrap .blogSidebarCell  #blogSidebarRSSLogo
 {
 	padding: 0 10px 0 0;
 	margin: 0 0 -5px 0;
 }
-.blogSidebar .blogSidebarCellWrap img.blogSidebarSocialLogo
+.blogWrapper .blogSidebar .blogSidebarCellWrap img.blogSidebarSocialLogo
 {
 	margin: 0 5px 0 0;
 }
 /*
 * workaround for table that holds the editing form
 */
-.blogWrapper table.aoBlogPostTable tr
-{
-}
-.blogWrapper table.aoBlogPostTable>tr>td,
-.blogWrapper table.aoBlogPostTable>tbody>tr>td
+.blogWrapper .blogWrapper table.aoBlogPostTable>tr>td,
+.blogWrapper .blogWrapper table.aoBlogPostTable>tbody>tr>td
 {
 	padding: 5px;
 }
 /*
 * caption/data columns of standard tables
 */
-.aoBlogTableRowCellLeft
+.blogWrapper .aoBlogTableRowCellLeft
 {
 	width:100px;
 	vertical-align:top;
 }
-.aoBlogTableRowCellRight
+.blogWrapper .aoBlogTableRowCellRight
 {
 	vertical-align:top;
 }
-.aoBlogImageTable td
+.blogWrapper .aoBlogImageTable td
 {
 	text-align:left;
 	vertical-align:top;
 	padding-bottom:10px;
 }
-.blogSidebar .aoBlogArchiveLinkList
+.blogWrapper .blogSidebar .aoBlogArchiveLinkList
 {
 	display: block;
 	list-style-type: none;
 	padding:0;
 	margin:0;
 }
-.blogSidebar .aoBlogArchiveLink
+.blogWrapper .blogSidebar .aoBlogArchiveLink
 {
 	padding:0 0 5px 0;;
 	margin:0;
 }
-@media screen and (max-width: 480px) {
-.aoBlogCommentHeader { margin: 20px 0; }
-.aoBlogLoginBox { margin: 20px 0; padding: 10px; width: 100%; }
-.aoBlogCommentCopy { margin-left: 0; }
+@media screen and (max-width: 480px) 
+{
+	.blogWrapper .aoBlogCommentHeader { margin: 20px 0; }
+	.blogWrapper .aoBlogLoginBox { margin: 20px 0; padding: 10px; width: 100%; }
+	.blogWrapper .aoBlogCommentCopy { margin-left: 0; }
 }
 /*
-* make inline images max width 100%, so to make image that scales, upload a larger image
+* move lists past inline pictures
 */
-.blogWrapper img 
+.blogWrapper ol, .blogWrapper ul 
 {
-	max-width: 100%;
+    list-style-position: outside;
+    clear: both;	
 }
