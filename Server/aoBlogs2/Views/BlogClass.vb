@@ -152,21 +152,21 @@ Namespace Views
                             copy &= "<a href=""" & blog.facebookLink & """ target=""_blank""><img Class=""blogSidebarSocialLogo"" src=""/blogs/facebook.jpg"" width=""32"" height=""32""></a>"
                         ElseIf blog.allowFacebookLink Then
                             If CP.User.IsAdmin Then
-                                copy &= "<div Class=""blogAdminWarning""><h2>Administrator</h2><p>Add a facebook link For this blog, Or disable the Allow Facebook Sidebar checkbox.</p></div>"
+                                copy &= "<div Class=""blogAdminWarning""><h2>Administrator</h2><p>Add a facebook link for this blog, or disable the Allow Facebook Sidebar checkbox.</p></div>"
                             End If
                         End If
                         If blog.allowTwitterLink And (blog.twitterLink <> "") Then
                             copy &= "<a href=""" & blog.twitterLink & """ target=""_blank""><img Class=""blogSidebarSocialLogo"" src=""/blogs/twitter.jpg"" width=""32"" height=""32""></a>"
                         ElseIf blog.allowTwitterLink Then
                             If CP.User.IsAdmin Then
-                                copy &= "<div Class=""blogAdminWarning""><h2>Administrator</h2><p>Add a twitter link For this blog, Or disable the Allow Twitter Sidebar checkbox.</p></div>"
+                                copy &= "<div Class=""blogAdminWarning""><h2>Administrator</h2><p>Add a twitter link for this blog, or disable the Allow Twitter Sidebar checkbox.</p></div>"
                             End If
                         End If
                         If blog.allowTwitterLink And (blog.googlePlusLink <> "") Then
                             copy &= "<a href=""" & blog.googlePlusLink & """ target=""_blank""><img Class=""blogSidebarSocialLogo"" src=""/blogs/GooglePlus.jpg"" width=""32"" height=""32""></a>"
                         ElseIf blog.allowGooglePlusLink Then
                             If CP.User.IsAdmin Then
-                                copy &= "<div Class=""blogAdminWarning""><h2>Administrator</h2><p>Add a GooglePlus link For this blog, Or disable the Allow Google Plus Sidebar checkbox.</p></div>"
+                                copy &= "<div Class=""blogAdminWarning""><h2>Administrator</h2><p>Add a GooglePlus link for this blog, or disable the Allow Google Plus Sidebar checkbox.</p></div>"
                             End If
                         End If
                         If copy <> "" Then
