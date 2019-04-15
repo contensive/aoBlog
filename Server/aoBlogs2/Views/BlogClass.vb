@@ -227,7 +227,9 @@ Namespace Views
                             Call sidebarCell.SetInner(".blogSidebarCellCopy", "")
                             Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
                             Call sidebarCell.SetOuter(".blogSidebarCellInputCaption", "")
-                            cellList &= vbCrLf & vbTab & "<div class=""aoBlogFooterLink"" style=""color:red;"">Blog Post has no CTA selected</a><br></div>"
+                            If CP.User.IsAdmin Then
+                                cellList &= vbCrLf & vbTab & "<div class=""aoBlogFooterLink"" style=""color:red;"">Blog Post has no CTA selected</a><br></div>"
+                            End If
                         End If
                     End If
                     '
@@ -245,7 +247,9 @@ Namespace Views
                         Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
                         qs = "cid=" & CP.Content.GetID("Calls To Action")
                         '
-                        cellList &= vbCrLf & vbTab & "<div class=""aoBlogFooterLink""><a href=""" & CP.Site.GetProperty("adminUrl") & "?" & qs & """>Add/Edit Site Call-To-Actions</a></div>"
+                        If CP.User.IsAdmin Then
+                            cellList &= vbCrLf & vbTab & "<div class=""aoBlogFooterLink""><a href=""" & CP.Site.GetProperty("adminUrl") & "?" & qs & """>Add/Edit Site Call-To-Actions</a></div>"
+                        End If
                         sidebarCnt += 1
                     End If
                 End If

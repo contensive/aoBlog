@@ -47,6 +47,7 @@ Namespace Models
         Public Property RSSFeedID As Integer
         Public Property ThumbnailImageWidth As Integer
         Public Property twitterLink As String
+        Public Property Id As Integer
         '
         '====================================================================================================
         ''' <summary>

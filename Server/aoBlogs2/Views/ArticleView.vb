@@ -58,9 +58,11 @@ Namespace Views
                         result = result & genericController.getBlogEntryCell(cp, blog, rssFeed, blogEntry, user, True, False, Return_CommentCnt, "", blogListQs)
                         EntryPtr = EntryPtr + 1
                         '
-                        blog.id = cp.Doc.GetInteger("BlogID")
+                        '*** This was causing the subscribe by email to malfunction no idea why it was there? Vince
+                        '
+                        ' blog.id = cp.Doc.GetInteger("BlogID")
+                        '
                     End If
-
                     '
                 End If
                 '
