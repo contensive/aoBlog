@@ -42,6 +42,7 @@ local.properties
 *.sln.docstates
 
 # Build results
+.vs/
 [Dd]ebug/
 [Rr]elease/
 *_i.c
@@ -164,3 +165,4 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
+Server/.vs/aoBlogs2/v15/Server/sqlite3/storage.ide-wal
