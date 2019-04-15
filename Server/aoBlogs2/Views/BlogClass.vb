@@ -265,6 +265,9 @@ Namespace Views
                     returnHtml &= "<div class=""ccHintWrapper""><div class=""ccHintWrapperContent""><h2>Administrator</h2><ul>" & adminSuggestions & "</ul></div></div>"
                 End If
                 '
+                ' -- if editing enabled, add the link and wrapperwrapper
+                returnHtml = genericController.addEditWrapper(CP, returnHtml, blog.id, blog.name, Models.BlogModel.contentName, "Blog Settings")
+                '
             Catch ex As Exception
                 errorReport(CP, ex, "execute")
             End Try
