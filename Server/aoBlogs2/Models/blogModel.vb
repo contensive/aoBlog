@@ -95,7 +95,7 @@ Namespace Models
                     If (LinkAlias.Count > 0) Then
                         Dim EntryLink As String = LinkAlias.First().name
                     End If
-                    blogEntry.RSSDescription = genericController.filterCopy(cp, blogEntry.copy, 150)
+                    blogEntry.RSSDescription = genericController.getBriefCopy(cp, blogEntry.copy, 150)
                     blogEntry.save(Of BlogEntryModel)(cp)
                 End If
                 '

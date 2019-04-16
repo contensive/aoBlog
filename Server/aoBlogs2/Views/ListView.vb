@@ -58,11 +58,6 @@ Namespace Views
                             End If
                         End If
                         If Not IsBlocked Then
-                            Dim entryEditLink As String
-
-                            If (cp.User.IsAuthoring("Blogs")) Then
-                                entryEditLink = cp.Content.GetEditLink("Blog Entries", blogEntry.id.ToString(), True, blogEntry.name, True)
-                            End If
                             Dim Return_CommentCnt As Integer
                             Dim blogArticleCell = genericController.getBlogEntryCell(cp, blog, rssFeed, blogEntry, user, False, True, Return_CommentCnt, "", blogListQs)
                             '

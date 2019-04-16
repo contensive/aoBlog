@@ -126,24 +126,6 @@ Namespace Views
                         sidebarCnt += 1
                     End If
                     '
-                    If blog.allowRSSSubscribe Then
-                        '
-                        If ((rssFeed Is Nothing) OrElse (rssFeed.rssFilename = "")) Then
-                            adminSuggestions &= CP.Html.li("This blog includes an RSS Feed, but no feed has been created. It his persists, please contact the site developer. Disable RSS feeds for this blog to hide this message.")
-                        Else
-                            '
-                            sidebarCell.Load(cellTemplate)
-                            Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By RSS")
-                            Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
-                            'http://aoblog/aoblog/files/rssfeeds/RSSFeed8.xml
-                            Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""http://" & CP.Site.DomainPrimary & CP.Site.FilePath & rssFeed.rssFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & blog.name & " Feed" & "</a>")
-                            Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
-                            Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
-                            cellList &= vbCrLf & vbTab & "<div id=""blogSidebarRSSCell"">" & sidebarCell.GetHtml() & "</div>"
-                            sidebarCnt += 1
-                        End If
-                    End If
-                    '
                     If blog.allowFacebookLink Or blog.allowGooglePlusLink Or blog.allowTwitterLink Then
                         '
                         ' Social Links
@@ -215,6 +197,24 @@ Namespace Views
                         Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
                         cellList &= vbCrLf & vbTab & "<div id=""blogSidebarArchiveCell"">" & sidebarCell.GetHtml() & "</div>"
                         sidebarCnt += 1
+                    End If
+                    '
+                    If blog.allowRSSSubscribe Then
+                        '
+                        If ((rssFeed Is Nothing) OrElse (rssFeed.rssFilename = "")) Then
+                            adminSuggestions &= CP.Html.li("This blog includes an RSS Feed, but no feed has been created. It his persists, please contact the site developer. Disable RSS feeds for this blog to hide this message.")
+                        Else
+                            '
+                            sidebarCell.Load(cellTemplate)
+                            Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By RSS")
+                            Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
+                            'http://aoblog/aoblog/files/rssfeeds/RSSFeed8.xml
+                            Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""http://" & CP.Site.DomainPrimary & CP.Site.FilePath & rssFeed.rssFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & blog.name & " Feed" & "</a>")
+                            Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
+                            Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
+                            cellList &= vbCrLf & vbTab & "<div id=""blogSidebarRSSCell"">" & sidebarCell.GetHtml() & "</div>"
+                            sidebarCnt += 1
+                        End If
                     End If
                     '
                     If isArticleView Then
