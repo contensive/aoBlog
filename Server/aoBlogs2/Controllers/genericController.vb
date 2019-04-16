@@ -88,13 +88,21 @@ Namespace Controllers
         ''' <param name="rawCopy"></param>
         ''' <param name="MaxLength"></param>
         ''' <returns></returns>
-        Friend Shared Function filterCopy(cp As CPBaseClass, rawCopy As String, MaxLength As Integer) As String
+        Friend Shared Function getBriefCopy(cp As CPBaseClass, rawCopy As String, MaxLength As Integer) As String
             Try
-                Dim Copy As String = rawCopy
+                Dim Copy As String = cp.Utils.ConvertHTML2Text(rawCopy)
                 If Len(Copy) > MaxLength Then
                     Copy = Left(Copy, MaxLength)
                     Copy = Copy & "..."
                 End If
+                ''
+                '' -- headlines in copy distract from listView, change to <div
+                'Copy = Copy.Replace("<h1", "<div").Replace("</h1", "</div")
+                'Copy = Copy.Replace("<h2", "<div").Replace("</h2", "</div")
+                'Copy = Copy.Replace("<h3", "<div").Replace("</h3", "</div")
+                'Copy = Copy.Replace("<h4", "<div").Replace("</h4", "</div")
+                'Copy = Copy.Replace("<h5", "<div").Replace("</h5", "</div")
+                'Copy = Copy.Replace("<h6", "<div").Replace("</h6", "</div")
                 Return Copy
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)
@@ -170,7 +178,7 @@ Namespace Controllers
         '
         '====================================================================================
         '
-        Public Shared Function getBlogEntryCell(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, blogEntry As BlogEntryModel, user As PersonModel, DisplayFullEntry As Boolean, IsSearchListing As Boolean, Return_CommentCnt As Integer, entryEditLink As String, blogListQs As String) As String
+        Public Shared Function getBlogEntryCell(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, blogEntry As BlogEntryModel, user As PersonModel, isArticleView As Boolean, IsSearchListing As Boolean, Return_CommentCnt As Integer, entryEditLink As String, blogListQs As String) As String
             Dim result As String = ""
             Try
                 If (blogEntry Is Nothing) Then Throw New ApplicationException("BlogEntryCell called without valid BlogEntry")
@@ -181,7 +189,9 @@ Namespace Controllers
                 Dim entryLink As String = cp.Content.GetPageLink(cp.Doc.PageId, qs)
                 Dim TagListRow As String = ""
                 Dim blogImageList = BlogImageModel.createListFromBlogEntry(cp, blogEntry.id)
-                If DisplayFullEntry Then
+                If isArticleView Then
+                    '
+                    ' -- article view
                     result = result & vbCrLf & entryEditLink & "<h2 class=""aoBlogEntryName"">" & blogEntry.name & "</h2>"
                     result = result & cr & "<div class=""aoBlogEntryCopy"">"
                     If (blogImageList.Count > 0) Then
@@ -269,7 +279,9 @@ Namespace Controllers
                         & cr & "</div>"
                     End If
                 Else
-                    result = result & vbCrLf & entryEditLink & "<h2 class=""aoBlogEntryName""><a href=""" & entryLink & """>" & blogEntry.name & "</a></h2>"
+                    '
+                    ' -- list view
+                    result = result & vbCrLf & entryEditLink & "<h4 class=""aoBlogEntryName""><a href=""" & entryLink & """>" & blogEntry.name & "</a></h4>"
                     result = result & cr & "<div class=""aoBlogEntryCopy"">"
                     If (blogImageList.Count > 0) Then
                         Dim ThumbnailFilename As String = ""
@@ -305,7 +317,7 @@ Namespace Controllers
                             End Select
                         End If
                     End If
-                    result = result & "<p>" & genericController.filterCopy(cp, blogEntry.copy, blog.OverviewLength) & "</p></div>"
+                    result = result & "<p>" & genericController.getBriefCopy(cp, blogEntry.copy, blog.OverviewLength) & "</p></div>"
                     result = result & cr & "<div class=""aoBlogEntryReadMore""><a href=""" & entryLink & """>Read More</a></div>"
                 End If
                 '
@@ -343,7 +355,7 @@ Namespace Controllers
                     Criteria = "(Approved<>0)and(EntryID=" & blogEntry.id & ")"
                     Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(Approved<>0)and(EntryID=" & blogEntry.id & ")")
                     CommentCount = BlogCommentModelList.Count
-                    If DisplayFullEntry Then
+                    If isArticleView Then
                         If CommentCount = 1 Then
                             RowCopy = RowCopy & " | 1 Comment"
                         ElseIf CommentCount > 1 Then
@@ -375,7 +387,7 @@ Namespace Controllers
 
 
                     'If blogEntry.AllowComments Then
-                    If Not DisplayFullEntry Then
+                    If Not isArticleView Then
                         ''
                         '' Show comment count
                         ''
@@ -595,6 +607,25 @@ Namespace Controllers
             End Try
             Return result
         End Function
+        '
+        '
+        '
+        Public Shared Function addEditWrapper(ByVal cp As CPBaseClass, ByVal innerHtml As String, ByVal instanceId As Integer, ByVal instanceName As String, ByVal contentName As String, ByVal designBlockCaption As String) As String
+            If (Not cp.User.IsEditingAnything) Then Return innerHtml
+            Dim editLink As String = getEditLink(cp, contentName, instanceId, designBlockCaption)
+            Dim settingContent As String = cp.Html.div(innerHtml, "", "dbSettingWrapper")
+            Dim settingHeader As String = cp.Html.div(editLink, "", "dbSettingHeader")
+            Return cp.Html.div(settingHeader + settingContent)
+        End Function
+        '
+        '
+        '
+        Public Shared Function getEditLink(ByVal cp As CPBaseClass, ByVal contentName As String, ByVal recordId As Integer, Caption As String) As String
+            Dim contentId As Integer = cp.Content.GetID(contentName)
+            If contentId = 0 Then Return String.Empty
+            Return "<a href=""/admin?af=4&aa=2&ad=1&cid=" & contentId & "&id=" & recordId & """ class=""ccRecordEditLink""><span style=""color:#0c0""><i title=""edit"" class=""fas fa-cog""></i></span>&nbsp;" & Caption & "</a>"
+        End Function
+
 
 
     End Class
