@@ -46,9 +46,9 @@ Namespace Views
                         blogEntry_copy = "<!-- cc --><p><br></p><!-- /cc -->"
                     End If
                 End If
-                result.Append(genericController.GetFormTableRow(cp, "<div style=""padding-top:3px"">Title: </div>", cp.Html.InputText(RequestNameBlogEntryName, blogEntry_name, "1", "70")))
+                result.Append(genericController.GetFormTableRow(cp, "<div style=""padding-top:3px"">Title: </div>", cp.Html.InputText(RequestNameBlogEntryName, blogEntry_name, "", "", False, "form-control")))
                 result.Append(genericController.GetFormTableRow(cp, "<div style=""padding-top:108px"">Post: </div>", cp.Html.InputWysiwyg(RequestNameBlogEntryCopy, blogEntry_copy)))
-                result.Append(genericController.GetFormTableRow(cp, "<div style=""padding-top:3px"">Tag List: </div>", cp.Html.InputText(RequestNameBlogEntryTagList, blogEntry_tagList, "5", "70")))
+                result.Append(genericController.GetFormTableRow(cp, "<div style=""padding-top:3px"">Tag List: </div>", cp.Html.InputText(RequestNameBlogEntryTagList, blogEntry_tagList, "", "", False, "form-control")))
                 If blog.AllowCategories Then
                     Dim CategorySelect As String = cp.Html.SelectContent(RequestNameBlogEntryCategoryID, blongEntry_blogCategoryId.ToString(), "Blog Categories")
                     If (InStr(1, CategorySelect, "<option value=""""></option></select>", vbTextCompare) <> 0) Then
