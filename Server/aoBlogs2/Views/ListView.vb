@@ -65,7 +65,7 @@ Namespace Views
                             blogArticleCell = genericController.addEditWrapper(cp, blogArticleCell, blogEntry.id, blogEntry.name, Models.BlogEntryModel.contentName, "Blog Article Settings")
 
                             result.Append(blogArticleCell)
-                            result.Append(cr & "<div Class=""aoBlogEntryDivider"">&nbsp;</div>")
+                            result.Append(cr & "<hr>")
                         End If
                         EntryPtr += 1
                     Next

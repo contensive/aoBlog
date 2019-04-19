@@ -61,22 +61,20 @@ Namespace Views
                 sidebarCell.Load(layout.GetOuter(".blogSidebarCellWrap"))
                 Dim cellTemplate As String = sidebarCell.GetHtml()
                 Dim adminSuggestions As String = ""
-                '
-                ' -- social media likes
-                Call sidebarCell.SetOuter(".blogSidebarCellHeadline", "")
-                Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
-                Call sidebarCell.SetInner(".blogSidebarCellInputCaption", CP.Utils.ExecuteAddon(facebookLikeAddonGuid))
-                Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
-                Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
-                Dim copy As String = sidebarCell.GetHtml()
-                If isArticleView Then
-                    blogBody = Replace(blogBody, "<div class=""aoBlogEntryCopy"">", copy & "<div class=""aoBlogEntryCopy"">")
-                End If
+                ''
+                '' -- social media likes
+                'Call sidebarCell.SetOuter(".blogSidebarCellHeadline", "")
+                'Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
+                ''Call sidebarCell.SetInner(".blogSidebarCellInputCaption", CP.Utils.ExecuteAddon(facebookLikeAddonGuid))
+                'Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
+                'Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
+                'If isArticleView Then
+                '    blogBody = Replace(blogBody, "<div class=""aoBlogEntryCopy"">", copy & "<div class=""aoBlogEntryCopy"">")
+                'End If
                 Dim sidebarCnt As Integer = 0
                 '
                 ' Sidebar
                 If allowSidebar Then
-                    '
                     If blog.allowArticleCTA And isArticleView Then
                         '
                         ' CTA cells
@@ -129,29 +127,30 @@ Namespace Views
                     If blog.allowFacebookLink Or blog.allowGooglePlusLink Or blog.allowTwitterLink Then
                         '
                         ' Social Links
-                        copy = ""
+                        'Dim sidebarHtml As String = sidebarCell.GetHtml()
+                        Dim sidebarHtml As String = ""
                         If blog.allowFacebookLink And (blog.facebookLink <> "") Then
-                            copy &= "<a href=""" & blog.facebookLink & """ target=""_blank""><img Class=""blogSidebarSocialLogo"" src=""/blogs/facebook.jpg"" width=""32"" height=""32""></a>"
+                            sidebarHtml &= "<a href=""" & blog.facebookLink & """ target=""_blank""><img Class=""blogSidebarSocialLogo"" src=""/blogs/facebook.jpg"" width=""32"" height=""32""></a>"
                         ElseIf blog.allowFacebookLink Then
                             If CP.User.IsAdmin Then
-                                copy &= "<div Class=""blogAdminWarning""><h2>Administrator</h2><p>Add a facebook link For this blog, Or disable the Allow Facebook Sidebar checkbox.</p></div>"
+                                sidebarHtml &= "<div Class=""blogAdminWarning""><h2>Administrator</h2><p>Add a facebook link For this blog, Or disable the Allow Facebook Sidebar checkbox.</p></div>"
                             End If
                         End If
                         If blog.allowTwitterLink And (blog.twitterLink <> "") Then
-                            copy &= "<a href=""" & blog.twitterLink & """ target=""_blank""><img Class=""blogSidebarSocialLogo"" src=""/blogs/twitter.jpg"" width=""32"" height=""32""></a>"
+                            sidebarHtml &= "<a href=""" & blog.twitterLink & """ target=""_blank""><img Class=""blogSidebarSocialLogo"" src=""/blogs/twitter.jpg"" width=""32"" height=""32""></a>"
                         ElseIf blog.allowTwitterLink Then
                             If CP.User.IsAdmin Then
-                                copy &= "<div Class=""blogAdminWarning""><h2>Administrator</h2><p>Add a twitter link For this blog, Or disable the Allow Twitter Sidebar checkbox.</p></div>"
+                                sidebarHtml &= "<div Class=""blogAdminWarning""><h2>Administrator</h2><p>Add a twitter link For this blog, Or disable the Allow Twitter Sidebar checkbox.</p></div>"
                             End If
                         End If
                         If blog.allowTwitterLink And (blog.googlePlusLink <> "") Then
-                            copy &= "<a href=""" & blog.googlePlusLink & """ target=""_blank""><img Class=""blogSidebarSocialLogo"" src=""/blogs/GooglePlus.jpg"" width=""32"" height=""32""></a>"
+                            sidebarHtml &= "<a href=""" & blog.googlePlusLink & """ target=""_blank""><img Class=""blogSidebarSocialLogo"" src=""/blogs/GooglePlus.jpg"" width=""32"" height=""32""></a>"
                         ElseIf blog.allowGooglePlusLink Then
                             If CP.User.IsAdmin Then
-                                copy &= "<div Class=""blogAdminWarning""><h2>Administrator</h2><p>Add a GooglePlus link For this blog, Or disable the Allow Google Plus Sidebar checkbox.</p></div>"
+                                sidebarHtml &= "<div Class=""blogAdminWarning""><h2>Administrator</h2><p>Add a GooglePlus link For this blog, Or disable the Allow Google Plus Sidebar checkbox.</p></div>"
                             End If
                         End If
-                        If copy <> "" Then
+                        If sidebarHtml <> "" Then
                             If blog.followUsCaption = "" Then
                                 blog.followUsCaption = "Follow Us"
                             End If
@@ -160,7 +159,7 @@ Namespace Views
                             Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
                             Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
                             Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
-                            Call sidebarCell.SetInner(".blogSidebarCellInputCaption", copy)
+                            Call sidebarCell.SetInner(".blogSidebarCellInputCaption", sidebarHtml)
                             cellList &= vbCrLf & vbTab & "<div id=""blogSidebarSocialCell"">" & sidebarCell.GetHtml() & "</div>"
                             sidebarCnt += 1
                         End If

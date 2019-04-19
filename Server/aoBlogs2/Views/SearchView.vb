@@ -74,13 +74,13 @@ Namespace Views
                     If (BlogEntryList.Count = 0) Then
                         result.Append("</br>" & "<div class=""aoBlogProblem"">There were no matches to your search</div>")
                     Else
-                        result.Append("</br>" & "<div class=""aoBlogEntryDivider"">&nbsp;</div>")
+                        result.Append("</br>" & "<hr>")
                         For Each blogSearchEntry In BlogEntryList
                             Dim AuthorMemberID As Integer = blogSearchEntry.AuthorMemberID
                             If AuthorMemberID = 0 Then AuthorMemberID = blogSearchEntry.CreatedBy
                             Dim Return_CommentCnt As Integer
                             result.Append(genericController.getBlogEntryCell(cp, blog, rssFeed, blogSearchEntry, user, False, True, Return_CommentCnt, "", blogListQs))
-                            result.Append(cr & "<div class=""aoBlogEntryDivider"">&nbsp;</div>")
+                            result.Append(cr & "<hr>")
                         Next
                     End If
                     result = New StringBuilder(cp.Html.div(result.ToString(), "", "aoBlogSearchResultsCon"))

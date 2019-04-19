@@ -208,13 +208,11 @@ Namespace Views
                         Dim EntryCopy As String = blogEntry.copy
                         Dim allowComments As Boolean = blogEntry.AllowComments
                         Dim BlogTagList As String = blogEntry.tagList
-                        Dim imageDisplayTypeId As Integer = blogEntry.imageDisplayTypeId
                         Dim primaryImagePositionId As Integer = blogEntry.primaryImagePositionId
-                        Dim articlePrimaryImagePositionId As Integer = blogEntry.articlePrimaryImagePositionId
                         Dim Return_CommentCnt As Integer
                         result = result & genericController.getBlogEntryCell(cp, blog, rssFeed, blogEntry, user, False, False, Return_CommentCnt, BlogTagList, blogListQs)
                     Next
-                    result = result & cr & "<div Class=""aoBlogEntryDivider"">&nbsp;</div>"
+                    result = result & cr & "<hr>"
                     EntryPtr = EntryPtr + 1
 
                 End If

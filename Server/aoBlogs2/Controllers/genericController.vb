@@ -193,6 +193,7 @@ Namespace Controllers
                     '
                     ' -- article view
                     result = result & vbCrLf & entryEditLink & "<h2 class=""aoBlogEntryName"">" & blogEntry.name & "</h2>"
+                    result &= "<div class=""aoBlogEntryLikeLine"">" & cp.Utils.ExecuteAddon(facebookLikeAddonGuid) & "</div>"
                     result = result & cr & "<div class=""aoBlogEntryCopy"">"
                     If (blogImageList.Count > 0) Then
                         Dim ThumbnailFilename As String = ""
@@ -200,7 +201,7 @@ Namespace Controllers
                         Dim imageName As String = ""
                         Dim imageDescription As String = ""
                         GetBlogImage(cp, blog, rssFeed, blogEntry, blogImageList.First, ThumbnailFilename, imageFilename, imageDescription, imageName)
-                        Select Case blogEntry.articlePrimaryImagePositionId
+                        Select Case blogEntry.primaryImagePositionId
                             Case 2
                                 '
                                 ' align right
@@ -223,35 +224,35 @@ Namespace Controllers
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor.ToString())
                     Dim c As String = ""
-                    If (blogEntry.imageDisplayTypeId = imageDisplayTypeList) And (blogImageList.Count > 0) Then
-                        '
-                        ' Get ImageID List
-                        For Each blogImage In blogImageList
-                            Dim ThumbnailFilename As String = ""
-                            Dim imageFilename As String = ""
-                            Dim imageName As String = ""
-                            Dim imageDescription As String = ""
-                            GetBlogImage(cp, blog, rssFeed, blogEntry, blogImageList.First, ThumbnailFilename, imageFilename, imageDescription, imageName)
-                            If imageFilename <> "" Then
-                                c = c _
-                                & cr & "<div class=""aoBlogEntryImageContainer"">" _
-                                & cr & "<img alt=""" & imageName & """ title=""" & imageName & """  src=""" & cp.Site.FilePath & imageFilename & """>"
-                                If imageName <> "" Then
-                                    c = c & cr & "<h2>" & imageName & "</h2>"
-                                End If
-                                If imageDescription <> "" Then
-                                    c = c & cr & "<div>" & imageDescription & "</div>"
-                                End If
-                                c = c & cr & "</div>"
-                            End If
-                        Next
-                        If c <> "" Then
-                            result = result _
-                            & cr & "<div class=""aoBlogEntryImageSection"">" _
-                            & cp.Html.Indent(c) _
-                            & cr & "</div>"
-                        End If
-                    End If
+                    'If (blogEntry.imageDisplayTypeId = imageDisplayTypeList) And (blogImageList.Count > 0) Then
+                    '    '
+                    '    ' Get ImageID List
+                    '    For Each blogImage In blogImageList
+                    '        Dim ThumbnailFilename As String = ""
+                    '        Dim imageFilename As String = ""
+                    '        Dim imageName As String = ""
+                    '        Dim imageDescription As String = ""
+                    '        GetBlogImage(cp, blog, rssFeed, blogEntry, blogImageList.First, ThumbnailFilename, imageFilename, imageDescription, imageName)
+                    '        If imageFilename <> "" Then
+                    '            c = c _
+                    '            & cr & "<div class=""aoBlogEntryImageContainer"">" _
+                    '            & cr & "<img alt=""" & imageName & """ title=""" & imageName & """  src=""" & cp.Site.FilePath & imageFilename & """>"
+                    '            If imageName <> "" Then
+                    '                c = c & cr & "<h2>" & imageName & "</h2>"
+                    '            End If
+                    '            If imageDescription <> "" Then
+                    '                c = c & cr & "<div>" & imageDescription & "</div>"
+                    '            End If
+                    '            c = c & cr & "</div>"
+                    '        End If
+                    '    Next
+                    '    If c <> "" Then
+                    '        result = result _
+                    '        & cr & "<div class=""aoBlogEntryImageSection"">" _
+                    '        & cp.Html.Indent(c) _
+                    '        & cr & "</div>"
+                    '    End If
+                    'End If
                     If blogEntry.tagList <> "" Then
                         blogEntry.tagList = Replace(blogEntry.tagList, ",", vbCrLf)
                         Dim Tags() As String = Split(blogEntry.tagList, vbCrLf)
