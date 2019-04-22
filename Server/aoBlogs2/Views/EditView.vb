@@ -61,110 +61,116 @@ Namespace Views
                 '
                 ' file upload form taken from Resource Library
                 Dim imageForm As String = "" _
-                    & "<TABLE id=""UploadInsert"" border=""0"" cellpadding=""0"" cellspacing=""1"" width=""100%"" class=""aoBlogImageTable"">" _
-                    & "<tr>" _
-                    & ""
+                        & "<TABLE id=""UploadInsert"" border=""0"" cellpadding=""0"" cellspacing=""1"" width=""100%"" class=""aoBlogImageTable"">" _
+                        & "<tr>" _
+                        & ""
                 Dim BlogImageModelList As List(Of BlogImageModel) = BlogImageModel.createListFromBlogEntry(cp, blogEntry_id)
                 Dim Ptr As Integer = 1
-                For Each BlogImage In BlogImageModelList
+                If BlogImageModelList.Count > 0 Then
+                    Dim BlogImage = BlogImageModelList.First
+                    'For Each BlogImage In BlogImageModelList
                     Dim imageFilename As String = BlogImage.Filename
                     Dim imageDescription As String = BlogImage.description
                     Dim imageName As String = BlogImage.name
                     If Ptr <> 1 Then
                         imageForm = imageForm _
-                            & "<tr>" _
-                            & "<td><HR></td>" _
-                            & "</tr>" _
-                            & ""
+                                    & "<tr>" _
+                                    & "<td><HR></td>" _
+                                    & "</tr>" _
+                                    & ""
                     End If
                     '
                     '   image
                     '
                     imageForm = imageForm _
-                        & "<tr>" _
-                        & "<td><input type=""checkbox"" name=""" & rnBlogImageDelete & "." & Ptr & """>&nbsp;Delete</td>" _
-                        & "</tr>" _
-                        & "<tr>" _
-                        & "<td align=""left"" class=""ccAdminSmall""><img class=""aoBlogEditImagePreview"" alt=""" & imageName & """ title=""" & imageName & """ src=""" & cp.Site.FilePath & imageFilename & """></td>" _
-                        & "</tr>" _
-                        & ""
+                                & "<tr>" _
+                                & "<td><input type=""checkbox"" name=""" & rnBlogImageDelete & "." & Ptr & """>&nbsp;Delete</td>" _
+                                & "</tr>" _
+                                & "<tr>" _
+                                & "<td align=""left"" class=""ccAdminSmall""><img class=""aoBlogEditImagePreview"" alt=""" & imageName & """ title=""" & imageName & """ src=""" & cp.Site.FilePath & imageFilename & """></td>" _
+                                & "</tr>" _
+                                & ""
                     '
                     '   order
                     '
-                    imageForm = imageForm _
-                        & "<tr>" _
-                        & "<td>Order<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageOrder & "." & Ptr & """ SIZE=""2"" value=""" & Ptr & """></td>" _
-                        & "</tr>" _
-                        & ""
+                    'imageForm = imageForm _
+                    '    & "<tr>" _
+                    '    & "<td>Order<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageOrder & "." & Ptr & """ SIZE=""2"" value=""" & Ptr & """></td>" _
+                    '    & "</tr>" _
+                    '    & ""
                     '
                     '   name
                     '
                     imageForm = imageForm _
-                        & "<tr>" _
-                        & "<td>Name<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageName & "." & Ptr & """ SIZE=""25"" value=""" & cp.Utils.EncodeHTML(imageName) & """></td>" _
-                        & "</tr>" _
-                        & ""
+                                & "<tr>" _
+                                & "<td>Name<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageName & "." & Ptr & """ SIZE=""25"" value=""" & cp.Utils.EncodeHTML(imageName) & """></td>" _
+                                & "</tr>" _
+                                & ""
                     Dim ImageID As Integer
                     '
                     '   description
                     '
                     imageForm = imageForm _
-                        & "<tr>" _
-                        & "<td>Description<br><TEXTAREA NAME=""" & rnBlogImageDescription & "." & Ptr & """ ROWS=""5"" COLS=""50"">" & cp.Utils.EncodeHTML(imageDescription) & "</TEXTAREA><input type=""hidden"" name=""" & rnBlogImageID & "." & Ptr & """ value=""" & ImageID & """></td>" _
-                        & "</tr>" _
-                        & ""
+                                & "<tr>" _
+                                & "<td>Description<br><TEXTAREA NAME=""" & rnBlogImageDescription & "." & Ptr & """ ROWS=""5"" COLS=""50"">" & cp.Utils.EncodeHTML(imageDescription) & "</TEXTAREA><input type=""hidden"" name=""" & rnBlogImageID & "." & Ptr & """ value=""" & ImageID & """></td>" _
+                                & "</tr>" _
+                                & ""
                     Ptr = Ptr + 1
-                Next
+                End If
+
+                ' Next
                 '
-                '   row delimiter
+                'row delimiter
+
+                imageForm = imageForm _
+                            & "<TR style=""padding-bottom:10px; padding-bottom:10px;"">" _
+                            & "<td><HR></td>" _
+                            & "</tr>" _
+                            & ""
+                ''
+                ''   order
+                ''
+                'imageForm = imageForm _
+                '        & "<tr>" _
+                '        & "<td align=""left"">Order<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageOrder & "." & Ptr & """ SIZE=""2"" value=""" & Ptr & """></td>" _
+                '        & "</tr>" _
+                '        & ""
+                ''
+                ''   image
+                ''
+                If Ptr = 1 Then
+                    imageForm = imageForm _
+                           & "<tr>" _
+                           & "<td align=""left"">Image<br><INPUT TYPE=""file"" name=""LibraryUpload." & Ptr & """></td>" _
+                           & "</tr>" _
+                           & ""
+                    ''   name
+                    ''
+                    imageForm = imageForm _
+                                & "<tr>" _
+                                & "<td align=""left"">Name<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageName & "." & Ptr & """ SIZE=""25""></td>" _
+                                & "</tr>" _
+                                & ""
+                    '
+                    '   description
+                    '
+                    imageForm = imageForm _
+                                & "<tr>" _
+                                & "<td align=""left"">Description<br><TEXTAREA NAME=""" & rnBlogImageDescription & "." & Ptr & """ ROWS=""5"" COLS=""50""></TEXTAREA></td>" _
+                                & "</tr>" _
+                                & ""
+                End If
+
+                ''
+
                 '
                 imageForm = imageForm _
-                        & "<TR style=""padding-bottom:10px; padding-bottom:10px;"">" _
-                        & "<td><HR></td>" _
-                        & "</tr>" _
-                        & ""
-                '
-                '   order
+                            & "</Table>" _
+                            & ""
                 '
                 imageForm = imageForm _
-                        & "<tr>" _
-                        & "<td align=""left"">Order<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageOrder & "." & Ptr & """ SIZE=""2"" value=""" & Ptr & """></td>" _
-                        & "</tr>" _
-                        & ""
-                '
-                '   image
-                '
-                imageForm = imageForm _
-                        & "<tr>" _
-                        & "<td align=""left"">Image<br><INPUT TYPE=""file"" name=""LibraryUpload." & Ptr & """></td>" _
-                        & "</tr>" _
-                        & ""
-                '
-                '   name
-                '
-                imageForm = imageForm _
-                        & "<tr>" _
-                        & "<td align=""left"">Name<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageName & "." & Ptr & """ SIZE=""25""></td>" _
-                        & "</tr>" _
-                        & ""
-                '
-                '   description
-                '
-                imageForm = imageForm _
-                        & "<tr>" _
-                        & "<td align=""left"">Description<br><TEXTAREA NAME=""" & rnBlogImageDescription & "." & Ptr & """ ROWS=""5"" COLS=""50""></TEXTAREA></td>" _
-                        & "</tr>" _
-                        & ""
-                '
-                imageForm = imageForm _
-                        & "</Table>" _
-                        & ""
-                '
-                imageForm = imageForm _
-                        & "<TABLE border=""0"" cellpadding=""0"" cellspacing=""1"" width=""100%""  class=""aoBlogNewRowTable"">" _
-                        & "<tr><td Width=""30""><img src=/ResourceLibrary/spacer.gif width=30 height=1></td><td align=""left""><a href=""#"" onClick=""blogNewRow();return false;"">+ upload more files</a></td></tr>" _
-                        & "</Table>" & cp.Html.Hidden("LibraryUploadCount", Ptr.ToString(), "LibraryUploadCount") _
-                        & ""
+                            & cp.Html.Hidden("LibraryUploadCount", Ptr.ToString(), "LibraryUploadCount") _
+                            & ""
                 '
                 result.Append(genericController.GetFormTableRow(cp, "Images: ", imageForm))
                 If blogEntry_id <> 0 Then
@@ -194,7 +200,16 @@ Namespace Views
         End Function
         '
         '====================================================================================
-        '
+        ''' <summary>
+        ''' Process a new blog entry or save the edit from an existing blog entry. If BlogEntry object is nothing, this is a new entry.
+        ''' </summary>
+        ''' <param name="cp"></param>
+        ''' <param name="blog"></param>
+        ''' <param name="rssFeed"></param>
+        ''' <param name="blogEntry"></param>
+        ''' <param name="request"></param>
+        ''' <param name="blogListLink"></param>
+        ''' <returns></returns>
         Public Shared Function ProcessFormBlogEdit(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, ByRef blogEntry As BlogEntryModel, request As View.RequestModel, blogListLink As String) As Integer
             Try
                 If cp.Visit.GetProperty(SNBlogEntryName) <> "" Then
@@ -215,17 +230,22 @@ Namespace Views
                         '
                         ' Post
                         '
-                        'blogEntry = If(request.blogEntryId > 0, DbModel.create(Of BlogEntryModel)(cp, request.blogEntryId), Nothing)
-                        If (blogEntry Is Nothing) Then blogEntry = DbModel.add(Of BlogEntryModel)(cp)
+                        If (blogEntry Is Nothing) Then
+                            blogEntry = DbModel.add(Of BlogEntryModel)(cp)
+                            '
+                            ' -- by default, the RSS feed should be checked for this new blog entry
+                            Dim rule As RSSFeedBlogRuleModel = RSSFeedBlogRuleModel.add(cp)
+                            rule.BlogPostID = blogEntry.id
+                            rule.RSSFeedID = rssFeed.id
+                            rule.save(cp)
+                        End If
+
                         blogEntry.name = request.BlogEntryName
                         blogEntry.copy = request.BlogEntryCopy
                         blogEntry.tagList = request.BlogEntryTagList
                         blogEntry.blogCategoryID = request.BlogEntryCategoryId
-                        blogEntry.blogID = blog.id
+                        blogEntry.blogID = blog.Id
                         blogEntry.save(Of BlogEntryModel)(cp)
-                        '
-                        Call RSSFeedModel.UpdateBlogFeed(cp)
-                        ProcessFormBlogEdit = FormBlogPostList
                         '
                         ' Upload files
                         '
@@ -289,6 +309,9 @@ Namespace Views
                                 End If
                             Next
                         End If
+                        '
+                        Call RSSFeedModel.UpdateBlogFeed(cp)
+                        ProcessFormBlogEdit = FormBlogPostList
                     End If
                 End If
                 '

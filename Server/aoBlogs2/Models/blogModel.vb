@@ -47,6 +47,7 @@ Namespace Models
         Public Property RSSFeedID As Integer
         Public Property ThumbnailImageWidth As Integer
         Public Property twitterLink As String
+        Public Property Id As Integer
         '
         '====================================================================================================
         ''' <summary>
@@ -110,8 +111,7 @@ Namespace Models
                 End If
                 '
                 'Add this new Call to Action
-
-
+                '
                 Dim callToAction = Models.CallsToActionModel.create(Of CallsToActionModel)(cp, guidDefaultCallToAction)
                 If (callToAction Is Nothing) Then
                     callToAction = DbModel.add(Of CallsToActionModel)(cp)

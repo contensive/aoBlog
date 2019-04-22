@@ -82,7 +82,7 @@ Namespace Views
                 If blog.AllowCategories Then
                     qs = cp.Doc.RefreshQueryString
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogCategoryIDSet, "0", True)
-                    CategoryFooter = CategoryFooter & cr & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>See posts in all categories</a></div>"
+                    CategoryFooter = CategoryFooter & cr & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>See Posts in All Categories</a></div>"
                     '
                     ' select a category
                     qs = cp.Doc.RefreshQueryString
@@ -101,7 +101,7 @@ Namespace Views
                             End If
                             If Not IsBlocked Then
                                 Dim categoryLink As String = cp.Utils.ModifyQueryString(qs, RequestNameBlogCategoryIDSet, CStr(blogCategaory.id), True)
-                                CategoryFooter = CategoryFooter & cr & "<div class=""aoBlogFooterLink""><a href=""?" & categoryLink & """> See posts in the category " & blogCategaory.name & "</a></div>"
+                                CategoryFooter = CategoryFooter & cr & "<div class=""aoBlogFooterLink""><a href=""?" & categoryLink & """> See Posts in All Category " & blogCategaory.name & "</a></div>"
                             End If
                         Next
                     End If
@@ -115,7 +115,7 @@ Namespace Views
                     '
                     qs = cp.Doc.RefreshQueryString
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor.ToString(), True)
-                    result.Append(cr & "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Create new Blog Post</a></div>")
+                    result.Append(cr & "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Create New Blog Post</a></div>")
                     '
                     ' Create a link to edit the blog record
                     '
@@ -128,7 +128,7 @@ Namespace Views
 
                     Else
                         qs = "cid=" & cp.Content.GetID("RSS Feeds") & "&af=4&id=" & rssFeed.id
-                        result.Append(cr & "<div class=""aoBlogFooterLink""><a href=""" & cp.Site.GetProperty("adminUrl") & "?" & qs & """>Edit rss feed features</a></div>")
+                        result.Append(cr & "<div class=""aoBlogFooterLink""><a href=""" & cp.Site.GetProperty("adminUrl") & "?" & qs & """>Edit RSS Features</a></div>")
                     End If
                 End If
                 result.Append(ReturnFooter)
@@ -145,7 +145,7 @@ Namespace Views
                 Dim FeedFooter As String = ""
                 If rssFeed.rssFilename <> "" Then
                     FeedFooter = "<a href=""" & cp.Site.FilePath & rssFeed.rssFilename & """>"
-                    FeedFooter = "rss feed " _
+                    FeedFooter = "RSS: " _
                         & FeedFooter & rssFeed.name & "</a>" _
                         & "&nbsp;" _
                         & FeedFooter & "<img src=""/cclib/images/IconXML-25x13.gif"" width=25 height=13 class=""aoBlogRSSFeedImage""></a>" _

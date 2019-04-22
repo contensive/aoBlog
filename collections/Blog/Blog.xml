@@ -587,6 +587,7 @@ function blogNewRow() {
 	<ImportCollection name="FaceBook Social Plug-ins">{507B7EB2-D3E5-4F9E-88BB-777FDA06EC65}</ImportCollection>
 	<ImportCollection name="Open Graph Meta Tags">{E4FAFB02-D4B2-4336-8956-A1DE68291C3B}</ImportCollection>
 	<ImportCollection name="Twitter">{EADB8DAF-CC49-404E-AEDE-71AEE9C9BFEC}</ImportCollection>
+	<Resource name="defaultpostcopy.txt" type="www" path="blogs" />
 	<Resource name="blog.png" type="www" path="blogs" />
 	<Resource name="facebook.jpg" type="www" path="blogs" />
 	<Resource name="googleplus.jpg" type="www" path="blogs" />
