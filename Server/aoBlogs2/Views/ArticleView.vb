@@ -53,7 +53,6 @@ Namespace Views
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
                         blogEntry.Viewings = (1 + cp.Doc.GetInteger("viewings"))
-                        blogEntry.imageDisplayTypeId = cp.Doc.GetInteger("imageDisplayTypeId")
                         blogEntry.primaryImagePositionId = cp.Doc.GetInteger("primaryImagePositionId")
                         result = result & genericController.getBlogEntryCell(cp, blog, rssFeed, blogEntry, user, True, False, Return_CommentCnt, "", blogListQs)
                         EntryPtr = EntryPtr + 1
