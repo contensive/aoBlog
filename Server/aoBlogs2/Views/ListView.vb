@@ -53,13 +53,13 @@ Namespace Views
                         Else
                             Dim blogEntryCategory = DbModel.create(Of Models.BlogCategorieModel)(cp, blogEntry.blogCategoryID)
                             If (blogEntryCategory IsNot Nothing) Then
-                                If (blogEntryCategory.UserBlocking) Then IsBlocked = Not genericController.IsGroupListMember(cp, GroupModel.GetBlockingGroups(cp, blogEntryCategory.id))
+                                If (blogEntryCategory.UserBlocking) Then IsBlocked = Not genericController.isGroupListMember(cp, GroupModel.GetBlockingGroups(cp, blogEntryCategory.id))
                                 isBlogCategoryBlockedDict.Add(blogEntry.blogCategoryID, IsBlocked)
                             End If
                         End If
                         If Not IsBlocked Then
                             Dim Return_CommentCnt As Integer
-                            Dim blogArticleCell = genericController.getBlogEntryCell(cp, blog, rssFeed, blogEntry, user, False, True, Return_CommentCnt, "", blogListQs)
+                            Dim blogArticleCell = BlogEntryCellView.getBlogEntryCell(cp, blog, rssFeed, blogEntry, user, False, True, Return_CommentCnt, "", blogListQs)
                             '
                             ' -- if editing enabled, add the link and wrapperwrapper
                             blogArticleCell = genericController.addEditWrapper(cp, blogArticleCell, blogEntry.id, blogEntry.name, Models.BlogEntryModel.contentName, "Blog Article Settings")
@@ -95,7 +95,7 @@ Namespace Views
                             Else
                                 Dim blogEntryCategory = DbModel.create(Of Models.BlogCategorieModel)(cp, blogCategaory.id)
                                 If (blogEntryCategory IsNot Nothing) Then
-                                    If (blogEntryCategory.UserBlocking) Then IsBlocked = Not genericController.IsGroupListMember(cp, GroupModel.GetBlockingGroups(cp, blogEntryCategory.id))
+                                    If (blogEntryCategory.UserBlocking) Then IsBlocked = Not genericController.isGroupListMember(cp, GroupModel.GetBlockingGroups(cp, blogEntryCategory.id))
                                     isBlogCategoryBlockedDict.Add(blogCategaory.id, IsBlocked)
                                 End If
                             End If

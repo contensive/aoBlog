@@ -17,10 +17,9 @@ Namespace Views
         Public Shared Function getArticleView(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, blogEntry As BlogEntryModel, request As View.RequestModel, user As PersonModel, blogListLink As String, blogListQs As String, RetryCommentPost As Boolean) As String
             Dim result As String = ""
             Try
-                Dim formKey As String
                 '
                 ' setup form key
-                formKey = "{" & Guid.NewGuid().ToString() & "}" ' cp.Utils.enc  Main.EncodeKeyNumber(Main.VisitID, Now())
+                Dim formKey As String = "{" & Guid.NewGuid().ToString() & "}" ' cp.Utils.enc  Main.EncodeKeyNumber(Main.VisitID, Now())
                 result = vbCrLf & cp.Html.Hidden("FormKey", formKey)
                 result = result & cr & "<div class=""aoBlogHeaderLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
                 '
@@ -54,7 +53,7 @@ Namespace Views
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
                         blogEntry.Viewings = (1 + cp.Doc.GetInteger("viewings"))
                         blogEntry.primaryImagePositionId = cp.Doc.GetInteger("primaryImagePositionId")
-                        result = result & genericController.getBlogEntryCell(cp, blog, rssFeed, blogEntry, user, True, False, Return_CommentCnt, "", blogListQs)
+                        result = result & BlogEntryCellView.getBlogEntryCell(cp, blog, rssFeed, blogEntry, user, True, False, Return_CommentCnt, "", blogListQs)
                         EntryPtr = EntryPtr + 1
                         '
                         '*** This was causing the subscribe by email to malfunction no idea why it was there? Vince
@@ -159,12 +158,12 @@ Namespace Views
                         result = result & cr & "<div>&nbsp;</div>"
                         result = result & cr & "<div class=""aoBlogCommentCopy"">Title</div>"
                         If RetryCommentPost Then
-                            result = result & cr & "<div class=""aoBlogCommentCopy"">" & genericController.GetField(cp, RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(RequestNameCommentTitle.ToString)) & "</div>"
+                            result = result & cr & "<div class=""aoBlogCommentCopy"">" & genericController.getField(cp, RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(RequestNameCommentTitle.ToString)) & "</div>"
                             result = result & cr & "<div>&nbsp;</div>"
                             result = result & cr & "<div class=""aoBlogCommentCopy"">Comment</div>"
                             result = result & cr & "<div class=""aoBlogCommentCopy"">" & cp.Html.InputText(RequestNameCommentCopy, cp.Doc.GetText(RequestNameCommentCopy), "15", "70",) & "</div>"
                         Else
-                            result = result & cr & "<div class=""aoBlogCommentCopy"">" & genericController.GetField(cp, RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(RequestNameCommentTitle.ToString)) & "</div>"
+                            result = result & cr & "<div class=""aoBlogCommentCopy"">" & genericController.getField(cp, RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(RequestNameCommentTitle.ToString)) & "</div>"
                             result = result & cr & "<div>&nbsp;</div>"
                             result = result & cr & "<div class=""aoBlogCommentCopy"">Comment</div>"
                             result = result & cr & "<div class=""aoBlogCommentCopy"">" & cp.Html.InputText(RequestNameCommentCopy, "", "15", "70") & "</div>"

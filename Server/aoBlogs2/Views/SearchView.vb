@@ -79,7 +79,7 @@ Namespace Views
                             Dim AuthorMemberID As Integer = blogSearchEntry.AuthorMemberID
                             If AuthorMemberID = 0 Then AuthorMemberID = blogSearchEntry.CreatedBy
                             Dim Return_CommentCnt As Integer
-                            result.Append(genericController.getBlogEntryCell(cp, blog, rssFeed, blogSearchEntry, user, False, True, Return_CommentCnt, "", blogListQs))
+                            result.Append(BlogEntryCellView.getBlogEntryCell(cp, blog, rssFeed, blogSearchEntry, user, False, True, Return_CommentCnt, "", blogListQs))
                             result.Append(cr & "<hr>")
                         Next
                     End If
@@ -89,10 +89,10 @@ Namespace Views
                 result.Append("" _
                     & "<div  class=""aoBlogSearchFormCon"">" _
                     & "<table width=100% border=0 cellspacing=0 cellpadding=5 class=""aoBlogSearchTable"">" _
-                    & genericController.GetFormTableRow(cp, "Date:", genericController.GetField(cp, RequestNameDateSearch, 1, 10, 10, cp.Doc.GetText(RequestNameDateSearch).ToString) & " " & "&nbsp;(mm/yyyy)") _
-                    & genericController.GetFormTableRow(cp, "Keyword(s):", genericController.GetField(cp, RequestNameKeywordList, 1, 10, 30, cp.Doc.GetText(RequestNameKeywordList))) _
-                    & genericController.GetFormTableRow(cp, "", cp.Html.Button(rnButton, FormButtonSearch)) _
-                    & genericController.GetFormTableRow2(cp, "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>") _
+                    & genericController.getFormTableRow(cp, "Date:", genericController.getField(cp, RequestNameDateSearch, 1, 10, 10, cp.Doc.GetText(RequestNameDateSearch).ToString) & " " & "&nbsp;(mm/yyyy)") _
+                    & genericController.getFormTableRow(cp, "Keyword(s):", genericController.getField(cp, RequestNameKeywordList, 1, 10, 30, cp.Doc.GetText(RequestNameKeywordList))) _
+                    & genericController.getFormTableRow(cp, "", cp.Html.Button(rnButton, FormButtonSearch)) _
+                    & genericController.getFormTableRow2(cp, "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>") _
                     & "</table>" _
                     & "</div>")
                 result.Append(cr & "<input type=""hidden"" name=""" & RequestNameSourceFormID & """ value=""" & FormBlogSearch.ToString & """>")

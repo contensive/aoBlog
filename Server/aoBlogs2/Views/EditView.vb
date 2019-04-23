@@ -46,9 +46,9 @@ Namespace Views
                         blogEntry_copy = "<!-- cc --><p><br></p><!-- /cc -->"
                     End If
                 End If
-                result.Append(genericController.GetFormTableRow(cp, "<div style=""padding-top:3px"">Title: </div>", cp.Html.InputText(RequestNameBlogEntryName, blogEntry_name, "", "", False, "form-control")))
-                result.Append(genericController.GetFormTableRow(cp, "<div style=""padding-top:108px"">Post: </div>", cp.Html.InputWysiwyg(RequestNameBlogEntryCopy, blogEntry_copy)))
-                result.Append(genericController.GetFormTableRow(cp, "<div style=""padding-top:3px"">Tag List: </div>", cp.Html.InputText(RequestNameBlogEntryTagList, blogEntry_tagList, "", "", False, "form-control")))
+                result.Append(genericController.getFormTableRow(cp, "<div style=""padding-top:3px"">Title: </div>", cp.Html.InputText(RequestNameBlogEntryName, blogEntry_name, "", "", False, "form-control")))
+                result.Append(genericController.getFormTableRow(cp, "<div style=""padding-top:108px"">Post: </div>", cp.Html.InputWysiwyg(RequestNameBlogEntryCopy, blogEntry_copy)))
+                result.Append(genericController.getFormTableRow(cp, "<div style=""padding-top:3px"">Tag List: </div>", cp.Html.InputText(RequestNameBlogEntryTagList, blogEntry_tagList, "", "", False, "form-control")))
                 If blog.AllowCategories Then
                     Dim CategorySelect As String = cp.Html.SelectContent(RequestNameBlogEntryCategoryID, blongEntry_blogCategoryId.ToString(), "Blog Categories")
                     If (InStr(1, CategorySelect, "<option value=""""></option></select>", vbTextCompare) <> 0) Then
@@ -56,7 +56,7 @@ Namespace Views
                         ' Select is empty
                         CategorySelect = "<div>This blog has no categories defined</div>"
                     End If
-                    result.Append(genericController.GetFormTableRow(cp, "Category: ", CategorySelect))
+                    result.Append(genericController.getFormTableRow(cp, "Category: ", CategorySelect))
                 End If
                 '
                 ' file upload form taken from Resource Library
@@ -172,20 +172,20 @@ Namespace Views
                             & cp.Html.Hidden("LibraryUploadCount", Ptr.ToString(), "LibraryUploadCount") _
                             & ""
                 '
-                result.Append(genericController.GetFormTableRow(cp, "Images: ", imageForm))
+                result.Append(genericController.getFormTableRow(cp, "Images: ", imageForm))
                 If blogEntry_id <> 0 Then
                     'hint =  "6"
-                    result.Append(genericController.GetFormTableRow(cp, "", cp.Html.Button(rnButton, FormButtonPost) & "&nbsp;" & cp.Html.Button(rnButton, FormButtonCancel) & "&nbsp;" & cp.Html.Button(rnButton, FormButtonDelete)))
+                    result.Append(genericController.getFormTableRow(cp, "", cp.Html.Button(rnButton, FormButtonPost) & "&nbsp;" & cp.Html.Button(rnButton, FormButtonCancel) & "&nbsp;" & cp.Html.Button(rnButton, FormButtonDelete)))
                 Else
                     'hint =  "7"
-                    result.Append(genericController.GetFormTableRow(cp, "", cp.Html.Button(rnButton, FormButtonPost) & "&nbsp;" & cp.Html.Button(rnButton, FormButtonCancel)))
+                    result.Append(genericController.getFormTableRow(cp, "", cp.Html.Button(rnButton, FormButtonPost) & "&nbsp;" & cp.Html.Button(rnButton, FormButtonCancel)))
                 End If
                 'hint =  "8"
                 Dim qs As String = cp.Doc.RefreshQueryString()
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, "", True)
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostList.ToString())
                 'hint =  "9"
-                result.Append(vbCrLf & genericController.GetFormTableRow2(cp, "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"))
+                result.Append(vbCrLf & genericController.getFormTableRow2(cp, "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"))
 
                 '
                 result.Append(cp.Html.Hidden(RequestNameBlogEntryID, blogEntry_id.ToString()))

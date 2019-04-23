@@ -111,6 +111,12 @@
     <Compile Include="Models\BlogEntryCtaRules.vb" />
     <Compile Include="Models\CallsToActionModel.vb" />
     <Compile Include="Models\_blankModel.vb" />
+    <Compile Include="Views\ArchiveView.vb" />
+    <Compile Include="Views\BlogCommentCellView.vb" />
+    <Compile Include="Views\BlogEntryCellView.vb" />
+    <Compile Include="Views\BlogBodyView.vb" />
+    <Compile Include="Views\SidebarView.vb" />
+    <Compile Include="Views\BlogImageView.vb" />
     <Compile Include="Views\ListView.vb" />
     <Compile Include="Views\SearchView.vb" />
     <Compile Include="Views\ArticleView.vb" />

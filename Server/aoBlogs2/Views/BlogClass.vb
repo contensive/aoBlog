@@ -27,26 +27,10 @@ Namespace Views
                 '
                 ' -- get Blog Body -- the body is the area down the middle that includes the Blog View (Article View, List View, Edit View)
                 Dim blogEntry = DbModel.create(Of BlogEntryModel)(CP, request.EntryID)
-                Dim blogBody As String = BlogBodyController.getBlogBody(CP, blog, request, blogEntry)
+                Dim blogBody As String = BlogBodyView.getBlogBody(CP, blog, request, blogEntry)
                 '
                 ' -- wrap the blog body in the wrapper (sidebar, footer, etc)
                 Dim isArticleView As Boolean = (request.blogEntryId > 0)
-                Dim sideBar_ArchiveList As String = ""
-                If blog.allowArchiveList Then
-                    '
-                    ' create the article list now - if only the current month, turn if off before setting allowListSidebar
-                    '
-                    Dim blogListQs As String = CP.Doc.RefreshQueryString()
-                    blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameSourceFormID, "")
-                    blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameFormID, "")
-                    blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameBlogCategoryID, "")
-                    blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameBlogEntryID, "")
-                    Dim blogListLink As String = CP.Content.GetLinkAliasByPageID(CP.Doc.PageId, blogListQs, "?" & blogListQs)
-                    sideBar_ArchiveList = GetFormBlogArchiveDateList(CP, blog.id, blogListQs)
-                    If sideBar_ArchiveList = "" Then
-                        blog.allowArchiveList = False
-                    End If
-                End If
                 Dim rssFeed = DbModel.create(Of RSSFeedModel)(CP, blog.RSSFeedID)
                 Dim allowListSidebar As Boolean = blog.allowEmailSubscribe Or blog.allowFacebookLink Or blog.allowGooglePlusLink Or blog.allowGooglePlusLink Or blog.allowRSSSubscribe Or blog.allowTwitterLink Or blog.allowArchiveList Or blog.allowSearch
                 Dim allowArticleSidebar As Boolean = allowListSidebar Or blog.allowArticleCTA
@@ -102,7 +86,7 @@ Namespace Views
                         '
                         ' Subscribe by email
                         '
-                        Dim subscribed As Boolean = CP.Visit.GetBoolean("EmailSubscribed-Blog" & blog.id & "-user" & CP.User.Id)
+                        Dim subscribed As Boolean = CP.Visit.GetBoolean("EmailSubscribed-Blog" & blog.Id & "-user" & CP.User.Id)
                         If Not subscribed Then
                             subscribed = CP.User.IsInGroup(blog.emailSubscribeGroupId.ToString())
                         End If
@@ -187,15 +171,29 @@ Namespace Views
                     If blog.allowArchiveList Then
                         '
                         ' Archive List
+                        Dim sideBar_ArchiveList As String = ""
                         '
-                        sidebarCell.Load(cellTemplate)
-                        Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Archives")
-                        Call sidebarCell.SetInner(".blogSidebarCellCopy", sideBar_ArchiveList)
-                        Call sidebarCell.SetOuter(".blogSidebarCellInputCaption", "")
-                        Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
-                        Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
-                        cellList &= vbCrLf & vbTab & "<div id=""blogSidebarArchiveCell"">" & sidebarCell.GetHtml() & "</div>"
-                        sidebarCnt += 1
+                        ' create the article list now - if only the current month, turn if off before setting allowListSidebar
+                        '
+                        Dim blogListQs As String = CP.Doc.RefreshQueryString()
+                        blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameSourceFormID, "")
+                        blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameFormID, "")
+                        blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameBlogCategoryID, "")
+                        blogListQs = CP.Utils.ModifyQueryString(blogListQs, RequestNameBlogEntryID, "")
+                        Dim blogListLink As String = CP.Content.GetLinkAliasByPageID(CP.Doc.PageId, blogListQs, "?" & blogListQs)
+                        sideBar_ArchiveList = SidebarView.GetSidebarArchiveList(CP, blog.Id, blogListQs)
+                        If (String.IsNullOrEmpty(sideBar_ArchiveList)) Then
+                            blog.allowArchiveList = False
+                        Else
+                            sidebarCell.Load(cellTemplate)
+                            Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Archives")
+                            Call sidebarCell.SetInner(".blogSidebarCellCopy", sideBar_ArchiveList)
+                            Call sidebarCell.SetOuter(".blogSidebarCellInputCaption", "")
+                            Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
+                            Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
+                            cellList &= vbCrLf & vbTab & "<div id=""blogSidebarArchiveCell"">" & sidebarCell.GetHtml() & "</div>"
+                            sidebarCnt += 1
+                        End If
                     End If
                     '
                     If blog.allowRSSSubscribe Then
@@ -254,7 +252,7 @@ Namespace Views
                 End If
                 '
                 layout.SetInner(".blogSidebar", cellList)
-                layout.Append(CP.Html.Hidden("blogId", blog.id.ToString(), "", "blogId"))
+                layout.Append(CP.Html.Hidden("blogId", blog.Id.ToString(), "", "blogId"))
                 If sidebarCnt = 0 Then
                     layout.SetInner(".blogWrapper", layout.GetInner(".blogColumn1"))
                 End If
@@ -269,7 +267,7 @@ Namespace Views
                 End If
                 '
                 ' -- if editing enabled, add the link and wrapperwrapper
-                returnHtml = genericController.addEditWrapper(CP, returnHtml, blog.id, blog.name, Models.BlogModel.contentName, "Blog Settings")
+                returnHtml = genericController.addEditWrapper(CP, returnHtml, blog.Id, blog.name, Models.BlogModel.contentName, "Blog Settings")
                 '
             Catch ex As Exception
                 errorReport(CP, ex, "execute")
@@ -291,51 +289,5 @@ Namespace Views
                 '
             End Try
         End Sub
-        '
-        '====================================================================================
-        '
-        '====================================================================================
-        '
-        Private Function GetFormBlogArchiveDateList(cp As CPBaseClass, BlogID As Integer, blogListQs As String) As String
-            Dim returnHtml As String = ""
-            Try
-                Dim cs As CPCSBaseClass = cp.CSNew()
-                Dim ArchiveMonth As Integer
-                Dim ArchiveYear As Integer
-                Dim NameOfMonth As String
-                Dim qs As String
-                Dim SQL As String
-                '
-                SQL = "SELECT distinct Month(DateAdded) as ArchiveMonth, year(dateadded) as ArchiveYear " _
-                    & " From ccBlogCopy" _
-                    & " Where (ContentControlID = " & cp.Content.GetID(cnBlogEntries) & ") And (Active <> 0)" _
-                    & " AND (BlogID=" & BlogID & ")" _
-                    & " ORDER BY year(dateadded) desc, Month(DateAdded) desc"
-                If cs.OpenSQL(SQL) Then
-                    qs = blogListQs
-                    qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogArchivedBlogs.ToString())
-                    Do While cs.OK
-                        ArchiveMonth = cs.GetInteger("ArchiveMonth")
-                        ArchiveYear = cs.GetInteger("ArchiveYear")
-                        NameOfMonth = MonthName(ArchiveMonth)
-                        qs = cp.Utils.ModifyQueryString(qs, RequestNameArchiveMonth, CStr(ArchiveMonth))
-                        qs = cp.Utils.ModifyQueryString(qs, RequestNameArchiveYear, CStr(ArchiveYear))
-                        returnHtml = returnHtml & vbCrLf & vbTab & vbTab & "<li class=""aoBlogArchiveLink""><a href=""?" & qs & """>" & NameOfMonth & "&nbsp;" & ArchiveYear & "</a></li>"
-                        Call cs.GoNext()
-                    Loop
-                End If
-                Call cs.Close()
-                If returnHtml <> "" Then
-                    returnHtml = "" _
-                        & vbCrLf & vbTab & "<ul class=""aoBlogArchiveLinkList"">" _
-                        & returnHtml _
-                        & vbCrLf & vbTab & "</ul>"
-                End If
-                '
-            Catch ex As Exception
-                errorReport(cp, ex, "GetFormBlogArchiveDateList")
-            End Try
-            Return returnHtml
-        End Function
     End Class
 End Namespace
