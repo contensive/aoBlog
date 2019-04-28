@@ -13,6 +13,9 @@ Namespace Controllers
         '====================================================================================================
         Public Shared Sub setMetadata(cp As CPBaseClass, blogEntry As BlogEntryModel)
             '
+            cp.Utils.AppendLog("Blog.setMetadata, blogEntry.id [" & blogEntry.id & "], set Open Graph Title = blogEntry.name [" & blogEntry.name & "]")
+            '
+            '
             Dim blogImageList As List(Of BlogImageModel) = BlogImageModel.createListFromBlogEntry(cp, blogEntry.id)
             Dim blogEntryBrief As String = blogEntry.RSSDescription
             If blogEntryBrief = "" Then
