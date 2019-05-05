@@ -214,20 +214,27 @@ Namespace Controllers
         '
         '========================================================================
         '
-        Public Shared Function addEditWrapper(ByVal cp As CPBaseClass, ByVal innerHtml As String, ByVal instanceId As Integer, ByVal instanceName As String, ByVal contentName As String, ByVal designBlockCaption As String) As String
+        'Public Shared Function addEditWrapper(ByVal cp As CPBaseClass, ByVal innerHtml As String, ByVal instanceId As Integer, ByVal instanceName As String, ByVal contentName As String, ByVal designBlockCaption As String) As String
+        '    If (Not cp.User.IsEditingAnything) Then Return innerHtml
+        '    Dim editLink As String = getEditLink(cp, contentName, instanceId, designBlockCaption)
+        '    Dim settingContent As String = cp.Html.div(innerHtml, "", "dbSettingWrapper")
+        '    Dim settingHeader As String = cp.Html.div(editLink, "", "dbSettingHeader")
+        '    Return cp.Html.div(settingHeader + settingContent)
+        'End Function
+        ''
+        ''========================================================================
+        ''
+        'Public Shared Function getEditLink(ByVal cp As CPBaseClass, ByVal contentName As String, ByVal recordId As Integer, Caption As String) As String
+        '    Dim contentId As Integer = cp.Content.GetID(contentName)
+        '    If contentId = 0 Then Return String.Empty
+        '    Return "<a href=""/admin?af=4&aa=2&ad=1&cid=" & contentId & "&id=" & recordId & """ class=""ccRecordEditLink""><span style=""color:#0c0""><i title=""edit"" class=""fas fa-cog""></i></span>&nbsp;" & Caption & "</a>"
+        'End Function
+        '
+        Public Shared Function addEditWrapper(ByVal cp As CPBaseClass, ByVal innerHtml As String, ByVal recordId As Integer, ByVal recordName As String, ByVal contentName As String) As String
             If (Not cp.User.IsEditingAnything) Then Return innerHtml
-            Dim editLink As String = getEditLink(cp, contentName, instanceId, designBlockCaption)
-            Dim settingContent As String = cp.Html.div(innerHtml, "", "dbSettingWrapper")
-            Dim settingHeader As String = cp.Html.div(editLink, "", "dbSettingHeader")
-            Return cp.Html.div(settingHeader + settingContent)
-        End Function
-        '
-        '========================================================================
-        '
-        Public Shared Function getEditLink(ByVal cp As CPBaseClass, ByVal contentName As String, ByVal recordId As Integer, Caption As String) As String
-            Dim contentId As Integer = cp.Content.GetID(contentName)
-            If contentId = 0 Then Return String.Empty
-            Return "<a href=""/admin?af=4&aa=2&ad=1&cid=" & contentId & "&id=" & recordId & """ class=""ccRecordEditLink""><span style=""color:#0c0""><i title=""edit"" class=""fas fa-cog""></i></span>&nbsp;" & Caption & "</a>"
+            Dim header As String = cp.Content.GetEditLink(contentName, recordId.ToString(), False, recordName, True)
+            Dim content As String = cp.Html.div(innerHtml, "", "")
+            Return cp.Html.div(header + content, "", "ccEditWrapper")
         End Function
 
     End Class

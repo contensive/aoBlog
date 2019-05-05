@@ -62,7 +62,7 @@ Namespace Views
                             Dim blogArticleCell = BlogEntryCellView.getBlogEntryCell(cp, blog, rssFeed, blogEntry, user, False, True, Return_CommentCnt, "", blogListQs)
                             '
                             ' -- if editing enabled, add the link and wrapperwrapper
-                            blogArticleCell = genericController.addEditWrapper(cp, blogArticleCell, blogEntry.id, blogEntry.name, Models.BlogEntryModel.contentName, "Blog Article Settings")
+                            blogArticleCell = genericController.addEditWrapper(cp, blogArticleCell, blogEntry.id, blogEntry.name, Models.BlogEntryModel.contentName)
 
                             result.Append(blogArticleCell)
                             result.Append(cr & "<hr>")

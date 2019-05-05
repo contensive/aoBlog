@@ -267,7 +267,7 @@ Namespace Views
                 End If
                 '
                 ' -- if editing enabled, add the link and wrapperwrapper
-                returnHtml = genericController.addEditWrapper(CP, returnHtml, blog.Id, blog.name, Models.BlogModel.contentName, "Blog Settings")
+                returnHtml = genericController.addEditWrapper(CP, returnHtml, blog.Id, blog.name, Models.BlogModel.contentName)
                 '
             Catch ex As Exception
                 errorReport(CP, ex, "execute")

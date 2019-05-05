@@ -212,7 +212,7 @@ Namespace Views
                 MetadataController.setMetadata(cp, blogEntry)
                 '
                 ' -- if editing enabled, add the link and wrapperwrapper
-                result = genericController.addEditWrapper(cp, result, blogEntry.id, blogEntry.name, Models.BlogEntryModel.contentName, "Blog Article Settings")
+                result = genericController.addEditWrapper(cp, result, blogEntry.id, blogEntry.name, Models.BlogEntryModel.contentName)
                 '
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)
