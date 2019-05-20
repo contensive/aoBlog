@@ -584,7 +584,6 @@ function blogNewRow() {
 	<ImportCollection name="RSS">{06791870-0ef8-48cb-ac54-2327ff5a1c40}</ImportCollection>
 	<ImportCollection name="ReCaptcha V2">{B0330AE8-225D-429A-8985-B5F602E295E2}</ImportCollection>
 	<ImportCollection name="Call To Action">{7103AAC0-E1CF-424D-AD1F-8CB256FD5AFD}</ImportCollection>
-	<ImportCollection name="FaceBook Social Plug-ins">{507B7EB2-D3E5-4F9E-88BB-777FDA06EC65}</ImportCollection>
 	<ImportCollection name="Open Graph Meta Tags">{E4FAFB02-D4B2-4336-8956-A1DE68291C3B}</ImportCollection>
 	<ImportCollection name="Twitter">{EADB8DAF-CC49-404E-AEDE-71AEE9C9BFEC}</ImportCollection>
 	<Resource name="defaultpostcopy.txt" type="www" path="blogs" />
