@@ -19,7 +19,7 @@ Namespace Controllers
             Dim blogImageList As List(Of BlogImageModel) = BlogImageModel.createListFromBlogEntry(cp, blogEntry.id)
             Dim blogEntryBrief As String = blogEntry.RSSDescription
             If blogEntryBrief = "" Then
-                blogEntryBrief = cp.Utils.DecodeHTML(blogEntry.copy)
+                blogEntryBrief = cp.Utils.ConvertHTML2Text(blogEntry.copy)
                 If blogEntryBrief.Length > 300 Then
                     Dim ptr As Integer = blogEntryBrief.IndexOf(" ", 290)
                     If ptr < 0 Then ptr = 300

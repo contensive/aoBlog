@@ -41,7 +41,7 @@ Namespace Views
                         End If
                         Dim DateAdded As Date = blogEntry.DateAdded
                         Dim EntryName As String = blogEntry.name
-                        If cp.User.IsAuthoring("Blogs") Then
+                        If cp.User.IsEditing("Blogs") Then
                             Dim entryEditLink As String = cp.Content.GetEditLink(BlogModel.contentName, blogEntry.id.ToString(), False, EntryName, True)
                         End If
                         Dim EntryCopy As String = blogEntry.copy
@@ -161,12 +161,12 @@ Namespace Views
                             result = result & cr & "<div class=""aoBlogCommentCopy"">" & genericController.getField(cp, RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(RequestNameCommentTitle.ToString)) & "</div>"
                             result = result & cr & "<div>&nbsp;</div>"
                             result = result & cr & "<div class=""aoBlogCommentCopy"">Comment</div>"
-                            result = result & cr & "<div class=""aoBlogCommentCopy"">" & cp.Html.InputText(RequestNameCommentCopy, cp.Doc.GetText(RequestNameCommentCopy), "15", "70",) & "</div>"
+                            result = result & cr & "<div class=""aoBlogCommentCopy"">" & cp.Html5.InputTextArea(RequestNameCommentCopy, 500, cp.Doc.GetText(RequestNameCommentCopy)) & "</div>"
                         Else
                             result = result & cr & "<div class=""aoBlogCommentCopy"">" & genericController.getField(cp, RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(RequestNameCommentTitle.ToString)) & "</div>"
                             result = result & cr & "<div>&nbsp;</div>"
                             result = result & cr & "<div class=""aoBlogCommentCopy"">Comment</div>"
-                            result = result & cr & "<div class=""aoBlogCommentCopy"">" & cp.Html.InputText(RequestNameCommentCopy, "", "15", "70") & "</div>"
+                            result = result & cr & "<div class=""aoBlogCommentCopy"">" & cp.Html5.InputTextArea(RequestNameCommentCopy, 500, cp.Doc.GetText(RequestNameCommentCopy)) & "</div>"
                         End If
                         '
                         ' todo re-enable recaptcha 20190123

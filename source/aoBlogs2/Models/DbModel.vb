@@ -318,7 +318,7 @@ Namespace Models
                             If (targetNullable And (String.IsNullOrEmpty(propertyValueText))) Then
                                 '
                                 ' -- null value in a nullable property - save a blank value to a Db field
-                                cs.SetField(instanceProperty.Name, Nothing)
+                                cs.SetField(instanceProperty.Name, "")
                             Else
                                 '
                                 ' -- not nullable or value is not null
@@ -387,7 +387,7 @@ Namespace Models
                                                 ' -- empty content
                                                 If (Not String.IsNullOrEmpty(filename)) Then
                                                     cs.SetField(instanceProperty.Name, "")
-                                                    cp.File.Delete(filename)
+                                                    cp.CdnFiles.DeleteFile(filename)
                                                 End If
                                             Else
                                                 '
@@ -395,7 +395,7 @@ Namespace Models
                                                 If (String.IsNullOrEmpty(filename)) Then
                                                     filename = getUploadPath(Of T)(instanceProperty.Name.ToLower())
                                                 End If
-                                                cs.SetFile(instanceProperty.Name, content, contentName)
+                                                cs.SetField(instanceProperty.Name, content)
                                             End If
                                         End If
 

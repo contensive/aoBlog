@@ -157,7 +157,7 @@ Namespace Views
                         formInput += CP.Html.Hidden("formid", "120")
                         formInput += CP.Html.Hidden("sourceformid", "120")
                         formInput += CP.Html.Hidden("button", " Search Blogs ")
-                        formInput = CP.Html.Form(formInput, , , "blogSidebarSearchForm")
+                        formInput = CP.Html.Form(formInput, "", "blogSidebarSearchForm", "blogSidebarSearchForm")
                         sidebarCell.Load(cellTemplate)
                         Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Search")
                         Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
