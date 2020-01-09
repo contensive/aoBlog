@@ -29,6 +29,7 @@
 		<Template>Yes</Template>
 		<Email>No</Email>
 		<Admin>Yes</Admin>
+		<Category>Applications.Social Media</Category>
 		<OnPageEndEvent>No</OnPageEndEvent>
 		<OnPageStartEvent>No</OnPageStartEvent>
 		<OnBodyStart>No</OnBodyStart>
