@@ -28,7 +28,7 @@
 		<Content>Yes</Content>
 		<Template>Yes</Template>
 		<Email>No</Email>
-		<Admin>Yes</Admin>
+		<Admin>no</Admin>
 		<Category>Applications.Social Media</Category>
 		<OnPageEndEvent>No</OnPageEndEvent>
 		<OnPageStartEvent>No</OnPageStartEvent>
@@ -81,29 +81,16 @@
 		<OtherHeadTags></OtherHeadTags>
 		<PageTitle></PageTitle>
 		<RemoteAssetLink></RemoteAssetLink>
+		<Category>Applications.Social Media</Category>
 		<Styles><![CDATA[
 
+			div.blogCatList {}
+			div.blogCatList ul {}
+			div.blogCatList ul li {}
+			div.blogCatList ul li.first {}
+			div.blogCatList ul li.last {}
 
-
-
-
-div.blogCatList {}
-div.blogCatList ul {}
-div.blogCatList ul li {}
-div.blogCatList ul li.first {}
-div.blogCatList ul li.last {}
-
-
-
-
-
-
-div.blogCatList {}
-div.blogCatList ul {}
-div.blogCatList ul li {}
-div.blogCatList ul li.first {}
-div.blogCatList ul li.last {}
-]]></Styles>
+			]]></Styles>
 		<styleslinkhref></styleslinkhref>
 		<Scripting Language="VBScript" EntryPoint="" Timeout="5000"/>
 	</Addon>
