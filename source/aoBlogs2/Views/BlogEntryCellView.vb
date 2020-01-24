@@ -241,14 +241,16 @@ Namespace Views
                         Else
                             CommentLine = CommentLine & "<a href=""?" & qs & """>Comments</a>&nbsp;(" & CommentCount & ")"
                         End If
+
+                        'get the unapproved comments
                         If user.isBlogEditor(cp, blog) Then
                             Criteria = "(EntryID=" & blogEntry.id & ")"
-                            BlogCommentModelList = DbModel.createList(Of BlogCommentModel)(cp, "(Approved<>0)and(EntryID=" & blogEntry.id & ")")
-                            CommentCount = BlogCommentModelList.Count
+                            Dim BlogUnapprovedCommentModelList = DbModel.createList(Of BlogCommentModel)(cp, "(Approved=0)and(EntryID=" & blogEntry.id & ")")
+                            Dim unapprovedCommentCount = BlogUnapprovedCommentModelList.Count
                             If ToolLine <> "" Then
                                 ToolLine = ToolLine & "&nbsp;|&nbsp;"
                             End If
-                            ToolLine = ToolLine & "Unapproved Comments (" & CommentCount & ")"
+                            ToolLine = ToolLine & "Unapproved Comments (" & unapprovedCommentCount & ")"
                             qs = blogListQs
                             qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
                             qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor.ToString())
@@ -257,6 +259,7 @@ Namespace Views
                             End If
                             ToolLine = ToolLine & "<a href=""?" & qs & """>Edit</a>"
                         End If
+
                         '
                     Else
                         '
