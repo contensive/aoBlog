@@ -305,17 +305,21 @@ Namespace Views
                                         & vbCrLf & cp.Utils.EncodeHTML(Copy) _
                                         & vbCrLf
                                     Dim EmailFromAddress As String = cp.Site.GetProperty("EmailFromAddress", "info@" & cp.Site.Domain)
-                                    Call cp.Email.sendUser(BlogEntry.AuthorMemberID.ToString, EmailFromAddress, "Blog comment notification for [" & blog.name & "]", EmailBody, True, False)
-                                    Call cp.Email.sendUser(BlogEntry.AuthorMemberID.ToString(), EmailFromAddress, "Blog comment notification for [" & blog.name & "]", EmailBody, False, False)
-                                    If blog.AuthoringGroupID <> 0 Then
-                                        Dim MemberRuleList As List(Of MemberRuleModel) = DbModel.createList(Of MemberRuleModel)(cp, "GroupId=" & blog.AuthoringGroupID)
-                                        For Each MemberRule In MemberRuleList
-                                            Call cp.Email.sendUser(MemberRule.MemberID.ToString(), EmailFromAddress, "Blog comment on " & blog.name, EmailBody, False, False)
-                                        Next
-                                    End If
-                                End If
 
-                            End If
+                                    If BlogEntry.AuthorMemberID <> 0 Then
+                                        Call cp.Email.sendUser(BlogEntry.AuthorMemberID.ToString, EmailFromAddress, "Blog comment notification for [" & blog.name & "]", EmailBody, True, False)
+                                        Call cp.Email.sendUser(BlogEntry.AuthorMemberID.ToString(), EmailFromAddress, "Blog comment notification for [" & blog.name & "]", EmailBody, False, False)
+                                    End If
+
+                                    If blog.AuthoringGroupID <> 0 Then
+                                            Dim MemberRuleList As List(Of MemberRuleModel) = DbModel.createList(Of MemberRuleModel)(cp, "GroupId=" & blog.AuthoringGroupID)
+                                            For Each MemberRule In MemberRuleList
+                                                Call cp.Email.sendUser(MemberRule.MemberID.ToString(), EmailFromAddress, "Blog comment on " & blog.name, EmailBody, False, False)
+                                            Next
+                                        End If
+                                    End If
+
+                                End If
                         End If
                         result = FormBlogPostDetails
                     ElseIf request.ButtonValue = FormButtonApplyCommentChanges Then
