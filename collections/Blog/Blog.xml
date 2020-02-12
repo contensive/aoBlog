@@ -44,6 +44,7 @@
 		<Styles></Styles>
 		<styleslinkhref><![CDATA[/blogs/blogs.css]]></styleslinkhref>
 		<Scripting Language="VBScript" EntryPoint="" Timeout="5000"/>
+		<instanceSettingPrimaryContentId><![CDATA[Blogs]]></instanceSettingPrimaryContentId>
 	</Addon>
 	<Addon name="Blog Categories List" guid="{534B4D50-B894-42BC-AB42-7AF6EC6265DE}" type="Add-on">
 		<Copy></Copy>
@@ -159,52 +160,52 @@
 		<FormXML></FormXML>
 		<IsInline>No</IsInline>
 		<JavascriptInHead><![CDATA[//
-//
-//----------
-//
-function blogNewRow() {
-		var RLTable = document.getElementById('UploadInsert' );
-		var CountElement = document.getElementById('LibraryUploadCount' );
-		var tCols,tRows,NewRowNumber;
-		var RowCnt = RLTable.rows.length;
-		var NewRow,NewRow2,NewRow3,NewRow4,NewRow5,NewCell;
-		if ( RLTable ) {
-			NewRowNumber = parseInt( CountElement.value )+1;
-			CountElement.value = NewRowNumber;
-			tRows = RLTable.getElementsByTagName("TR");
 			//
-			//  put in a rule so rows dont run together
+			//----------
 			//
-			NewRow = RLTable.insertRow(RowCnt);
-			NewCell = NewRow.insertCell(0);
-			NewCell.innerHTML='<hr>';
-			//
-			//  order
-			//
-			NewRow2 = RLTable.insertRow(RowCnt+1);
-			NewCell = NewRow2.insertCell(0);
-			NewCell.innerHTML= 'Order<br><INPUT TYPE="Text" NAME="LibraryOrder.'+NewRowNumber+'" SIZE="2" value="'+parseInt(NewRowNumber)+'">'
-			//
-			//  image
-			//
-			NewRow3 = RLTable.insertRow(RowCnt+2);
-			NewCell = NewRow3.insertCell(0);
-			NewCell.innerHTML='Image<br><INPUT TYPE="file" name="LibraryUpload.'+NewRowNumber+'">';
-			//
-			//  name
-			//
-			NewRow4 = RLTable.insertRow(RowCnt+3);
-			NewCell = NewRow4.insertCell(0);
-			NewCell.innerHTML= 'Name<br><INPUT TYPE="Text" NAME="LibraryName.'+NewRowNumber+'" SIZE="30">'
-			//
-			//  description
-			//
-			NewRow5 = RLTable.insertRow(RowCnt+4);
-			NewCell = NewRow5.insertCell(0);
-			NewCell.innerHTML='Description<br><TEXTAREA NAME="LibraryDescription.'+NewRowNumber+'" ROWS="5" COLS="50"></TEXTAREA>';
-		}
-}
-]]></JavascriptInHead>
+			function blogNewRow() {
+					var RLTable = document.getElementById('UploadInsert' );
+					var CountElement = document.getElementById('LibraryUploadCount' );
+					var tCols,tRows,NewRowNumber;
+					var RowCnt = RLTable.rows.length;
+					var NewRow,NewRow2,NewRow3,NewRow4,NewRow5,NewCell;
+					if ( RLTable ) {
+						NewRowNumber = parseInt( CountElement.value )+1;
+						CountElement.value = NewRowNumber;
+						tRows = RLTable.getElementsByTagName("TR");
+						//
+						//  put in a rule so rows dont run together
+						//
+						NewRow = RLTable.insertRow(RowCnt);
+						NewCell = NewRow.insertCell(0);
+						NewCell.innerHTML='<hr>';
+						//
+						//  order
+						//
+						NewRow2 = RLTable.insertRow(RowCnt+1);
+						NewCell = NewRow2.insertCell(0);
+						NewCell.innerHTML= 'Order<br><INPUT TYPE="Text" NAME="LibraryOrder.'+NewRowNumber+'" SIZE="2" value="'+parseInt(NewRowNumber)+'">'
+						//
+						//  image
+						//
+						NewRow3 = RLTable.insertRow(RowCnt+2);
+						NewCell = NewRow3.insertCell(0);
+						NewCell.innerHTML='Image<br><INPUT TYPE="file" name="LibraryUpload.'+NewRowNumber+'">';
+						//
+						//  name
+						//
+						NewRow4 = RLTable.insertRow(RowCnt+3);
+						NewCell = NewRow4.insertCell(0);
+						NewCell.innerHTML= 'Name<br><INPUT TYPE="Text" NAME="LibraryName.'+NewRowNumber+'" SIZE="30">'
+						//
+						//  description
+						//
+						NewRow5 = RLTable.insertRow(RowCnt+4);
+						NewCell = NewRow5.insertCell(0);
+						NewCell.innerHTML='Description<br><TEXTAREA NAME="LibraryDescription.'+NewRowNumber+'" ROWS="5" COLS="50"></TEXTAREA>';
+					}
+			}
+			]]></JavascriptInHead>
 		<javascriptForceHead>No</javascriptForceHead>
 		<JSHeadScriptSrc></JSHeadScriptSrc>
 		<!-- deprecated --><JSBodyScriptSrc></JSBodyScriptSrc>
@@ -233,25 +234,25 @@ function blogNewRow() {
 		<record content="Layouts" guid="{58788483-D050-4464-9261-627278A57B35}" name="Blog Layout">
 			<field name="active">True</field>
 			<field name="layout"><![CDATA[<div class="blogWrapper">
-	<div class="blogColumn1-Wrap">
-		<div class="blogColumn1">
-			{{legacyBlog}}
-		</div>
-	</div>
-	<div class="blogSidebar">
-		<div class="blogSidebarCellWrap">
-			<div class="blogSidebarCell">
-				<h2 class="blogSidebarCellHeadline">Headline</h2>
-				<p class="blogSidebarCellCopy">This is the short description for the cell. It describes the cell quickly.</p>
-				<h3 class="blogSidebarCellInputCaption">Email</h3>
-				<div class="blogSidebarCellInput"><input type="text" name="email" value=""></div>
-				<div class="blogSidebarCellButton"><a href="#">Click Me</a></div>
-			</div>
-		</div>
-	</div>
-	<div class="blogClear">
-	</div>
-</div>]]></field>
+					<div class="blogColumn1-Wrap">
+						<div class="blogColumn1">
+							{{legacyBlog}}
+						</div>
+					</div>
+					<div class="blogSidebar">
+						<div class="blogSidebarCellWrap">
+							<div class="blogSidebarCell">
+								<h2 class="blogSidebarCellHeadline">Headline</h2>
+								<p class="blogSidebarCellCopy">This is the short description for the cell. It describes the cell quickly.</p>
+								<h3 class="blogSidebarCellInputCaption">Email</h3>
+								<div class="blogSidebarCellInput"><input type="text" name="email" value=""></div>
+								<div class="blogSidebarCellButton"><a href="#">Click Me</a></div>
+							</div>
+						</div>
+					</div>
+					<div class="blogClear">
+					</div>
+				</div>]]></field>
 			<field name="sortorder"></field>
 			<field name="stylesfilename"></field>
 		</record>
