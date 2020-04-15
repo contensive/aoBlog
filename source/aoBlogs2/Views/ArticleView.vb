@@ -95,8 +95,8 @@ Namespace Views
                     End If
                     '
                     If (Not blog.AllowAnonymous) And (Not cp.User.IsAuthenticated) Then
-                        AllowPasswordEmail = cp.Utils.EncodeBoolean(cp.Site.GetProperty("AllowPasswordEmail", "0"))
-                        AllowMemberJoin = cp.Utils.EncodeBoolean(cp.Site.GetProperty("AllowMemberJoin", "0"))
+                        AllowPasswordEmail = cp.Site.GetBoolean("AllowPasswordEmail", False)
+                        AllowMemberJoin = cp.Site.GetBoolean("AllowMemberJoin", False)
                         Auth = cp.Doc.GetInteger("auth")
                         If (Auth = 1) And (Not AllowPasswordEmail) Then
                             Auth = 3
@@ -228,7 +228,7 @@ Namespace Views
             Try
                 '
                 result = request.SourceFormID
-                Dim SN As String = cp.Visit.GetProperty(SNBlogCommentName)
+                Dim SN As String = cp.Visit.GetText(SNBlogCommentName)
                 '
                 If SN = "" Then
                     '
@@ -304,7 +304,7 @@ Namespace Views
                                         & vbCrLf _
                                         & vbCrLf & cp.Utils.EncodeHTML(Copy) _
                                         & vbCrLf
-                                    Dim EmailFromAddress As String = cp.Site.GetProperty("EmailFromAddress", "info@" & cp.Site.Domain)
+                                    Dim EmailFromAddress As String = cp.Site.GetText("EmailFromAddress", "info@" & cp.Site.Domain)
 
                                     If BlogEntry.AuthorMemberID <> 0 Then
                                         Call cp.Email.sendUser(BlogEntry.AuthorMemberID.ToString, EmailFromAddress, "Blog comment notification for [" & blog.name & "]", EmailBody, True, False)

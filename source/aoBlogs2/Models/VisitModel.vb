@@ -23,29 +23,26 @@ Namespace Models
         ' -- instance properties
         'instancePropertiesGoHere
         Public Property Bot As Boolean
-        Public Property Browser As String
-        Public Property CookieSupport As Boolean
+        'Public Property Browser As String
+        'Public Property CookieSupport As Boolean
         Public Property ExcludeFromAnalytics As Boolean
-        Public Property HTTP_FROM As String
-        Public Property HTTP_REFERER As String
-        Public Property HTTP_VIA As String
-        Public Property LastVisitTime As Date
-        Public Property LoginAttempts As Integer
-        Public Property MemberID As Integer
-        Public Property MemberNew As Boolean
-        Public Property Mobile As Boolean
-        Public Property PageVisits As Integer
-        Public Property RefererPathPage As String
-        Public Property REMOTE_ADDR As String
-        Public Property RemoteName As String
-        Public Property StartDateValue As Integer
-        Public Property StartTime As Date
-        Public Property StopTime As Date
-        Public Property TimeToLastHit As Integer
-        Public Property VerboseReporting As Boolean
-        Public Property VisitAuthenticated As Boolean
-        Public Property VisitorID As Integer
-        Public Property VisitorNew As Boolean
+        'Public Property HTTP_REFERER As String
+        'Public Property LastVisitTime As Date
+        'Public Property LoginAttempts As Integer
+        'Public Property MemberID As Integer
+        'Public Property MemberNew As Boolean
+        'Public Property Mobile As Boolean
+        'Public Property PageVisits As Integer
+        'Public Property RefererPathPage As String
+        'Public Property REMOTE_ADDR As String
+        'Public Property StartDateValue As Integer
+        'Public Property StartTime As Date
+        'Public Property StopTime As Date
+        'Public Property TimeToLastHit As Integer
+        'Public Property VerboseReporting As Boolean
+        'Public Property VisitAuthenticated As Boolean
+        'Public Property VisitorID As Integer
+        'Public Property VisitorNew As Boolean
         '
         '====================================================================================================
         Public Overloads Shared Function add(cp As CPBaseClass) As VisitModel

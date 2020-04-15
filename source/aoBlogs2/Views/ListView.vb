@@ -76,7 +76,7 @@ Namespace Views
                 ' Build Footers
                 If cp.User.IsAdmin() And blog.AllowCategories Then
                     qs = "cid=" & cp.Content.GetID("Blog Categories") & "&af=4"
-                    CategoryFooter = CategoryFooter & cr & "<div Class=""aoBlogFooterLink""><a href=""" & cp.Site.GetProperty("ADMINURL") & "?" & qs & """>Add a New category</a></div>"
+                    CategoryFooter = CategoryFooter & cr & "<div Class=""aoBlogFooterLink""><a href=""" & cp.Site.GetText("ADMINURL") & "?" & qs & """>Add a New category</a></div>"
                 End If
                 Dim ReturnFooter As String = ""
                 If blog.AllowCategories Then
@@ -120,7 +120,7 @@ Namespace Views
                     ' Create a link to edit the blog record
                     '
                     qs = "cid=" & cp.Content.GetID("Blogs") & "&af=4&id=" & blog.id
-                    result.Append(cr & "<div class=""aoBlogFooterLink""><a href=""" & cp.Site.GetProperty("adminUrl") & "?" & qs & """>Blog Settings</a></div>")
+                    result.Append(cr & "<div class=""aoBlogFooterLink""><a href=""" & cp.Site.GetText("adminUrl") & "?" & qs & """>Blog Settings</a></div>")
                     '
                     ' Create a link to edit the rss record
                     '
@@ -128,7 +128,7 @@ Namespace Views
 
                     Else
                         qs = "cid=" & cp.Content.GetID("RSS Feeds") & "&af=4&id=" & rssFeed.id
-                        result.Append(cr & "<div class=""aoBlogFooterLink""><a href=""" & cp.Site.GetProperty("adminUrl") & "?" & qs & """>Edit RSS Features</a></div>")
+                        result.Append(cr & "<div class=""aoBlogFooterLink""><a href=""" & cp.Site.GetText("adminUrl") & "?" & qs & """>Edit RSS Features</a></div>")
                     End If
                 End If
                 result.Append(ReturnFooter)

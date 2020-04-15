@@ -85,24 +85,11 @@ Namespace Views
 
                 returnHtml = "OK"
             Catch ex As Exception
-                errorReport(CP, ex, "execute")
+                CP.Site.ErrorReport(ex, "execute")
                 returnHtml = ""
             End Try
             Return returnHtml
         End Function
-        '
-        '=====================================================================================
-        ' common report for this class
-        '=====================================================================================
-        '
-        Private Sub errorReport(ByVal cp As CPBaseClass, ByVal ex As Exception, ByVal method As String)
-            Try
-                cp.Site.ErrorReport(ex, "Unexpected error in sampleClass." & method)
-            Catch exLost As Exception
-                '
-                ' stop anything thrown from cp errorReport
-                '
-            End Try
-        End Sub
+
     End Class
 End Namespace

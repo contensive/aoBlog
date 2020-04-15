@@ -90,9 +90,11 @@ Namespace Views
                     '    End If
                     'End If
                     If blogEntry.tagList <> "" Then
-                        blogEntry.tagList = Replace(blogEntry.tagList, ",", vbCrLf)
-                        Dim Tags() As String = Split(blogEntry.tagList, vbCrLf)
-                        blogEntry.tagList = ""
+                        '
+                        ' -- make a clickable section
+                        Dim clickableLinkList As String = Replace(blogEntry.tagList, ",", vbCrLf)
+                        Dim Tags() As String = Split(clickableLinkList, vbCrLf)
+                        clickableLinkList = ""
                         Dim SQS As String
                         SQS = cp.Utils.ModifyQueryString(blogListQs, RequestNameFormID, FormBlogSearch.ToString(), True)
                         Dim Ptr As Integer
@@ -100,15 +102,15 @@ Namespace Views
                             'QS = cp.Utils.ModifyQueryString(SQS, RequestNameFormID, FormBlogSearch, True)
                             qs = cp.Utils.ModifyQueryString(SQS, RequestNameQueryTag, Tags(Ptr), True)
                             Dim Link As String = "?" & qs
-                            blogEntry.tagList = blogEntry.tagList & ", " & "<a href=""" & Link & """>" & Tags(Ptr) & "</a>"
+                            clickableLinkList = clickableLinkList & ", " & "<a href=""" & Link & """>" & Tags(Ptr) & "</a>"
                         Next
-                        blogEntry.tagList = Mid(blogEntry.tagList, 3)
+                        clickableLinkList = Mid(clickableLinkList, 3)
                         c = "" _
                         & cr & "<div class=""aoBlogTagListHeader"">" _
                         & cr & vbTab & "Tags" _
                         & cr & "</div>" _
                         & cr & "<div class=""aoBlogTagList"">" _
-                        & cr & vbTab & blogEntry.tagList _
+                        & cr & vbTab & clickableLinkList _
                         & cr & "</div>"
                         TagListRow = "" _
                         & cr & "<div class=""aoBlogTagListSection"">" _

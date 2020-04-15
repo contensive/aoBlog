@@ -171,7 +171,7 @@ Namespace Controllers
             Dim result As String = ""
             Try
                 result = sourceLink
-                If cp.Utils.EncodeBoolean(cp.Site.GetProperty("allowLinkAlias", "1")) Then
+                If cp.Site.GetBoolean("allowLinkAlias", True) Then
                     Dim Link As String = sourceLink
                     '
                     Dim pageQs() As String = Split(LCase(Link), "?")

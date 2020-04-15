@@ -15,7 +15,6 @@ Namespace Controllers
             '
             cp.Utils.AppendLog("Blog.setMetadata, blogEntry.id [" & blogEntry.id & "], set Open Graph Title = blogEntry.name [" & blogEntry.name & "]")
             '
-            '
             Dim blogImageList As List(Of BlogImageModel) = BlogImageModel.createListFromBlogEntry(cp, blogEntry.id)
             Dim blogEntryBrief As String = blogEntry.RSSDescription
             If blogEntryBrief = "" Then
@@ -23,7 +22,7 @@ Namespace Controllers
                 If blogEntryBrief.Length > 300 Then
                     Dim ptr As Integer = blogEntryBrief.IndexOf(" ", 290)
                     If ptr < 0 Then ptr = 300
-                    blogEntryBrief = blogEntryBrief.Substring(1, ptr - 1) & "..."
+                    blogEntryBrief = blogEntryBrief.Substring(0, ptr - 1) & "..."
                 End If
             End If
             '

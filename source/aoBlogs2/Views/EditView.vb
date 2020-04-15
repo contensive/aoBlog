@@ -212,8 +212,8 @@ Namespace Views
         ''' <returns></returns>
         Public Shared Function ProcessFormBlogEdit(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, ByRef blogEntry As BlogEntryModel, request As View.RequestModel, blogListLink As String) As Integer
             Try
-                If cp.Visit.GetProperty(SNBlogEntryName) <> "" Then
-                    Call cp.Visit.SetProperty(SNBlogEntryName, "")
+                If cp.Visit.GetText(SNBlogEntryName) <> "" Then
+                    Call cp.Visit.GetText(SNBlogEntryName, "")
                     If request.ButtonValue = FormButtonCancel Then
                         '
                         ' Cancel
@@ -244,7 +244,7 @@ Namespace Views
                         blogEntry.copy = request.BlogEntryCopy
                         blogEntry.tagList = request.BlogEntryTagList
                         blogEntry.blogCategoryID = request.BlogEntryCategoryId
-                        blogEntry.blogID = blog.Id
+                        blogEntry.blogID = blog.id
                         blogEntry.save(Of BlogEntryModel)(cp)
                         '
                         ' Upload files
