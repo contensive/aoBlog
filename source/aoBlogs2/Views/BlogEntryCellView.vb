@@ -174,7 +174,11 @@ Namespace Views
                 ' Author Row
                 '
                 Dim RowCopy As String = ""
-                Dim author = DbModel.create(Of PersonModel)(cp, blogEntry.CreatedBy)
+                Dim AuthorMemberID As Integer = blogEntry.AuthorMemberID
+                If AuthorMemberID = 0 Then
+                    AuthorMemberID = blogEntry.CreatedBy
+                End If
+                Dim author = DbModel.create(Of PersonModel)(cp, AuthorMemberID)
                 If (author IsNot Nothing) Then
                     RowCopy = RowCopy & "By " & author.name
                     If blogEntry.DateAdded <> Date.MinValue Then
