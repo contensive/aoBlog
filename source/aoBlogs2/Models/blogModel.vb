@@ -28,7 +28,7 @@ Namespace Models
         Public Property allowRSSSubscribe As Boolean
         Public Property allowSearch As Boolean
         Public Property allowTwitterLink As Boolean
-        Public Property AuthoringGroupID As Integer
+        'Public Property AuthoringGroupID As Integer
         Public Property autoApproveComments As Boolean
         Public Property BriefFilename As String
         Public Property Caption As String
@@ -66,7 +66,7 @@ Namespace Models
                 Blog.Caption = "The New Blog"
                 Blog.Copy = "<p>This is the description of your new blog. It always appears at the top of your list of blog posts. Edit or remove this description by editing the blog features.</p>"
                 Blog.OwnerMemberID = cp.User.Id
-                Blog.AuthoringGroupID = cp.Group.GetId("Site Managers")
+                'Blog.AuthoringGroupID = cp.Group.GetId("Site Managers")
                 Blog.AllowAnonymous = True
                 Blog.autoApproveComments = False
                 Blog.AllowCategories = True

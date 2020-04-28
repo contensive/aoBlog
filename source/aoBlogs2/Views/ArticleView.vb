@@ -311,15 +311,22 @@ Namespace Views
                                         Call cp.Email.sendUser(BlogEntry.AuthorMemberID.ToString(), EmailFromAddress, "Blog comment notification for [" & blog.name & "]", EmailBody, False, False)
                                     End If
 
-                                    If blog.AuthoringGroupID <> 0 Then
-                                            Dim MemberRuleList As List(Of MemberRuleModel) = DbModel.createList(Of MemberRuleModel)(cp, "GroupId=" & blog.AuthoringGroupID)
-                                            For Each MemberRule In MemberRuleList
-                                                Call cp.Email.sendUser(MemberRule.MemberID.ToString(), EmailFromAddress, "Blog comment on " & blog.name, EmailBody, False, False)
-                                            Next
-                                        End If
+                                    'If blog.AuthoringGroupID <> 0 Then
+                                    'Dim MemberRuleList As List(Of MemberRuleModel) = DbModel.createList(Of MemberRuleModel)(cp, "GroupId=" & blog.AuthoringGroupID)
+                                    'For Each MemberRule In MemberRuleList
+                                    'Call cp.Email.sendUser(MemberRule.MemberID.ToString(), EmailFromAddress, "Blog comment on " & blog.name, EmailBody, False, False)
+                                    'Next
+                                    'End If
+                                    Dim blogAuthorsGroupId As Integer = cp.Group.GetId("Blog Authors")
+                                    If blogAuthorsGroupId <> 0 Then
+                                        Dim MemberRuleList As List(Of MemberRuleModel) = DbModel.createList(Of MemberRuleModel)(cp, "GroupId=" & blogAuthorsGroupId)
+                                        For Each MemberRule In MemberRuleList
+                                            Call cp.Email.sendUser(MemberRule.MemberID.ToString(), EmailFromAddress, "Blog comment on " & blog.name, EmailBody, False, False)
+                                        Next
                                     End If
-
                                 End If
+
+                            End If
                         End If
                         result = FormBlogPostDetails
                     ElseIf request.ButtonValue = FormButtonApplyCommentChanges Then
