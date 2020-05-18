@@ -15,20 +15,20 @@ Namespace Models.View
         '====================================================================================================
         '
         Private cp As CPBaseClass
-        ''' <summary>
-        ''' string that represents the guid of the blog record to be displayed
-        ''' </summary>
-        ''' <returns></returns>
-        Public ReadOnly Property instanceId As String
-            Get
-                If (_instanceId Is Nothing) Then
-                    _instanceId = cp.Doc.GetText("instanceId")
-                    If (String.IsNullOrWhiteSpace(_instanceId)) Then _instanceId = "BlogWithoutinstanceId-PageId-" & cp.Doc.PageId
-                End If
-                Return _instanceId
-            End Get
-        End Property
-        Private _instanceId As String = Nothing
+        '''' <summary>
+        '''' string that represents the guid of the blog record to be displayed
+        '''' </summary>
+        '''' <returns></returns>
+        'Public ReadOnly Property instanceId As String
+        '    Get
+        '        If (_instanceId Is Nothing) Then
+        '            _instanceId = cp.Doc.GetText("instanceId")
+        '            If (String.IsNullOrWhiteSpace(_instanceId)) Then _instanceId = "BlogWithoutinstanceId-PageId-" & cp.Doc.PageId
+        '        End If
+        '        Return _instanceId
+        '    End Get
+        'End Property
+        'Private _instanceId As String = Nothing
         '
         '====================================================================================================
         ''' <summary>

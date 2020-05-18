@@ -66,7 +66,7 @@ Public Const sfImageExtList = "jpg,jpeg,gif,png"
 Public Const PageChildListInstanceID = "{ChildPageList}"
 '
 Public Const cr = vbCrLf & vbTab
-Public Const cr2 = cr & vbTab
+Public Const cr2 =  vbTab
 Public Const cr3 = cr2 & vbTab
 Public Const cr4 = cr3 & vbTab
 Public Const cr5 = cr4 & vbTab

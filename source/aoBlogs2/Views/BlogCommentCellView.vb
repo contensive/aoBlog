@@ -25,14 +25,14 @@ Namespace Views
                     qs = cp.Doc.RefreshQueryString
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostList.ToString())
-                    result = result & cr & "<div class=""aoBlogEntryName"">Comment to Blog Post " & blogEntry.name & ", <a href=""?" & qs & """>View this post</a></div>"
-                    result = result & cr & "<div class=""aoBlogCommentDivider"">&nbsp;</div>"
+                    result &=   "<div class=""aoBlogEntryName"">Comment to Blog Post " & blogEntry.name & ", <a href=""?" & qs & """>View this post</a></div>"
+                    result &=   "<div class=""aoBlogCommentDivider"">&nbsp;</div>"
                 End If
-                result = result & cr & "<div class=""aoBlogCommentName"">" & cp.Utils.EncodeHTML(blogComment.name) & "</div>"
+                result &=   "<div class=""aoBlogCommentName"">" & cp.Utils.EncodeHTML(blogComment.name) & "</div>"
                 Copy = blogComment.CopyText
                 Copy = cp.Utils.EncodeHTML(Copy)
                 Copy = Replace(Copy, vbCrLf, "<BR />")
-                result = result & cr & "<div class=""aoBlogCommentCopy"">" & Copy & "</div>"
+                result &=   "<div class=""aoBlogCommentCopy"">" & Copy & "</div>"
                 RowCopy = ""
                 If (True) Then
                     Dim author = DbModel.create(Of PersonModel)(cp, blogEntry.AuthorMemberID)
@@ -66,7 +66,7 @@ Namespace Views
                         & ""
                 End If
                 If RowCopy <> "" Then
-                    result = result & cr & "<div class=""aoBlogCommentByLine"">Posted " & RowCopy & "</div>"
+                    result &=   "<div class=""aoBlogCommentByLine"">Posted " & RowCopy & "</div>"
                 End If
                 '
                 If (Not blogComment.Approved) And (Not user.isBlogEditor(cp, blog)) And (blogComment.AuthorMemberID = cp.User.Id) Then
@@ -74,7 +74,7 @@ Namespace Views
                 End If
                 '
                 getBlogCommentCell = result
-                'GetBlogCommentCell = cr & "<div class=""aoBlogComment"">" & s & cr & "</div>"
+                'GetBlogCommentCell =  "<div class=""aoBlogComment"">" & s &  "</div>"
                 '
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)

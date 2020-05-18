@@ -14,21 +14,24 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function GetFormBlogArchiveDateList(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, blogEntry As BlogEntryModel, request As View.RequestModel, user As PersonModel, blogListLink As String, blogListQs As String) As String
+        Public Shared Function GetFormBlogArchiveDateList(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel) As String
             '
             Dim result As String = ""
             Try
+
+                Dim blog As BlogModel = app.blog
+                Dim blogEntry As BlogEntryModel = app.blogEntry
                 Dim OpenSQL As String = ""
                 Dim contentControlId As String = cp.Content.GetID(cnBlogEntries).ToString
                 '
-                result = vbCrLf & cp.Content.GetCopy("Blogs Archives Header for " & blog.name, "<h2>" & blog.name & " Blog Archive</h2>")
+                result = vbCrLf & cp.Content.GetCopy("Blogs Archives Header for " & Blog.name, "<h2>" & Blog.name & " Blog Archive</h2>")
                 ' 
-                Dim archiveDateList As List(Of BlogCopyModel.ArchiveDateModel) = BlogCopyModel.createArchiveListFromBlogCopy(cp, blog.Id)
+                Dim archiveDateList As List(Of BlogCopyModel.ArchiveDateModel) = BlogCopyModel.createArchiveListFromBlogCopy(cp, Blog.Id)
                 If (archiveDateList.Count = 0) Then
                     '
                     ' No archives, give them an error
-                    result = result & cr & "<div class=""aoBlogProblem"">There are no current blog entries</div>"
-                    result = result & cr & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
+                    result &= "<div class=""aoBlogProblem"">There are no current blog entries</div>"
+                    result &= "<div class=""aoBlogFooterLink""><a href=""" & app.blogPageBaseLink & """>" & BackToRecentPostsMsg & "</a></div>"
                 Else
                     Dim ArchiveMonth As Integer
                     Dim ArchiveYear As Integer
@@ -37,11 +40,11 @@ Namespace Views
                         ' one archive - just display it
                         ArchiveMonth = archiveDateList.First.Month
                         ArchiveYear = archiveDateList.First.Year
-                        result = result & GetFormBlogArchivedBlogs(cp, blog, rssFeed, blogEntry, request, user, blogListLink, blogListQs)
+                        result &= GetFormBlogArchivedBlogs(cp, app, request)
                     Else
                         '
                         ' Display List of archive
-                        Dim qs As String = cp.Utils.ModifyQueryString(blogListQs, RequestNameSourceFormID, FormBlogArchiveDateList.ToString())
+                        Dim qs As String = cp.Utils.ModifyQueryString(app.blogListLink, RequestNameSourceFormID, FormBlogArchiveDateList.ToString())
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogArchivedBlogs.ToString())
                         For Each archiveDate In archiveDateList
                             ArchiveMonth = archiveDate.Month
@@ -49,9 +52,9 @@ Namespace Views
                             Dim NameOfMonth As String = MonthName(ArchiveMonth)
                             qs = cp.Utils.ModifyQueryString(qs, RequestNameArchiveMonth, CStr(ArchiveMonth))
                             qs = cp.Utils.ModifyQueryString(qs, RequestNameArchiveYear, CStr(ArchiveYear))
-                            result = result & vbCrLf & vbTab & vbTab & "<div class=""aoBlogArchiveLink""><a href=""?" & qs & """>" & NameOfMonth & " " & ArchiveYear & "</a></div>"
+                            result &= vbCrLf & vbTab & vbTab & "<div class=""aoBlogArchiveLink""><a href=""?" & qs & """>" & NameOfMonth & " " & ArchiveYear & "</a></div>"
                         Next
-                        result = result & vbCrLf & vbTab & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
+                        result &= vbCrLf & vbTab & "<div class=""aoBlogFooterLink""><a href=""" & app.blogPageBaseLink & """>" & BackToRecentPostsMsg & "</a></div>"
                     End If
                 End If
                 '
@@ -64,10 +67,12 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function GetFormBlogArchivedBlogs(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, blogEntry As BlogEntryModel, request As View.RequestModel, user As PersonModel, blogListLink As String, blogListQs As String) As String
+        Public Shared Function GetFormBlogArchivedBlogs(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel) As String
             '
             Dim result As String = ""
             Try
+                Dim blog As BlogModel = app.blog
+                Dim blogEntry As BlogEntryModel = app.blogEntry
                 Dim PageNumber As Integer
                 '
                 ' If it is the current month, start at entry 6
@@ -76,7 +81,7 @@ Namespace Views
                 '
                 ' List Blog Entries
                 '
-                Dim BlogEntryModelList As List(Of BlogEntryModel) = DbModel.createList(Of BlogEntryModel)(cp, "(Month(DateAdded) = " & request.ArchiveMonth & ")And(year(DateAdded)=" & request.ArchiveYear & ")And(BlogID=" & blog.Id & ")", "DateAdded Desc")
+                Dim BlogEntryModelList As List(Of BlogEntryModel) = DbModel.createList(Of BlogEntryModel)(cp, "(Month(DateAdded) = " & request.ArchiveMonth & ")And(year(DateAdded)=" & request.ArchiveYear & ")And(BlogID=" & Blog.Id & ")", "DateAdded Desc")
                 If (BlogEntryModelList.Count = 0) Then
                     result = "<div Class=""aoBlogProblem"">There are no blog archives For " & request.ArchiveMonth & "/" & request.ArchiveYear & "</div>"
                 Else
@@ -98,24 +103,24 @@ Namespace Views
                         Dim BlogTagList As String = blogEntry.tagList
                         Dim primaryImagePositionId As Integer = blogEntry.primaryImagePositionId
                         Dim Return_CommentCnt As Integer
-                        result = result & BlogEntryCellView.getBlogEntryCell(cp, blog, rssFeed, blogEntry, user, False, False, Return_CommentCnt, BlogTagList, blogListQs)
+                        result &= BlogEntryCellView.getBlogEntryCell(cp, app, blogEntry, False, False, Return_CommentCnt, BlogTagList)
                     Next
-                    result = result & cr & "<hr>"
+                    result &= "<hr>"
                     EntryPtr = EntryPtr + 1
 
                 End If
                 '              
                 '
-                Dim qs As String = blogListQs
+                Dim qs As String = app.blogListLink
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogSearch.ToString())
-                result = result & cr & "<div>&nbsp;</div>"
-                result = result & cr & "<div Class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>"
+                result &= "<div>&nbsp;</div>"
+                result &= "<div Class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>"
                 qs = cp.Doc.RefreshQueryString()
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, "", True)
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostList.ToString())
-                result = result & cr & "<div Class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
+                result &= "<div Class=""aoBlogFooterLink""><a href=""" & app.blogPageBaseLink & """>" & BackToRecentPostsMsg & "</a></div>"
                 Call cp.CSNew.Close()
-                result = result & cp.Html.Hidden(RequestNameSourceFormID, FormBlogArchivedBlogs.ToString())
+                result &= cp.Html.Hidden(RequestNameSourceFormID, FormBlogArchivedBlogs.ToString())
                 result = cp.Html.Form(result)
                 '
                 GetFormBlogArchivedBlogs = result

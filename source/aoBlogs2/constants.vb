@@ -5,18 +5,28 @@ Option Strict On
 Public Module constants
     '
     Public Const AnonymousMemberName = "Anonymous"
+    '
+    ' -- Guids
+    '
     Public Const reCaptchaDisplayGuid = "{E9E51C6E-9152-4284-A44F-D3ABC423AB90}"
     Public Const reCaptchaProcessGuid = "{030AC5B0-F796-4EA4-B94C-986B1C29C16C}"
+    Public Const RSSProcessAddonGuid = "{2119C2DA-1D57-4C32-B13C-28CD2D85EDF5}"
+    Public Const addonGuidWebcast As String = "{F6037DEE-023C-4A14-A972-ADAFA5538240}"
+    Public Const guidDefaultCallToAction As String = "{3ab72599-bfec-4f8c-9801-a21fd7b6a084}"
+    Public Const BlogListLayout As String = "{58788483-D050-4464-9261-627278A57B35}"
+    Public Const LegacyBlogAddon As String = "{656E95EA-2799-45CD-9712-D4CEDF0E2D02}"
+    Public Const facebookLikeAddonGuid As String = "{17919A35-06B3-4F32-9607-4DB3228A15DF}"
+    Public Const reCaptchaWorkingGuid As String = "{500A1F57-86A2-4D47-B747-4EF4D30A83E2}"
+    '
+    ' -- messages
     '
     Public Const BackToRecentPostsMsg = "« Back to recent posts"
-    '
-    Public Const RSSProcessAddonGuid = "{2119C2DA-1D57-4C32-B13C-28CD2D85EDF5}"
-    '
-    Public Const addonGuidWebcast As String = "{F6037DEE-023C-4A14-A972-ADAFA5538240}"
-    '
-    ' copy that will be used as the automatic first post if the virtual file blogs/DefaultPostCopy.txt is not found
-    '
+    ''' <summary>
+    ''' copy that will be used as the automatic first post if the virtual file blogs/DefaultPostCopy.txt is not found
+    ''' </summary>
     Public Const DefaultPostCopy = "This post has been created automatically for you by the system. Verify the blog is set up properly by viewing the blog settings available after turning on Advanced Edit in the toolbar."
+    '
+    ' -- content
     '
     Public Const cnPeople As String = "people"
     Public Const cnBlogs As String = "Blogs"
@@ -31,14 +41,14 @@ Public Module constants
     Public Const cnBlogImages As String = "Blog Images"
     Public Const cnBlogImageRules As String = "Blog Image Rules"
     Public Const cnCTA As String = "Calls to Action"
-    Public Const guidDefaultCallToAction As String = "{3ab72599-bfec-4f8c-9801-a21fd7b6a084}"
-
     '
-    Public Const TableNameBlogCategoryRules As String = "ccBlogCategoryGroupRules"
-    '
+    ' -- no idea what this is
+    ' 
     Public Const SNBlogEntryName As String = "Blog Entry Serial Number"
     Public Const SNBlogCommentName As String = "Blog Comment Serial Number"
     '
+    ' -- request name
+    ' 
     Public Const RequestNameQueryTag As String = "qTag"
     Public Const RequestNameFormID As String = "FormID"
     Public Const RequestNameSourceFormID As String = "SourceFormID"
@@ -68,18 +78,19 @@ Public Module constants
     Public Const rnBlogImageOrder As String = "LibraryOrder"
     Public Const rnBlogImageDelete As String = "LibraryUploadDelete"
     Public Const rnBlogImageID As String = "LibraryID"
-    '
     Public Const RequestNameBlogEntryID As String = "BlogEntryID"
     Public Const RequestNameBlogEntryName As String = "blogEntryTitle"
     Public Const RequestNameBlogEntryCopy As String = "blogEntryCopy"
     Public Const RequestNameBlogEntryTagList As String = "blogEntryTagList"
     Public Const RequestNameBlogEntryCategoryID As String = "blogEntryCategoryId"
     '
+    ' -- system email
+    '
     Public Const SystemEmailBlogNotification As String = "New Blog Notification"
     Public Const SystemEmailCommentNotification As String = "New Blog Comment Notification"
     '
-    Public Const VersionSiteProperty As String = "BlogsVersion"
-    '
+    '-- buttons
+    ' 
     Public Const FormButtonDelete As String = " Delete "
     Public Const FormButtonCreate As String = " Create "
     Public Const FormButtonPost As String = " Post "
@@ -89,22 +100,14 @@ Public Module constants
     Public Const FormButtonApply As String = "  Apply  "
     Public Const FormButtonApplyCommentChanges As String = "  Apply Comment Changes  "
     '
+    ' -- views
+    '
     Public Const FormBlogPostList As Integer = 100
     Public Const FormBlogEntryEditor As Integer = 110
     Public Const FormBlogSearch As Integer = 120
     Public Const FormBlogPostDetails As Integer = 300
     Public Const FormBlogArchiveDateList As Integer = 400
     Public Const FormBlogArchivedBlogs As Integer = 600
-    '
-    Public Const BlogListLayout As String = "{58788483-D050-4464-9261-627278A57B35}"
-    Public Const LegacyBlogAddon As String = "{656E95EA-2799-45CD-9712-D4CEDF0E2D02}"
-    Public Const facebookLikeAddonGuid As String = "{17919A35-06B3-4F32-9607-4DB3228A15DF}"
-    '
-    Public Const reCaptchaWorkingGuid As String = "{500A1F57-86A2-4D47-B747-4EF4D30A83E2}"
-    '
-    Public Const imageDisplayTypeNone As Integer = 1
-    Public Const imageDisplayTypeList As Integer = 2
-    Public Const imageDisplayTypeFader As Integer = 3
     '
     Public Const cr As String = vbCrLf
     '

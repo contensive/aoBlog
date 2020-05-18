@@ -14,12 +14,13 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function GetFormBlogSearch(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, blogEntry As BlogEntryModel, request As View.RequestModel, user As PersonModel, blogListLink As String, blogListQs As String) As String
+        Public Shared Function GetFormBlogSearch(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel) As String
             Dim result As New StringBuilder()
             Try
+                Dim blog As BlogModel = app.blog
                 Call cp.Doc.AddRefreshQueryString(RequestNameBlogEntryID, "")
                 '
-                result.Append("<h2>" & blog.name & " Search</h2>")
+                result.Append("<h2>" & Blog.name & " Search</h2>")
                 '
                 ' Search results
                 '
@@ -27,7 +28,7 @@ Namespace Views
                 Dim Button As String = cp.Doc.GetText("button")
                 If (Button = FormButtonSearch) Or (QueryTag <> "") Then
                     Dim Subcaption As String = ""
-                    Dim sqlCriteria As New StringBuilder("(blogid=" & blog.id & ")")
+                    Dim sqlCriteria As New StringBuilder("(blogid=" & Blog.id & ")")
                     '
                     ' -- Date
                     Dim DateSearch As Date = Date.MinValue
@@ -75,12 +76,12 @@ Namespace Views
                         result.Append("</br>" & "<div class=""aoBlogProblem"">There were no matches to your search</div>")
                     Else
                         result.Append("</br>" & "<hr>")
-                        For Each blogSearchEntry In BlogEntryList
-                            Dim AuthorMemberID As Integer = blogSearchEntry.AuthorMemberID
-                            If AuthorMemberID = 0 Then AuthorMemberID = blogSearchEntry.CreatedBy
+                        For Each blogEntry In BlogEntryList
+                            Dim AuthorMemberID As Integer = blogEntry.AuthorMemberID
+                            If AuthorMemberID = 0 Then AuthorMemberID = blogEntry.CreatedBy
                             Dim Return_CommentCnt As Integer
-                            result.Append(BlogEntryCellView.getBlogEntryCell(cp, blog, rssFeed, blogSearchEntry, user, False, True, Return_CommentCnt, "", blogListQs))
-                            result.Append(cr & "<hr>")
+                            result.Append(BlogEntryCellView.getBlogEntryCell(cp, app, blogEntry, False, True, Return_CommentCnt, ""))
+                            result.Append("<hr>")
                         Next
                     End If
                     result = New StringBuilder(cp.Html.div(result.ToString(), "", "aoBlogSearchResultsCon"))
@@ -92,11 +93,11 @@ Namespace Views
                     & genericController.getFormTableRow(cp, "Date:", genericController.getField(cp, RequestNameDateSearch, 1, 10, 10, cp.Doc.GetText(RequestNameDateSearch).ToString) & " " & "&nbsp;(mm/yyyy)") _
                     & genericController.getFormTableRow(cp, "Keyword(s):", genericController.getField(cp, RequestNameKeywordList, 1, 10, 30, cp.Doc.GetText(RequestNameKeywordList))) _
                     & genericController.getFormTableRow(cp, "", cp.Html.Button(rnButton, FormButtonSearch)) _
-                    & genericController.getFormTableRow2(cp, "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>") _
+                    & genericController.getFormTableRow2(cp, "<div class=""aoBlogFooterLink""><a href=""" & app.blogPageBaseLink & """>" & BackToRecentPostsMsg & "</a></div>") _
                     & "</table>" _
                     & "</div>")
-                result.Append(cr & "<input type=""hidden"" name=""" & RequestNameSourceFormID & """ value=""" & FormBlogSearch.ToString & """>")
-                result.Append(cr & "<input type=""hidden"" name=""" & RequestNameFormID & """ value=""" & FormBlogSearch.ToString & """>")
+                result.Append("<input type=""hidden"" name=""" & RequestNameSourceFormID & """ value=""" & FormBlogSearch.ToString & """>")
+                result.Append("<input type=""hidden"" name=""" & RequestNameFormID & """ value=""" & FormBlogSearch.ToString & """>")
                 Return cp.Html.Form(result.ToString())
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)

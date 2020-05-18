@@ -14,14 +14,17 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function getArticleView(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, blogEntry As BlogEntryModel, request As View.RequestModel, user As PersonModel, blogListLink As String, blogListQs As String, RetryCommentPost As Boolean) As String
+        Public Shared Function getArticleView(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel, RetryCommentPost As Boolean) As String
             Dim result As String = ""
             Try
+                Dim blog As BlogModel = app.blog
+                Dim blogEntry As BlogEntryModel = app.blogEntry
+                Dim user As PersonModel = app.user
                 '
                 ' setup form key
                 Dim formKey As String = "{" & Guid.NewGuid().ToString() & "}" ' cp.Utils.enc  Main.EncodeKeyNumber(Main.VisitID, Now())
                 result = vbCrLf & cp.Html.Hidden("FormKey", formKey)
-                result = result & cr & "<div class=""aoBlogHeaderLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
+                result &= "<div class=""aoBlogHeaderLink""><a href=""" & app.blogPageBaseLink & """>" & BackToRecentPostsMsg & "</a></div>"
                 '
                 ' Print the Blog Entry
                 Dim CommentCnt As Integer = 0
@@ -33,7 +36,7 @@ Namespace Views
 
                     'Dim BlogEntry As BlogEntryModel = blogEntryList.First
                     If Not (blogEntry IsNot Nothing) Then
-                        result = result & cr & "<div class=""aoBlogProblem"">Sorry, the blog post you selected is not currently available</div>"
+                        result &= "<div class=""aoBlogProblem"">Sorry, the blog post you selected is not currently available</div>"
                     Else
                         Dim AuthorMemberID As Integer = blogEntry.AuthorMemberID
                         If AuthorMemberID = 0 Then
@@ -54,7 +57,7 @@ Namespace Views
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
                         blogEntry.Viewings = (1 + cp.Doc.GetInteger("viewings"))
                         blogEntry.primaryImagePositionId = cp.Doc.GetInteger("primaryImagePositionId")
-                        result = result & BlogEntryCellView.getBlogEntryCell(cp, blog, rssFeed, blogEntry, user, True, False, Return_CommentCnt, "", blogListQs)
+                        result &= BlogEntryCellView.getBlogEntryCell(cp, app, blogEntry, True, False, Return_CommentCnt, "")
                         EntryPtr = EntryPtr + 1
                         '
                         '*** This was causing the subscribe by email to malfunction no idea why it was there? Vince
@@ -79,8 +82,8 @@ Namespace Views
                     End If
                 End If
                 '
-                If user.isBlogEditor(cp, blog) And (Return_CommentCnt > 0) Then
-                    result = result & cr & "<div class=""aoBlogCommentCopy"">" & cp.Html.Button(FormButtonApplyCommentChanges) & "</div>"
+                If user.isBlogEditor(cp, Blog) And (Return_CommentCnt > 0) Then
+                    result &= "<div class=""aoBlogCommentCopy"">" & cp.Html.Button(FormButtonApplyCommentChanges) & "</div>"
                 End If
                 '
                 Dim Auth As Integer
@@ -88,13 +91,13 @@ Namespace Views
                 Dim AllowMemberJoin As Boolean
                 '
                 If allowComments And (cp.Visit.CookieSupport) And (Not VisitModel.Bot()) Then
-                    result = result & cr & "<div class=""aoBlogCommentHeader"">Post a Comment</div>"
+                    result &= "<div class=""aoBlogCommentHeader"">Post a Comment</div>"
                     '
                     If Not (cp.UserError.OK()) Then
-                        result = result & "<div class=""aoBlogCommentError"">" & (cp.UserError.OK()) & "</div>"
+                        result &= "<div class=""aoBlogCommentError"">" & (cp.UserError.OK()) & "</div>"
                     End If
                     '
-                    If (Not blog.AllowAnonymous) And (Not cp.User.IsAuthenticated) Then
+                    If (Not Blog.AllowAnonymous) And (Not cp.User.IsAuthenticated) Then
                         AllowPasswordEmail = cp.Site.GetBoolean("AllowPasswordEmail", False)
                         AllowMemberJoin = cp.Site.GetBoolean("AllowMemberJoin", False)
                         Auth = cp.Doc.GetInteger("auth")
@@ -124,7 +127,7 @@ Namespace Views
                                         & "<div class=""aoBlogLoginBox"">" _
                                         & vbCrLf & vbTab & "<div class=""aoBlogCommentCopy"">" & Copy & "</div>" _
                                         & vbCrLf & vbTab & "<div class=""aoBlogCommentCopy"">" & "send password form removed" & "</div>" _
-                                        & cr & "</div>"
+                                        & "</div>"
                             Case 2
                                 '
                                 ' join
@@ -138,9 +141,9 @@ Namespace Views
                                 End If
                                 result = result _
                                         & "<div class=""aoBlogLoginBox"">" _
-                                        & cr & "<div class=""aoBlogCommentCopy"">" & Copy & "</div>" _
-                                        & cr & "<div class=""aoBlogCommentCopy"">" & "Send join form removed" & "</div>" _
-                                        & cr & "</div>"
+                                        & "<div class=""aoBlogCommentCopy"">" & Copy & "</div>" _
+                                        & "<div class=""aoBlogCommentCopy"">" & "Send join form removed" & "</div>" _
+                                        & "</div>"
                             Case Else
                                 '
                                 ' login
@@ -151,59 +154,59 @@ Namespace Views
                                     Copy = Copy & "<div class=""aoBlogRegisterLink""><a href=""?" & qs & """>Need to Register?</a></div>"
                                 End If
                                 result = result _
-                                        & cr & "<div class=""aoBlogCommentCopy"">" & Copy & "</div>" _
-                                        & cr & "</div>"
+                                        & "<div class=""aoBlogCommentCopy"">" & Copy & "</div>" _
+                                        & "</div>"
                         End Select
 
                     Else
-                        result = result & cr & "<div>&nbsp;</div>"
-                        result = result & cr & "<div class=""aoBlogCommentCopy"">Title</div>"
+                        result &= "<div>&nbsp;</div>"
+                        result &= "<div class=""aoBlogCommentCopy"">Title</div>"
                         If RetryCommentPost Then
-                            result = result & cr & "<div class=""aoBlogCommentCopy"">" & genericController.getField(cp, RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(RequestNameCommentTitle.ToString)) & "</div>"
-                            result = result & cr & "<div>&nbsp;</div>"
-                            result = result & cr & "<div class=""aoBlogCommentCopy"">Comment</div>"
-                            result = result & cr & "<div class=""aoBlogCommentCopy"">" & cp.Html5.InputTextArea(RequestNameCommentCopy, 500, cp.Doc.GetText(RequestNameCommentCopy)) & "</div>"
+                            result &= "<div class=""aoBlogCommentCopy"">" & genericController.getField(cp, RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(RequestNameCommentTitle.ToString)) & "</div>"
+                            result &= "<div>&nbsp;</div>"
+                            result &= "<div class=""aoBlogCommentCopy"">Comment</div>"
+                            result &= "<div class=""aoBlogCommentCopy"">" & cp.Html5.InputTextArea(RequestNameCommentCopy, 500, cp.Doc.GetText(RequestNameCommentCopy)) & "</div>"
                         Else
-                            result = result & cr & "<div class=""aoBlogCommentCopy"">" & genericController.getField(cp, RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(RequestNameCommentTitle.ToString)) & "</div>"
-                            result = result & cr & "<div>&nbsp;</div>"
-                            result = result & cr & "<div class=""aoBlogCommentCopy"">Comment</div>"
-                            result = result & cr & "<div class=""aoBlogCommentCopy"">" & cp.Html5.InputTextArea(RequestNameCommentCopy, 500, cp.Doc.GetText(RequestNameCommentCopy)) & "</div>"
+                            result &= "<div class=""aoBlogCommentCopy"">" & genericController.getField(cp, RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(RequestNameCommentTitle.ToString)) & "</div>"
+                            result &= "<div>&nbsp;</div>"
+                            result &= "<div class=""aoBlogCommentCopy"">Comment</div>"
+                            result &= "<div class=""aoBlogCommentCopy"">" & cp.Html5.InputTextArea(RequestNameCommentCopy, 500, cp.Doc.GetText(RequestNameCommentCopy)) & "</div>"
                         End If
                         '
                         ' todo re-enable recaptcha 20190123
-                        If blog.recaptcha Then
-                            result = result & cr & "<div class=""aoBlogCommentCopy"">Verify Text</div>"
-                            result = result & cr & "<div class=""aoBlogCommentCopy"">" & cp.Utils.ExecuteAddon(reCaptchaDisplayGuid) & "</div>"
+                        If Blog.recaptcha Then
+                            result &= "<div class=""aoBlogCommentCopy"">Verify Text</div>"
+                            result &= "<div class=""aoBlogCommentCopy"">" & cp.Utils.ExecuteAddon(reCaptchaDisplayGuid) & "</div>"
                         End If
                         '
-                        result = result & cr & "<div class=""aoBlogCommentCopy"">" & cp.Html.Button(rnButton, FormButtonPostComment) & "&nbsp;" & cp.Html.Button(rnButton, FormButtonCancel) & "</div>"
+                        result &= "<div class=""aoBlogCommentCopy"">" & cp.Html.Button(rnButton, FormButtonPostComment) & "&nbsp;" & cp.Html.Button(rnButton, FormButtonCancel) & "</div>"
                     End If
 
                 End If
 
-                result = result & cr & "<div class=""aoBlogCommentDivider"">&nbsp;</div>"
+                result &= "<div class=""aoBlogCommentDivider"">&nbsp;</div>"
                 '
                 ' edit link
                 '
-                If user.isBlogEditor(cp, blog) Then
+                If user.isBlogEditor(cp, Blog) Then
                     qs = cp.Doc.RefreshQueryString()
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor.ToString())
-                    result = result & cr & "<div class=""aoBlogToolLink""><a href=""?" & qs & """>Edit</a></div>"
+                    result &= "<div class=""aoBlogToolLink""><a href=""?" & qs & """>Edit</a></div>"
                 End If
                 '
                 ' Search
                 '
                 qs = cp.Doc.RefreshQueryString
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogSearch.ToString(), True)
-                result = result & cr & "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>"
+                result &= "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>"
                 '
                 ' back to recent posts
-                result = result & cr & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"
+                result &= "<div class=""aoBlogFooterLink""><a href=""" & app.blogPageBaseLink & """>" & BackToRecentPostsMsg & "</a></div>"
                 '
-                result = result & vbCrLf & cp.Html.Hidden(RequestNameSourceFormID, FormBlogPostDetails.ToString())
-                result = result & vbCrLf & cp.Html.Hidden(RequestNameBlogEntryID, blogEntry.id.ToString())
-                result = result & vbCrLf & cp.Html.Hidden("EntryCnt", EntryPtr.ToString())
+                result &= vbCrLf & cp.Html.Hidden(RequestNameSourceFormID, FormBlogPostDetails.ToString())
+                result &= vbCrLf & cp.Html.Hidden(RequestNameBlogEntryID, blogEntry.id.ToString())
+                result &= vbCrLf & cp.Html.Hidden("EntryCnt", EntryPtr.ToString())
                 getArticleView = result
                 result = cp.Html.Form(getArticleView)
                 '
@@ -223,9 +226,12 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function processArticleView(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, request As View.RequestModel, user As PersonModel, ByRef RetryCommentPost As Boolean) As Integer
+        Public Shared Function processArticleView(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel, ByRef RetryCommentPost As Boolean) As Integer
             Dim result As Integer
             Try
+                Dim blog As BlogModel = app.blog
+                Dim blogEntry As BlogEntryModel = app.blogEntry
+                Dim user As PersonModel = app.user
                 '
                 result = request.SourceFormID
                 Dim SN As String = cp.Visit.GetText(SNBlogCommentName)
@@ -246,7 +252,7 @@ Namespace Views
                         result = FormBlogPostList
                     ElseIf request.ButtonValue = FormButtonPostComment Then
                         ' todo re-enable recaptcha 20190123
-                        If blog.recaptcha Then
+                        If Blog.recaptcha Then
                             '
                             ' Process recaptcha
                             '
@@ -270,21 +276,21 @@ Namespace Views
                                 Call cp.UserError.Add("<p>This comment has already been accepted.</p>")
                                 RetryCommentPost = False
                             Else
-                                Dim EntryID = cp.Doc.GetInteger(RequestNameBlogEntryID)
-                                Dim BlogEntry As BlogEntryModel = DbModel.create(Of BlogEntryModel)(cp, EntryID)
+                                'Dim EntryID = cp.Doc.GetInteger(RequestNameBlogEntryID)
+                                'Dim BlogEntry As BlogEntryModel = DbModel.create(Of BlogEntryModel)(cp, EntryID)
                                 Dim BlogComment As BlogCommentModel = DbModel.add(Of BlogCommentModel)(cp)
-                                BlogComment.BlogID = blog.id
+                                BlogComment.BlogID = Blog.id
                                 BlogComment.Active = True
                                 BlogComment.name = cp.Doc.GetText(RequestNameCommentTitle)
                                 BlogComment.CopyText = Copy
-                                BlogComment.EntryID = EntryID
-                                BlogComment.Approved = user.isBlogEditor(cp, blog) Or blog.autoApproveComments
+                                BlogComment.EntryID = blogEntry.id
+                                BlogComment.Approved = user.isBlogEditor(cp, Blog) Or Blog.autoApproveComments
                                 BlogComment.FormKey = formKey
                                 BlogComment.save(Of BlogCommentModel)(cp)
                                 CommentID = BlogComment.id
                                 RetryCommentPost = False
                                 '
-                                If (blog.emailComment) Then
+                                If (Blog.emailComment) Then
                                     '
                                     ' Send Comment Notification
                                     Dim EntryLink As String = BlogEntry.RSSLink
@@ -293,22 +299,22 @@ Namespace Views
                                     Else
                                         EntryLink = EntryLink & "&"
                                     End If
-                                    EntryLink = EntryLink & "blogentryid=" & EntryID
+                                    EntryLink = EntryLink & "blogentryid=" & blogEntry.id
                                     Dim EmailBody As String = "" _
-                                        & cr & "The following blog comment was posted " & Now() _
-                                        & cr & "To approve this comment, go to " & EntryLink _
+                                        & "The following blog comment was posted " & Now() _
+                                        & "To approve this comment, go to " & EntryLink _
                                         & vbCrLf _
-                                        & cr & "Blog '" & blog.name & "'" _
-                                        & cr & "Post '" & BlogEntry.name & "'" _
-                                        & cr & "By " & cp.User.Name _
+                                        & "Blog '" & Blog.name & "'" _
+                                        & "Post '" & BlogEntry.name & "'" _
+                                        & "By " & cp.User.Name _
                                         & vbCrLf _
                                         & vbCrLf & cp.Utils.EncodeHTML(Copy) _
                                         & vbCrLf
                                     Dim EmailFromAddress As String = cp.Site.GetText("EmailFromAddress", "info@" & cp.Site.Domain)
 
                                     If BlogEntry.AuthorMemberID <> 0 Then
-                                        Call cp.Email.sendUser(BlogEntry.AuthorMemberID.ToString, EmailFromAddress, "Blog comment notification for [" & blog.name & "]", EmailBody, True, False)
-                                        Call cp.Email.sendUser(BlogEntry.AuthorMemberID.ToString(), EmailFromAddress, "Blog comment notification for [" & blog.name & "]", EmailBody, False, False)
+                                        Call cp.Email.sendUser(BlogEntry.AuthorMemberID.ToString, EmailFromAddress, "Blog comment notification for [" & Blog.name & "]", EmailBody, True, False)
+                                        Call cp.Email.sendUser(BlogEntry.AuthorMemberID.ToString(), EmailFromAddress, "Blog comment notification for [" & Blog.name & "]", EmailBody, False, False)
                                     End If
 
                                     'If blog.AuthoringGroupID <> 0 Then
@@ -321,7 +327,7 @@ Namespace Views
                                     If blogAuthorsGroupId <> 0 Then
                                         Dim MemberRuleList As List(Of MemberRuleModel) = DbModel.createList(Of MemberRuleModel)(cp, "GroupId=" & blogAuthorsGroupId)
                                         For Each MemberRule In MemberRuleList
-                                            Call cp.Email.sendUser(MemberRule.MemberID.ToString(), EmailFromAddress, "Blog comment on " & blog.name, EmailBody, False, False)
+                                            Call cp.Email.sendUser(MemberRule.MemberID.ToString(), EmailFromAddress, "Blog comment on " & Blog.name, EmailBody, False, False)
                                         Next
                                     End If
                                 End If
@@ -333,7 +339,7 @@ Namespace Views
                         '
                         ' Post approval changes if the person is the owner
                         '
-                        If user.isBlogEditor(cp, blog) Then
+                        If user.isBlogEditor(cp, Blog) Then
                             Dim EntryCnt As Integer = cp.Doc.GetInteger("EntryCnt")
                             If EntryCnt > 0 Then
                                 Dim EntryPtr As Integer
@@ -348,12 +354,12 @@ Namespace Views
                                                 '
                                                 ' Delete comment
                                                 '
-                                                Call cp.Content.Delete("Blog Comments", "(id=" & CommentID & ")and(BlogID=" & blog.id & ")")
+                                                Call cp.Content.Delete("Blog Comments", "(id=" & CommentID & ")and(BlogID=" & Blog.id & ")")
                                             ElseIf cp.Doc.GetBoolean("Approve" & Suffix) And Not cp.Doc.GetBoolean("Approved" & Suffix) Then
                                                 '
                                                 ' Approve Comment
                                                 '
-                                                Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(name=" & cp.Utils.EncodeQueryString(blog.name) & ")", "ID")
+                                                Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(name=" & cp.Utils.EncodeQueryString(Blog.name) & ")", "ID")
                                                 If (BlogCommentModelList.Count > 0) Then
                                                     Dim BlogComment As BlogCommentModel = DbModel.add(Of BlogCommentModel)(cp)
                                                     If cp.CSNew.OK() Then

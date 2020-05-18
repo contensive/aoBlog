@@ -1,6 +1,7 @@
 
 Imports System
 Imports System.Collections.Generic
+Imports System.IO
 Imports System.Linq
 Imports System.Text
 Imports System.Text.RegularExpressions
@@ -14,9 +15,11 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function GetFormBlogEdit(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, blogEntry As BlogEntryModel, request As View.RequestModel, user As PersonModel, blogListLink As String) As String
+        Public Shared Function GetFormBlogEdit(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel) As String
             Dim result As New StringBuilder()
             Try
+                Dim blog As BlogModel = app.blog
+                Dim blogEntry As BlogEntryModel = app.blogEntry
                 Dim blogEntry_id As Integer = 0
                 Dim blogEntry_copy As String = ""
                 Dim blogEntry_tagList As String = ""
@@ -185,7 +188,7 @@ Namespace Views
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, "", True)
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostList.ToString())
                 'hint =  "9"
-                result.Append(vbCrLf & genericController.getFormTableRow2(cp, "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>" & BackToRecentPostsMsg & "</a></div>"))
+                result.Append(vbCrLf & genericController.getFormTableRow2(cp, "<div class=""aoBlogFooterLink""><a href=""" & app.blogPageBaseLink & """>" & BackToRecentPostsMsg & "</a></div>"))
 
                 '
                 result.Append(cp.Html.Hidden(RequestNameBlogEntryID, blogEntry_id.ToString()))
@@ -204,14 +207,12 @@ Namespace Views
         ''' Process a new blog entry or save the edit from an existing blog entry. If BlogEntry object is nothing, this is a new entry.
         ''' </summary>
         ''' <param name="cp"></param>
-        ''' <param name="blog"></param>
-        ''' <param name="rssFeed"></param>
-        ''' <param name="blogEntry"></param>
         ''' <param name="request"></param>
-        ''' <param name="blogListLink"></param>
         ''' <returns></returns>
-        Public Shared Function ProcessFormBlogEdit(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, ByRef blogEntry As BlogEntryModel, request As View.RequestModel, blogListLink As String) As Integer
+        Public Shared Function ProcessFormBlogEdit(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel) As Integer
             Try
+                Dim blog As BlogModel = app.blog
+                Dim blogEntry As BlogEntryModel = app.blogEntry
                 If cp.Visit.GetText(SNBlogEntryName) <> "" Then
                     Call cp.Visit.GetText(SNBlogEntryName, "")
                     If request.ButtonValue = FormButtonCancel Then
@@ -236,7 +237,7 @@ Namespace Views
                             ' -- by default, the RSS feed should be checked for this new blog entry
                             Dim rule As RSSFeedBlogRuleModel = RSSFeedBlogRuleModel.add(cp)
                             rule.BlogPostID = blogEntry.id
-                            rule.RSSFeedID = rssFeed.id
+                            rule.RSSFeedID = app.RSSFeed.id
                             rule.save(cp)
                         End If
 
@@ -244,7 +245,7 @@ Namespace Views
                         blogEntry.copy = request.BlogEntryCopy
                         blogEntry.tagList = request.BlogEntryTagList
                         blogEntry.blogCategoryID = request.BlogEntryCategoryId
-                        blogEntry.blogID = blog.id
+                        blogEntry.blogID = Blog.id
                         blogEntry.save(Of BlogEntryModel)(cp)
                         '
                         ' Upload files

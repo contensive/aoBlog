@@ -14,49 +14,52 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function getBlogEntryCell(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, blogEntry As BlogEntryModel, user As PersonModel, isArticleView As Boolean, IsSearchListing As Boolean, Return_CommentCnt As Integer, entryEditLink As String, blogListQs As String) As String
+        Public Shared Function getBlogEntryCell(cp As CPBaseClass, app As ApplicationController, blogEntry As BlogEntryModel, isArticleView As Boolean, IsSearchListing As Boolean, Return_CommentCnt As Integer, entryEditLink As String) As String
             Dim result As String = ""
             Try
+                Dim user As PersonModel = app.user
+                Dim blog As BlogModel = app.blog
+                Dim rssFeed As RSSFeedModel = app.RSSFeed
                 If (blogEntry Is Nothing) Then Throw New ApplicationException("BlogEntryCell called without valid BlogEntry")
                 '
                 Dim qs As String = cp.Utils.ModifyQueryString("", RequestNameBlogEntryID, CStr(blogEntry.id))
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
-                Call cp.Site.addLinkAlias(blogEntry.name, cp.Doc.PageId, qs)
+                Call cp.Site.AddLinkAlias(blogEntry.name, cp.Doc.PageId, qs)
                 Dim entryLink As String = cp.Content.GetPageLink(cp.Doc.PageId, qs)
                 Dim TagListRow As String = ""
                 Dim blogImageList = BlogImageModel.createListFromBlogEntry(cp, blogEntry.id)
                 If isArticleView Then
                     '
                     ' -- article view
-                    result = result & vbCrLf & entryEditLink & "<h2 class=""aoBlogEntryName"">" & blogEntry.name & "</h2>"
-                    result &= "<div class=""aoBlogEntryLikeLine"">" & cp.Utils.ExecuteAddon(facebookLikeAddonGuid) & "</div>"
-                    result = result & cr & "<div class=""aoBlogEntryCopy"">"
+                    result &= vbCrLf & entryEditLink & "<h2 class=""aoBlogEntryName"">" & blogEntry.name & "</h2>"
+                    result &= "<div class=""aoBlogEntryLikeLine"">" & cp.Addon.Execute(facebookLikeAddonGuid) & "</div>"
+                    result &= "<div class=""aoBlogEntryCopy"">"
                     If (blogImageList.Count > 0) Then
                         Dim ThumbnailFilename As String = ""
                         Dim imageFilename As String = ""
                         Dim imageName As String = ""
                         Dim imageDescription As String = ""
-                        BlogImageView.getBlogImage(cp, blog, rssFeed, blogEntry, blogImageList.First, ThumbnailFilename, imageFilename, imageDescription, imageName)
+                        BlogImageView.getBlogImage(cp, app, blogImageList.First, ThumbnailFilename, imageFilename, imageDescription, imageName)
                         Select Case blogEntry.primaryImagePositionId
                             Case 2
                                 '
                                 ' align right
-                                result = result & "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:40%;"">"
+                                result &= "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:40%;"">"
                             Case 3
                                 '
                                 ' align left
-                                result = result & "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:40%;"">"
+                                result &= "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:40%;"">"
                             Case 4
                                 '
                                 ' hide
                             Case Else
                                 '
                                 ' 1 and none align per stylesheet
-                                result = result & "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:40%;"">"
+                                result &= "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:40%;"">"
                         End Select
                     End If
-                    result = result & blogEntry.copy & "</div>"
-                    qs = blogListQs
+                    result &= blogEntry.copy & "</div>"
+                    qs = app.blogListLink
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor.ToString())
                     Dim c As String = ""
@@ -71,22 +74,22 @@ Namespace Views
                     '        GetBlogImage(cp, blog, rssFeed, blogEntry, blogImageList.First, ThumbnailFilename, imageFilename, imageDescription, imageName)
                     '        If imageFilename <> "" Then
                     '            c = c _
-                    '            & cr & "<div class=""aoBlogEntryImageContainer"">" _
-                    '            & cr & "<img alt=""" & imageName & """ title=""" & imageName & """  src=""" & cp.Site.FilePath & imageFilename & """>"
+                    '            &  "<div class=""aoBlogEntryImageContainer"">" _
+                    '            &  "<img alt=""" & imageName & """ title=""" & imageName & """  src=""" & cp.Site.FilePath & imageFilename & """>"
                     '            If imageName <> "" Then
-                    '                c = c & cr & "<h2>" & imageName & "</h2>"
+                    '                c = c &  "<h2>" & imageName & "</h2>"
                     '            End If
                     '            If imageDescription <> "" Then
-                    '                c = c & cr & "<div>" & imageDescription & "</div>"
+                    '                c = c &  "<div>" & imageDescription & "</div>"
                     '            End If
-                    '            c = c & cr & "</div>"
+                    '            c = c &  "</div>"
                     '        End If
                     '    Next
                     '    If c <> "" Then
                     '        result = result _
-                    '        & cr & "<div class=""aoBlogEntryImageSection"">" _
+                    '        &  "<div class=""aoBlogEntryImageSection"">" _
                     '        & cp.Html.Indent(c) _
-                    '        & cr & "</div>"
+                    '        &  "</div>"
                     '    End If
                     'End If
                     If blogEntry.tagList <> "" Then
@@ -96,7 +99,7 @@ Namespace Views
                         Dim Tags() As String = Split(clickableLinkList, vbCrLf)
                         clickableLinkList = ""
                         Dim SQS As String
-                        SQS = cp.Utils.ModifyQueryString(blogListQs, RequestNameFormID, FormBlogSearch.ToString(), True)
+                        SQS = cp.Utils.ModifyQueryString(app.blogListLink, RequestNameFormID, FormBlogSearch.ToString(), True)
                         Dim Ptr As Integer
                         For Ptr = 0 To UBound(Tags)
                             'QS = cp.Utils.ModifyQueryString(SQS, RequestNameFormID, FormBlogSearch, True)
@@ -106,42 +109,42 @@ Namespace Views
                         Next
                         clickableLinkList = Mid(clickableLinkList, 3)
                         c = "" _
-                        & cr & "<div class=""aoBlogTagListHeader"">" _
-                        & cr & vbTab & "Tags" _
-                        & cr & "</div>" _
-                        & cr & "<div class=""aoBlogTagList"">" _
-                        & cr & vbTab & clickableLinkList _
-                        & cr & "</div>"
+                        & "<div class=""aoBlogTagListHeader"">" _
+                        & vbTab & "Tags" _
+                        & "</div>" _
+                        & "<div class=""aoBlogTagList"">" _
+                        & vbTab & clickableLinkList _
+                        & "</div>"
                         TagListRow = "" _
-                        & cr & "<div class=""aoBlogTagListSection"">" _
+                        & "<div class=""aoBlogTagListSection"">" _
                         & cp.Html.Indent(c) _
-                        & cr & "</div>"
+                        & "</div>"
                     End If
                 Else
                     '
                     ' -- list view
-                    result = result & vbCrLf & entryEditLink & "<h4 class=""aoBlogEntryName""><a href=""" & entryLink & """>" & blogEntry.name & "</a></h4>"
-                    result = result & cr & "<div class=""aoBlogEntryCopy"">"
+                    result &= vbCrLf & entryEditLink & "<h4 class=""aoBlogEntryName""><a href=""" & entryLink & """>" & blogEntry.name & "</a></h4>"
+                    result &= "<div class=""aoBlogEntryCopy"">"
                     If (blogImageList.Count > 0) Then
                         Dim ThumbnailFilename As String = ""
                         Dim imageFilename As String = ""
                         Dim imageName As String = ""
                         Dim imageDescription As String = ""
-                        BlogImageView.getBlogImage(cp, blog, rssFeed, blogEntry, blogImageList.First, ThumbnailFilename, imageFilename, imageDescription, imageName)
+                        BlogImageView.getBlogImage(cp, app, blogImageList.First, ThumbnailFilename, imageFilename, imageDescription, imageName)
                         If ThumbnailFilename <> "" Then
                             Select Case blogEntry.primaryImagePositionId
                                 Case 2
                                     '
                                     ' align right
                                     '
-                                    'result = result & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & blog.ThumbnailImageWidth & "px;""></a>"
-                                    result = result & "<a href=""" & entryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:25%;""></a>"
+                                    'result &=  "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & blog.ThumbnailImageWidth & "px;""></a>"
+                                    result &= "<a href=""" & entryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:25%;""></a>"
                                 Case 3
                                     '
                                     ' align left
                                     '
-                                    ' result = result & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & blog.ThumbnailImageWidth & "px;""></a>"
-                                    result = result & "<a href=""" & entryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:25%;""></a>"
+                                    ' result &=  "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & blog.ThumbnailImageWidth & "px;""></a>"
+                                    result &= "<a href=""" & entryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:25%;""></a>"
                                 Case 4
                                     '
                                     ' hide
@@ -150,14 +153,14 @@ Namespace Views
                                     '
                                     ' 1 and none align per stylesheet
                                     '
-                                    'result = result & "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & blog.ThumbnailImageWidth & "px;""></a>"
-                                    result = result & "<a href=""" & entryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:25%;""></a>"
+                                    'result &=  "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & blog.ThumbnailImageWidth & "px;""></a>"
+                                    result &= "<a href=""" & entryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:25%;""></a>"
 
                             End Select
                         End If
                     End If
-                    result = result & "<p>" & genericController.getBriefCopy(cp, blogEntry.copy, blog.OverviewLength) & "</p></div>"
-                    result = result & cr & "<div class=""aoBlogEntryReadMore""><a href=""" & entryLink & """>Read More</a></div>"
+                    result &= "<p>" & genericController.getBriefCopy(cp, blogEntry.copy, blog.OverviewLength) & "</p></div>"
+                    result &= "<div class=""aoBlogEntryReadMore""><a href=""" & entryLink & """>Read More</a></div>"
                 End If
                 '
                 ' Podcast link
@@ -168,7 +171,7 @@ Namespace Views
                     cp.Doc.SetProperty("Hide Player", "True")
                     cp.Doc.SetProperty("Auto Start", "False")
                     '
-                    result = result & cp.Utils.ExecuteAddon(addonGuidWebcast)
+                    result &= cp.Addon.Execute(addonGuidWebcast)
                 End If
                 '
                 ' Author Row
@@ -205,7 +208,7 @@ Namespace Views
                             RowCopy = RowCopy & " | " & CommentCount & " Comments&nbsp;(" & CommentCount & ")"
                         End If
                     Else
-                        qs = blogListQs
+                        qs = app.blogListLink
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
                         If CommentCount = 0 Then
@@ -216,13 +219,13 @@ Namespace Views
                     End If
                 End If
                 If RowCopy <> "" Then
-                    result = result & cr & "<div class=""aoBlogEntryByLine"">Posted " & RowCopy & "</div>"
+                    result &= "<div class=""aoBlogEntryByLine"">Posted " & RowCopy & "</div>"
                 End If
                 '
                 ' Tag List Row
                 '
                 If TagListRow <> "" Then
-                    result = result & TagListRow
+                    result &= TagListRow
                 End If
                 Dim ToolLine As String = ""
                 Dim CommentPtr As Integer
@@ -238,7 +241,7 @@ Namespace Views
                         Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(Approved<>0)and(EntryID=" & blogEntry.id & ")")
                         CommentCount = BlogCommentModelList.Count
                         '
-                        qs = blogListQs
+                        qs = app.blogListLink
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
                         Dim CommentLine As String = ""
@@ -257,7 +260,7 @@ Namespace Views
                                 ToolLine = ToolLine & "&nbsp;|&nbsp;"
                             End If
                             ToolLine = ToolLine & "Unapproved Comments (" & unapprovedCommentCount & ")"
-                            qs = blogListQs
+                            qs = app.blogListLink
                             qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
                             qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor.ToString())
                             If ToolLine <> "" Then
@@ -286,13 +289,13 @@ Namespace Views
                         Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, Criteria, "DateAdded")
                         If (BlogCommentModelList.Count > 0) Then
                             Dim Divider As String = "<div class=""aoBlogCommentDivider"">&nbsp;</div>"
-                            result = result & cr & "<div class=""aoBlogCommentHeader"">Comments</div>"
-                            result = result & vbCrLf & Divider
+                            result &= "<div class=""aoBlogCommentHeader"">Comments</div>"
+                            result &= vbCrLf & Divider
                             CommentPtr = 0
                             For Each blogComment In DbModel.createList(Of BlogCommentModel)(cp, Criteria)
 
-                                result = result & BlogCommentCellView.getBlogCommentCell(cp, blog, rssFeed, blogEntry, blogComment, user, False)
-                                result = result & vbCrLf & Divider
+                                result &= BlogCommentCellView.getBlogCommentCell(cp, blog, rssFeed, blogEntry, blogComment, user, False)
+                                result &= vbCrLf & Divider
                                 CommentPtr = CommentPtr + 1
                             Next
 
@@ -303,15 +306,16 @@ Namespace Views
                 '
                 'hint =  hint & ",12"
                 If ToolLine <> "" Then
-                    result = result & cr & "<div class=""aoBlogToolLink"">" & ToolLine & "</div>"
+                    result &= "<div class=""aoBlogToolLink"">" & ToolLine & "</div>"
                 End If
-                result = result & vbCrLf & cp.Html.Hidden("CommentCnt" & blogEntry.id, CommentPtr.ToString())
+                result &= vbCrLf & cp.Html.Hidden("CommentCnt" & blogEntry.id, CommentPtr.ToString())
                 '
                 Return_CommentCnt = CommentPtr
                 getBlogEntryCell = result
                 '
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)
+                Throw
             End Try
 
             Return result

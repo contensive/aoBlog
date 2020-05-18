@@ -14,7 +14,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function ProcessForm(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, blogEntry As BlogEntryModel, request As View.RequestModel, user As PersonModel, blogListLink As String, ByRef RetryCommentPost As Boolean) As Integer
+        Public Shared Function ProcessForm(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel, ByRef RetryCommentPost As Boolean) As Integer
             '
             Try
                 If request.ButtonValue <> "" Then
@@ -22,9 +22,9 @@ Namespace Views
                         Case FormBlogPostList
                             ProcessForm = FormBlogPostList
                         Case FormBlogEntryEditor
-                            ProcessForm = EditView.ProcessFormBlogEdit(cp, blog, rssFeed, blogEntry, request, blogListLink)
+                            ProcessForm = EditView.ProcessFormBlogEdit(cp, app, request)
                         Case FormBlogPostDetails
-                            ProcessForm = ArticleView.processArticleView(cp, blog, rssFeed, request, user, RetryCommentPost)
+                            ProcessForm = ArticleView.processArticleView(cp, app, request, RetryCommentPost)
                         Case FormBlogArchiveDateList
                             ProcessForm = FormBlogArchiveDateList
                         Case FormBlogSearch

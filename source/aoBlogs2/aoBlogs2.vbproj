@@ -91,6 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="constants.vb" />
+    <Compile Include="Controllers\ApplicationController.vb" />
     <Compile Include="Controllers\MetadataController.vb" />
     <Compile Include="Controllers\genericController.vb" />
     <Compile Include="Models\DbModel.vb" />

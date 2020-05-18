@@ -14,14 +14,18 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function GetListView(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, request As View.RequestModel, user As PersonModel, blogListLink As String, blogListQs As String) As String
+        Public Shared Function GetListView(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel) As String
             Dim result As New StringBuilder()
             Try
-                If blog.Caption <> "" Then
-                    result.Append(vbCrLf & "<h2 Class=""aoBlogCaption"">" & blog.Caption & "</h2>")
+                Dim blog As BlogModel = app.blog
+                Dim blogEntry As BlogEntryModel = app.blogEntry
+                Dim user As PersonModel = app.user
+                Dim rssFeed As RSSFeedModel = app.RSSFeed
+                If Blog.Caption <> "" Then
+                    result.Append(vbCrLf & "<h2 Class=""aoBlogCaption"">" & Blog.Caption & "</h2>")
                 End If
-                If blog.Copy <> "" Then
-                    result.Append(vbCrLf & "<div Class=""aoBlogDescription"">" & blog.Copy & "</div>")
+                If Blog.Copy <> "" Then
+                    result.Append(vbCrLf & "<div Class=""aoBlogDescription"">" & Blog.Copy & "</div>")
                 End If
                 '
                 ' Display the most recent entries
@@ -30,23 +34,23 @@ Namespace Views
                 Dim blogCategory = DbModel.create(Of Models.BlogCategorieModel)(cp, request.categoryId)
                 '
                 If (blogCategory IsNot Nothing) Then
-                    BlogEntryList = DbModel.createList(Of BlogEntryModel)(cp, "(BlogID=" & blog.id & ")And(BlogCategoryID=" & request.categoryId & ")", "DateAdded Desc", blog.PostsToDisplay, 1)
-                    result.Append(cr & "<div Class=""aoBlogCategoryCaption"">Category " & blogCategory.name & "</div>")
+                    BlogEntryList = DbModel.createList(Of BlogEntryModel)(cp, "(BlogID=" & Blog.id & ")And(BlogCategoryID=" & request.categoryId & ")", "DateAdded Desc", Blog.PostsToDisplay, 1)
+                    result.Append("<div Class=""aoBlogCategoryCaption"">Category " & blogCategory.name & "</div>")
                     NoneMsg = "There are no blog posts available in the category " & blogCategory.name
                 Else
-                    BlogEntryList = DbModel.createList(Of BlogEntryModel)(cp, "(BlogID=" & blog.id & ")", "DateAdded Desc", blog.PostsToDisplay, 1)
+                    BlogEntryList = DbModel.createList(Of BlogEntryModel)(cp, "(BlogID=" & Blog.id & ")", "DateAdded Desc", Blog.PostsToDisplay, 1)
                     NoneMsg = "There are no blog posts available"
                 End If
                 '
                 Dim isBlogCategoryBlockedDict As New Dictionary(Of Integer, Boolean)
                 If (BlogEntryList.Count.Equals(0)) Then
                     '
-                    result.Append(cr & "<div Class=""aoBlogProblem"">" & NoneMsg & "</div>")
+                    result.Append("<div Class=""aoBlogProblem"">" & NoneMsg & "</div>")
                 Else
                     Dim blogCategoryList = DbModel.createList(Of BlogCategorieModel)(cp, "")
                     Dim EntryPtr As Integer = 0
                     For Each blogEntry In BlogEntryList
-                        If (EntryPtr >= blog.PostsToDisplay) Then Exit For
+                        If (EntryPtr >= Blog.PostsToDisplay) Then Exit For
                         Dim IsBlocked As Boolean = False
                         If (isBlogCategoryBlockedDict.ContainsKey(blogEntry.blogCategoryID)) Then
                             IsBlocked = isBlogCategoryBlockedDict(blogEntry.blogCategoryID)
@@ -59,13 +63,13 @@ Namespace Views
                         End If
                         If Not IsBlocked Then
                             Dim Return_CommentCnt As Integer
-                            Dim blogArticleCell = BlogEntryCellView.getBlogEntryCell(cp, blog, rssFeed, blogEntry, user, False, True, Return_CommentCnt, "", blogListQs)
+                            Dim blogArticleCell = BlogEntryCellView.getBlogEntryCell(cp, app, blogEntry, False, True, Return_CommentCnt, "")
                             '
                             ' -- if editing enabled, add the link and wrapperwrapper
                             blogArticleCell = genericController.addEditWrapper(cp, blogArticleCell, blogEntry.id, blogEntry.name, Models.BlogEntryModel.contentName)
 
                             result.Append(blogArticleCell)
-                            result.Append(cr & "<hr>")
+                            result.Append("<hr>")
                         End If
                         EntryPtr += 1
                     Next
@@ -74,15 +78,15 @@ Namespace Views
                 Dim qs As String
                 '
                 ' Build Footers
-                If cp.User.IsAdmin() And blog.AllowCategories Then
+                If cp.User.IsAdmin() And Blog.AllowCategories Then
                     qs = "cid=" & cp.Content.GetID("Blog Categories") & "&af=4"
-                    CategoryFooter = CategoryFooter & cr & "<div Class=""aoBlogFooterLink""><a href=""" & cp.Site.GetText("ADMINURL") & "?" & qs & """>Add a New category</a></div>"
+                    CategoryFooter = CategoryFooter & "<div Class=""aoBlogFooterLink""><a href=""" & cp.Site.GetText("ADMINURL") & "?" & qs & """>Add a New category</a></div>"
                 End If
                 Dim ReturnFooter As String = ""
-                If blog.AllowCategories Then
+                If Blog.AllowCategories Then
                     qs = cp.Doc.RefreshQueryString
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogCategoryIDSet, "0", True)
-                    CategoryFooter = CategoryFooter & cr & "<div class=""aoBlogFooterLink""><a href=""" & blogListLink & """>See Posts in All Categories</a></div>"
+                    CategoryFooter = CategoryFooter & "<div class=""aoBlogFooterLink""><a href=""" & app.blogPageBaseLink & """>See Posts in All Categories</a></div>"
                     '
                     ' select a category
                     qs = cp.Doc.RefreshQueryString
@@ -101,26 +105,26 @@ Namespace Views
                             End If
                             If Not IsBlocked Then
                                 Dim categoryLink As String = cp.Utils.ModifyQueryString(qs, RequestNameBlogCategoryIDSet, CStr(blogCategaory.id), True)
-                                CategoryFooter = CategoryFooter & cr & "<div class=""aoBlogFooterLink""><a href=""?" & categoryLink & """> See Posts in All Category " & blogCategaory.name & "</a></div>"
+                                CategoryFooter = CategoryFooter & "<div class=""aoBlogFooterLink""><a href=""?" & categoryLink & """> See Posts in All Category " & blogCategaory.name & "</a></div>"
                             End If
                         Next
                     End If
                 End If
                 '
                 ' Footer
-                result.Append(cr & "<div>&nbsp;</div>")
-                If user.isBlogEditor(cp, blog) Then
+                result.Append("<div>&nbsp;</div>")
+                If user.isBlogEditor(cp, Blog) Then
                     '
                     ' Create a new entry if this is the Blog Owner
                     '
                     qs = cp.Doc.RefreshQueryString
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor.ToString(), True)
-                    result.Append(cr & "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Create New Blog Post</a></div>")
+                    result.Append("<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Create New Blog Post</a></div>")
                     '
                     ' Create a link to edit the blog record
                     '
-                    qs = "cid=" & cp.Content.GetID("Blogs") & "&af=4&id=" & blog.id
-                    result.Append(cr & "<div class=""aoBlogFooterLink""><a href=""" & cp.Site.GetText("adminUrl") & "?" & qs & """>Blog Settings</a></div>")
+                    qs = "cid=" & cp.Content.GetID("Blogs") & "&af=4&id=" & Blog.id
+                    result.Append("<div class=""aoBlogFooterLink""><a href=""" & cp.Site.GetText("adminUrl") & "?" & qs & """>Blog Settings</a></div>")
                     '
                     ' Create a link to edit the rss record
                     '
@@ -128,7 +132,7 @@ Namespace Views
 
                     Else
                         qs = "cid=" & cp.Content.GetID("RSS Feeds") & "&af=4&id=" & rssFeed.id
-                        result.Append(cr & "<div class=""aoBlogFooterLink""><a href=""" & cp.Site.GetText("adminUrl") & "?" & qs & """>Edit RSS Features</a></div>")
+                        result.Append("<div class=""aoBlogFooterLink""><a href=""" & cp.Site.GetText("adminUrl") & "?" & qs & """>Edit RSS Features</a></div>")
                     End If
                 End If
                 result.Append(ReturnFooter)
@@ -138,7 +142,7 @@ Namespace Views
                 '
                 qs = cp.Doc.RefreshQueryString
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogSearch.ToString(), True)
-                result.Append(cr & "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>")
+                result.Append("<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>")
                 '
                 ' Link to RSS Feed
                 '
@@ -150,7 +154,7 @@ Namespace Views
                         & "&nbsp;" _
                         & FeedFooter & "<img src=""/cclib/images/IconXML-25x13.gif"" width=25 height=13 class=""aoBlogRSSFeedImage""></a>" _
                         & ""
-                    result.Append(cr & "<div class=""aoBlogFooterLink"">" & FeedFooter & "</div>")
+                    result.Append("<div class=""aoBlogFooterLink"">" & FeedFooter & "</div>")
                 End If
                 result.Append(cp.Html.Hidden(RequestNameSourceFormID, FormBlogPostList.ToString()))
             Catch ex As Exception

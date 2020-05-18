@@ -16,45 +16,22 @@ Namespace Views
         ''' <summary>
         ''' Inner Blog - the list of posts without sidebar. Blog object must be valid
         ''' </summary>
-        ''' <param name="cp"></param>
-        ''' <param name="blog"></param>
         ''' <returns></returns>
-        Public Shared Function getBlogBody(cp As CPBaseClass, blog As BlogModel, request As View.RequestModel, blogEntry As BlogEntryModel) As String
+        Public Shared Function getBlogBody(cp As CPBaseClass, app As ApplicationController, legacyRequest As View.RequestModel, blogBodyRequest As BlogBodyRequestModel) As String
             Dim result As String = ""
             Try
-                If (blog Is Nothing) Then Throw New ApplicationException("BlogBody requires valid Blog object and blog object is null.")
-                If (blog.Id = 0) Then Throw New ApplicationException("BlogBody requires valid Blog object and blog.id is 0.")
-                '
-                Dim user = PersonModel.create(cp, cp.User.Id)
-                Dim qsBlogList As String = cp.Doc.RefreshQueryString()
-                qsBlogList = cp.Utils.ModifyQueryString(qsBlogList, RequestNameSourceFormID, "")
-                qsBlogList = cp.Utils.ModifyQueryString(qsBlogList, RequestNameFormID, "")
-                qsBlogList = cp.Utils.ModifyQueryString(qsBlogList, RequestNameBlogCategoryID, "")
-                qsBlogList = cp.Utils.ModifyQueryString(qsBlogList, RequestNameBlogEntryID, "")
-                Dim blogPageBaseLink As String = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, "", "")
-                '
-                ' Get the Feed Args
-                Dim RSSFeed As RSSFeedModel = DbModel.create(Of RSSFeedModel)(cp, blog.RSSFeedID)
-                If (RSSFeed Is Nothing) Then
-                    RSSFeed = DbModel.add(Of RSSFeedModel)(cp)
-                    RSSFeed.name = blog.Caption
-                    RSSFeed.description = "This is your First RssFeed"
-                    RSSFeed.save(Of BlogModel)(cp)
-                    blog.RSSFeedID = RSSFeed.id
-                    blog.save(Of BlogModel)(cp)
-                End If
                 '
                 ' Process Input
                 Dim RetryCommentPost As Boolean = False
-                Dim dstFormId As Integer = request.FormID
-                If request.ButtonValue <> "" Then
+                Dim dstFormId As Integer = legacyRequest.FormID
+                If legacyRequest.ButtonValue <> "" Then
                     '
                     ' Process the source form into form if there was a button - else keep formid
-                    dstFormId = BlogBodyController.ProcessForm(cp, blog, RSSFeed, blogEntry, request, user, blogPageBaseLink, RetryCommentPost)
+                    dstFormId = BlogBodyController.ProcessForm(cp, app, legacyRequest, RetryCommentPost)
                 End If
                 '
                 ' -- Get Next Form
-                result = GetForm(cp, blog, RSSFeed, blogEntry, request, user, dstFormId, blogPageBaseLink, qsBlogList, RetryCommentPost)
+                result = GetForm(cp, app, legacyRequest, dstFormId, RetryCommentPost)
                 '
                 Return result
             Catch ex As Exception
@@ -65,31 +42,31 @@ Namespace Views
         '
         '====================================================================================
         '
-        Private Shared Function GetForm(cp As CPBaseClass, blog As BlogModel, rssFeed As RSSFeedModel, blogEntry As BlogEntryModel, request As View.RequestModel, user As PersonModel, FormID As Integer, blogListLink As String, blogListQs As String, RetryCommentPost As Boolean) As String
+        Private Shared Function GetForm(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel, dstFormID As Integer, RetryCommentPost As Boolean) As String
             Dim result As New StringBuilder()
             Try
-                Select Case FormID
+                Select Case dstFormID
                     Case FormBlogPostDetails
-                        result.Append(ArticleView.getArticleView(cp, blog, rssFeed, blogEntry, request, user, blogListLink, blogListQs, RetryCommentPost))
+                        result.Append(ArticleView.getArticleView(cp, app, request, RetryCommentPost))
                     Case FormBlogArchiveDateList
-                        result.Append(ArchiveView.GetFormBlogArchiveDateList(cp, blog, rssFeed, blogEntry, request, user, blogListLink, blogListQs))
+                        result.Append(ArchiveView.GetFormBlogArchiveDateList(cp, app, request))
                     Case FormBlogArchivedBlogs
-                        result.Append(ArchiveView.GetFormBlogArchivedBlogs(cp, blog, rssFeed, blogEntry, request, user, blogListLink, blogListQs))
+                        result.Append(ArchiveView.GetFormBlogArchivedBlogs(cp, app, request))
                     Case FormBlogEntryEditor
-                        result.Append(EditView.GetFormBlogEdit(cp, blog, rssFeed, blogEntry, request, user, blogListLink))
+                        result.Append(EditView.GetFormBlogEdit(cp, app, request))
                     Case FormBlogSearch
-                        result.Append(SearchView.GetFormBlogSearch(cp, blog, rssFeed, blogEntry, request, user, blogListLink, blogListQs))
+                        result.Append(SearchView.GetFormBlogSearch(cp, app, request))
                     Case Else
-                        If (blogEntry IsNot Nothing) Then
+                        If (app.blogEntry IsNot Nothing) Then
                             '
                             ' Go to details page
                             '
-                            result.Append(ArticleView.getArticleView(cp, blog, rssFeed, blogEntry, request, user, blogListLink, blogListQs, RetryCommentPost))
+                            result.Append(ArticleView.getArticleView(cp, app, request, RetryCommentPost))
                         Else
                             '
                             ' list all the entries
                             '
-                            result.Append(ListView.GetListView(cp, blog, rssFeed, request, user, blogListLink, blogListQs))
+                            result.Append(ListView.GetListView(cp, app, request))
                         End If
                 End Select
             Catch ex As Exception

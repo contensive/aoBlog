@@ -55,9 +55,9 @@ Namespace Models
         ''' </summary>
         ''' <param name="cp"></param>
         ''' <returns></returns>
-        Public Shared Function verifyBlog(cp As CPBaseClass, request As View.RequestModel) As BlogModel
+        Public Shared Function verifyBlog(cp As CPBaseClass, instanceGuid As String) As BlogModel
             Try
-                Dim Blog = DbModel.create(Of BlogModel)(cp, request.instanceId)
+                Dim Blog = DbModel.create(Of BlogModel)(cp, instanceGuid)
                 If (Blog IsNot Nothing) Then Return Blog
                 If (Not cp.User.IsAdmin) Then Return Nothing
 
@@ -75,7 +75,7 @@ Namespace Models
                 Blog.ThumbnailImageWidth = 200
                 Blog.ImageWidthMax = 400
                 Blog.allowArticleCTA = True
-                Blog.ccguid = request.instanceId
+                Blog.ccguid = instanceGuid
                 Blog.save(Of BlogModel)(cp)
                 Dim rssFeed = RSSFeedModel.verifyFeed(cp, Blog)
                 Blog.RSSFeedID = If(rssFeed IsNot Nothing, rssFeed.id, 0)

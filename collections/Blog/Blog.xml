@@ -233,7 +233,8 @@
 	<data>
 		<record content="Layouts" guid="{58788483-D050-4464-9261-627278A57B35}" name="Blog Layout">
 			<field name="active">True</field>
-			<field name="layout"><![CDATA[<div class="blogWrapper">
+			<field name="layout"><![CDATA[
+				<div class="blogWrapper">
 					<div class="blogColumn1-Wrap">
 						<div class="blogColumn1">
 							{{legacyBlog}}
@@ -252,7 +253,8 @@
 					</div>
 					<div class="blogClear">
 					</div>
-				</div>]]></field>
+				</div>
+				]]></field>
 			<field name="sortorder"></field>
 			<field name="stylesfilename"></field>
 		</record>
