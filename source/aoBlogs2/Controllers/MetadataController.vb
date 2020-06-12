@@ -36,7 +36,11 @@ Namespace Controllers
             Call cp.Doc.SetProperty("Open Graph Title", blogEntry.name)
             Call cp.Doc.SetProperty("Open Graph Description", blogEntryBrief)
             If (blogImageList.Count > 0) Then
-                Call cp.Doc.SetProperty("Open Graph Image", "http://" & cp.Site.Domain & cp.Site.FilePath & blogImageList.First().Filename)
+                If cp.Request.Secure Then
+                    Call cp.Doc.SetProperty("Open Graph Image", "https://" & cp.Site.Domain & cp.Site.FilePath & blogImageList.First().Filename)
+                Else
+                    Call cp.Doc.SetProperty("Open Graph Image", "http://" & cp.Site.Domain & cp.Site.FilePath & blogImageList.First().Filename)
+                End If
             End If
         End Sub
     End Class
