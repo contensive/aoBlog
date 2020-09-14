@@ -17,11 +17,11 @@
 {
 	color: #f00;
 }
-.blogWrapper .aoBlogCommentError .ccError 
+.blogWrapper .aoBlogCommentError .ccError
 {
 	font-size:inherit;
 }
-.blogWrapper div.aoBlogCommentError 
+.blogWrapper div.aoBlogCommentError
 {
 	 clear:both;
 	 margin:20px 0 0 20px;
@@ -52,22 +52,22 @@
 	font-size:120%; */
 }
 
-.blogWrapper .aoBlogEntryName a 
+.blogWrapper .aoBlogEntryName a
 {
 	text-decoration:none;
 	color:black
 }
-.blogWrapper .aoBlogEntryName a:visited 
+.blogWrapper .aoBlogEntryName a:visited
 {
 	text-decoration:none;
 	color:black
 }
-.blogWrapper .aoBlogEntryName a:hover 
+.blogWrapper .aoBlogEntryName a:hover
 {
 	text-decoration:none;
 	color:black
 }
-.blogWrapper .aoBlogEntryThumbnail 
+.blogWrapper .aoBlogEntryThumbnail
 {
 	float:left;
 	margin:0 10px 10px 0;
@@ -101,7 +101,7 @@
 	clear:both;
 	margin-bottom:10px;
 }
-.blogWrapper .aoBlogEntryByLine 
+.blogWrapper .aoBlogEntryByLine
 {
 	clear:both;
 	color:#9C9C9C
@@ -151,14 +151,14 @@
 	padding: 10px;
 	margin: 10px 10px 10px 0;
 }
-.blogWrapper .aoBlogCommentByLine 
+.blogWrapper .aoBlogCommentByLine
 {
 	clear:both;
 	color:#9C9C9C;
 	margin-left:20px;
 	margin-top:10px;
 }
-.blogWrapper .aoBlogLoginBox 
+.blogWrapper .aoBlogLoginBox
 {
 	width:300px;
 	padding:20px;
@@ -169,36 +169,36 @@
 {
 	margin:0;
 }
-.blogWrapper .aoBlogRSSFeedImage 
+.blogWrapper .aoBlogRSSFeedImage
 {
 	vertical-align:middle;
 	border:0;
 }
-.blogWrapper .aoBlogFooterLink 
+.blogWrapper .aoBlogFooterLink
 {
 	border:1px solid #eef;
 	padding:4px;
 	background-color:#f8f8ff
 }
-.blogWrapper .aoBlogToolLink 
+.blogWrapper .aoBlogToolLink
 {
 	border:1px solid #eef;
 	padding:4px;
 	background-color:#f8f8ff
 }
-.blogWrapper .aoBlogArchiveLink 
+.blogWrapper .aoBlogArchiveLink
 {
 	padding:4px;
 	padding-left:20px;
 }
-.blogWrapper .aoBlogHeaderLink 
+.blogWrapper .aoBlogHeaderLink
 {
 	padding:4px 0 4px 0;
 }
-.blogWrapper .aoBlogEntryImageSection 
+.blogWrapper .aoBlogEntryImageSection
 {
 }
-.blogWrapper .aoBlogEntryImageContainer 
+.blogWrapper .aoBlogEntryImageContainer
 {
 	clear:both;
 	 border-top: 1px solid #eef;
@@ -207,21 +207,21 @@
 	 background-color: #f8f8ff;
 	 overflow:auto;
 }
-.blogWrapper .aoBlogEntryImageContainer img 
+.blogWrapper .aoBlogEntryImageContainer img
 {
 	float:left;
 	 border: 0;
 	 margin: 0 10px 0 0
 }
-.blogWrapper .aoBlogEntryImageContainer h2 
+.blogWrapper .aoBlogEntryImageContainer h2
 {
 	/* font-size:120%; */
 	margin-bottom:10px
 }
-.blogWrapper .aoBlogEntryImageContainer div 
+.blogWrapper .aoBlogEntryImageContainer div
 {
 }
-.blogWrapper .aoBlogTagListHeader 
+.blogWrapper .aoBlogTagListHeader
 {
 	clear:both;
 	 margin:20px 0 0 20px;
@@ -229,12 +229,12 @@
 	 color:black;
 	 /* font-size:120%; */
 }
-.blogWrapper .aoBlogTagList 
+.blogWrapper .aoBlogTagList
 {
 	padding:0 0 0 20px;
 	text-align:left;
 }
-.blogWrapper .aoBlogTagListSection 
+.blogWrapper .aoBlogTagListSection
 {
 	clear:both;
 	 border-top: 1px solid #9c9c9c;
@@ -397,6 +397,24 @@ width: inherit;
 {
 	vertical-align:top;
 }
+
+.blogWrapper .aoBlogTableRowCellRight:first-child {
+  background-color: lightgrey;
+	border: lightgrey 1px solid;
+}
+
+.blogWrapper .aoBlogTableRowCellRight:nth-child(2) {
+  background-color: orange;
+	color: white;
+	border: orange 1px solid;
+}
+
+.blogWrapper .aoBlogTableRowCellRight:last-child {
+  background-color: red;
+	color: white;
+	border: red 1px solid;
+}
+
 .blogWrapper .aoBlogImageTable td
 {
 	text-align:left;
@@ -415,7 +433,7 @@ width: inherit;
 	padding:0 0 5px 0;;
 	margin:0;
 }
-@media screen and (max-width: 480px) 
+@media screen and (max-width: 480px)
 {
 	.blogWrapper .aoBlogCommentHeader { margin: 20px 0; }
 	.blogWrapper .aoBlogLoginBox { margin: 20px 0; padding: 10px; width: 100%; }
@@ -424,8 +442,8 @@ width: inherit;
 /*
 * move lists past inline pictures
 */
-.blogWrapper ol, .blogWrapper ul 
+.blogWrapper ol, .blogWrapper ul
 {
     list-style-position: outside;
-    clear: both;	
+    clear: both;
 }
