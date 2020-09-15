@@ -398,21 +398,27 @@ width: inherit;
 	vertical-align:top;
 }
 
-.blogWrapper .aoBlogTableRowCellRight:first-child {
+.blogWrapper .aoBlogTableRowCellRight input[type=submit]:first-child {
   background-color: lightgrey;
 	border: lightgrey 1px solid;
+	padding: 3px 18px;
+  border-radius: 4px;
 }
 
-.blogWrapper .aoBlogTableRowCellRight:nth-child(2) {
+.blogWrapper .aoBlogTableRowCellRight input[type=submit]:nth-child(2) {
   background-color: orange;
 	color: white;
 	border: orange 1px solid;
+	padding: 3px 18px;
+  border-radius: 4px;
 }
 
-.blogWrapper .aoBlogTableRowCellRight:last-child {
+.blogWrapper .aoBlogTableRowCellRight input[type=submit]:last-child {
   background-color: red;
 	color: white;
 	border: red 1px solid;
+	padding: 3px 18px;
+  border-radius: 4px;
 }
 
 .blogWrapper .aoBlogImageTable td
