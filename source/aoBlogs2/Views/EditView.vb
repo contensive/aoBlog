@@ -90,7 +90,7 @@ Namespace Views
                                 & "<td><input type=""checkbox"" name=""" & rnBlogImageDelete & "." & Ptr & """>&nbsp;Delete</td>" _
                                 & "</tr>" _
                                 & "<tr>" _
-                                & "<td align=""left"" class=""ccAdminSmall""><img class=""aoBlogEditImagePreview"" alt=""" & imageName & """ title=""" & imageName & """ src=""" & cp.Site.FilePath & imageFilename & """></td>" _
+                                & "<td align=""left"" class=""ccAdminSmall""><img class=""aoBlogEditImagePreview"" alt=""" & imageName & """ title=""" & imageName & """ src=""" & cp.Http.CdnFilePathPrefix & imageFilename & """></td>" _
                                 & "</tr>" _
                                 & ""
                     '

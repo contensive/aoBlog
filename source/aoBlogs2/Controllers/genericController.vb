@@ -156,7 +156,7 @@ Namespace Controllers
                     Width = 25
                 End If
                 '           
-                result = cp.Html.InputText(RequestName, DefaultValue, Height.ToString(), Width.ToString())
+                result = cp.Html.InputText(RequestName, DefaultValue, 255)
                 result = Replace(result, "<INPUT ", "<INPUT maxlength=""" & MaxLenghth & """ ", 1, 99, CompareMethod.Text)
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)

@@ -23,7 +23,7 @@ function m
 	end if
 	cs.close()
 	call cp.file.saveVirtual( "Models.txt", c )
-	m = "<a href=""" & cp.site.filePath & "Models.txt"">Models.txt</a>"
+	m = "<a href=""" & cp.Http.CdnFilePathPrefix & "Models.txt"">Models.txt</a>"
 end function
 
 function getModelFields( contentId )

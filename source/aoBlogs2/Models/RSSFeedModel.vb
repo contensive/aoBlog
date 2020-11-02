@@ -66,7 +66,7 @@ Namespace Models
         Public Shared Sub UpdateBlogFeed(cp As CPBaseClass)
             '
             Try
-                Call cp.Utils.ExecuteAddon(RSSProcessAddonGuid)
+                Call cp.Addon.Execute(RSSProcessAddonGuid)
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)
             End Try

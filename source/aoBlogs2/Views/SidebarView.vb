@@ -183,7 +183,7 @@ Namespace Views
                                 Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By RSS")
                                 Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
                                 'http://aoblog/aoblog/files/rssfeeds/RSSFeed8.xml
-                                Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""http://" & cp.Site.DomainPrimary & cp.Site.FilePath & rssFeed.rssFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & Blog.name & " Feed" & "</a>")
+                                Call sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=""http://" & cp.Site.DomainPrimary & cp.Http.CdnFilePathPrefix & rssFeed.rssFilename & """><img id=""blogSidebarRSSLogo"" src=""/blogs/rss.png"" width=""25"" height=""25"">" & blog.name & " Feed" & "</a>")
                                 Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
                                 Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
                                 cellList &= vbCrLf & vbTab & "<div id=""blogSidebarRSSCell"">" & sidebarCell.GetHtml() & "</div>"

@@ -695,7 +695,7 @@ Namespace Models
                     If (Not contentLoaded) Then
                         If (Not String.IsNullOrEmpty(filename)) And (internalCp IsNot Nothing) Then
                             contentLoaded = True
-                            _content = internalCp.File.Read(filename)
+                            _content = internalCp.CdnFiles.Read(filename)
                         End If
                     End If
                     Return _content

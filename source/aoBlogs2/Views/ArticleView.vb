@@ -176,7 +176,7 @@ Namespace Views
                         ' todo re-enable recaptcha 20190123
                         If Blog.recaptcha Then
                             result &= "<div class=""aoBlogCommentCopy"">Verify Text</div>"
-                            result &= "<div class=""aoBlogCommentCopy"">" & cp.Utils.ExecuteAddon(reCaptchaDisplayGuid) & "</div>"
+                            result &= "<div class=""aoBlogCommentCopy"">" & cp.Addon.Execute(reCaptchaDisplayGuid) & "</div>"
                         End If
                         '
                         result &= "<div class=""aoBlogCommentCopy"">" & cp.Html.Button(rnButton, FormButtonPostComment) & "&nbsp;" & cp.Html.Button(rnButton, FormButtonCancel) & "</div>"
@@ -259,7 +259,7 @@ Namespace Views
                             Dim optionStr As String = "Challenge=" + cp.Doc.GetText("recaptcha_challenge_field")
                             optionStr = optionStr & "&Response=" + cp.Doc.GetText("recaptcha_response_field")
                             Dim WrapperId As Integer = Nothing
-                            Dim captchaResponse As String = cp.Utils.ExecuteAddon(reCaptchaProcessGuid)
+                            Dim captchaResponse As String = cp.Addon.Execute(reCaptchaProcessGuid)
                             If captchaResponse <> "" Then
                                 Call cp.UserError.Add("The verify text you entered did not match correctly. Please try again.")
                             End If
@@ -313,8 +313,8 @@ Namespace Views
                                     Dim EmailFromAddress As String = cp.Site.GetText("EmailFromAddress", "info@" & cp.Site.Domain)
 
                                     If BlogEntry.AuthorMemberID <> 0 Then
-                                        Call cp.Email.sendUser(BlogEntry.AuthorMemberID.ToString, EmailFromAddress, "Blog comment notification for [" & Blog.name & "]", EmailBody, True, False)
-                                        Call cp.Email.sendUser(BlogEntry.AuthorMemberID.ToString(), EmailFromAddress, "Blog comment notification for [" & Blog.name & "]", EmailBody, False, False)
+                                        Call cp.Email.sendUser(blogEntry.AuthorMemberID, EmailFromAddress, "Blog comment notification for [" & blog.name & "]", EmailBody, True, False)
+                                        Call cp.Email.sendUser(blogEntry.AuthorMemberID, EmailFromAddress, "Blog comment notification for [" & blog.name & "]", EmailBody, False, False)
                                     End If
 
                                     'If blog.AuthoringGroupID <> 0 Then
@@ -327,7 +327,7 @@ Namespace Views
                                     If blogAuthorsGroupId <> 0 Then
                                         Dim MemberRuleList As List(Of MemberRuleModel) = DbModel.createList(Of MemberRuleModel)(cp, "GroupId=" & blogAuthorsGroupId)
                                         For Each MemberRule In MemberRuleList
-                                            Call cp.Email.sendUser(MemberRule.MemberID.ToString(), EmailFromAddress, "Blog comment on " & Blog.name, EmailBody, False, False)
+                                            Call cp.Email.sendUser(MemberRule.MemberID, EmailFromAddress, "Blog comment on " & blog.name, EmailBody, False, False)
                                         Next
                                     End If
                                 End If
@@ -359,7 +359,7 @@ Namespace Views
                                                 '
                                                 ' Approve Comment
                                                 '
-                                                Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(name=" & cp.Utils.EncodeQueryString(Blog.name) & ")", "ID")
+                                                Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(name=" & cp.Utils.EncodeRequestVariable(blog.name) & ")", "ID")
                                                 If (BlogCommentModelList.Count > 0) Then
                                                     Dim BlogComment As BlogCommentModel = DbModel.add(Of BlogCommentModel)(cp)
                                                     If cp.CSNew.OK() Then

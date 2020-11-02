@@ -44,18 +44,18 @@ Namespace Views
                             Case 2
                                 '
                                 ' align right
-                                result &= "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:40%;"">"
+                                result &= "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Http.CdnFilePathPrefix & ThumbnailFilename & """ style=""width:40%;"">"
                             Case 3
                                 '
                                 ' align left
-                                result &= "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:40%;"">"
+                                result &= "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Http.CdnFilePathPrefix & ThumbnailFilename & """ style=""width:40%;"">"
                             Case 4
                                 '
                                 ' hide
                             Case Else
                                 '
                                 ' 1 and none align per stylesheet
-                                result &= "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:40%;"">"
+                                result &= "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Http.CdnFilePathPrefix & ThumbnailFilename & """ style=""width:40%;"">"
                         End Select
                     End If
                     result &= blogEntry.copy & "</div>"
@@ -75,7 +75,7 @@ Namespace Views
                     '        If imageFilename <> "" Then
                     '            c = c _
                     '            &  "<div class=""aoBlogEntryImageContainer"">" _
-                    '            &  "<img alt=""" & imageName & """ title=""" & imageName & """  src=""" & cp.Site.FilePath & imageFilename & """>"
+                    '            &  "<img alt=""" & imageName & """ title=""" & imageName & """  src=""" & cp.Http.CdnFilePathPrefix & imageFilename & """>"
                     '            If imageName <> "" Then
                     '                c = c &  "<h2>" & imageName & "</h2>"
                     '            End If
@@ -137,14 +137,14 @@ Namespace Views
                                     '
                                     ' align right
                                     '
-                                    'result &=  "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & blog.ThumbnailImageWidth & "px;""></a>"
-                                    result &= "<a href=""" & entryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:25%;""></a>"
+                                    'result &=  "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Http.CdnFilePathPrefix & ThumbnailFilename & """ style=""width:" & blog.ThumbnailImageWidth & "px;""></a>"
+                                    result &= "<a href=""" & entryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Http.CdnFilePathPrefix & ThumbnailFilename & """ style=""width:25%;""></a>"
                                 Case 3
                                     '
                                     ' align left
                                     '
-                                    ' result &=  "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & blog.ThumbnailImageWidth & "px;""></a>"
-                                    result &= "<a href=""" & entryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:25%;""></a>"
+                                    ' result &=  "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Http.CdnFilePathPrefix & ThumbnailFilename & """ style=""width:" & blog.ThumbnailImageWidth & "px;""></a>"
+                                    result &= "<a href=""" & entryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Http.CdnFilePathPrefix & ThumbnailFilename & """ style=""width:25%;""></a>"
                                 Case 4
                                     '
                                     ' hide
@@ -153,8 +153,8 @@ Namespace Views
                                     '
                                     ' 1 and none align per stylesheet
                                     '
-                                    'result &=  "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:" & blog.ThumbnailImageWidth & "px;""></a>"
-                                    result &= "<a href=""" & entryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Site.FilePath & ThumbnailFilename & """ style=""width:25%;""></a>"
+                                    'result &=  "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Http.CdnFilePathPrefix & ThumbnailFilename & """ style=""width:" & blog.ThumbnailImageWidth & "px;""></a>"
+                                    result &= "<a href=""" & entryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Http.CdnFilePathPrefix & ThumbnailFilename & """ style=""width:25%;""></a>"
 
                             End Select
                         End If
