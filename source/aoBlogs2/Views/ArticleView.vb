@@ -1,9 +1,5 @@
 
-Imports System
-Imports System.Collections.Generic
-Imports System.Linq
-Imports System.Text
-Imports System.Text.RegularExpressions
+Imports System.Runtime.CompilerServices
 Imports Contensive.Addons.Blog.Controllers
 Imports Contensive.Addons.Blog.Models
 Imports Contensive.BaseClasses
@@ -15,8 +11,9 @@ Namespace Views
         '====================================================================================
         '
         Public Shared Function getArticleView(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel, RetryCommentPost As Boolean) As String
-            Dim result As String = ""
+            Dim hint As Integer = 0
             Try
+                Dim result As String = ""
                 Dim blog As BlogModel = app.blog
                 Dim blogEntry As BlogEntryModel = app.blogEntry
                 Dim user As PersonModel = app.user
@@ -25,6 +22,7 @@ Namespace Views
                 Dim formKey As String = "{" & Guid.NewGuid().ToString() & "}" ' cp.Utils.enc  Main.EncodeKeyNumber(Main.VisitID, Now())
                 result = vbCrLf & cp.Html.Hidden("FormKey", formKey)
                 result &= "<div class=""aoBlogHeaderLink""><a href=""" & app.blogPageBaseLink & """>" & BackToRecentPostsMsg & "</a></div>"
+                hint = 10
                 '
                 ' Print the Blog Entry
                 Dim CommentCnt As Integer = 0
@@ -33,11 +31,12 @@ Namespace Views
                 Dim EntryPtr As Integer
                 Dim qs As String
                 If (blogEntry IsNot Nothing) Then
-
-                    'Dim BlogEntry As BlogEntryModel = blogEntryList.First
+                    hint = 20
+                    '
                     If Not (blogEntry IsNot Nothing) Then
                         result &= "<div class=""aoBlogProblem"">Sorry, the blog post you selected is not currently available</div>"
                     Else
+                        hint = 30
                         Dim AuthorMemberID As Integer = blogEntry.AuthorMemberID
                         If AuthorMemberID = 0 Then
                             AuthorMemberID = blogEntry.CreatedBy
@@ -67,6 +66,7 @@ Namespace Views
                     End If
                     '
                 End If
+                hint = 40
                 '
                 Dim criteria As String = ""
                 Dim VisitModel As New VisitModel
@@ -81,8 +81,9 @@ Namespace Views
                         BlogViewingLog.save(Of BlogModel)(cp)
                     End If
                 End If
+                hint = 50
                 '
-                If user.isBlogEditor(cp, Blog) And (Return_CommentCnt > 0) Then
+                If user.isBlogEditor(cp, blog) And (Return_CommentCnt > 0) Then
                     result &= "<div class=""aoBlogCommentCopy"">" & cp.Html.Button(FormButtonApplyCommentChanges) & "</div>"
                 End If
                 '
@@ -90,14 +91,17 @@ Namespace Views
                 Dim AllowPasswordEmail As Boolean
                 Dim AllowMemberJoin As Boolean
                 '
+                hint = 60
                 If allowComments And (cp.Visit.CookieSupport) And (Not VisitModel.Bot()) Then
+                    hint = 70
                     result &= "<div class=""aoBlogCommentHeader"">Post a Comment</div>"
                     '
                     If Not (cp.UserError.OK()) Then
                         result &= "<div class=""aoBlogCommentError"">" & (cp.UserError.OK()) & "</div>"
                     End If
                     '
-                    If (Not Blog.AllowAnonymous) And (Not cp.User.IsAuthenticated) Then
+                    If (Not blog.AllowAnonymous) And (Not cp.User.IsAuthenticated) Then
+                        hint = 80
                         AllowPasswordEmail = cp.Site.GetBoolean("AllowPasswordEmail", False)
                         AllowMemberJoin = cp.Site.GetBoolean("AllowMemberJoin", False)
                         Auth = cp.Doc.GetInteger("auth")
@@ -111,8 +115,10 @@ Namespace Views
                         Call cp.Doc.AddRefreshQueryString("auth", "0")
                         qs = cp.Doc.RefreshQueryString()
                         Dim Copy As String
+                        hint = 90
                         Select Case Auth
                             Case 1
+                                hint = 100
                                 '
                                 ' password email
                                 '
@@ -129,6 +135,7 @@ Namespace Views
                                         & vbCrLf & vbTab & "<div class=""aoBlogCommentCopy"">" & "send password form removed" & "</div>" _
                                         & "</div>"
                             Case 2
+                                hint = 110
                                 '
                                 ' join
                                 '
@@ -145,6 +152,7 @@ Namespace Views
                                         & "<div class=""aoBlogCommentCopy"">" & "Send join form removed" & "</div>" _
                                         & "</div>"
                             Case Else
+                                hint = 120
                                 '
                                 ' login
                                 '
@@ -157,16 +165,19 @@ Namespace Views
                                         & "<div class=""aoBlogCommentCopy"">" & Copy & "</div>" _
                                         & "</div>"
                         End Select
-
+                        hint = 140
                     Else
+                        hint = 150
                         result &= "<div>&nbsp;</div>"
                         result &= "<div class=""aoBlogCommentCopy"">Title</div>"
                         If RetryCommentPost Then
+                            hint = 160
                             result &= "<div class=""aoBlogCommentCopy"">" & genericController.getField(cp, RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(RequestNameCommentTitle.ToString)) & "</div>"
                             result &= "<div>&nbsp;</div>"
                             result &= "<div class=""aoBlogCommentCopy"">Comment</div>"
                             result &= "<div class=""aoBlogCommentCopy"">" & cp.Html5.InputTextArea(RequestNameCommentCopy, 500, cp.Doc.GetText(RequestNameCommentCopy)) & "</div>"
                         Else
+                            hint = 170
                             result &= "<div class=""aoBlogCommentCopy"">" & genericController.getField(cp, RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(RequestNameCommentTitle.ToString)) & "</div>"
                             result &= "<div>&nbsp;</div>"
                             result &= "<div class=""aoBlogCommentCopy"">Comment</div>"
@@ -174,21 +185,23 @@ Namespace Views
                         End If
                         '
                         ' todo re-enable recaptcha 20190123
-                        If Blog.recaptcha Then
+                        hint = 180
+                        If blog.recaptcha Then
                             result &= "<div class=""aoBlogCommentCopy"">Verify Text</div>"
                             result &= "<div class=""aoBlogCommentCopy"">" & cp.Addon.Execute(reCaptchaDisplayGuid) & "</div>"
                         End If
                         '
                         result &= "<div class=""aoBlogCommentCopy"">" & cp.Html.Button(rnButton, FormButtonPostComment) & "&nbsp;" & cp.Html.Button(rnButton, FormButtonCancel) & "</div>"
                     End If
-
                 End If
-
+                hint = 190
+                '
                 result &= "<div class=""aoBlogCommentDivider"">&nbsp;</div>"
                 '
                 ' edit link
                 '
-                If user.isBlogEditor(cp, Blog) Then
+                hint = 200
+                If user.isBlogEditor(cp, blog) Then
                     qs = cp.Doc.RefreshQueryString()
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor.ToString())
@@ -197,6 +210,7 @@ Namespace Views
                 '
                 ' Search
                 '
+                hint = 210
                 qs = cp.Doc.RefreshQueryString
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogSearch.ToString(), True)
                 result &= "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>"
@@ -210,18 +224,22 @@ Namespace Views
                 getArticleView = result
                 result = cp.Html.Form(getArticleView)
                 '
+                hint = 220
                 Call cp.Visit.SetProperty(SNBlogCommentName, CStr(cp.Utils.GetRandomInteger()))
                 '
                 ' -- set metadata
+                hint = 230
                 MetadataController.setMetadata(cp, blogEntry)
                 '
                 ' -- if editing enabled, add the link and wrapperwrapper
+                hint = 240
                 result = genericController.addEditWrapper(cp, result, blogEntry.id, blogEntry.name, Models.BlogEntryModel.contentName)
                 '
+                Return result
             Catch ex As Exception
-                cp.Site.ErrorReport(ex)
+                cp.Site.ErrorReport(ex, "Hint [" & hint & "]")
+                Throw
             End Try
-            Return result
         End Function
         '
         '====================================================================================
