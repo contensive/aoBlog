@@ -187,8 +187,8 @@ Namespace Views
                 hint = 200
                 If user.isBlogEditor(cp, blog) Then
                     qs = cp.Doc.RefreshQueryString()
-                    qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
-                    qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor.ToString())
+                    qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, blogEntry.id)
+                    qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor)
                     result &= "<div class=""aoBlogToolLink""><a href=""?" & qs & """>Edit</a></div>"
                 End If
                 '
@@ -196,15 +196,15 @@ Namespace Views
                 '
                 hint = 210
                 qs = cp.Doc.RefreshQueryString
-                qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogSearch.ToString(), True)
+                qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogSearch, True)
                 result &= "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>"
                 '
                 ' back to recent posts
                 result &= "<div class=""aoBlogFooterLink""><a href=""" & app.blogPageBaseLink & """>" & BackToRecentPostsMsg & "</a></div>"
                 '
-                result &= vbCrLf & cp.Html.Hidden(RequestNameSourceFormID, FormBlogPostDetails.ToString())
-                result &= vbCrLf & cp.Html.Hidden(RequestNameBlogEntryID, blogEntry.id.ToString())
-                result &= vbCrLf & cp.Html.Hidden("EntryCnt", EntryPtr.ToString())
+                result &= vbCrLf & cp.Html5.Hidden(RequestNameSourceFormID, FormBlogPostDetails)
+                result &= vbCrLf & cp.Html5.Hidden(RequestNameBlogEntryID, blogEntry.id)
+                result &= vbCrLf & cp.Html5.Hidden("EntryCnt", EntryPtr)
                 getArticleView = result
                 result = cp.Html.Form(getArticleView)
                 '
