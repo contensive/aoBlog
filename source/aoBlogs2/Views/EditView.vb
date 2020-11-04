@@ -194,6 +194,11 @@ Namespace Views
                 result.Append(cp.Html.Hidden(RequestNameBlogEntryID, blogEntry_id.ToString()))
                 result.Append(cp.Html.Hidden(RequestNameSourceFormID, FormBlogEntryEditor.ToString()))
                 result.Append("</table>")
+                '
+                ' -- *****************************************************
+                ' -- De-Vince this
+                ' -- *****************************************************
+                '
                 Call cp.Visit.SetProperty(SNBlogEntryName, CStr(cp.Utils.GetRandomInteger()))
                 Return cp.Html.Form(result.ToString())
             Catch ex As Exception

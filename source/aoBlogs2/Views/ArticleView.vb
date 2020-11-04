@@ -13,50 +13,34 @@ Namespace Views
         Public Shared Function getArticleView(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel, RetryCommentPost As Boolean) As String
             Dim hint As Integer = 0
             Try
-                Dim result As String = ""
-                Dim blog As BlogModel = app.blog
-                Dim blogEntry As BlogEntryModel = app.blogEntry
-                Dim user As PersonModel = app.user
+                If app.blogEntry Is Nothing Then
+                    '
+                    ' -- This article cannot be found
+                    Return "<div class=""aoBlogProblem"">Sorry, the blog post you selected is not currently available</div>"
+                End If
                 '
-                ' setup form key
-                Dim formKey As String = "{" & Guid.NewGuid().ToString() & "}" ' cp.Utils.enc  Main.EncodeKeyNumber(Main.VisitID, Now())
-                result &= cp.Html.Hidden("FormKey", formKey)
-                result &= "<div class=""aoBlogHeaderLink""><a href=""" & app.blogPageBaseLink & """>" & BackToRecentPostsMsg & "</a></div>"
+                ' -- count the viewing
+                cp.Db.ExecuteNonQuery("update " & BlogEntryModel.contentTableName & " set viewings=" & (app.blogEntry.Viewings + 1))
                 hint = 10
                 '
+                Dim result As String = ""
+                '
+                ' setup form key
+                Dim formKey As String = cp.Utils.CreateGuid()
+                result &= cp.Html.Hidden("FormKey", formKey)
+                result &= "<div class=""aoBlogHeaderLink""><a href=""" & app.blogPageBaseLink & """>" & BackToRecentPostsMsg & "</a></div>"
+                hint = 20
+                '
+                Dim entryEditLink As String = If(app.userIsEditing, cp.Content.GetEditLink(BlogModel.contentName, app.blogEntry.id.ToString(), False, app.blogEntry.name, True), "")
+                '
                 ' Print the Blog Entry
-                Dim Return_CommentCnt As Integer
-                Dim allowComments As Boolean
-                Dim EntryPtr As Integer
-                If (blogEntry IsNot Nothing) Then
-                    hint = 20
-                    '
-                    If Not (blogEntry IsNot Nothing) Then
-                        result &= "<div class=""aoBlogProblem"">Sorry, the blog post you selected is not currently available</div>"
-                    Else
-                        hint = 30
-                        Dim AuthorMemberID As Integer = blogEntry.AuthorMemberID
-                        If AuthorMemberID = 0 Then
-                            AuthorMemberID = blogEntry.CreatedBy
-                        End If
-                        Dim DateAdded As Date = blogEntry.DateAdded
-                        Dim EntryName As String = blogEntry.name
-                        If cp.User.IsEditing("Blogs") Then
-                            Dim entryEditLink As String = cp.Content.GetEditLink(BlogModel.contentName, blogEntry.id.ToString(), False, EntryName, True)
-                        End If
-                        allowComments = blogEntry.AllowComments
-                        blogEntry.Viewings = (1 + cp.Doc.GetInteger("viewings"))
-                        blogEntry.primaryImagePositionId = cp.Doc.GetInteger("primaryImagePositionId")
-                        result &= BlogEntryCellView.getBlogEntryCell(cp, app, blogEntry, True, False, Return_CommentCnt, "")
-                        EntryPtr += 1
-                    End If
-                End If
-                hint = 40
+                Dim return_CommentCnt As Integer
+                result &= BlogEntryCellView.getBlogEntryCell(cp, app, app.blogEntry, True, False, return_CommentCnt, entryEditLink)
                 '
                 Dim visit As VisitModel = VisitModel.create(cp, cp.Visit.Id)
                 If (visit IsNot Nothing) Then
                     If (Not visit.ExcludeFromAnalytics) Then
-                        Dim blogEntryId As Integer = If(blogEntry IsNot Nothing, blogEntry.id, 0)
+                        Dim blogEntryId As Integer = If(app.blogEntry IsNot Nothing, app.blogEntry.id, 0)
                         Dim BlogViewingLog As BlogViewingLogModel = DbModel.add(Of BlogViewingLogModel)(cp)
                         If (BlogViewingLog IsNot Nothing) Then
                             BlogViewingLog.name = cp.User.Name & ", post " & CStr(blogEntryId) & ", " & Now()
@@ -69,13 +53,13 @@ Namespace Views
                 End If
                 hint = 50
                 '
-                If user.isBlogEditor(cp, blog) And (Return_CommentCnt > 0) Then
+                If app.user.isBlogEditor(cp, app.blog) And (return_CommentCnt > 0) Then
                     result &= "<div class=""aoBlogCommentCopy"">" & cp.Html.Button(FormButtonApplyCommentChanges) & "</div>"
                 End If
                 '
                 hint = 60
                 Dim qs As String
-                If allowComments And (cp.Visit.CookieSupport) And (Not visit.Bot()) Then
+                If app.blogEntry.AllowComments And (cp.Visit.CookieSupport) And (Not visit.Bot()) Then
                     hint = 70
                     result &= "<div class=""aoBlogCommentHeader"">Post a Comment</div>"
                     '
@@ -83,7 +67,7 @@ Namespace Views
                         result &= "<div class=""aoBlogCommentError"">" & (cp.UserError.OK()) & "</div>"
                     End If
                     '
-                    If (Not blog.AllowAnonymous) And (Not cp.User.IsAuthenticated) Then
+                    If (Not app.blog.AllowAnonymous) And (Not cp.User.IsAuthenticated) Then
                         hint = 80
                         Dim AllowPasswordEmail As Boolean = cp.Site.GetBoolean("AllowPasswordEmail", False)
                         Dim AllowMemberJoin As Boolean = cp.Site.GetBoolean("AllowMemberJoin", False)
@@ -95,7 +79,7 @@ Namespace Views
                             Auth = 3
                         End If
                         Call cp.Doc.AddRefreshQueryString(RequestNameFormID, FormBlogPostDetails.ToString())
-                        Call cp.Doc.AddRefreshQueryString(RequestNameBlogEntryID, blogEntry.id.ToString())
+                        Call cp.Doc.AddRefreshQueryString(RequestNameBlogEntryID, app.blogEntry.id.ToString())
                         Call cp.Doc.AddRefreshQueryString("auth", "0")
                         qs = cp.Doc.RefreshQueryString()
                         Dim Copy As String
@@ -170,7 +154,7 @@ Namespace Views
                         '
                         ' todo re-enable recaptcha 20190123
                         hint = 180
-                        If blog.recaptcha Then
+                        If app.blog.recaptcha Then
                             result &= "<div class=""aoBlogCommentCopy"">Verify Text</div>"
                             result &= "<div class=""aoBlogCommentCopy"">" & cp.Addon.Execute(reCaptchaDisplayGuid) & "</div>"
                         End If
@@ -185,9 +169,9 @@ Namespace Views
                 ' edit link
                 '
                 hint = 200
-                If user.isBlogEditor(cp, blog) Then
+                If app.user.isBlogEditor(cp, app.blog) Then
                     qs = cp.Doc.RefreshQueryString()
-                    qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, blogEntry.id)
+                    qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, app.blogEntry.id)
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor)
                     result &= "<div class=""aoBlogToolLink""><a href=""?" & qs & """>Edit</a></div>"
                 End If
@@ -203,8 +187,8 @@ Namespace Views
                 result &= "<div class=""aoBlogFooterLink""><a href=""" & app.blogPageBaseLink & """>" & BackToRecentPostsMsg & "</a></div>"
                 '
                 result &= vbCrLf & cp.Html5.Hidden(RequestNameSourceFormID, FormBlogPostDetails)
-                result &= vbCrLf & cp.Html5.Hidden(RequestNameBlogEntryID, blogEntry.id)
-                result &= vbCrLf & cp.Html5.Hidden("EntryCnt", EntryPtr)
+                result &= vbCrLf & cp.Html5.Hidden(RequestNameBlogEntryID, app.blogEntry.id)
+                result &= vbCrLf & cp.Html5.Hidden("EntryCnt", 1)
                 getArticleView = result
                 result = cp.Html.Form(getArticleView)
                 '
@@ -213,11 +197,11 @@ Namespace Views
                 '
                 ' -- set metadata
                 hint = 230
-                MetadataController.setMetadata(cp, blogEntry)
+                MetadataController.setMetadata(cp, app.blogEntry)
                 '
                 ' -- if editing enabled, add the link and wrapperwrapper
                 hint = 240
-                result = genericController.addEditWrapper(cp, result, blogEntry.id, blogEntry.name, Models.BlogEntryModel.contentName)
+                result = genericController.addEditWrapper(cp, result, app.blogEntry.id, app.blogEntry.name, Models.BlogEntryModel.contentName)
                 '
                 Return result
             Catch ex As Exception

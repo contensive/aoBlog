@@ -95,7 +95,7 @@ Namespace Views
                         End If
                         Dim DateAdded As Date = blogEntry.DateAdded
                         Dim EntryName As String = blogEntry.name
-                        If cp.User.IsEditing("Blogs") Then
+                        If app.userIsEditing Then
                             entryEditLink = cp.Content.GetEditLink(EntryName, EntryID.ToString(), True, EntryName, True)
                         End If
                         Dim EntryCopy As String = blogEntry.copy
