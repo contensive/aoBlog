@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="windows-1252"?>
-<Collection name="Blog" guid="{13bb6661-3056-455e-b80d-b13779d11d2b}" system="No" updatable="Yes" blockNavigatorNode="No">
+<Collection name="Blog" guid="{13bb6661-3056-455e-b80d-b13779d11d2b}" system="No" updatable="Yes" blockNavigatorNode="No" onInstallAddonGuid="{F0DDB73F-0894-4510-A657-64CC5459E7BC}">
 	<HelpLink>http://wiki.kmacloud.net/index.php?title=Blogs</HelpLink>
 	<Help></Help>
+	<Addon name="Blog Install" guid="{F0DDB73F-0894-4510-A657-64CC5459E7BC}" type="Add-on">
+		<Scripting Language="VBScript" EntryPoint="" Timeout="5000">
+			<Code><![CDATA[
+		function f
+			'
+			' -- delete legacy blog
+			cp.db.executeNonQuery("delete from ccaggregatefunctions where ccguid='{656E95EA-2799-45CD-9712-D4CEDF0E2D02}'")
+			'
+			' -- delete blog categores list
+			cp.db.executeNonQuery("delete from ccaggregatefunctions where ccguid='{534B4D50-B894-42BC-AB42-7AF6EC6265DE}'")
+		end function
+		]]></Code>
+		</Scripting>
+	</Addon>
+
 	<Addon name="Blog" guid="{7B7614BB-92E5-4D91-8A60-2058401B8524}" type="Add-on">
 		<Copy></Copy>
 		<CopyText></CopyText>
@@ -45,55 +60,6 @@
 		<styleslinkhref><![CDATA[/blogs/blogs.css]]></styleslinkhref>
 		<Scripting Language="VBScript" EntryPoint="" Timeout="5000"/>
 		<instanceSettingPrimaryContentId><![CDATA[Blogs]]></instanceSettingPrimaryContentId>
-	</Addon>
-	<Addon name="Blog Categories List" guid="{534B4D50-B894-42BC-AB42-7AF6EC6265DE}" type="Add-on">
-		<Copy></Copy>
-		<CopyText></CopyText>
-		<ActiveXProgramID><![CDATA[aoBlogs.CategoriesClass]]></ActiveXProgramID>
-		<DotNetClass></DotNetClass>
-		<ArgumentList><![CDATA[Blog URL=]]></ArgumentList>
-		<AsAjax>No</AsAjax>
-		<Filter>No</Filter>
-		<Help></Help>
-		<HelpLink></HelpLink>
-		<Icon Link="" width="0" height="0" sprites="0" />
-		<InIframe>No</InIframe>
-		<BlockEditTools>No</BlockEditTools>
-		<FormXML></FormXML>
-		<IsInline>No</IsInline>
-		<JavascriptInHead></JavascriptInHead>
-		<javascriptForceHead>No</javascriptForceHead>
-		<JSHeadScriptSrc></JSHeadScriptSrc>
-		<!-- deprecated --><JSBodyScriptSrc></JSBodyScriptSrc>
-		<!-- deprecated --><JavascriptBodyEnd></JavascriptBodyEnd>
-		<!-- deprecated --><JavascriptOnLoad></JavascriptOnLoad>
-		<Content>Yes</Content>
-		<Template>Yes</Template>
-		<Email>No</Email>
-		<Admin>No</Admin>
-		<OnPageEndEvent>No</OnPageEndEvent>
-		<OnPageStartEvent>No</OnPageStartEvent>
-		<OnBodyStart>No</OnBodyStart>
-		<OnBodyEnd>No</OnBodyEnd>
-		<RemoteMethod>No</RemoteMethod>
-		<ProcessRunOnce>No</ProcessRunOnce>
-		<ProcessInterval>0</ProcessInterval>
-		<MetaDescription></MetaDescription>
-		<OtherHeadTags></OtherHeadTags>
-		<PageTitle></PageTitle>
-		<RemoteAssetLink></RemoteAssetLink>
-		<Category>Applications.Social Media</Category>
-		<Styles><![CDATA[
-
-			div.blogCatList {}
-			div.blogCatList ul {}
-			div.blogCatList ul li {}
-			div.blogCatList ul li.first {}
-			div.blogCatList ul li.last {}
-
-			]]></Styles>
-		<styleslinkhref></styleslinkhref>
-		<Scripting Language="VBScript" EntryPoint="" Timeout="5000"/>
 	</Addon>
 	<Addon name="Blog Change Processing" guid="{A139DCC9-88C0-4EE4-8702-58EB669D6B7B}" type="Add-on">
 		<Copy></Copy>

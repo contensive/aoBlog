@@ -1,9 +1,4 @@
-﻿
-Imports System
-Imports System.Collections.Generic
-Imports System.Linq
-Imports System.Text
-Imports Contensive.Addons.Blog.Controllers
+﻿Imports Contensive.Addons.Blog.Controllers
 Imports Contensive.Addons.Blog.Models
 Imports Contensive.BaseClasses
 

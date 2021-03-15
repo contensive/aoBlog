@@ -90,6 +90,7 @@
     <Import Include="System.Diagnostics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Addons\BlogCategoriesClass.vb" />
     <Compile Include="constants.vb" />
     <Compile Include="Controllers\ApplicationController.vb" />
     <Compile Include="Controllers\MetadataController.vb" />
@@ -127,7 +128,7 @@
     <Compile Include="Views\SearchView.vb" />
     <Compile Include="Views\ArticleView.vb" />
     <Compile Include="Views\EditView.vb" />
-    <Compile Include="Views\BlogClass.vb" />
+    <Compile Include="Addons\BlogClass.vb" />
     <Compile Include="Controllers\BlogBodyController.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
@@ -144,7 +145,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Views\SubscribeEmailClass.vb" />
+    <Compile Include="Addons\SubscribeEmailClass.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
