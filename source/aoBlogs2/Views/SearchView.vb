@@ -1,9 +1,4 @@
-
-Imports System
-Imports System.Collections.Generic
-Imports System.Linq
 Imports System.Text
-Imports System.Text.RegularExpressions
 Imports Contensive.Addons.Blog.Controllers
 Imports Contensive.Addons.Blog.Models
 Imports Contensive.BaseClasses
@@ -28,7 +23,7 @@ Namespace Views
                 Dim Button As String = cp.Doc.GetText("button")
                 If (Button = FormButtonSearch) Or (QueryTag <> "") Then
                     Dim Subcaption As String = ""
-                    Dim sqlCriteria As New StringBuilder("(blogid=" & Blog.id & ")")
+                    Dim sqlCriteria As New StringBuilder("(blogid=" & blog.id & ")")
                     '
                     ' -- Date
                     Dim DateSearch As Date = Date.MinValue
@@ -71,7 +66,7 @@ Namespace Views
                     End If
                     result.Append("<h4 class=""aoBlogEntryCopy"">" & Subcaption & "</h4>")
                     '
-                    Dim BlogEntryList = DbModel.createList(Of BlogEntryModel)(cp, sqlCriteria.ToString())
+                    Dim BlogEntryList = DbModel.createList(Of BlogPostModel)(cp, sqlCriteria.ToString())
                     If (BlogEntryList.Count = 0) Then
                         result.Append("</br>" & "<div class=""aoBlogProblem"">There were no matches to your search</div>")
                     Else
@@ -80,7 +75,7 @@ Namespace Views
                             Dim AuthorMemberID As Integer = blogEntry.AuthorMemberID
                             If AuthorMemberID = 0 Then AuthorMemberID = blogEntry.CreatedBy
                             Dim Return_CommentCnt As Integer
-                            result.Append(BlogEntryCellView.getBlogEntryCell(cp, app, blogEntry, False, True, Return_CommentCnt, ""))
+                            result.Append(BlogEntryCellView.getBlogPostCell(cp, app, blogEntry, False, True, Return_CommentCnt, ""))
                             result.Append("<hr>")
                         Next
                     End If

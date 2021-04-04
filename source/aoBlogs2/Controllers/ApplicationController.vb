@@ -7,7 +7,10 @@ Public Class ApplicationController
     Public ReadOnly Property cp As CPBaseClass
     '
     '====================================================================================================
-    '
+    ''' <summary>
+    ''' The user at the keyboard is editing
+    ''' </summary>
+    ''' <returns></returns>
     Public ReadOnly Property userIsEditing As Boolean
         Get
             If local_userIsEditing Is Nothing Then
@@ -19,24 +22,98 @@ Public Class ApplicationController
     Private Property local_userIsEditing As Boolean? = Nothing
     '
     '====================================================================================================
-    '
-    Public Property blog As BlogModel
-    '
-    '====================================================================================================
-    '
-    Public Property blogEntry As BlogEntryModel
-    '
-    '====================================================================================================
-    '
-    Public Property user As PersonModel
-    '
-    '====================================================================================================
-    '
-    Public Property blogListLink As String
+    ''' <summary>
+    ''' blog set during construction
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property blog As BlogModel
+        Get
+            '
+            ' -- blog set during object constructor
+            Return local_blog
+        End Get
+    End Property
+    Private local_blog As BlogModel = Nothing
     '
     '====================================================================================================
+    ''' <summary>
+    ''' Current Blog Entry. Returns null if no valid entry
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property blogEntry As BlogPostModel
+        Get
+            '
+            ' -- return if set
+            If (local_blogEntry IsNot Nothing) Then Return local_blogEntry
+            '
+            ' -- return null if no blog entry for this doc
+            If (local_blogEntryId Is Nothing) OrElse (local_blogEntryId = 0) Then Return Nothing
+            '
+            ' -- lookup and return the blog entry
+            local_blogEntry = DbModel.create(Of BlogPostModel)(cp, cp.Utils.EncodeInteger(local_blogEntryId))
+            Return local_blogEntry
+        End Get
+    End Property
+    Private ReadOnly local_blogEntryId As Integer? = Nothing
+    Private local_blogEntry As BlogPostModel = Nothing
     '
-    Public Property RSSFeed As RSSFeedModel
+    '====================================================================================================
+    ''' <summary>
+    ''' The current user at the keyboard
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property user As PersonModel
+        Get
+            If (local_user Is Nothing) Then
+                local_user = PersonModel.create(cp, cp.User.Id)
+            End If
+            Return local_user
+        End Get
+    End Property
+    Private local_user As PersonModel = Nothing
+    '
+    '====================================================================================================
+    ''' <summary>
+    ''' link to the blogs list page
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property blogListLink As String
+        Get
+            If (local_blogListLink IsNot Nothing) Then Return local_blogListLink
+            local_blogListLink = cp.Doc.RefreshQueryString()
+            local_blogListLink = cp.Utils.ModifyQueryString(local_blogListLink, RequestNameSourceFormID, "")
+            local_blogListLink = cp.Utils.ModifyQueryString(local_blogListLink, RequestNameFormID, "")
+            local_blogListLink = cp.Utils.ModifyQueryString(local_blogListLink, RequestNameBlogCategoryID, "")
+            local_blogListLink = cp.Utils.ModifyQueryString(local_blogListLink, RequestNameBlogEntryID, "")
+            Return local_blogListLink
+        End Get
+    End Property
+    Private local_blogListLink As String = Nothing
+    '
+    '====================================================================================================
+    ''' <summary>
+    ''' RSS feed for this blog?
+    ''' </summary>
+    ''' <returns></returns>
+    Public ReadOnly Property rssFeed As RSSFeedModel
+        Get
+            If (local_RSSFeed Is Nothing) Then
+                '
+                ' Get the Feed Args
+                local_RSSFeed = DbModel.create(Of RSSFeedModel)(cp, blog.RSSFeedID)
+                If (local_RSSFeed Is Nothing) Then
+                    local_RSSFeed = DbModel.add(Of RSSFeedModel)(cp)
+                    local_RSSFeed.name = blog.Caption
+                    local_RSSFeed.description = "This is your First RssFeed"
+                    local_RSSFeed.save(Of BlogModel)(cp)
+                    blog.RSSFeedID = local_RSSFeed.id
+                    blog.save(Of BlogModel)(cp)
+                End If
+            End If
+            Return local_RSSFeed
+        End Get
+    End Property
+    Private local_RSSFeed As RSSFeedModel = Nothing
     '
     '====================================================================================================
     '
@@ -48,25 +125,7 @@ Public Class ApplicationController
         '
         Me.cp = cp
         '
-        Me.blog = blog
-        user = PersonModel.create(cp, cp.User.Id)
-        blogListLink = cp.Doc.RefreshQueryString()
-        blogListLink = cp.Utils.ModifyQueryString(blogListLink, RequestNameSourceFormID, "")
-        blogListLink = cp.Utils.ModifyQueryString(blogListLink, RequestNameFormID, "")
-        blogListLink = cp.Utils.ModifyQueryString(blogListLink, RequestNameBlogCategoryID, "")
-        blogListLink = cp.Utils.ModifyQueryString(blogListLink, RequestNameBlogEntryID, "")
+        local_blog = blog
         blogPageBaseLink = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, "", "")
-        blogEntry = DbModel.create(Of BlogEntryModel)(cp, blogEntryId)
-        '
-        ' Get the Feed Args
-        RSSFeed = DbModel.create(Of RSSFeedModel)(cp, blog.RSSFeedID)
-        If (RSSFeed Is Nothing) Then
-            RSSFeed = DbModel.add(Of RSSFeedModel)(cp)
-            RSSFeed.name = blog.Caption
-            RSSFeed.description = "This is your First RssFeed"
-            RSSFeed.save(Of BlogModel)(cp)
-            blog.RSSFeedID = RSSFeed.id
-            blog.save(Of BlogModel)(cp)
-        End If
     End Sub
 End Class

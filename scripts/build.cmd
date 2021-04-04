@@ -9,7 +9,20 @@ rem
 rem Setup deployment folder
 rem
 
-call env.cmd
+
+rem all paths are relative to the git scripts folder
+
+set appName=app200509
+set majorVersion=5
+set minorVersion=1
+set collectionName=Blog
+set solutionName=aoBlogs2.sln
+set collectionPath=..\collections\blog\
+set binPath=..\source\aoblogs2\bin\debug\
+set msbuildLocation=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\
+set deploymentFolderRoot=C:\deployments\aoBlog\Dev\
+
+
 set deploymentNumber=%1
 set year=%date:~12,4%
 set month=%date:~4,2%
@@ -65,3 +78,5 @@ del "%collectionName%.zip" /Q
 "c:\program files\7-zip\7z.exe" a "%collectionName%.zip"
 xcopy "%collectionName%.zip" "%deploymentFolderRoot%%deploymentNumber%" /Y
 cd ..\..\scripts
+
+pause

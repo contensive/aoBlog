@@ -1,33 +1,30 @@
-
-Imports System
-Imports System.Collections.Generic
-Imports System.IO
 Imports System.Linq
 Imports System.Text
-Imports System.Text.RegularExpressions
 Imports Contensive.Addons.Blog.Controllers
 Imports Contensive.Addons.Blog.Models
 Imports Contensive.BaseClasses
 
 Namespace Views
     '
-    Public Class EditView
+    Public NotInheritable Class EditView
         '
         '====================================================================================
         '
-        Public Shared Function GetFormBlogEdit(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel) As String
+        Public Shared Function getFormBlogEdit(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel) As String
             Dim result As New StringBuilder()
             Try
-                Dim blog As BlogModel = app.blog
-                Dim blogEntry As BlogEntryModel = app.blogEntry
+                '
+                result.Append("<table width=100% border=0 cellspacing=0 cellpadding=5 class=""aoBlogPostTable"">")
+                '
+                ' -- create properties that can be either from the model, or the request
                 Dim blogEntry_id As Integer = 0
                 Dim blogEntry_copy As String = ""
                 Dim blogEntry_tagList As String = ""
                 Dim blogEntry_name As String = ""
                 Dim blongEntry_blogCategoryId As Integer = 0
-                '
-                result.Append("<table width=100% border=0 cellspacing=0 cellpadding=5 class=""aoBlogPostTable"">")
-                If (blogEntry Is Nothing) Then
+                If (app.blogEntry Is Nothing) Then
+                    '
+                    ' -- Create a new blog post
                     result.Append("<h2>Create a new blog post</h2>")
                     If (request.ButtonValue = FormButtonPost) Then
                         '
@@ -40,11 +37,11 @@ Namespace Views
                 Else
                     '
                     ' Edit an entry
-                    blogEntry_id = blogEntry.id
-                    blogEntry_name = blogEntry.name
-                    blogEntry_tagList = blogEntry.tagList
-                    blongEntry_blogCategoryId = blogEntry.blogCategoryID
-                    blogEntry_copy = blogEntry.copy
+                    blogEntry_id = app.blogEntry.id
+                    blogEntry_name = app.blogEntry.name
+                    blogEntry_tagList = app.blogEntry.tagList
+                    blongEntry_blogCategoryId = app.blogEntry.blogCategoryID
+                    blogEntry_copy = app.blogEntry.copy
                     If blogEntry_copy = "" Then
                         blogEntry_copy = "<!-- cc --><p><br></p><!-- /cc -->"
                     End If
@@ -52,7 +49,7 @@ Namespace Views
                 result.Append(genericController.getFormTableRow(cp, "<div style=""padding-top:3px"">Title: </div>", cp.Html.InputText(RequestNameBlogEntryName, blogEntry_name, 255, "form-control")))
                 result.Append(genericController.getFormTableRow(cp, "<div style=""padding-top:108px"">Post: </div>", cp.Html.InputWysiwyg(RequestNameBlogEntryCopy, blogEntry_copy, CPHtmlBaseClass.EditorUserScope.ContentManager)))
                 result.Append(genericController.getFormTableRow(cp, "<div style=""padding-top:3px"">Tag List: </div>", cp.Html.InputText(RequestNameBlogEntryTagList, blogEntry_tagList, 255, "form-control")))
-                If blog.AllowCategories Then
+                If app.blog.AllowCategories Then
                     Dim CategorySelect As String = cp.Html.SelectContent(RequestNameBlogEntryCategoryID, blongEntry_blogCategoryId.ToString(), "Blog Categories")
                     If (InStr(1, CategorySelect, "<option value=""""></option></select>", vbTextCompare) <> 0) Then
                         '
@@ -83,7 +80,7 @@ Namespace Views
                                     & ""
                     End If
                     '
-                    '   image
+                    ' -- image
                     '
                     imageForm = imageForm _
                                 & "<tr>" _
@@ -94,15 +91,7 @@ Namespace Views
                                 & "</tr>" _
                                 & ""
                     '
-                    '   order
-                    '
-                    'imageForm = imageForm _
-                    '    & "<tr>" _
-                    '    & "<td>Order<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageOrder & "." & Ptr & """ SIZE=""2"" value=""" & Ptr & """></td>" _
-                    '    & "</tr>" _
-                    '    & ""
-                    '
-                    '   name
+                    ' -- name
                     '
                     imageForm = imageForm _
                                 & "<tr>" _
@@ -111,7 +100,7 @@ Namespace Views
                                 & ""
                     Dim ImageID As Integer
                     '
-                    '   description
+                    ' -- description
                     '
                     imageForm = imageForm _
                                 & "<tr>" _
@@ -120,42 +109,33 @@ Namespace Views
                                 & ""
                     Ptr = Ptr + 1
                 End If
-
-                ' Next
                 '
-                'row delimiter
-
+                ' -- Next
+                '
                 imageForm = imageForm _
                             & "<TR style=""padding-bottom:10px; padding-bottom:10px;"">" _
                             & "<td><HR></td>" _
                             & "</tr>" _
                             & ""
-                ''
-                ''   order
-                ''
-                'imageForm = imageForm _
-                '        & "<tr>" _
-                '        & "<td align=""left"">Order<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageOrder & "." & Ptr & """ SIZE=""2"" value=""" & Ptr & """></td>" _
-                '        & "</tr>" _
-                '        & ""
-                ''
-                ''   image
-                ''
+                '
+                ' -- image
+                '
                 If Ptr = 1 Then
                     imageForm = imageForm _
                            & "<tr>" _
                            & "<td align=""left"">Image<br><INPUT TYPE=""file"" name=""LibraryUpload." & Ptr & """></td>" _
                            & "</tr>" _
                            & ""
-                    ''   name
-                    ''
+                    '
+                    ' -- image name
+                    '
                     imageForm = imageForm _
                                 & "<tr>" _
                                 & "<td align=""left"">Name<br><INPUT TYPE=""Text"" NAME=""" & rnBlogImageName & "." & Ptr & """ SIZE=""25""></td>" _
                                 & "</tr>" _
                                 & ""
                     '
-                    '   description
+                    ' -- image description
                     '
                     imageForm = imageForm _
                                 & "<tr>" _
@@ -163,9 +143,6 @@ Namespace Views
                                 & "</tr>" _
                                 & ""
                 End If
-
-                ''
-
                 '
                 imageForm = imageForm _
                             & "</Table>" _
@@ -177,19 +154,14 @@ Namespace Views
                 '
                 result.Append(genericController.getFormTableRow(cp, "Images: ", imageForm))
                 If blogEntry_id <> 0 Then
-                    'hint =  "6"
                     result.Append(genericController.getFormTableRow(cp, "", cp.Html.Button(rnButton, FormButtonPost) & "&nbsp;" & cp.Html.Button(rnButton, FormButtonCancel) & "&nbsp;" & cp.Html.Button(rnButton, FormButtonDelete)))
                 Else
-                    'hint =  "7"
                     result.Append(genericController.getFormTableRow(cp, "", cp.Html.Button(rnButton, FormButtonPost) & "&nbsp;" & cp.Html.Button(rnButton, FormButtonCancel)))
                 End If
-                'hint =  "8"
                 Dim qs As String = cp.Doc.RefreshQueryString()
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, "", True)
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostList.ToString())
-                'hint =  "9"
                 result.Append(vbCrLf & genericController.getFormTableRow2(cp, "<div class=""aoBlogFooterLink""><a href=""" & app.blogPageBaseLink & """>" & BackToRecentPostsMsg & "</a></div>"))
-
                 '
                 result.Append(cp.Html.Hidden(RequestNameBlogEntryID, blogEntry_id.ToString()))
                 result.Append(cp.Html.Hidden(RequestNameSourceFormID, FormBlogEntryEditor.ToString()))
@@ -203,7 +175,7 @@ Namespace Views
                 Return cp.Html.Form(result.ToString())
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)
-                Return String.Empty
+                Throw
             End Try
         End Function
         '
@@ -217,7 +189,7 @@ Namespace Views
         Public Shared Function ProcessFormBlogEdit(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel) As Integer
             Try
                 Dim blog As BlogModel = app.blog
-                Dim blogEntry As BlogEntryModel = app.blogEntry
+                Dim blogEntry As BlogPostModel = app.blogEntry
                 If cp.Visit.GetText(SNBlogEntryName) <> "" Then
                     Call cp.Visit.GetText(SNBlogEntryName, "")
                     If request.ButtonValue = FormButtonCancel Then
@@ -228,7 +200,7 @@ Namespace Views
                     ElseIf request.ButtonValue = FormButtonDelete Then
                         '
                         ' Delete
-                        DbModel.delete(Of BlogEntryModel)(cp, blogEntry.id)
+                        DbModel.delete(Of BlogPostModel)(cp, blogEntry.id)
                         Call RSSFeedModel.UpdateBlogFeed(cp)
                         blogEntry = Nothing
                         Return FormBlogPostList
@@ -237,12 +209,12 @@ Namespace Views
                         ' Post
                         '
                         If (blogEntry Is Nothing) Then
-                            blogEntry = DbModel.add(Of BlogEntryModel)(cp)
+                            blogEntry = DbModel.add(Of BlogPostModel)(cp)
                             '
                             ' -- by default, the RSS feed should be checked for this new blog entry
                             Dim rule As RSSFeedBlogRuleModel = RSSFeedBlogRuleModel.add(cp)
                             rule.BlogPostID = blogEntry.id
-                            rule.RSSFeedID = app.RSSFeed.id
+                            rule.RSSFeedID = app.rssFeed.id
                             rule.save(cp)
                         End If
 
@@ -250,8 +222,8 @@ Namespace Views
                         blogEntry.copy = request.BlogEntryCopy
                         blogEntry.tagList = request.BlogEntryTagList
                         blogEntry.blogCategoryID = request.BlogEntryCategoryId
-                        blogEntry.blogID = Blog.id
-                        blogEntry.save(Of BlogEntryModel)(cp)
+                        blogEntry.blogID = blog.id
+                        blogEntry.save(Of BlogPostModel)(cp)
                         '
                         ' Upload files
                         '
@@ -278,7 +250,7 @@ Namespace Views
                                             BlogImage.name = imageName
                                             BlogImage.description = imageDescription
                                             BlogImage.SortOrder = New String(CChar("0"), 12 - imageOrder.ToString().Length) & imageOrder.ToString() ' String.Empty.PadLeft((12 - Len(imageOrder.ToString())), "0") & imageOrder
-                                            blogEntry.save(Of BlogEntryModel)(cp)
+                                            blogEntry.save(Of BlogPostModel)(cp)
                                         End If
                                     End If
                                 ElseIf imageFilename <> "" Then

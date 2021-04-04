@@ -739,18 +739,6 @@
             Methods to create a uniform admin UI interface
             </summary>
         </member>
-        <member name="M:Contensive.BaseClasses.CPAdminUIBaseClass.NewToolForm">
-            <summary>
-            Create a new instance of a Tool Form. Tool Forms are simple forms with key elements like buttons and header with a simple body
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Contensive.BaseClasses.CPAdminUIBaseClass.NewListReport">
-            <summary>
-            Create a new instance of a List Report. List reports have a list of data rows with filters on the left
-            </summary>
-            <returns></returns>
-        </member>
         <member name="M:Contensive.BaseClasses.CPAdminUIBaseClass.GetEditRow(System.String,System.String)">
             <summary>
             Create an html row that includes a caption, editor and optional help content
@@ -1554,18 +1542,22 @@
             <param name="htmlValue"></param>
             <returns></returns>
         </member>
+        <member name="M:Contensive.BaseClasses.CPAdminUIBaseClass.NewToolForm">
+            <summary>
+            Create a new instance of a Tool Form. Tool Forms are simple forms with key elements like buttons and header with a simple body
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPAdminUIBaseClass.NewListReport">
+            <summary>
+            Create a new instance of a List Report. List reports have a list of data rows with filters on the left
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Contensive.BaseClasses.CPBaseClass">
             <summary>
             CP - The object passed to an addon in the add-ons execute method. See the AddonBaseClass for details of the addon execute method.
             </summary>
-            <remarks></remarks>
-        </member>
-        <member name="P:Contensive.BaseClasses.CPBaseClass.Version">
-            <summary>
-            Contensive version
-            </summary>
-            <value></value>
-            <returns></returns>
             <remarks></remarks>
         </member>
         <member name="P:Contensive.BaseClasses.CPBaseClass.Addon">
@@ -1770,6 +1762,16 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="P:Contensive.BaseClasses.CPBaseClass.SMS">
+            <summary>
+            Text messaging services
+            </summary>
+        </member>
+        <member name="P:Contensive.BaseClasses.CPBaseClass.TempFiles">
+            <summary>
+            A local file system that automatically deletes files
+            </summary>
+        </member>
         <member name="P:Contensive.BaseClasses.CPBaseClass.User">
             <summary>
             The User Class handles details related to the user and its related people record. See CPUserBaseClass for more details.
@@ -1805,6 +1807,14 @@
         <member name="P:Contensive.BaseClasses.CPBaseClass.Utils">
             <summary>
             The Utils class handles basic utilities and other features not classified. See CPUtilsBaseClass for more details.
+            </summary>
+            <value></value>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="P:Contensive.BaseClasses.CPBaseClass.Version">
+            <summary>
+            Contensive version
             </summary>
             <value></value>
             <returns></returns>
@@ -5202,9 +5212,18 @@
             This can be overridden with the site property webAddressProtocolDomain on the Preferences page
             </summary>
         </member>
+        <member name="T:Contensive.BaseClasses.CPImageBaseClass">
+            <summary>
+            Image methods
+            </summary>
+        </member>
         <member name="M:Contensive.BaseClasses.CPImageBaseClass.GetBestFit(System.String,System.Int32,System.Int32,System.Collections.Generic.List{System.String})">
             <summary>
-            Return an image resized and cropped to best fit the hole. New image is saved back to the same path. 
+            Return an image resized and cropped to best fit the hole. 
+            The source imagePathFilename is expected to be in the CdnFiles filesystem. 
+            New image is saved back to the same path.  
+            imageAltSizeList is a list of strings, each representing a previous resize of this image in the format "filename-000x000". The method checks this list for the size requested and if found returns success. 
+            If the size requested is not in the list, it is created, saved to the path, and this new size is added to the list. On return, if the imageAltSizeList.count changes, save this new list with the image for future calls. 
             Test if in cache first, else load record and test for resized in alt list, else Resize the image and save back to the image's record
             </summary>
             <param name="imagePathFilename"></param>
@@ -5326,6 +5345,11 @@
             Support disposable for non-default datasources
             </summary>
         </member>
+        <member name="T:Contensive.BaseClasses.CPRequestBaseClass">
+            <summary>
+            Properties of optional http request
+            </summary>
+        </member>
         <member name="P:Contensive.BaseClasses.CPRequestBaseClass.Browser">
             <summary>
             The browser string of the request
@@ -5345,7 +5369,7 @@
         </member>
         <member name="P:Contensive.BaseClasses.CPRequestBaseClass.CookieString">
             <summary>
-            Full cookie list from the browser
+            Full cookie list from the browser. empty line seperates cookies. name=value pairs
             </summary>
         </member>
         <member name="P:Contensive.BaseClasses.CPRequestBaseClass.Form">
@@ -5440,7 +5464,7 @@
         </member>
         <member name="P:Contensive.BaseClasses.CPRequestBaseClass.Page">
             <summary>
-            the left-most segment of the url. The page for website urls
+            the right-most segment of the url. The page for website urls
             </summary>
         </member>
         <member name="P:Contensive.BaseClasses.CPRequestBaseClass.Path">
@@ -5495,6 +5519,11 @@
             The content type of the request
             </summary>
         </member>
+        <member name="T:Contensive.BaseClasses.CPResponseBaseClass">
+            <summary>
+            Control over the optional http response
+            </summary>
+        </member>
         <member name="P:Contensive.BaseClasses.CPResponseBaseClass.ContentType">
             <summary>
             set of geth the content type of the response.
@@ -5507,7 +5536,7 @@
         </member>
         <member name="P:Contensive.BaseClasses.CPResponseBaseClass.Header">
             <summary>
-            
+            response headers
             </summary>
         </member>
         <member name="M:Contensive.BaseClasses.CPResponseBaseClass.Clear">
@@ -5550,6 +5579,57 @@
             </summary>
             <param name="status"></param>
         </member>
+        <member name="M:Contensive.BaseClasses.CPResponseBaseClass.SetType(System.String)">
+            <summary>
+            set response content type
+            </summary>
+            <param name="contentType"></param>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPResponseBaseClass.SetCookie(System.String,System.String)">
+            <summary>
+            set a simple response cookie value
+            </summary>
+            <param name="key"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPResponseBaseClass.SetCookie(System.String,System.String,System.DateTime)">
+            <summary>
+            set a response cookie
+            </summary>
+            <param name="key"></param>
+            <param name="value"></param>
+            <param name="dateExpires"></param>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPResponseBaseClass.SetCookie(System.String,System.String,System.DateTime,System.String)">
+            <summary>
+            set a response cookie
+            </summary>
+            <param name="key"></param>
+            <param name="value"></param>
+            <param name="dateExpires"></param>
+            <param name="domain"></param>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPResponseBaseClass.SetCookie(System.String,System.String,System.DateTime,System.String,System.String)">
+            <summary>
+            set a response cookie
+            </summary>
+            <param name="key"></param>
+            <param name="value"></param>
+            <param name="dateExpires"></param>
+            <param name="domain"></param>
+            <param name="path"></param>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPResponseBaseClass.SetCookie(System.String,System.String,System.DateTime,System.String,System.String,System.Boolean)">
+            <summary>
+            set a response cookie
+            </summary>
+            <param name="key"></param>
+            <param name="value"></param>
+            <param name="dateExpires"></param>
+            <param name="domain"></param>
+            <param name="path"></param>
+            <param name="secure"></param>
+        </member>
         <member name="P:Contensive.BaseClasses.CPResponseBaseClass.isOpen">
             <summary>
             Is the response object available to write. False during background processes and after the html response has ended. For instance, when a remote method is returned the response is closed meaning no other data should be added to the output.
@@ -5557,6 +5637,18 @@
             <value></value>
             <returns></returns>
             <remarks></remarks>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPResponseBaseClass.Write(System.String)">
+            <summary>
+            deprecated. content generation no longer includes a buffer
+            </summary>
+            <param name="content"></param>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPResponseBaseClass.SetTimeout(System.String)">
+            <summary>
+            Deprecated. Set http response timeout directly in response client.
+            </summary>
+            <param name="timeoutSeconds"></param>
         </member>
         <member name="M:Contensive.BaseClasses.CPSecurityBaseClass.EncryptOneWay(System.String)">
             <summary>
@@ -5945,6 +6037,19 @@
             Use CP.Utils.EncodeAppRootPath()
             </summary>
             <param name="link"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Contensive.BaseClasses.CPSMSBaseClass">
+            <summary>
+            text messaging (SNS) layer. Provide properties and methods to abstract the service for addons.
+            </summary>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPSMSBaseClass.Send(System.String,System.String)">
+            <summary>
+            Send an text message with SMS to the phone numnber
+            </summary>
+            <param name="smsPhoneNumber"></param>
+            <param name="smsMessage"></param>
             <returns></returns>
         </member>
         <member name="T:Contensive.BaseClasses.CPUserBaseClass">
@@ -6457,17 +6562,17 @@
             When an addon is executed from content with {% JSON %}, this object describes the record in which the command was executed
             </summary>
         </member>
-        <member name="F:Contensive.BaseClasses.CPUtilsBaseClass.addonExecuteHostRecordContext.contentName">
+        <member name="P:Contensive.BaseClasses.CPUtilsBaseClass.addonExecuteHostRecordContext.contentName">
             <summary>
             the content for the record (metadata that describes the table)
             </summary>
         </member>
-        <member name="F:Contensive.BaseClasses.CPUtilsBaseClass.addonExecuteHostRecordContext.recordId">
+        <member name="P:Contensive.BaseClasses.CPUtilsBaseClass.addonExecuteHostRecordContext.recordId">
             <summary>
             record's id
             </summary>
         </member>
-        <member name="F:Contensive.BaseClasses.CPUtilsBaseClass.addonExecuteHostRecordContext.fieldName">
+        <member name="P:Contensive.BaseClasses.CPUtilsBaseClass.addonExecuteHostRecordContext.fieldName">
             <summary>
             field name
             </summary>
@@ -7437,11 +7542,6 @@
             </summary>
             <param name="key"></param>
         </member>
-        <member name="P:Contensive.BaseClasses.CPVisitorBaseClass.ForceBrowserMobile">
-            <summary>
-            set the visit property to force the mobile state true
-            </summary>
-        </member>
         <member name="M:Contensive.BaseClasses.CPVisitorBaseClass.GetText(System.String,System.String)">
             <summary>
             return the visitor property from its key. If missing, set and return the defaultValue.
@@ -7614,6 +7714,67 @@
             return the id of the last user authenticated to this visitor
             </summary>
         </member>
+        <member name="M:Contensive.BaseClasses.CPVisitorBaseClass.GetProperty(System.String,System.String,System.Int32)">
+            <summary>
+            Use the Get that returns the appropriate defaultvalue type.
+            </summary>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <param name="targetVisitorId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPVisitorBaseClass.GetProperty(System.String,System.String)">
+            <summary>
+            Use the Get that returns the appropriate defaultvalue type.
+            </summary>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPVisitorBaseClass.GetProperty(System.String)">
+            <summary>
+            Use the Get that returns the appropriate defaultvalue type.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPVisitorBaseClass.GetBoolean(System.String,System.String)">
+            <summary>
+            Use the Get that returns the appropriate defaultvalue type.
+            </summary>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPVisitorBaseClass.GetDate(System.String,System.String)">
+            <summary>
+            Use the Get that returns the appropriate defaultvalue type.
+            </summary>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPVisitorBaseClass.GetInteger(System.String,System.String)">
+            <summary>
+            Use the Get that returns the appropriate defaultvalue type.
+            </summary>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPVisitorBaseClass.GetNumber(System.String,System.String)">
+            <summary>
+            Use the Get that returns the appropriate defaultvalue type.
+            </summary>
+            <param name="key"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Contensive.BaseClasses.CPVisitorBaseClass.ForceBrowserMobile">
+            <summary>
+            set the visit property to force the mobile state true
+            </summary>
+        </member>
         <member name="T:Contensive.BaseModels.AppConfigBaseModel">
             <summary>
             Configuration of an application
@@ -7767,6 +7928,26 @@
             <typeparam name="V"></typeparam>
             <typeparam name="S"></typeparam>
         </member>
+        <member name="T:Contensive.BaseModels.HttpContextBaseModel">
+            <summary>
+            A parameter Object for CPBaseClass constructor. Provides context from a potential server request, like a website request
+            </summary>
+        </member>
+        <member name="T:Contensive.BaseModels.NameValueBaseModel">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.BaseModels.NameValueBaseModel.name">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.BaseModels.NameValueBaseModel.value">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:Contensive.BaseModels.ServerConfigBaseModel">
             <summary>
             configuration of the server (on or more apps in the serer)
@@ -7905,37 +8086,57 @@
             sql server
             </summary>
         </member>
+        <member name="T:Contensive.BaseModels.SimplestDataBaseModel">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.BaseModels.SimplestDataBaseModel.id">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.BaseModels.SimplestDataBaseModel.name">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.BaseModels.SimplestDataBaseModel.ccGuid">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="T:Contensive.CPBase.BaseModels.HtmlAttributesA">
             <summary>
             Attributes for html form
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.download">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesA.download">
             <summary>
             Specifies that the target will be downloaded when a user clicks on the hyperlink
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.href">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesA.href">
             <summary>
             Specifies the URL of the page the link goes to
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.hreflang">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesA.hreflang">
             <summary>
             Specifies the language of the linked document
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.media">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesA.media">
             <summary>
             Specifies what media/device the linked document is optimized for
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.ping">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesA.ping">
             <summary>
             Specifies a space-separated list of URLs to which, when the link is followed, post requests with the body ping will be sent by the browser (in the background). Typically used for tracking
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.referrerpolicy">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesA.referrerpolicy">
             <summary>
             Specifies which referrer to send
             </summary>
@@ -7945,7 +8146,37 @@
             
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.rel">
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeReferrerPolicy.none">
+            <summary>
+            no policy
+            </summary>
+        </member>
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeReferrerPolicy.no_referrer">
+            <summary>
+            no_referrer
+            </summary>
+        </member>
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeReferrerPolicy.no_referrer_when_downgrade">
+            <summary>
+            no_referrer_when_downgrade
+            </summary>
+        </member>
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeReferrerPolicy.origin">
+            <summary>
+            origin
+            </summary>
+        </member>
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeReferrerPolicy.origin_when_cross_origin">
+            <summary>
+            origin_when_cross_origin
+            </summary>
+        </member>
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeReferrerPolicy.unsafe_url">
+            <summary>
+            unsafe_url
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesA.rel">
             <summary>
             Specifies the relationship between the current document and the linked document
             </summary>
@@ -7955,12 +8186,82 @@
             values for html form encodetype
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.target">
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeRel.none">
+            <summary>
+            rel=none
+            </summary>
+        </member>
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeRel.alternate">
+            <summary>
+            rel=alternate
+            </summary>
+        </member>
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeRel.author">
+            <summary>
+            rel=author
+            </summary>
+        </member>
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeRel.bookmark">
+            <summary>
+            rel=bookmark
+            </summary>
+        </member>
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeRel.external">
+            <summary>
+            rel=external
+            </summary>
+        </member>
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeRel.help">
+            <summary>
+            rel=help
+            </summary>
+        </member>
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeRel.license">
+            <summary>
+            rel=
+            </summary>
+        </member>
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeRel.next">
+            <summary>
+            rel=next
+            </summary>
+        </member>
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeRel.nofollow">
+            <summary>
+            rel=nofollow
+            </summary>
+        </member>
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeRel.noreferrer">
+            <summary>
+            rel=noreferrer
+            </summary>
+        </member>
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeRel.noopener">
+            <summary>
+            rel=noopener
+            </summary>
+        </member>
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeRel.prev">
+            <summary>
+            rel=prev
+            </summary>
+        </member>
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeRel.search">
+            <summary>
+            rel=search
+            </summary>
+        </member>
+        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.HtmlAttributeRel.tag">
+            <summary>
+            rel=tag
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesA.target">
             <summary>
             Specifies where to open the linked document
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesA.type">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesA.type">
             <summary>
             Specifies the media type of the linked document
             </summary>
@@ -7970,43 +8271,43 @@
             Attributes for html form
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesForm.acceptcharset">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesForm.acceptcharset">
             <summary>
             Specifies the character encodings that are to be used for the form submission. A space-separated list of one or more character encodings that are to be used for the form submission.
             Common values: UTF-8 - Character encoding for Unicode, ISO-8859-1 - Character encoding for the Latin alphabet.
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesForm.action">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesForm.action">
             <summary>
             Specifies where to send the form-data when a form is submitted
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesForm.autocomplete">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesForm.autocomplete">
             <summary>
             Specifies whether a form should have autocomplete on or off
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesForm.enctype">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesForm.enctype">
             <summary>
             Specifies how the form-data should be encoded when submitting it to the server (only for method="post")
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesForm.method">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesForm.method">
             <summary>
             Specifies the HTTP method to use when sending form-data
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesForm.name">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesForm.name">
             <summary>
             Specifies the name of a form
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesForm.novalidate">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesForm.novalidate">
             <summary>
             Specifies that the form should not be validated when submitted
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesForm.target">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesForm.target">
             <summary>
             Specifies where to display the response that is received after submitting the form
             </summary>
@@ -8085,80 +8386,446 @@
             <summary>
             Attributes avalable for all html5 elements
             </summary>
+            <summary>
+            
+            </summary>
+            <summary>
+            
+            </summary>
+            <summary>
+            
+            </summary>
+            <summary>
+            
+            </summary>
+            <summary>
+            
+            </summary>
+            <summary>
+            
+            </summary>
+            <summary>
+            
+            </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.accesskey">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.accesskey">
             <summary>
             Specifies a shortcut key to activate/focus an element
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.class">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.class">
             <summary>
             Specifies one or more classnames for an element (refers to a class in a style sheet)
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.contenteditable">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.contenteditable">
             <summary>
             Specifies whether the content of an element is editable or not
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.data">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.data">
             <summary>
             Used to store custom data private to the page or application
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.dir">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.dir">
             <summary>
             Specifies the text direction for the content in an element
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.draggable">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.draggable">
             <summary>
             Specifies whether an element is draggable or not
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.dropzone">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.dropzone">
             <summary>
             Specifies whether the dragged data is copied, moved, or linked, when dropped
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.hidden">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.hidden">
             <summary>
             Specifies that an element is not yet, or is no longer, relevant
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.id">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.id">
             <summary>
             Specifies a unique id for an element
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.lang">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.lang">
             <summary>
             Specifies the language of the element's content
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.spellcheck">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.spellcheck">
             <summary>
             Specifies whether the element is to have its spelling and grammar checked or not
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.style">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.style">
             <summary>
             Specifies an inline CSS style for an element
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.tabindex">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.tabindex">
             <summary>
             Specifies the tabbing order of an element
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.title">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.title">
             <summary>
             Specifies extra information about an element
             </summary>
         </member>
-        <member name="F:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.translate">
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.translate">
             <summary>
             Specifies whether the content of an element should be translated or not
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.oncopy">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.oncut">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onpaste">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.ondrag">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.ondragend">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.ondragenter">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.ondragleave">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.ondragover">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.ondragstart">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.ondrop">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onscroll">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onblur">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onchange">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.oncontextmenu">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onfocus">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.oninput">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.oninvalid">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onreset">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onsearch">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onselect">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onsubmit">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onafterprint">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onbeforeprint">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onbeforeunload">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onerror">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onhashchange">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onload">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onmessage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onoffline">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.ononline">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onpagehide">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onpageshow">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onpopstate">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onresize">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onstorage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onunload">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onkeydown">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onkeypress">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onkeyup">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onabort">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.oncanplay">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.oncanplaythrough">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.oncuechange">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.ondurationchange">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onemptied">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onended">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onloadeddata">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onloadedmetadata">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onloadstart">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onpause">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onplay">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onplaying">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onprogress">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onratechange">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onseeked">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onseeking">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onstalled">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onsuspend">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.ontimeupdate">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onvolumechange">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onwaiting">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.ondblclick">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onmousedown">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onmousemove">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onmouseout">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onmouseover">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onmouseup">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onmousewheel">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Contensive.CPBase.BaseModels.HtmlAttributesGlobal.onwheel">
+            <summary>
+            
             </summary>
         </member>
         <member name="T:Contensive.CPBase.BaseModels.LastestDateTrackerBaseModel">

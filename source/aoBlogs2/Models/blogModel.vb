@@ -81,7 +81,7 @@ Namespace Models
                 Blog.RSSFeedID = If(rssFeed IsNot Nothing, rssFeed.id, 0)
                 Blog.save(Of BlogModel)(cp)
 
-                Dim blogEntry As BlogEntryModel = DbModel.add(Of BlogEntryModel)(cp)
+                Dim blogEntry As BlogPostModel = DbModel.add(Of BlogPostModel)(cp)
                 If (blogEntry IsNot Nothing) Then
                     blogEntry.blogID = Blog.id
                     blogEntry.name = "Welcome to the New Blog!"
@@ -97,7 +97,7 @@ Namespace Models
                         Dim EntryLink As String = LinkAlias.First().name
                     End If
                     blogEntry.RSSDescription = genericController.getBriefCopy(cp, blogEntry.copy, 150)
-                    blogEntry.save(Of BlogEntryModel)(cp)
+                    blogEntry.save(Of BlogPostModel)(cp)
                 End If
                 '
                 ' Add this new default post to the new feed

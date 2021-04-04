@@ -20,7 +20,7 @@ Namespace Views
                 End If
                 '
                 ' -- count the viewing
-                cp.Db.ExecuteNonQuery("update " & BlogEntryModel.contentTableName & " set viewings=" & (app.blogEntry.Viewings + 1))
+                cp.Db.ExecuteNonQuery("update " & BlogPostModel.contentTableName & " set viewings=" & (app.blogEntry.Viewings + 1))
                 hint = 10
                 '
                 Dim result As String = ""
@@ -35,7 +35,7 @@ Namespace Views
                 '
                 ' Print the Blog Entry
                 Dim return_CommentCnt As Integer
-                result &= BlogEntryCellView.getBlogEntryCell(cp, app, app.blogEntry, True, False, return_CommentCnt, entryEditLink)
+                result &= BlogEntryCellView.getBlogPostCell(cp, app, app.blogEntry, True, False, return_CommentCnt, entryEditLink)
                 '
                 Dim visit As VisitModel = VisitModel.create(cp, cp.Visit.Id)
                 If (visit IsNot Nothing) Then
@@ -201,7 +201,7 @@ Namespace Views
                 '
                 ' -- if editing enabled, add the link and wrapperwrapper
                 hint = 240
-                result = genericController.addEditWrapper(cp, result, app.blogEntry.id, app.blogEntry.name, Models.BlogEntryModel.contentName)
+                result = genericController.addEditWrapper(cp, result, app.blogEntry.id, app.blogEntry.name, Models.BlogPostModel.contentName)
                 '
                 Return result
             Catch ex As Exception
@@ -216,7 +216,7 @@ Namespace Views
             Dim result As Integer
             Try
                 Dim blog As BlogModel = app.blog
-                Dim blogEntry As BlogEntryModel = app.blogEntry
+                Dim blogEntry As BlogPostModel = app.blogEntry
                 Dim user As PersonModel = app.user
                 '
                 result = request.SourceFormID

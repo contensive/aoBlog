@@ -11,7 +11,7 @@ Namespace Controllers
         End Sub
         '
         '====================================================================================================
-        Public Shared Sub setMetadata(cp As CPBaseClass, blogEntry As BlogEntryModel)
+        Public Shared Sub setMetadata(cp As CPBaseClass, blogEntry As BlogPostModel)
             '
             cp.Utils.AppendLog("Blog.setMetadata, blogEntry.id [" & blogEntry.id & "], set Open Graph Title = blogEntry.name [" & blogEntry.name & "]")
             '

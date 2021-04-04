@@ -20,7 +20,7 @@ Namespace Views
             Try
 
                 Dim blog As BlogModel = app.blog
-                Dim blogEntry As BlogEntryModel = app.blogEntry
+                Dim blogEntry As BlogPostModel = app.blogEntry
                 Dim OpenSQL As String = ""
                 Dim contentControlId As String = cp.Content.GetID(cnBlogEntries).ToString
                 '
@@ -72,7 +72,7 @@ Namespace Views
             Dim result As String = ""
             Try
                 Dim blog As BlogModel = app.blog
-                Dim blogEntry As BlogEntryModel = app.blogEntry
+                Dim blogEntry As BlogPostModel = app.blogEntry
                 Dim PageNumber As Integer
                 '
                 ' If it is the current month, start at entry 6
@@ -81,7 +81,7 @@ Namespace Views
                 '
                 ' List Blog Entries
                 '
-                Dim BlogEntryModelList As List(Of BlogEntryModel) = DbModel.createList(Of BlogEntryModel)(cp, "(Month(DateAdded) = " & request.ArchiveMonth & ")And(year(DateAdded)=" & request.ArchiveYear & ")And(BlogID=" & Blog.Id & ")", "DateAdded Desc")
+                Dim BlogEntryModelList As List(Of BlogPostModel) = DbModel.createList(Of BlogPostModel)(cp, "(Month(DateAdded) = " & request.ArchiveMonth & ")And(year(DateAdded)=" & request.ArchiveYear & ")And(BlogID=" & Blog.Id & ")", "DateAdded Desc")
                 If (BlogEntryModelList.Count = 0) Then
                     result = "<div Class=""aoBlogProblem"">There are no blog archives For " & request.ArchiveMonth & "/" & request.ArchiveYear & "</div>"
                 Else
@@ -103,7 +103,7 @@ Namespace Views
                         Dim BlogTagList As String = blogEntry.tagList
                         Dim primaryImagePositionId As Integer = blogEntry.primaryImagePositionId
                         Dim Return_CommentCnt As Integer
-                        result &= BlogEntryCellView.getBlogEntryCell(cp, app, blogEntry, False, False, Return_CommentCnt, BlogTagList)
+                        result &= BlogEntryCellView.getBlogPostCell(cp, app, blogEntry, False, False, Return_CommentCnt, BlogTagList)
                     Next
                     result &= "<hr>"
                     EntryPtr = EntryPtr + 1

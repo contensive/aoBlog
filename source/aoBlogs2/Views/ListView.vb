@@ -18,9 +18,8 @@ Namespace Views
             Dim result As New StringBuilder()
             Try
                 Dim blog As BlogModel = app.blog
-                Dim blogEntry As BlogEntryModel = app.blogEntry
                 Dim user As PersonModel = app.user
-                Dim rssFeed As RSSFeedModel = app.RSSFeed
+                Dim rssFeed As RSSFeedModel = app.rssFeed
                 If Blog.Caption <> "" Then
                     result.Append(vbCrLf & "<h2 Class=""aoBlogCaption"">" & Blog.Caption & "</h2>")
                 End If
@@ -29,16 +28,16 @@ Namespace Views
                 End If
                 '
                 ' Display the most recent entries
-                Dim BlogEntryList As List(Of BlogEntryModel)
+                Dim BlogEntryList As List(Of BlogPostModel)
                 Dim NoneMsg As String
                 Dim blogCategory = DbModel.create(Of Models.BlogCategorieModel)(cp, request.categoryId)
                 '
                 If (blogCategory IsNot Nothing) Then
-                    BlogEntryList = DbModel.createList(Of BlogEntryModel)(cp, "(BlogID=" & Blog.id & ")And(BlogCategoryID=" & request.categoryId & ")", "DateAdded Desc", Blog.PostsToDisplay, 1)
+                    BlogEntryList = DbModel.createList(Of BlogPostModel)(cp, "(BlogID=" & blog.id & ")And(BlogCategoryID=" & request.categoryId & ")", "DateAdded Desc", blog.PostsToDisplay, 1)
                     result.Append("<div Class=""aoBlogCategoryCaption"">Category " & blogCategory.name & "</div>")
                     NoneMsg = "There are no blog posts available in the category " & blogCategory.name
                 Else
-                    BlogEntryList = DbModel.createList(Of BlogEntryModel)(cp, "(BlogID=" & Blog.id & ")", "DateAdded Desc", Blog.PostsToDisplay, 1)
+                    BlogEntryList = DbModel.createList(Of BlogPostModel)(cp, "(BlogID=" & blog.id & ")", "DateAdded Desc", blog.PostsToDisplay, 1)
                     NoneMsg = "There are no blog posts available"
                 End If
                 '
@@ -49,8 +48,8 @@ Namespace Views
                 Else
                     Dim blogCategoryList = DbModel.createList(Of BlogCategorieModel)(cp, "")
                     Dim EntryPtr As Integer = 0
-                    For Each blogEntry In BlogEntryList
-                        If (EntryPtr >= Blog.PostsToDisplay) Then Exit For
+                    For Each blogEntry As BlogPostModel In BlogEntryList
+                        If (EntryPtr >= blog.PostsToDisplay) Then Exit For
                         Dim IsBlocked As Boolean = False
                         If (isBlogCategoryBlockedDict.ContainsKey(blogEntry.blogCategoryID)) Then
                             IsBlocked = isBlogCategoryBlockedDict(blogEntry.blogCategoryID)
@@ -63,10 +62,10 @@ Namespace Views
                         End If
                         If Not IsBlocked Then
                             Dim Return_CommentCnt As Integer
-                            Dim blogArticleCell = BlogEntryCellView.getBlogEntryCell(cp, app, blogEntry, False, True, Return_CommentCnt, "")
+                            Dim blogArticleCell = BlogEntryCellView.getBlogPostCell(cp, app, blogEntry, False, True, Return_CommentCnt, "")
                             '
                             ' -- if editing enabled, add the link and wrapperwrapper
-                            blogArticleCell = genericController.addEditWrapper(cp, blogArticleCell, blogEntry.id, blogEntry.name, Models.BlogEntryModel.contentName)
+                            blogArticleCell = genericController.addEditWrapper(cp, blogArticleCell, blogEntry.id, blogEntry.name, Models.BlogPostModel.contentName)
 
                             result.Append(blogArticleCell)
                             result.Append("<hr>")

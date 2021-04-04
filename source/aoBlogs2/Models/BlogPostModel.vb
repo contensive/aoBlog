@@ -8,7 +8,7 @@ Imports System.Text
 Imports Contensive.BaseClasses
 
 Namespace Models
-    Public Class BlogEntryModel        '<------ set set model Name and everywhere that matches this string
+    Public Class BlogPostModel        '<------ set set model Name and everywhere that matches this string
         Inherits DbModel
         '
         '====================================================================================================

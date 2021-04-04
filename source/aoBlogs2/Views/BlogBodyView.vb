@@ -53,7 +53,7 @@ Namespace Views
                     Case FormBlogArchivedBlogs
                         result.Append(ArchiveView.GetFormBlogArchivedBlogs(cp, app, request))
                     Case FormBlogEntryEditor
-                        result.Append(EditView.GetFormBlogEdit(cp, app, request))
+                        result.Append(EditView.getFormBlogEdit(cp, app, request))
                     Case FormBlogSearch
                         result.Append(SearchView.GetFormBlogSearch(cp, app, request))
                     Case Else

@@ -1,9 +1,4 @@
-
-Imports System
-Imports System.Collections.Generic
 Imports System.Linq
-Imports System.Text
-Imports System.Text.RegularExpressions
 Imports Contensive.Addons.Blog.Controllers
 Imports Contensive.Addons.Blog.Models
 Imports Contensive.BaseClasses
@@ -14,33 +9,39 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function getBlogEntryCell(cp As CPBaseClass, app As ApplicationController, blogEntry As BlogEntryModel, isArticleView As Boolean, IsSearchListing As Boolean, Return_CommentCnt As Integer, entryEditLink As String) As String
-            Dim result As String = ""
+        Public Shared Function getBlogPostCell(cp As CPBaseClass, app As ApplicationController, blogPost As BlogPostModel, isArticleView As Boolean, IsSearchListing As Boolean, Return_CommentCnt As Integer, entryEditLink As String) As String
+            Dim hint As Integer = 0
             Try
-                Dim user As PersonModel = app.user
-                Dim blog As BlogModel = app.blog
-                Dim rssFeed As RSSFeedModel = app.RSSFeed
-                If (blogEntry Is Nothing) Then Throw New ApplicationException("BlogEntryCell called without valid BlogEntry")
+                Dim result As String = ""
+                hint = 10
                 '
-                Dim qs As String = cp.Utils.ModifyQueryString("", RequestNameBlogEntryID, CStr(blogEntry.id))
+                ' -- argument test
+                If (blogPost Is Nothing) Then Throw New ApplicationException("BlogEntryCell called without valid BlogEntry")
+                '
+                ' -- add link alias for this page
+                Dim qs As String = cp.Utils.ModifyQueryString("", RequestNameBlogEntryID, CStr(blogPost.id))
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
-                Call cp.Site.AddLinkAlias(blogEntry.name, cp.Doc.PageId, qs)
+                Call cp.Site.AddLinkAlias(blogPost.name, cp.Doc.PageId, qs)
                 Dim entryLink As String = cp.Content.GetPageLink(cp.Doc.PageId, qs)
                 Dim TagListRow As String = ""
-                Dim blogImageList = BlogImageModel.createListFromBlogEntry(cp, blogEntry.id)
+                Dim blogImageList = BlogImageModel.createListFromBlogEntry(cp, blogPost.id)
+                hint = 20
+                '
                 If isArticleView Then
+                    hint = 30
                     '
                     ' -- article view
-                    result &= vbCrLf & entryEditLink & "<h2 class=""aoBlogEntryName"">" & blogEntry.name & "</h2>"
+                    result &= vbCrLf & entryEditLink & "<h2 class=""aoBlogEntryName"">" & blogPost.name & "</h2>"
                     result &= "<div class=""aoBlogEntryLikeLine"">" & cp.Addon.Execute(facebookLikeAddonGuid) & "</div>"
                     result &= "<div class=""aoBlogEntryCopy"">"
                     If (blogImageList.Count > 0) Then
+                        hint = 40
                         Dim ThumbnailFilename As String = ""
                         Dim imageFilename As String = ""
                         Dim imageName As String = ""
                         Dim imageDescription As String = ""
                         BlogImageView.getBlogImage(cp, app, blogImageList.First, ThumbnailFilename, imageFilename, imageDescription, imageName)
-                        Select Case blogEntry.primaryImagePositionId
+                        Select Case blogPost.primaryImagePositionId
                             Case 2
                                 '
                                 ' align right
@@ -58,53 +59,22 @@ Namespace Views
                                 result &= "<img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Http.CdnFilePathPrefix & ThumbnailFilename & """ style=""width:40%;"">"
                         End Select
                     End If
-                    result &= blogEntry.copy & "</div>"
+                    hint = 50
+                    result &= blogPost.copy & "</div>"
                     qs = app.blogListLink
-                    qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
+                    qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogPost.id))
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor.ToString())
                     Dim c As String = ""
-                    'If (blogEntry.imageDisplayTypeId = imageDisplayTypeList) And (blogImageList.Count > 0) Then
-                    '    '
-                    '    ' Get ImageID List
-                    '    For Each blogImage In blogImageList
-                    '        Dim ThumbnailFilename As String = ""
-                    '        Dim imageFilename As String = ""
-                    '        Dim imageName As String = ""
-                    '        Dim imageDescription As String = ""
-                    '        GetBlogImage(cp, blog, rssFeed, blogEntry, blogImageList.First, ThumbnailFilename, imageFilename, imageDescription, imageName)
-                    '        If imageFilename <> "" Then
-                    '            c = c _
-                    '            &  "<div class=""aoBlogEntryImageContainer"">" _
-                    '            &  "<img alt=""" & imageName & """ title=""" & imageName & """  src=""" & cp.Http.CdnFilePathPrefix & imageFilename & """>"
-                    '            If imageName <> "" Then
-                    '                c = c &  "<h2>" & imageName & "</h2>"
-                    '            End If
-                    '            If imageDescription <> "" Then
-                    '                c = c &  "<div>" & imageDescription & "</div>"
-                    '            End If
-                    '            c = c &  "</div>"
-                    '        End If
-                    '    Next
-                    '    If c <> "" Then
-                    '        result = result _
-                    '        &  "<div class=""aoBlogEntryImageSection"">" _
-                    '        & cp.Html.Indent(c) _
-                    '        &  "</div>"
-                    '    End If
-                    'End If
-                    If blogEntry.tagList <> "" Then
+                    If Not String.IsNullOrEmpty(blogPost.tagList) Then
+                        hint = 60
                         '
                         ' -- make a clickable section
-                        Dim clickableLinkList As String = Replace(blogEntry.tagList, ",", vbCrLf)
+                        Dim clickableLinkList As String = Replace(blogPost.tagList, ",", vbCrLf)
                         Dim Tags() As String = Split(clickableLinkList, vbCrLf)
                         clickableLinkList = ""
-                        Dim SQS As String
-                        SQS = cp.Utils.ModifyQueryString(app.blogListLink, RequestNameFormID, FormBlogSearch.ToString(), True)
-                        Dim Ptr As Integer
-                        For Ptr = 0 To UBound(Tags)
-                            'QS = cp.Utils.ModifyQueryString(SQS, RequestNameFormID, FormBlogSearch, True)
-                            qs = cp.Utils.ModifyQueryString(SQS, RequestNameQueryTag, Tags(Ptr), True)
-                            Dim Link As String = "?" & qs
+                        Dim SQS As String = cp.Utils.ModifyQueryString(app.blogListLink, RequestNameFormID, FormBlogSearch.ToString(), True)
+                        For Ptr As Integer = 0 To UBound(Tags)
+                            Dim Link As String = "?" & cp.Utils.ModifyQueryString(SQS, RequestNameQueryTag, Tags(Ptr), True)
                             clickableLinkList = clickableLinkList & ", " & "<a href=""" & Link & """>" & Tags(Ptr) & "</a>"
                         Next
                         clickableLinkList = Mid(clickableLinkList, 3)
@@ -121,18 +91,20 @@ Namespace Views
                         & "</div>"
                     End If
                 Else
+                    hint = 70
                     '
                     ' -- list view
-                    result &= vbCrLf & entryEditLink & "<h4 class=""aoBlogEntryName""><a href=""" & entryLink & """>" & blogEntry.name & "</a></h4>"
+                    result &= vbCrLf & entryEditLink & "<h4 class=""aoBlogEntryName""><a href=""" & entryLink & """>" & blogPost.name & "</a></h4>"
                     result &= "<div class=""aoBlogEntryCopy"">"
                     If (blogImageList.Count > 0) Then
+                        hint = 80
                         Dim ThumbnailFilename As String = ""
                         Dim imageFilename As String = ""
                         Dim imageName As String = ""
                         Dim imageDescription As String = ""
                         BlogImageView.getBlogImage(cp, app, blogImageList.First, ThumbnailFilename, imageFilename, imageDescription, imageName)
                         If ThumbnailFilename <> "" Then
-                            Select Case blogEntry.primaryImagePositionId
+                            Select Case blogPost.primaryImagePositionId
                                 Case 2
                                     '
                                     ' align right
@@ -159,132 +131,125 @@ Namespace Views
                             End Select
                         End If
                     End If
-                    result &= "<p>" & genericController.getBriefCopy(cp, blogEntry.copy, blog.OverviewLength) & "</p></div>"
+                    result &= "<p>" & genericController.getBriefCopy(cp, blogPost.copy, app.blog.OverviewLength) & "</p></div>"
                     result &= "<div class=""aoBlogEntryReadMore""><a href=""" & entryLink & """>Read More</a></div>"
                 End If
+                hint = 90
                 '
                 ' Podcast link
                 '
-                If blogEntry.PodcastMediaLink <> "" Then
-                    cp.Doc.SetProperty("Media Link", blogEntry.PodcastMediaLink)
-                    cp.Doc.SetProperty("Media Link", blogEntry.PodcastSize.ToString())
+                If blogPost.PodcastMediaLink <> "" Then
+                    cp.Doc.SetProperty("Media Link", blogPost.PodcastMediaLink)
+                    cp.Doc.SetProperty("Media Link", blogPost.PodcastSize.ToString())
                     cp.Doc.SetProperty("Hide Player", "True")
                     cp.Doc.SetProperty("Auto Start", "False")
                     '
                     result &= cp.Addon.Execute(addonGuidWebcast)
                 End If
+                hint = 100
                 '
                 ' Author Row
                 '
                 Dim RowCopy As String = ""
-                Dim AuthorMemberID As Integer = blogEntry.AuthorMemberID
-                If AuthorMemberID = 0 Then
-                    AuthorMemberID = blogEntry.CreatedBy
+                If (blogPost.AuthorMemberID = 0) And (blogPost.CreatedBy > 0) Then
+                    blogPost.AuthorMemberID = blogPost.CreatedBy
+                    blogPost.save(Of BlogPostModel)(cp)
                 End If
-                Dim author = DbModel.create(Of PersonModel)(cp, AuthorMemberID)
+                Dim author = DbModel.create(Of PersonModel)(cp, blogPost.AuthorMemberID)
                 If (author IsNot Nothing) Then
-                    RowCopy = RowCopy & "By " & author.name
-                    If blogEntry.DateAdded <> Date.MinValue Then
-                        RowCopy = RowCopy & " | " & blogEntry.DateAdded
+                    RowCopy &= "By " & author.name
+                    If blogPost.DateAdded <> Date.MinValue Then
+                        RowCopy &= " | " & blogPost.DateAdded
                     End If
                 Else
-                    If blogEntry.DateAdded <> Date.MinValue Then
-                        RowCopy = RowCopy & blogEntry.DateAdded
+                    If blogPost.DateAdded <> Date.MinValue Then
+                        RowCopy &= blogPost.DateAdded
                     End If
                 End If
-                Dim CommentCount As Integer
-                Dim Criteria As String
                 Dim visit As VisitModel = VisitModel.create(cp, cp.Visit.Id)
-                If blogEntry.AllowComments And (cp.Visit.CookieSupport) And (Not visit.Bot()) Then
+                If blogPost.AllowComments And ((visit IsNot Nothing) AndAlso (cp.Visit.CookieSupport And (Not visit.Bot()))) Then
+                    hint = 110
                     '
                     ' Show comment count
-                    Criteria = "(Approved<>0)and(EntryID=" & blogEntry.id & ")"
-                    Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(Approved<>0)and(EntryID=" & blogEntry.id & ")")
-                    CommentCount = BlogCommentModelList.Count
+                    Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(Approved<>0)and(EntryID=" & blogPost.id & ")")
                     If isArticleView Then
-                        If CommentCount = 1 Then
-                            RowCopy = RowCopy & " | 1 Comment"
-                        ElseIf CommentCount > 1 Then
-                            RowCopy = RowCopy & " | " & CommentCount & " Comments&nbsp;(" & CommentCount & ")"
+                        If BlogCommentModelList.Count = 1 Then
+                            RowCopy &= " | 1 Comment"
+                        ElseIf BlogCommentModelList.Count > 1 Then
+                            RowCopy &= " | " & BlogCommentModelList.Count & " Comments&nbsp;(" & BlogCommentModelList.Count & ")"
                         End If
                     Else
                         qs = app.blogListLink
-                        qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
+                        qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogPost.id))
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
-                        If CommentCount = 0 Then
-                            RowCopy = RowCopy & " | " & "<a href=""" & entryLink & """>Comment</a>"
+                        If BlogCommentModelList.Count = 0 Then
+                            RowCopy &= " | " & "<a href=""" & entryLink & """>Comment</a>"
                         Else
-                            RowCopy = RowCopy & " | " & "<a href=""" & entryLink & """>Comments</a>&nbsp;(" & CommentCount & ")"
+                            RowCopy &= " | " & "<a href=""" & entryLink & """>Comments</a>&nbsp;(" & BlogCommentModelList.Count & ")"
                         End If
                     End If
                 End If
-                If RowCopy <> "" Then
+                If Not String.IsNullOrEmpty(RowCopy) Then
                     result &= "<div class=""aoBlogEntryByLine"">Posted " & RowCopy & "</div>"
                 End If
+                hint = 120
                 '
                 ' Tag List Row
                 '
                 If TagListRow <> "" Then
                     result &= TagListRow
                 End If
-                Dim ToolLine As String = ""
+                Dim toolLine As String = ""
                 Dim CommentPtr As Integer
-                If blogEntry.AllowComments And (cp.Visit.CookieSupport) And (Not visit.Bot) Then
-
-
-                    'If blogEntry.AllowComments Then
+                If blogPost.AllowComments And (cp.Visit.CookieSupport) And ((visit IsNot Nothing) AndAlso (Not visit.Bot)) Then
+                    hint = 130
+                    '
+                    ' --
                     If Not isArticleView Then
-                        ''
-                        '' Show comment count
-                        ''
-                        Criteria = "(Approved<>0)and(EntryID=" & blogEntry.id & ")"
-                        Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(Approved<>0)and(EntryID=" & blogEntry.id & ")")
-                        CommentCount = BlogCommentModelList.Count
+                        hint = 140
+                        '
+                        ' Show comment count
+                        '
+                        Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(Approved<>0)and(EntryID=" & blogPost.id & ")")
                         '
                         qs = app.blogListLink
-                        qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
+                        qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogPost.id))
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
                         Dim CommentLine As String = ""
-                        If CommentCount = 0 Then
+                        If BlogCommentModelList.Count = 0 Then
                             CommentLine = CommentLine & "<a href=""?" & qs & """>Comment</a>"
                         Else
-                            CommentLine = CommentLine & "<a href=""?" & qs & """>Comments</a>&nbsp;(" & CommentCount & ")"
+                            CommentLine = CommentLine & "<a href=""?" & qs & """>Comments</a>&nbsp;(" & BlogCommentModelList.Count & ")"
                         End If
 
                         'get the unapproved comments
-                        If user.isBlogEditor(cp, blog) Then
-                            Criteria = "(EntryID=" & blogEntry.id & ")"
-                            Dim BlogUnapprovedCommentModelList = DbModel.createList(Of BlogCommentModel)(cp, "(Approved=0)and(EntryID=" & blogEntry.id & ")")
+                        If app.user.isBlogEditor(cp, app.blog) Then
+                            hint = 150
+                            Dim BlogUnapprovedCommentModelList = DbModel.createList(Of BlogCommentModel)(cp, "(Approved=0)and(EntryID=" & blogPost.id & ")")
                             Dim unapprovedCommentCount = BlogUnapprovedCommentModelList.Count
-                            If ToolLine <> "" Then
-                                ToolLine = ToolLine & "&nbsp;|&nbsp;"
+                            If toolLine <> "" Then
+                                toolLine = toolLine & "&nbsp;|&nbsp;"
                             End If
-                            ToolLine = ToolLine & "Unapproved Comments (" & unapprovedCommentCount & ")"
+                            toolLine = toolLine & "Unapproved Comments (" & unapprovedCommentCount & ")"
                             qs = app.blogListLink
-                            qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
+                            qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogPost.id))
                             qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor.ToString())
-                            If ToolLine <> "" Then
-                                ToolLine = ToolLine & "&nbsp;|&nbsp;"
+                            If toolLine <> "" Then
+                                toolLine = toolLine & "&nbsp;|&nbsp;"
                             End If
-                            ToolLine = ToolLine & "<a href=""?" & qs & """>Edit</a>"
+                            toolLine = toolLine & "<a href=""?" & qs & """>Edit</a>"
                         End If
-
-                        '
                     Else
+                        hint = 160
                         '
                         ' Show all comments
                         '
-                        'hint =  hint & ",11"
-                        If user.isBlogEditor(cp, blog) Then
-                            '
-                            ' Owner - Show all comments
-                            '
-                            Criteria = "(EntryID=" & blogEntry.id & ")"
-                        Else
+                        Dim Criteria As String = "(EntryID=" & blogPost.id & ")"
+                        If Not app.user.isBlogEditor(cp, app.blog) Then
                             '
                             ' non-owner - just approved comments plus your own comments
                             '
-                            Criteria = "((Approved<>0)or(AuthorMemberID=" & cp.User.Id & "))and(EntryID=" & blogEntry.id & ")"
+                            Criteria &= "and((Approved<>0)or(AuthorMemberID=" & cp.User.Id & "))"
                         End If
                         Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, Criteria, "DateAdded")
                         If (BlogCommentModelList.Count > 0) Then
@@ -294,34 +259,29 @@ Namespace Views
                             CommentPtr = 0
                             For Each blogComment In DbModel.createList(Of BlogCommentModel)(cp, Criteria)
 
-                                result &= BlogCommentCellView.getBlogCommentCell(cp, blog, rssFeed, blogEntry, blogComment, user, False)
+                                result &= BlogCommentCellView.getBlogCommentCell(cp, app.blog, blogPost, blogComment, app.user, False)
                                 result &= vbCrLf & Divider
-                                CommentPtr = CommentPtr + 1
+                                CommentPtr += 1
                             Next
-
                         End If
-
                     End If
                 End If
+                hint = 170
                 '
-                'hint =  hint & ",12"
-                If ToolLine <> "" Then
-                    result &= "<div class=""aoBlogToolLink"">" & ToolLine & "</div>"
+                If toolLine <> "" Then
+                    result &= "<div class=""aoBlogToolLink"">" & toolLine & "</div>"
                 End If
-                result &= vbCrLf & cp.Html.Hidden("CommentCnt" & blogEntry.id, CommentPtr.ToString())
+                result &= vbCrLf & cp.Html.Hidden("CommentCnt" & blogPost.id, CommentPtr.ToString())
                 '
                 Return_CommentCnt = CommentPtr
-                getBlogEntryCell = result
-                '
+                getBlogPostCell = result
+
+                hint = 999
+                Return result
             Catch ex As Exception
-                cp.Site.ErrorReport(ex)
+                cp.Site.ErrorReport(ex, "hint " & hint)
                 Throw
             End Try
-
-            Return result
-
         End Function
-        '
-        '
     End Class
 End Namespace
