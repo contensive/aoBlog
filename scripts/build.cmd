@@ -1,5 +1,5 @@
 
-@echo off
+echo off
 
 rem 
 rem Must be run from the projects git\project\scripts folder - everything is relative
@@ -12,7 +12,7 @@ rem
 
 rem all paths are relative to the git scripts folder
 
-set appName=app200509
+set appName=app210411
 set majorVersion=5
 set minorVersion=1
 set collectionName=Blog
@@ -22,6 +22,9 @@ set binPath=..\source\aoblogs2\bin\debug\
 set msbuildLocation=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\
 set deploymentFolderRoot=C:\deployments\aoBlog\Dev\
 
+rem prompt user if appName is correct
+@echo Build project and install on site: %appName%
+pause
 
 set deploymentNumber=%1
 set year=%date:~12,4%

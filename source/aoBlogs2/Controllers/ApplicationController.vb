@@ -117,7 +117,15 @@ Public Class ApplicationController
     '
     '====================================================================================================
     '
-    Public Property blogPageBaseLink As String
+    Public ReadOnly Property blogPageBaseLink As String
+        Get
+            If local_blogPageBaseLink IsNot Nothing Then Return local_blogPageBaseLink
+            local_blogPageBaseLink = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, "", "")
+            Return local_blogPageBaseLink
+        End Get
+    End Property
+    Private local_blogPageBaseLink As String = Nothing
+
     '
     '====================================================================================================
     '
@@ -126,6 +134,6 @@ Public Class ApplicationController
         Me.cp = cp
         '
         local_blog = blog
-        blogPageBaseLink = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, "", "")
+        local_blogEntryId = blogEntryId
     End Sub
 End Class
