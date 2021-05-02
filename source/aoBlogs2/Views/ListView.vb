@@ -151,7 +151,8 @@ Namespace Views
                     FeedFooter = "RSS: " _
                         & FeedFooter & rssFeed.name & "</a>" _
                         & "&nbsp;" _
-                        & FeedFooter & "<img src=""/cclib/images/IconXML-25x13.gif"" width=25 height=13 class=""aoBlogRSSFeedImage""></a>" _
+                        & FeedFooter _
+                        & iconRSS_16x16 _
                         & ""
                     result.Append("<div class=""aoBlogFooterLink"">" & FeedFooter & "</div>")
                 End If
