@@ -19,7 +19,7 @@ Namespace Views
             Dim result As New StringBuilder()
             Try
                 Dim blog As BlogModel = app.blog
-                Dim user As PersonModel = app.user
+                Dim user As Models.PersonModel = app.user
                 Dim rssFeed As RSSFeedModel = app.rssFeed
                 If blog.Caption <> "" Then
                     result.Append(vbCrLf & "<h2 Class=""aoBlogCaption"">" & blog.Caption & "</h2>")

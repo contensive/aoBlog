@@ -63,15 +63,15 @@ Public Class ApplicationController
     ''' The current user at the keyboard
     ''' </summary>
     ''' <returns></returns>
-    Public ReadOnly Property user As PersonModel
+    Public ReadOnly Property user As Models.PersonModel
         Get
             If (local_user Is Nothing) Then
-                local_user = Contensive.Models.Db.DbBaseModel.create(Of PersonModel)(cp, cp.User.Id)
+                local_user = DbBaseModel.create(Of Models.PersonModel)(cp, cp.User.Id)
             End If
             Return local_user
         End Get
     End Property
-    Private local_user As PersonModel = Nothing
+    Private local_user As Models.PersonModel = Nothing
     '
     '====================================================================================================
     ''' <summary>

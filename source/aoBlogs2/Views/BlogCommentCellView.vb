@@ -8,7 +8,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function getBlogCommentCell(cp As CPBaseClass, blog As BlogModel, blogEntry As BlogPostModel, blogComment As BlogCommentModel, user As PersonModel, IsSearchListing As Boolean) As String
+        Public Shared Function getBlogCommentCell(cp As CPBaseClass, blog As BlogModel, blogEntry As BlogPostModel, blogComment As BlogCommentModel, user As Models.PersonModel, IsSearchListing As Boolean) As String
             Try
                 Dim result As String = ""
                 '
@@ -26,7 +26,7 @@ Namespace Views
                 result &= "<div class=""aoBlogCommentCopy"">" & Copy & "</div>"
                 Dim rowCopy As String = ""
                 If (True) Then
-                    Dim author = DbBaseModel.create(Of PersonModel)(cp, blogEntry.AuthorMemberID)
+                    Dim author = DbBaseModel.create(Of Models.PersonModel)(cp, blogEntry.AuthorMemberID)
                     If (author IsNot Nothing) AndAlso (author.name <> "") Then
                         rowCopy &= "by " & cp.Utils.EncodeHTML(author.name)
                         If blogComment.dateAdded <> Date.MinValue Then

@@ -218,7 +218,7 @@ Namespace Views
             Try
                 Dim blog As BlogModel = app.blog
                 Dim blogEntry As BlogPostModel = app.blogEntry
-                Dim user As PersonModel = app.user
+                Dim user As Models.PersonModel = app.user
                 '
                 result = request.SourceFormID
                 Dim SN As String = cp.Visit.GetText(SNBlogCommentName)

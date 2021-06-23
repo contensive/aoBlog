@@ -156,7 +156,7 @@ Namespace Views
                     blogPost.AuthorMemberID = cp.Utils.EncodeInteger(blogPost.createdBy)
                     blogPost.save(cp)
                 End If
-                Dim author = DbBaseModel.create(Of PersonModel)(cp, blogPost.AuthorMemberID)
+                Dim author = DbBaseModel.create(Of Models.PersonModel)(cp, blogPost.AuthorMemberID)
                 If (author IsNot Nothing) Then
                     RowCopy &= "By " & author.name
                     If blogPost.DateAdded <> Date.MinValue Then

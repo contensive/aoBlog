@@ -10,7 +10,6 @@ Imports Contensive.BaseClasses
 
 Namespace Models.View
     Public Class RequestModel
-        Inherits DbModel
         '
         '====================================================================================================
         '
