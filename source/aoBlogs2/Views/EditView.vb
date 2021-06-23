@@ -272,7 +272,7 @@ Namespace Views
                                             FileExtension = Mid(imageFilename, Pos + 1)
                                             FilenameNoExtension = Left(imageFilename, Pos - 1)
                                         End If
-                                        Dim VirtualFilePath As String = BlogImage.getUploadPath(Of BlogImageModel)("filename")
+                                        Dim VirtualFilePath As String = BlogImage.Filename.  .getUploadPath(Of BlogImageModel)("filename")
                                         Call cp.Html.ProcessInputFile(rnBlogUploadPrefix & "." & UploadPointer, VirtualFilePath)
                                         BlogImage.Filename = VirtualFilePath & imageFilename
                                         BlogImage.save(cp)

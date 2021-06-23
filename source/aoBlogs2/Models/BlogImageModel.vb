@@ -17,7 +17,7 @@ Namespace Models
         '
         Public Property AltSizeList As String
         Public Property description As String
-        Public Property Filename As String
+        Public Property Filename As DbBaseModel.FieldTypeFile
         Public Property height As Integer
         Public Property width As Integer
         '
