@@ -21,8 +21,8 @@ Namespace Views
                 If (blogImage IsNot Nothing) Then
                     Return_ImageDescription = blogImage.description
                     Return_Imagename = blogImage.name
-                    Return_ThumbnailFilename = blogImage.Filename
-                    Return_ImageFilename = blogImage.Filename
+                    Return_ThumbnailFilename = blogImage.Filename.filename
+                    Return_ImageFilename = blogImage.Filename.filename
                 End If
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)

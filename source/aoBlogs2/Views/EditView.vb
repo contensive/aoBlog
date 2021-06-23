@@ -70,7 +70,7 @@ Namespace Views
                 If BlogImageModelList.Count > 0 Then
                     Dim BlogImage = BlogImageModelList.First
                     'For Each BlogImage In BlogImageModelList
-                    Dim imageFilename As String = BlogImage.Filename
+                    Dim imageFilename As String = BlogImage.Filename.filename
                     Dim imageDescription As String = BlogImage.description
                     Dim imageName As String = BlogImage.name
                     If Ptr <> 1 Then
@@ -265,16 +265,19 @@ Namespace Views
                                         BlogImageID = BlogImage.id
                                         BlogImage.name = imageName
                                         BlogImage.description = imageDescription
-                                        Dim FileExtension As String = ""
-                                        Dim FilenameNoExtension As String = ""
-                                        Dim Pos As Integer = InStrRev(imageFilename, ".")
-                                        If Pos > 0 Then
-                                            FileExtension = Mid(imageFilename, Pos + 1)
-                                            FilenameNoExtension = Left(imageFilename, Pos - 1)
-                                        End If
-                                        Dim VirtualFilePath As String = BlogImage.Filename.  .getUploadPath(Of BlogImageModel)("filename")
-                                        Call cp.Html.ProcessInputFile(rnBlogUploadPrefix & "." & UploadPointer, VirtualFilePath)
-                                        BlogImage.Filename = VirtualFilePath & imageFilename
+                                        'Dim FileExtension As String = ""
+                                        'Dim FilenameNoExtension As String = ""
+                                        'Dim Pos As Integer = InStrRev(imageFilename, ".")
+                                        'If Pos > 0 Then
+                                        '    FileExtension = Mid(imageFilename, Pos + 1)
+                                        '    FilenameNoExtension = Left(imageFilename, Pos - 1)
+                                        'End If
+
+                                        BlogImage.Filename.uploadRequestName = rnBlogUploadPrefix & "." & UploadPointer
+
+                                        'Dim VirtualFilePath As String = cp.Db.CreateUploadFieldPath(tableName:=, fieldName:=, recordId:= ) ' BlogImage.Filename.  .getUploadPath(Of BlogImageModel)("filename")
+                                        'Call cp.Html.ProcessInputFile(rnBlogUploadPrefix & "." & UploadPointer, VirtualFilePath)
+                                        'BlogImage.Filename = VirtualFilePath & imageFilename
                                         BlogImage.save(cp)
                                         BlogImage.sortOrder = New String("0"c, 12 - imageOrder.ToString().Length) & imageOrder.ToString()
                                     End If
