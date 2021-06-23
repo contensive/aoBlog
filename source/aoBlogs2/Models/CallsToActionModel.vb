@@ -1,24 +1,18 @@
 ﻿
-
-Option Explicit On
-Option Strict On
-
-Imports System
-Imports System.Collections.Generic
-Imports System.Text
-Imports Contensive.BaseClasses
+Imports Contensive.Models.Db
 
 Namespace Models
     Public Class CallsToActionModel
-        Inherits DbModel
+        Inherits DbBaseModel
         '
         '====================================================================================================
-        '-- const
-        Public Const contentName As String = "Calls To Action"
-        Public Const contentTableName As String = "callsToAction"
-        Private Shadows Const contentDataSource As String = "default"
+        ''' <summary>
+        '''table definition
+        '''</summary>
+        Public Shared ReadOnly Property tableMetadata As DbBaseTableMetadataModel = New DbBaseTableMetadataModel("Calls To Action", "callsToAction", "default", False)
         '
         '====================================================================================================
+        '
         ' -- instance properties
         Public Property link As String
         Public Property headline As String

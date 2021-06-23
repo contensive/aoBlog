@@ -1,5 +1,6 @@
 Imports Contensive.Addons.Blog.Models
 Imports Contensive.BaseClasses
+Imports Contensive.Models.Db
 
 Namespace Views
     '
@@ -25,15 +26,15 @@ Namespace Views
                 result &= "<div class=""aoBlogCommentCopy"">" & Copy & "</div>"
                 Dim rowCopy As String = ""
                 If (True) Then
-                    Dim author = DbModel.create(Of PersonModel)(cp, blogEntry.AuthorMemberID)
+                    Dim author = DbBaseModel.create(Of PersonModel)(cp, blogEntry.AuthorMemberID)
                     If (author IsNot Nothing) AndAlso (author.name <> "") Then
                         rowCopy &= "by " & cp.Utils.EncodeHTML(author.name)
-                        If blogComment.DateAdded <> Date.MinValue Then
-                            rowCopy &= " | " & blogComment.DateAdded
+                        If blogComment.dateAdded <> Date.MinValue Then
+                            rowCopy &= " | " & blogComment.dateAdded
                         End If
                     Else
-                        If blogComment.DateAdded <> Date.MinValue Then
-                            rowCopy &= blogComment.DateAdded
+                        If blogComment.dateAdded <> Date.MinValue Then
+                            rowCopy &= blogComment.dateAdded
                         End If
                     End If
                 End If

@@ -1,12 +1,6 @@
 ﻿
-
-Option Explicit On
-Option Strict On
-
-Imports System
-Imports System.Collections.Generic
-Imports System.Text
 Imports Contensive.BaseClasses
+Imports Contensive.Models.Db
 
 Namespace Models
     ''' <summary>
@@ -14,13 +8,13 @@ Namespace Models
     ''' Blog Entries (posts) and Blog Comments (comments to posts) are both stored in Blog Copy
     ''' </summary>
     Public Class BlogCopyModel
-        Inherits DbModel
+        Inherits DbBaseModel
         '
         '====================================================================================================
-        '-- const
-        Public Const contentName As String = "Blog Copy"      '<------ set content name
-        Public Const contentTableName As String = "ccBlogCopy"   '<------ set to tablename for the primary content (used for cache names)
-        Private Shadows Const contentDataSource As String = "default"             '<------ set to datasource if not default
+        ''' <summary>
+        '''table definition
+        '''</summary>
+        Public Shared ReadOnly Property tableMetadata As DbBaseTableMetadataModel = New DbBaseTableMetadataModel("Blog Copy", "ccBlogCopy", "default", False)
         '
         '====================================================================================================
         ' -- instance properties
@@ -48,18 +42,18 @@ Namespace Models
         ''' <param name="blogId">The id of the Blog Copy</param>
         ''' <returns></returns>
         Public Shared Function createListFromBlogCopy(cp As CPBaseClass, blogId As Integer) As List(Of BlogCopyModel)
-            Dim result As New List(Of BlogCopyModel)
             Try
                 Dim Sql As String = "select p.ID" _
-                        & " from (ccBlogCopy p" _
-                        & " left join BlogCategories c on c.id=p.blogCategoryID)" _
-                        & " where (p.blogid=" & blogId & ")" _
-                        & " and((c.id is null)or(c.UserBlocking=0)or(c.UserBlocking is null))"
-                result = createList(Of BlogCopyModel)(cp, "(id in (" & Sql & "))")
+                    & " from (ccBlogCopy p" _
+                    & " left join BlogCategories c on c.id=p.blogCategoryID)" _
+                    & " where (p.blogid=" & blogId & ")" _
+                    & " and((c.id is null)or(c.UserBlocking=0)or(c.UserBlocking is null))"
+                Return createList(Of BlogCopyModel)(cp, "(id in (" & Sql & "))")
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)
+                Throw
             End Try
-            Return result
+
         End Function
         '
         ''' <summary>
@@ -69,9 +63,8 @@ Namespace Models
         ''' <param name="blogId">The id of the Blog Copy</param>
         ''' <returns></returns>
         Public Shared Function createArchiveListFromBlogCopy(cp As CPBaseClass, blogId As Integer) As List(Of ArchiveDateModel)
-            Dim result As New List(Of ArchiveDateModel)
             Try
-                'result = createList(cp, "(BlogID=" & blogId & ")", "year(dateadded) desc, Month(DateAdded) desc")
+                Dim result As New List(Of ArchiveDateModel)
                 Dim SQL = "SELECT DISTINCT month(dateadded) as archiveMonth, year(dateadded) as archiveYear" _
                             & " From ccBlogCopy" _
                             & " Where (ContentControlID = " & cp.Content.GetID(cnBlogEntries) & ") And (Active <> 0)" _
@@ -80,19 +73,20 @@ Namespace Models
                 Dim cs As CPCSBaseClass = cp.CSNew()
                 If (cs.OpenSQL(SQL)) Then
                     Do
-                        Dim archiveDate As New ArchiveDateModel()
-                        archiveDate.Month = cs.GetInteger("archiveMonth")
-                        archiveDate.Year = cs.GetInteger("archiveYear")
-                        result.Add(archiveDate)
+                        result.Add(New ArchiveDateModel With {
+                            .Month = cs.GetInteger("archiveMonth"),
+                            .Year = cs.GetInteger("archiveYear")
+                        })
                         cs.GoNext()
                     Loop While cs.OK()
                 End If
 
                 cs.Close()
+                Return result
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)
+                Throw
             End Try
-            Return result
         End Function
 
         Public Class ArchiveDateModel

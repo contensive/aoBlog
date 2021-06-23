@@ -1,6 +1,7 @@
 ﻿
 Imports Contensive.Addons.Blog.Models
 Imports Contensive.BaseClasses
+Imports Contensive.Models.Db
 
 Public Class ApplicationController
     '
@@ -50,7 +51,7 @@ Public Class ApplicationController
             If (local_blogEntryId Is Nothing) OrElse (local_blogEntryId = 0) Then Return Nothing
             '
             ' -- lookup and return the blog entry
-            local_blogEntry = DbModel.create(Of BlogPostModel)(cp, cp.Utils.EncodeInteger(local_blogEntryId))
+            local_blogEntry = DbBaseModel.create(Of BlogPostModel)(cp, cp.Utils.EncodeInteger(local_blogEntryId))
             Return local_blogEntry
         End Get
     End Property
@@ -65,7 +66,7 @@ Public Class ApplicationController
     Public ReadOnly Property user As PersonModel
         Get
             If (local_user Is Nothing) Then
-                local_user = PersonModel.create(cp, cp.User.Id)
+                local_user = Contensive.Models.Db.DbBaseModel.create(Of PersonModel)(cp, cp.User.Id)
             End If
             Return local_user
         End Get
@@ -100,14 +101,14 @@ Public Class ApplicationController
             If (local_RSSFeed Is Nothing) Then
                 '
                 ' Get the Feed Args
-                local_RSSFeed = DbModel.create(Of RSSFeedModel)(cp, blog.RSSFeedID)
+                local_RSSFeed = DbBaseModel.create(Of RSSFeedModel)(cp, blog.RSSFeedID)
                 If (local_RSSFeed Is Nothing) Then
-                    local_RSSFeed = DbModel.add(Of RSSFeedModel)(cp)
+                    local_RSSFeed = DbBaseModel.addDefault(Of RSSFeedModel)(cp)
                     local_RSSFeed.name = blog.Caption
                     local_RSSFeed.description = "This is your First RssFeed"
-                    local_RSSFeed.save(Of BlogModel)(cp)
+                    local_RSSFeed.save(cp)
                     blog.RSSFeedID = local_RSSFeed.id
-                    blog.save(Of BlogModel)(cp)
+                    blog.save(cp)
                 End If
             End If
             Return local_RSSFeed

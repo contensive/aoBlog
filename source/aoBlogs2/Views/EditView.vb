@@ -3,6 +3,7 @@ Imports System.Text
 Imports Contensive.Addons.Blog.Controllers
 Imports Contensive.Addons.Blog.Models
 Imports Contensive.BaseClasses
+Imports Contensive.Models.Db
 
 Namespace Views
     '
@@ -200,7 +201,7 @@ Namespace Views
                     ElseIf request.ButtonValue = FormButtonDelete Then
                         '
                         ' Delete
-                        DbModel.delete(Of BlogPostModel)(cp, blogEntry.id)
+                        DbBaseModel.delete(Of BlogPostModel)(cp, blogEntry.id)
                         Call RSSFeedModel.UpdateBlogFeed(cp)
                         blogEntry = Nothing
                         Return FormBlogPostList
@@ -209,10 +210,10 @@ Namespace Views
                         ' Post
                         '
                         If (blogEntry Is Nothing) Then
-                            blogEntry = DbModel.add(Of BlogPostModel)(cp)
+                            blogEntry = DbBaseModel.addDefault(Of BlogPostModel)(cp)
                             '
                             ' -- by default, the RSS feed should be checked for this new blog entry
-                            Dim rule As RSSFeedBlogRuleModel = RSSFeedBlogRuleModel.add(cp)
+                            Dim rule As RSSFeedBlogRuleModel = DbBaseModel.addDefault(Of RSSFeedBlogRuleModel)(cp)
                             rule.BlogPostID = blogEntry.id
                             rule.RSSFeedID = app.rssFeed.id
                             rule.save(cp)
@@ -223,7 +224,7 @@ Namespace Views
                         blogEntry.tagList = request.BlogEntryTagList
                         blogEntry.blogCategoryID = request.BlogEntryCategoryId
                         blogEntry.blogID = blog.id
-                        blogEntry.save(Of BlogPostModel)(cp)
+                        blogEntry.save(cp)
                         '
                         ' Upload files
                         '
@@ -241,7 +242,7 @@ Namespace Views
                                     '
                                     ' edit image
                                     '
-                                    Dim BlogImage As BlogImageModel = DbModel.add(Of BlogImageModel)(cp)
+                                    Dim BlogImage As BlogImageModel = DbBaseModel.addDefault(Of BlogImageModel)(cp)
                                     If cp.Doc.GetBoolean(rnBlogImageDelete & "." & UploadPointer) Then
                                         Call cp.Content.Delete(cnBlogImages, ImageID.ToString())
                                     Else
@@ -249,8 +250,8 @@ Namespace Views
                                         If (BlogImage IsNot Nothing) Then
                                             BlogImage.name = imageName
                                             BlogImage.description = imageDescription
-                                            BlogImage.SortOrder = New String(CChar("0"), 12 - imageOrder.ToString().Length) & imageOrder.ToString() ' String.Empty.PadLeft((12 - Len(imageOrder.ToString())), "0") & imageOrder
-                                            blogEntry.save(Of BlogPostModel)(cp)
+                                            BlogImage.sortOrder = New String(CChar("0"), 12 - imageOrder.ToString().Length) & imageOrder.ToString() ' String.Empty.PadLeft((12 - Len(imageOrder.ToString())), "0") & imageOrder
+                                            blogEntry.save(cp)
                                         End If
                                     End If
                                 ElseIf imageFilename <> "" Then
@@ -259,7 +260,7 @@ Namespace Views
                                     '
                                     'CS = Main.InsertCSRecord(cnBlogImages)
                                     'If Main.IsCSOK(CS) Then
-                                    Dim BlogImage As BlogImageModel = DbModel.add(Of BlogImageModel)(cp)
+                                    Dim BlogImage As BlogImageModel = DbBaseModel.addDefault(Of BlogImageModel)(cp)
                                     If (BlogImage IsNot Nothing) Then
                                         BlogImageID = BlogImage.id
                                         BlogImage.name = imageName
@@ -274,15 +275,15 @@ Namespace Views
                                         Dim VirtualFilePath As String = BlogImage.getUploadPath(Of BlogImageModel)("filename")
                                         Call cp.Html.ProcessInputFile(rnBlogUploadPrefix & "." & UploadPointer, VirtualFilePath)
                                         BlogImage.Filename = VirtualFilePath & imageFilename
-                                        BlogImage.save(Of BlogImageModel)(cp)
-                                        BlogImage.SortOrder = New String("0"c, 12 - imageOrder.ToString().Length) & imageOrder.ToString()
+                                        BlogImage.save(cp)
+                                        BlogImage.sortOrder = New String("0"c, 12 - imageOrder.ToString().Length) & imageOrder.ToString()
                                     End If
                                     '
-                                    Dim ImageRule As BlogImageRuleModel = BlogImageRuleModel.add(Of BlogImageRuleModel)(cp)
+                                    Dim ImageRule As BlogImageRuleModel = BlogImageRuleModel.addDefault(Of BlogImageRuleModel)(cp)
                                     If (ImageRule IsNot Nothing) Then
                                         ImageRule.BlogEntryID = blogEntry.id
                                         ImageRule.BlogImageID = BlogImageID
-                                        ImageRule.save(Of BlogImageRuleModel)(cp)
+                                        ImageRule.save(cp)
                                     End If
                                 End If
                             Next

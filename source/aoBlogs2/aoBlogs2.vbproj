@@ -74,8 +74,11 @@
     <AssemblyOriginatorKeyFile>blogkey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ContensiveDbModels, Version=4.1.2.0, Culture=neutral, PublicKeyToken=c014b235a9c6bb22, processorArchitecture=MSIL">
+      <HintPath>..\packages\Contensive.DbModels.21.5.6.1\lib\net45\ContensiveDbModels.dll</HintPath>
+    </Reference>
     <Reference Include="CPBase, Version=4.1.2.0, Culture=neutral, PublicKeyToken=10b3c53389b845fb, processorArchitecture=MSIL">
-      <HintPath>..\packages\Contensive.CPBaseClass.21.3.24.1\lib\net45\CPBase.dll</HintPath>
+      <HintPath>..\packages\Contensive.CPBaseClass.21.5.6.1\lib\net45\CPBase.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -95,16 +98,9 @@
     <Compile Include="Controllers\ApplicationController.vb" />
     <Compile Include="Controllers\MetadataController.vb" />
     <Compile Include="Controllers\genericController.vb" />
-    <Compile Include="Models\DbModel.vb" />
-    <Compile Include="Models\EmailModel.vb" />
-    <Compile Include="Models\GroupModel.vb" />
-    <Compile Include="Models\GroupRuleModel.vb" />
-    <Compile Include="Models\MemberRuleModel.vb" />
-    <Compile Include="Models\PersonModel.vb" />
     <Compile Include="Models\BlogCategoryGroupRulesModel.vb" />
     <Compile Include="Models\BlogModel.vb" />
     <Compile Include="Models\BlogPostModel.vb" />
-    <Compile Include="Models\LinkAliasesModel.vb" />
     <Compile Include="Models\RSSFeedBlogRuleModel.vb" />
     <Compile Include="Models\RSSFeedModel.vb" />
     <Compile Include="Models\BlogCommentModel.vb" />
@@ -113,11 +109,9 @@
     <Compile Include="Models\BlogImageModel.vb" />
     <Compile Include="Models\BlogImageRuleModel.vb" />
     <Compile Include="Models\View\RequestModel.vb" />
-    <Compile Include="Models\VisitModel.vb" />
     <Compile Include="Models\BlogViewingLogModel.vb" />
     <Compile Include="Models\BlogEntryCtaRules.vb" />
     <Compile Include="Models\CallsToActionModel.vb" />
-    <Compile Include="Models\_blankModel.vb" />
     <Compile Include="Views\ArchiveView.vb" />
     <Compile Include="Views\BlogCommentCellView.vb" />
     <Compile Include="Views\BlogEntryCellView.vb" />
@@ -186,7 +180,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Models\modelData.txt" />
     <Content Include="Resources\LegacyVb6-ccCommonModule.txt" />
     <Content Include="Resources\LegacyVb6-KmaCommonModule.txt" />
   </ItemGroup>

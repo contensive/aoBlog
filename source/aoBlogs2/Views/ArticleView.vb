@@ -3,6 +3,7 @@ Imports System.Runtime.CompilerServices
 Imports Contensive.Addons.Blog.Controllers
 Imports Contensive.Addons.Blog.Models
 Imports Contensive.BaseClasses
+Imports Contensive.Models.Db
 
 Namespace Views
     '
@@ -20,7 +21,7 @@ Namespace Views
                 End If
                 '
                 ' -- count the viewing
-                cp.Db.ExecuteNonQuery("update " & BlogPostModel.contentTableName & " set viewings=" & (app.blogEntry.Viewings + 1))
+                cp.Db.ExecuteNonQuery("update " & BlogPostModel.tableMetadata.tableNameLower & " set viewings=" & (app.blogEntry.Viewings + 1))
                 hint = 10
                 '
                 Dim result As String = ""
@@ -31,23 +32,23 @@ Namespace Views
                 result &= "<div class=""aoBlogHeaderLink""><a href=""" & app.blogPageBaseLink & """>" & BackToRecentPostsMsg & "</a></div>"
                 hint = 20
                 '
-                Dim entryEditLink As String = If(app.userIsEditing, cp.Content.GetEditLink(BlogModel.contentName, app.blogEntry.id.ToString(), False, app.blogEntry.name, True), "")
+                Dim entryEditLink As String = If(app.userIsEditing, cp.Content.GetEditLink(BlogModel.tableMetadata.contentName, app.blogEntry.id.ToString(), False, app.blogEntry.name, True), "")
                 '
                 ' Print the Blog Entry
                 Dim return_CommentCnt As Integer
                 result &= BlogEntryCellView.getBlogPostCell(cp, app, app.blogEntry, True, False, return_CommentCnt, entryEditLink)
                 '
-                Dim visit As VisitModel = VisitModel.create(cp, cp.Visit.Id)
+                Dim visit As VisitModel = DbBaseModel.create(Of VisitModel)(cp, cp.Visit.Id)
                 If (visit IsNot Nothing) Then
-                    If (Not visit.ExcludeFromAnalytics) Then
+                    If (Not visit.excludeFromAnalytics) Then
                         Dim blogEntryId As Integer = If(app.blogEntry IsNot Nothing, app.blogEntry.id, 0)
-                        Dim BlogViewingLog As BlogViewingLogModel = DbModel.add(Of BlogViewingLogModel)(cp)
+                        Dim BlogViewingLog As BlogViewingLogModel = DbBaseModel.addDefault(Of BlogViewingLogModel)(cp)
                         If (BlogViewingLog IsNot Nothing) Then
                             BlogViewingLog.name = cp.User.Name & ", post " & CStr(blogEntryId) & ", " & Now()
                             BlogViewingLog.BlogEntryID = blogEntryId
                             BlogViewingLog.MemberID = cp.User.Id
                             BlogViewingLog.VisitID = cp.Visit.Id
-                            BlogViewingLog.save(Of BlogModel)(cp)
+                            BlogViewingLog.save(cp)
                         End If
                     End If
                 End If
@@ -59,7 +60,7 @@ Namespace Views
                 '
                 hint = 60
                 Dim qs As String
-                If app.blogEntry.AllowComments And (cp.Visit.CookieSupport) And (Not visit.Bot()) Then
+                If app.blogEntry.AllowComments And (cp.Visit.CookieSupport) And (Not visit.bot()) Then
                     hint = 70
                     result &= "<div class=""aoBlogCommentHeader"">Post a Comment</div>"
                     '
@@ -201,7 +202,7 @@ Namespace Views
                 '
                 ' -- if editing enabled, add the link and wrapperwrapper
                 hint = 240
-                result = genericController.addEditWrapper(cp, result, app.blogEntry.id, app.blogEntry.name, Models.BlogPostModel.contentName)
+                result = genericController.addEditWrapper(cp, result, app.blogEntry.id, app.blogEntry.name, BlogPostModel.tableMetadata.contentName)
                 '
                 Return result
             Catch ex As Exception
@@ -257,22 +258,22 @@ Namespace Views
                         formKey = cp.Doc.GetText("formkey")
                         Copy = cp.Doc.GetText(RequestNameCommentCopy)
                         If Copy <> "" Then
-                            Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(formkey=" & cp.Db.EncodeSQLText(formKey) & ")", "ID")
+                            Dim BlogCommentModelList As List(Of BlogCommentModel) = DbBaseModel.createList(Of BlogCommentModel)(cp, "(formkey=" & cp.Db.EncodeSQLText(formKey) & ")", "ID")
                             If (BlogCommentModelList.Count <> 0) Then
                                 Call cp.UserError.Add("<p>This comment has already been accepted.</p>")
                                 RetryCommentPost = False
                             Else
                                 'Dim EntryID = cp.Doc.GetInteger(RequestNameBlogEntryID)
-                                'Dim BlogEntry As BlogEntryModel = DbModel.create(Of BlogEntryModel)(cp, EntryID)
-                                Dim BlogComment As BlogCommentModel = DbModel.add(Of BlogCommentModel)(cp)
+                                'Dim BlogEntry As BlogEntryModel = DbBaseModel.create(Of BlogEntryModel)(cp, EntryID)
+                                Dim BlogComment As BlogCommentModel = DbBaseModel.addDefault(Of BlogCommentModel)(cp)
                                 BlogComment.BlogID = blog.id
-                                BlogComment.Active = True
+                                BlogComment.active = True
                                 BlogComment.name = cp.Doc.GetText(RequestNameCommentTitle)
                                 BlogComment.CopyText = Copy
                                 BlogComment.EntryID = blogEntry.id
                                 BlogComment.Approved = user.isBlogEditor(cp, blog) Or blog.autoApproveComments
                                 BlogComment.FormKey = formKey
-                                BlogComment.save(Of BlogCommentModel)(cp)
+                                BlogComment.save(cp)
                                 CommentID = BlogComment.id
                                 RetryCommentPost = False
                                 '
@@ -304,16 +305,16 @@ Namespace Views
                                     End If
 
                                     'If blog.AuthoringGroupID <> 0 Then
-                                    'Dim MemberRuleList As List(Of MemberRuleModel) = DbModel.createList(Of MemberRuleModel)(cp, "GroupId=" & blog.AuthoringGroupID)
+                                    'Dim MemberRuleList As List(Of MemberRuleModel) = DbBaseModel.createList(Of MemberRuleModel)(cp, "GroupId=" & blog.AuthoringGroupID)
                                     'For Each MemberRule In MemberRuleList
                                     'Call cp.Email.sendUser(MemberRule.MemberID.ToString(), EmailFromAddress, "Blog comment on " & blog.name, EmailBody, False, False)
                                     'Next
                                     'End If
                                     Dim blogAuthorsGroupId As Integer = cp.Group.GetId("Blog Authors")
                                     If blogAuthorsGroupId <> 0 Then
-                                        Dim MemberRuleList As List(Of MemberRuleModel) = DbModel.createList(Of MemberRuleModel)(cp, "GroupId=" & blogAuthorsGroupId)
+                                        Dim MemberRuleList As List(Of MemberRuleModel) = DbBaseModel.createList(Of MemberRuleModel)(cp, "GroupId=" & blogAuthorsGroupId)
                                         For Each MemberRule In MemberRuleList
-                                            Call cp.Email.sendUser(MemberRule.MemberID, EmailFromAddress, "Blog comment on " & blog.name, EmailBody, False, False)
+                                            Call cp.Email.sendUser(MemberRule.memberId, EmailFromAddress, "Blog comment on " & blog.name, EmailBody, False, False)
                                         Next
                                     End If
                                 End If
@@ -345,9 +346,9 @@ Namespace Views
                                                 '
                                                 ' Approve Comment
                                                 '
-                                                Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(name=" & cp.Utils.EncodeRequestVariable(blog.name) & ")", "ID")
+                                                Dim BlogCommentModelList As List(Of BlogCommentModel) = DbBaseModel.createList(Of BlogCommentModel)(cp, "(name=" & cp.Utils.EncodeRequestVariable(blog.name) & ")", "ID")
                                                 If (BlogCommentModelList.Count > 0) Then
-                                                    Dim BlogComment As BlogCommentModel = DbModel.add(Of BlogCommentModel)(cp)
+                                                    Dim BlogComment As BlogCommentModel = DbBaseModel.addDefault(Of BlogCommentModel)(cp)
                                                     If cp.CSNew.OK() Then
                                                         BlogComment.Approved = True
                                                     End If
@@ -355,7 +356,7 @@ Namespace Views
                                                     '
                                                     ' Unapprove comment
                                                     '
-                                                    Dim BlogComment As BlogCommentModel = DbModel.add(Of BlogCommentModel)(cp)
+                                                    Dim BlogComment As BlogCommentModel = DbBaseModel.addDefault(Of BlogCommentModel)(cp)
                                                     If (BlogComment IsNot Nothing) Then
                                                         BlogComment.Approved = False
                                                     End If

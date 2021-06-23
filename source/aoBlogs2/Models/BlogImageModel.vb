@@ -1,26 +1,20 @@
 ﻿
-
-Option Explicit On
-Option Strict On
-
-Imports System
-Imports System.Collections.Generic
-Imports System.Text
 Imports Contensive.BaseClasses
+Imports Contensive.Models.Db
 
 Namespace Models
-    Public Class BlogImageModel        '<------ set set model Name and everywhere that matches this string
-        Inherits DbModel
+    Public Class BlogImageModel
+        Inherits DbBaseModel
         '
         '====================================================================================================
-        '-- const
-        Public Const contentName As String = "Blog Images"      '<------ set content name
-        Public Const contentTableName As String = "BlogImages"   '<------ set to tablename for the primary content (used for cache names)
-        Private Shadows Const contentDataSource As String = "default"             '<------ set to datasource if not default
+        ''' <summary>
+        '''table definition
+        '''</summary>
+        Public Shared ReadOnly Property tableMetadata As DbBaseTableMetadataModel = New DbBaseTableMetadataModel("Blog Images", "BlogImages", "default", False)
         '
         '====================================================================================================
         ' -- instance properties
-        'instancePropertiesGoHere
+        '
         Public Property AltSizeList As String
         Public Property description As String
         Public Property Filename As String
@@ -34,20 +28,17 @@ Namespace Models
         ''' <param name="entryId">The id of the blog entry</param>
         ''' <returns></returns>
         Public Shared Function createListFromBlogEntry(cp As CPBaseClass, entryId As Integer) As List(Of BlogImageModel)
-            Dim result As New List(Of BlogImageModel)
             Try
-                For Each Rule In DbModel.createList(Of BlogImageRuleModel)(cp, "(BlogEntryID=" & entryId & ")")
-                    Dim blogimage As BlogImageModel = DbModel.create(Of BlogImageModel)(cp, Rule.BlogImageID)
-                    If (blogimage IsNot Nothing) Then
-                        result.Add(DbModel.create(Of BlogImageModel)(cp, Rule.BlogImageID))
-                    End If
+                Dim result As New List(Of BlogImageModel)
+                For Each Rule In DbBaseModel.createList(Of BlogImageRuleModel)(cp, "(BlogEntryID=" & entryId & ")")
+                    Dim blogimage As BlogImageModel = DbBaseModel.create(Of BlogImageModel)(cp, Rule.BlogImageID)
+                    If (blogimage IsNot Nothing) Then result.Add(blogimage)
                 Next
+                Return result
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)
+                Throw
             End Try
-            Return result
         End Function
-
-
     End Class
 End Namespace

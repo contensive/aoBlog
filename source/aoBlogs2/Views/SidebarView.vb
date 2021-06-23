@@ -9,6 +9,7 @@ Imports Contensive.Addons.Blog.Controllers
 Imports Contensive.Addons.Blog.Models
 Imports Contensive.Addons.Blog.Models.View
 Imports Contensive.BaseClasses
+Imports Contensive.Models.Db
 
 Namespace Views
     '
@@ -38,9 +39,9 @@ Namespace Views
                         If Blog.allowArticleCTA And isArticleView Then
                             '
                             ' CTA cells
-                            Dim blogEntryCtaRuleList = DbModel.createList(Of BlogEntryCTARuleModel)(cp, "blogEntryid=" & request.blogEntryId)
+                            Dim blogEntryCtaRuleList = DbBaseModel.createList(Of BlogEntryCTARuleModel)(cp, "blogEntryid=" & request.blogEntryId)
                             For Each rule In blogEntryCtaRuleList
-                                Dim cta = DbModel.create(Of CallsToActionModel)(cp, rule.calltoactionid)
+                                Dim cta = DbBaseModel.create(Of CallsToActionModel)(cp, rule.calltoactionid)
                                 If (cta IsNot Nothing) Then
                                     sidebarCell.Load(cellTemplate)
                                     Call sidebarCell.SetInner(".blogSidebarCellHeadline", cta.headline & "<br>")
@@ -173,7 +174,7 @@ Namespace Views
                         End If
                         '
                         If Blog.allowRSSSubscribe Then
-                            Dim rssFeed = DbModel.create(Of RSSFeedModel)(cp, Blog.RSSFeedID)
+                            Dim rssFeed = DbBaseModel.create(Of RSSFeedModel)(cp, Blog.RSSFeedID)
                             '
                             If ((rssFeed Is Nothing) OrElse (rssFeed.rssFilename = "")) Then
                                 adminSuggestions &= cp.Html.li("This blog includes an RSS Feed, but no feed has been created. It his persists, please contact the site developer. Disable RSS feeds for this blog to hide this message.")
@@ -192,7 +193,7 @@ Namespace Views
                         End If
                         '
                         If isArticleView Then
-                            Dim emtyblogEntryCtaRuleList = DbModel.createList(Of BlogEntryCTARuleModel)(cp, "blogEntryid=" & request.blogEntryId)
+                            Dim emtyblogEntryCtaRuleList = DbBaseModel.createList(Of BlogEntryCTARuleModel)(cp, "blogEntryid=" & request.blogEntryId)
                             If emtyblogEntryCtaRuleList.Count > 0 Then
 
                             Else

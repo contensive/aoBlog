@@ -2,9 +2,9 @@ Imports System.Text
 Imports Contensive.Addons.Blog.Controllers
 Imports Contensive.Addons.Blog.Models
 Imports Contensive.BaseClasses
+Imports Contensive.Models.Db
 
 Namespace Views
-    '
     Public Class SearchView
         '
         '====================================================================================
@@ -15,7 +15,7 @@ Namespace Views
                 Dim blog As BlogModel = app.blog
                 Call cp.Doc.AddRefreshQueryString(RequestNameBlogEntryID, "")
                 '
-                result.Append("<h2>" & Blog.name & " Search</h2>")
+                result.Append("<h2>" & blog.name & " Search</h2>")
                 '
                 ' Search results
                 '
@@ -66,14 +66,14 @@ Namespace Views
                     End If
                     result.Append("<h4 class=""aoBlogEntryCopy"">" & Subcaption & "</h4>")
                     '
-                    Dim BlogEntryList = DbModel.createList(Of BlogPostModel)(cp, sqlCriteria.ToString())
+                    Dim BlogEntryList = DbBaseModel.createList(Of BlogPostModel)(cp, sqlCriteria.ToString())
                     If (BlogEntryList.Count = 0) Then
                         result.Append("</br>" & "<div class=""aoBlogProblem"">There were no matches to your search</div>")
                     Else
                         result.Append("</br>" & "<hr>")
                         For Each blogEntry In BlogEntryList
                             Dim AuthorMemberID As Integer = blogEntry.AuthorMemberID
-                            If AuthorMemberID = 0 Then AuthorMemberID = blogEntry.CreatedBy
+                            If AuthorMemberID = 0 Then AuthorMemberID = cp.Utils.EncodeInteger(blogEntry.createdBy)
                             Dim Return_CommentCnt As Integer
                             result.Append(BlogEntryCellView.getBlogPostCell(cp, app, blogEntry, False, True, Return_CommentCnt, ""))
                             result.Append("<hr>")

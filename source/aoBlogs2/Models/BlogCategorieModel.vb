@@ -1,26 +1,18 @@
 ﻿
-
-Option Explicit On
-Option Strict On
-
-Imports System
-Imports System.Collections.Generic
-Imports System.Text
-Imports Contensive.BaseClasses
+Imports Contensive.Models.Db
 
 Namespace Models
-    Public Class BlogCategorieModel        '<------ set set model Name and everywhere that matches this string
-        Inherits DbModel
+    Public Class BlogCategorieModel
+        Inherits DbBaseModel
         '
         '====================================================================================================
-        '-- const
-        Public Const contentName As String = "Blog Categories"      '<------ set content name
-        Public Const contentTableName As String = "BlogCategories"   '<------ set to tablename for the primary content (used for cache names)
-        Private Shadows Const contentDataSource As String = "default"             '<------ set to datasource if not default
+        ''' <summary>
+        '''table definition
+        '''</summary>
+        Public Shared ReadOnly Property tableMetadata As DbBaseTableMetadataModel = New DbBaseTableMetadataModel("Blog Categories", "ccBlogCategories", "default", False)
         '
         '====================================================================================================
-        ' -- instance properties
-        Public Property UserBlocking As Boolean
+        Public Property userBlocking As Boolean
 
     End Class
 End Namespace

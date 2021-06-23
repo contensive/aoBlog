@@ -2,6 +2,7 @@ Imports System.Linq
 Imports Contensive.Addons.Blog.Controllers
 Imports Contensive.Addons.Blog.Models
 Imports Contensive.BaseClasses
+Imports Contensive.Models.Db
 
 Namespace Views
     '
@@ -152,10 +153,10 @@ Namespace Views
                 '
                 Dim RowCopy As String = ""
                 If (blogPost.AuthorMemberID = 0) And (blogPost.CreatedBy > 0) Then
-                    blogPost.AuthorMemberID = blogPost.CreatedBy
-                    blogPost.save(Of BlogPostModel)(cp)
+                    blogPost.AuthorMemberID = cp.Utils.EncodeInteger(blogPost.createdBy)
+                    blogPost.save(cp)
                 End If
-                Dim author = DbModel.create(Of PersonModel)(cp, blogPost.AuthorMemberID)
+                Dim author = DbBaseModel.create(Of PersonModel)(cp, blogPost.AuthorMemberID)
                 If (author IsNot Nothing) Then
                     RowCopy &= "By " & author.name
                     If blogPost.DateAdded <> Date.MinValue Then
@@ -166,12 +167,11 @@ Namespace Views
                         RowCopy &= blogPost.DateAdded
                     End If
                 End If
-                Dim visit As VisitModel = VisitModel.create(cp, cp.Visit.Id)
-                If blogPost.AllowComments And ((visit IsNot Nothing) AndAlso (cp.Visit.CookieSupport And (Not visit.Bot()))) Then
+                If blogPost.AllowComments And cp.Visit.CookieSupport Then
                     hint = 110
                     '
                     ' Show comment count
-                    Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(Approved<>0)and(EntryID=" & blogPost.id & ")")
+                    Dim BlogCommentModelList As List(Of BlogCommentModel) = DbBaseModel.createList(Of BlogCommentModel)(cp, "(Approved<>0)and(EntryID=" & blogPost.id & ")")
                     If isArticleView Then
                         If BlogCommentModelList.Count = 1 Then
                             RowCopy &= " | 1 Comment"
@@ -201,7 +201,7 @@ Namespace Views
                 End If
                 Dim toolLine As String = ""
                 Dim CommentPtr As Integer
-                If blogPost.AllowComments And (cp.Visit.CookieSupport) And ((visit IsNot Nothing) AndAlso (Not visit.Bot)) Then
+                If blogPost.AllowComments And cp.Visit.CookieSupport Then
                     hint = 130
                     '
                     ' --
@@ -210,7 +210,7 @@ Namespace Views
                         '
                         ' Show comment count
                         '
-                        Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(Approved<>0)and(EntryID=" & blogPost.id & ")")
+                        Dim BlogCommentModelList As List(Of BlogCommentModel) = DbBaseModel.createList(Of BlogCommentModel)(cp, "(Approved<>0)and(EntryID=" & blogPost.id & ")")
                         '
                         qs = app.blogListLink
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogPost.id))
@@ -225,7 +225,7 @@ Namespace Views
                         'get the unapproved comments
                         If app.user.isBlogEditor(cp, app.blog) Then
                             hint = 150
-                            Dim BlogUnapprovedCommentModelList = DbModel.createList(Of BlogCommentModel)(cp, "(Approved=0)and(EntryID=" & blogPost.id & ")")
+                            Dim BlogUnapprovedCommentModelList = DbBaseModel.createList(Of BlogCommentModel)(cp, "(Approved=0)and(EntryID=" & blogPost.id & ")")
                             Dim unapprovedCommentCount = BlogUnapprovedCommentModelList.Count
                             If toolLine <> "" Then
                                 toolLine = toolLine & "&nbsp;|&nbsp;"
@@ -251,13 +251,13 @@ Namespace Views
                             '
                             Criteria &= "and((Approved<>0)or(AuthorMemberID=" & cp.User.Id & "))"
                         End If
-                        Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, Criteria, "DateAdded")
+                        Dim BlogCommentModelList As List(Of BlogCommentModel) = DbBaseModel.createList(Of BlogCommentModel)(cp, Criteria, "DateAdded")
                         If (BlogCommentModelList.Count > 0) Then
                             Dim Divider As String = "<div class=""aoBlogCommentDivider"">&nbsp;</div>"
                             result &= "<div class=""aoBlogCommentHeader"">Comments</div>"
                             result &= vbCrLf & Divider
                             CommentPtr = 0
-                            For Each blogComment In DbModel.createList(Of BlogCommentModel)(cp, Criteria)
+                            For Each blogComment In DbBaseModel.createList(Of BlogCommentModel)(cp, Criteria)
 
                                 result &= BlogCommentCellView.getBlogCommentCell(cp, app.blog, blogPost, blogComment, app.user, False)
                                 result &= vbCrLf & Divider

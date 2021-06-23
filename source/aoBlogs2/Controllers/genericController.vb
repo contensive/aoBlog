@@ -5,6 +5,7 @@ Imports System.Linq
 Imports Contensive.Addons.Blog.Models
 Imports Contensive.Addons.Blog.Views
 Imports Contensive.BaseClasses
+Imports Contensive.Models.Db
 
 Namespace Controllers
     Public NotInheritable Class genericController

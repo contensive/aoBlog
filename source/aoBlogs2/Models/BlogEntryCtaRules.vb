@@ -1,13 +1,15 @@
 ﻿
+Imports Contensive.Models.Db
+
 Namespace Models
     Public Class BlogEntryCTARuleModel
-        Inherits DbModel
+        Inherits DbBaseModel
         '
         '====================================================================================================
-        '-- const
-        Public Const contentName As String = "Blog Entry CTA Rules"
-        Public Const contentTableName As String = "ccBlogEntryCTARules"
-        Private Shadows Const contentDataSource As String = "default"
+        ''' <summary>
+        '''table definition
+        '''</summary>
+        Public Shared ReadOnly Property tableMetadata As DbBaseTableMetadataModel = New DbBaseTableMetadataModel("Blog Entry CTA Rules", "ccBlogEntryCTARules", "default", False)
         '
         '====================================================================================================
         ' -- instance properties

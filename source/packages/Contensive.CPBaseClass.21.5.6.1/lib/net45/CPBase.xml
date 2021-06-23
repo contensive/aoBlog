@@ -1706,9 +1706,11 @@
             <summary>
             utilities for json
             </summary>
-            <value></value>
-            <returns></returns>
-            <remarks></remarks>
+        </member>
+        <member name="P:Contensive.BaseClasses.CPBaseClass.Layout">
+            <summary>
+            manage application layout records.
+            </summary>
         </member>
         <member name="P:Contensive.BaseClasses.CPBaseClass.Log">
             <summary>
@@ -1717,6 +1719,11 @@
             <value></value>
             <returns></returns>
             <remarks></remarks>
+        </member>
+        <member name="P:Contensive.BaseClasses.CPBaseClass.Mustache">
+            <summary>
+            Manage mustache compatible template language operations
+            </summary>
         </member>
         <member name="P:Contensive.BaseClasses.CPBaseClass.PrivateFiles">
             <summary>
@@ -2465,6 +2472,13 @@
             <returns></returns>
             <remarks></remarks>
         </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.GetCopy(System.String)">
+            <summary>
+            Get the string from the 'Copy Content' record based on it's name. If the record does not exist it is created with the default value provided.
+            </summary>
+            <param name="CopyName"></param>
+            <returns></returns>
+        </member>
         <member name="M:Contensive.BaseClasses.CPContentBaseClass.GetCopy(System.String,System.String,System.Int32)">
             <summary>
             Get the string from the 'Copy Content' record based on it's name. If the record does not exist it is created with the default value provided.
@@ -2493,6 +2507,36 @@
             <param name="IsEditing">If false, this call returns nothing. Set it true if IsEdiing( contentname ) is true.</param>
             <returns></returns>
             <remarks></remarks>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.GetAddLink(System.String,System.String)">
+            <summary>
+            Get an icon linked to the administration site which adds a new record to the content.
+            </summary>
+            <param name="ContentName"></param>
+            <param name="PresetNameValueList"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.GetAddLink(System.String)">
+            <summary>
+            Get an icon linked to the administration site which adds a new record to the content.
+            </summary>
+            <param name="ContentName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.GetAddLink(System.Int32,System.String)">
+            <summary>
+            Get an icon linked to the administration site which adds a new record to the content.
+            </summary>
+            <param name="contentId"></param>
+            <param name="PresetNameValueList"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.GetAddLink(System.Int32)">
+            <summary>
+            Get an icon linked to the administration site which adds a new record to the content.
+            </summary>
+            <param name="contentId"></param>
+            <returns></returns>
         </member>
         <member name="M:Contensive.BaseClasses.CPContentBaseClass.GetContentControlCriteria(System.String)">
             <summary>
@@ -2632,6 +2676,21 @@
             <returns></returns>
             <remarks></remarks>
         </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.GetPageLink(System.Int32,System.String)">
+            <summary>
+            Return the appropriate link for a page.
+            </summary>
+            <param name="PageID"></param>
+            <param name="QueryStringSuffix"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.GetPageLink(System.Int32)">
+            <summary>
+            Return the appropriate link for a page.
+            </summary>
+            <param name="PageID"></param>
+            <returns></returns>
+        </member>
         <member name="M:Contensive.BaseClasses.CPContentBaseClass.GetRecordID(System.String,System.String)">
             <summary>
             Return a record's ID given it's name. If duplicates exist, the first one ordered by ID is returned.
@@ -2682,30 +2741,6 @@
             </summary>
             <param name="ChildContentID"></param>
             <param name="ParentContentID"></param>
-            <returns></returns>
-            <remarks></remarks>
-        </member>
-        <member name="M:Contensive.BaseClasses.CPContentBaseClass.getLayout(System.String)">
-            <summary>
-            Returns the html layout field of a layout record
-            </summary>
-            <param name="layoutName"></param>
-            <returns></returns>
-            <remarks></remarks>
-        </member>
-        <member name="M:Contensive.BaseClasses.CPContentBaseClass.getLayout(System.String,System.String)">
-            <summary>
-            Returns the html layout field of a layout record. If the record does not exist, it is created with the supplied default layout
-            </summary>
-            <param name="layoutName"></param>
-            <returns></returns>
-            <remarks></remarks>
-        </member>
-        <member name="M:Contensive.BaseClasses.CPContentBaseClass.GetLayout(System.Int32)">
-            <summary>
-            Returns the html layout field of a layout record
-            </summary>
-            <param name="layoutId"></param>
             <returns></returns>
             <remarks></remarks>
         </member>
@@ -2795,6 +2830,106 @@
             Return the recordId in the ccTables table for this table
             </summary>
             <param name="tableName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.getLayout(System.String)">
+            <summary>
+            Deprecated, use CP.Layout.GetLayoutByName()
+            </summary>
+            <param name="layoutName"></param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.getLayout(System.String,System.String)">
+            <summary>
+            Deprecated, use CP.Layout.GetLayoutByName()
+            </summary>
+            <param name="layoutName"></param>
+            <param name="defaultLayout"></param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.GetLayout(System.Int32)">
+            <summary>
+            Returns the html layout field of a layout record
+            </summary>
+            <param name="layoutId"></param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.GetTemplateLink(System.Int32)">
+            <summary>
+            Deprecated, template link is not supported
+            </summary>
+            <param name="TemplateID"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.IsWorkflow(System.String)">
+            <summary>
+            workflow editing is deprecated
+            </summary>
+            <param name="ContentName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.PublishEdit(System.String,System.Int32)">
+            <summary>
+            workflow editing is deprecated
+            </summary>
+            <param name="ContentName"></param>
+            <param name="RecordID"></param>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.SubmitEdit(System.String,System.Int32)">
+            <summary>
+            workflow editing is deprecated
+            </summary>
+            <param name="ContentName"></param>
+            <param name="RecordID"></param>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.AbortEdit(System.String,System.Int32)">
+            <summary>
+            workflow editing is deprecated
+            </summary>
+            <param name="ContentName"></param>
+            <param name="RecordId"></param>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.ApproveEdit(System.String,System.Int32)">
+            <summary>
+            workflow editing is deprecated
+            </summary>
+            <param name="ContentName"></param>
+            <param name="RecordId"></param>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.AddRecord(System.Object)">
+            <summary>
+            Deprecated, use AddRecord(string)
+            </summary>
+            <param name="ContentName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.GetProperty(System.String,System.String)">
+            <summary>
+            Deprecated. Use models to access record fields
+            </summary>
+            <param name="ContentName"></param>
+            <param name="PropertyName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.GetFieldProperty(System.String,System.String,System.String)">
+            <summary>
+            Deprecated, use GetFieldMeta and use the property
+            </summary>
+            <param name="ContentName"></param>
+            <param name="FieldName"></param>
+            <param name="PropertyName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPContentBaseClass.AddContentField(System.String,System.String,Contensive.BaseClasses.CPContentBaseClass.fileTypeIdEnum)">
+            <summary>
+            Deprecated, use method with FieldTypeIdEnum
+            </summary>
+            <param name="ContentName"></param>
+            <param name="FieldName"></param>
+            <param name="fileTypeEnum"></param>
             <returns></returns>
         </member>
         <member name="T:Contensive.BaseClasses.CPContentBaseClass.fileTypeIdEnum">
@@ -5244,10 +5379,74 @@
         </member>
         <member name="M:Contensive.BaseClasses.CPJSONBaseClass.Deserialize``1(System.String)">
             <summary>
-            Deserialize a
+            Deserialize to an object of a known class
             </summary>
             <typeparam name="T"></typeparam>
             <param name="JSON"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPJSONBaseClass.Deserialize(System.String)">
+            <summary>
+            Deserialize to an object of a unknown class
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="JSON"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Contensive.BaseClasses.CPLayoutBaseClass">
+            <summary>
+            Manage layout records
+            </summary>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPLayoutBaseClass.GetLayoutByName(System.String)">
+            <summary>
+            Returns the html layout field of a layout record
+            </summary>
+            <param name="layoutName"></param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPLayoutBaseClass.GetLayoutByName(System.String,System.String)">
+            <summary>
+            Returns the html layout field of a layout record. If the record does not exist, it is created with the supplied default layout
+            </summary>
+            <param name="layoutName"></param>
+            <param name="defaultLayout"></param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPLayoutBaseClass.GetLayout(System.Int32)">
+            <summary>
+            get the layout by its id. If not found, returns blank. To determine record status use Layout Model instead.
+            </summary>
+            <param name="layoutId"></param>
+            <returns></returns>
+            <remarks></remarks>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPLayoutBaseClass.GetLayout(System.String)">
+            <summary>
+            get the layout by its guid. If not found, returns blank. To determine record status use Layout Model instead.
+            </summary>
+            <param name="layoutGuid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPLayoutBaseClass.GetLayout(System.String,System.String,System.String)">
+            <summary>
+            returns a layout by Guid. 
+            If missing, the layout record is created with the default name 
+            and the layout file referenced in the cdn is transformed (data attribute based html transformations)
+            </summary>
+            <param name="layoutGuid"></param>
+            <param name="defaultLayoutName"></param>
+            <param name="defaultLayoutCdnPathFilename"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPLayoutBaseClass.Transform(System.String)">
+            <summary>
+            Transform the input html using the data attribute based html transformations. These transformations 
+            are typically used to convert a static html design
+            </summary>
+            <param name="sourceHtml"></param>
             <returns></returns>
         </member>
         <member name="T:Contensive.BaseClasses.CPLogBaseClass">
@@ -5344,6 +5543,19 @@
             <summary>
             Support disposable for non-default datasources
             </summary>
+        </member>
+        <member name="T:Contensive.BaseClasses.CPMustacheBaseClass">
+            <summary>
+            Manage mustache compatible templating
+            </summary>
+        </member>
+        <member name="M:Contensive.BaseClasses.CPMustacheBaseClass.Render(System.String,System.Object)">
+            <summary>
+            Perform a simple render of a dataset object with a layout. The layout would likely include {{myName}} style mustache replaceable elements that match public properties  of the dataset.
+            </summary>
+            <param name="template"></param>
+            <param name="dataSet"></param>
+            <returns></returns>
         </member>
         <member name="T:Contensive.BaseClasses.CPRequestBaseClass">
             <summary>

@@ -1,16 +1,11 @@
 
-Imports System
-Imports System.Collections.Generic
 Imports System.Linq
-Imports System.Text
-Imports System.Text.RegularExpressions
-Imports Contensive.Addons.Blog.Controllers
 Imports Contensive.Addons.Blog.Models
 Imports Contensive.BaseClasses
+Imports Contensive.Models.Db
 
 Namespace Views
     Public Class ArchiveView
-        '
         '
         '====================================================================================
         '
@@ -24,9 +19,9 @@ Namespace Views
                 Dim OpenSQL As String = ""
                 Dim contentControlId As String = cp.Content.GetID(cnBlogEntries).ToString
                 '
-                result = vbCrLf & cp.Content.GetCopy("Blogs Archives Header for " & Blog.name, "<h2>" & Blog.name & " Blog Archive</h2>")
+                result = vbCrLf & cp.Content.GetCopy("Blogs Archives Header for " & blog.name, "<h2>" & blog.name & " Blog Archive</h2>")
                 ' 
-                Dim archiveDateList As List(Of BlogCopyModel.ArchiveDateModel) = BlogCopyModel.createArchiveListFromBlogCopy(cp, Blog.Id)
+                Dim archiveDateList As List(Of BlogCopyModel.ArchiveDateModel) = BlogCopyModel.createArchiveListFromBlogCopy(cp, blog.id)
                 If (archiveDateList.Count = 0) Then
                     '
                     ' No archives, give them an error
@@ -57,8 +52,6 @@ Namespace Views
                         result &= vbCrLf & vbTab & "<div class=""aoBlogFooterLink""><a href=""" & app.blogPageBaseLink & """>" & BackToRecentPostsMsg & "</a></div>"
                     End If
                 End If
-                '
-
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)
             End Try
@@ -81,7 +74,7 @@ Namespace Views
                 '
                 ' List Blog Entries
                 '
-                Dim BlogEntryModelList As List(Of BlogPostModel) = DbModel.createList(Of BlogPostModel)(cp, "(Month(DateAdded) = " & request.ArchiveMonth & ")And(year(DateAdded)=" & request.ArchiveYear & ")And(BlogID=" & Blog.Id & ")", "DateAdded Desc")
+                Dim BlogEntryModelList As List(Of BlogPostModel) = DbBaseModel.createList(Of BlogPostModel)(cp, "(Month(DateAdded) = " & request.ArchiveMonth & ")And(year(DateAdded)=" & request.ArchiveYear & ")And(BlogID=" & blog.id & ")", "DateAdded Desc")
                 If (BlogEntryModelList.Count = 0) Then
                     result = "<div Class=""aoBlogProblem"">There are no blog archives For " & request.ArchiveMonth & "/" & request.ArchiveYear & "</div>"
                 Else
@@ -91,9 +84,9 @@ Namespace Views
                         Dim EntryID As Integer = blogEntry.id
                         Dim AuthorMemberID As Integer = blogEntry.AuthorMemberID
                         If AuthorMemberID = 0 Then
-                            AuthorMemberID = blogEntry.CreatedBy
+                            AuthorMemberID = cp.Utils.EncodeInteger(blogEntry.createdBy)
                         End If
-                        Dim DateAdded As Date = blogEntry.DateAdded
+                        Dim DateAdded As Date = cp.Utils.EncodeDate(blogEntry.dateAdded)
                         Dim EntryName As String = blogEntry.name
                         If app.userIsEditing Then
                             entryEditLink = cp.Content.GetEditLink(EntryName, EntryID.ToString(), True, EntryName, True)

@@ -1,22 +1,17 @@
 ﻿
 
-Option Explicit On
-Option Strict On
-
-Imports System
-Imports System.Collections.Generic
-Imports System.Text
 Imports Contensive.BaseClasses
+Imports Contensive.Models.Db
 
 Namespace Models
     Public Class RSSFeedModel
-        Inherits DbModel
+        Inherits DbBaseModel
         '
         '====================================================================================================
-        '-- const
-        Public Const contentName As String = "RSS Feeds"      '<------ set content name
-        Public Const contentTableName As String = "ccRSSFeeds"   '<------ set to tablename for the primary content (used for cache names)
-        Private Shadows Const contentDataSource As String = "default"             '<------ set to datasource if not default
+        ''' <summary>
+        '''table definition
+        '''</summary>
+        Public Shared ReadOnly Property tableMetadata As DbBaseTableMetadataModel = New DbBaseTableMetadataModel("RSS Feeds", "ccRSSFeeds", "default", False)
         '
         '====================================================================================================
         ' -- instance properties
@@ -37,10 +32,10 @@ Namespace Models
             Try
                 Dim rssFeed As RSSFeedModel
                 If (blog.RSSFeedID > 0) Then
-                    rssFeed = DbModel.create(Of RSSFeedModel)(cp, blog.RSSFeedID)
+                    rssFeed = create(Of RSSFeedModel)(cp, blog.RSSFeedID)
                     If (rssFeed IsNot Nothing) Then Return rssFeed
                 End If
-                rssFeed = DbModel.add(Of RSSFeedModel)(cp)
+                rssFeed = addDefault(Of RSSFeedModel)(cp)
                 rssFeed.copyright = "Copyright " & Now.Year
                 rssFeed.description = ""
                 rssFeed.link = ""
@@ -48,7 +43,7 @@ Namespace Models
                 rssFeed.name = "RSS Feed for Blog #" & blog.id & ", " & blog.Caption
                 rssFeed.rssDateUpdated = Date.MinValue
                 rssFeed.rssFilename = "RSS" & rssFeed.id & ".xml"
-                rssFeed.save(Of RSSFeedModel)(cp)
+                rssFeed.save(cp)
                 Return rssFeed
 
                 ''

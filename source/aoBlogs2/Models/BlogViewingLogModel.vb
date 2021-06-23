@@ -1,22 +1,15 @@
 ﻿
-
-Option Explicit On
-Option Strict On
-
-Imports System
-Imports System.Collections.Generic
-Imports System.Text
-Imports Contensive.BaseClasses
+Imports Contensive.Models.Db
 
 Namespace Models
-    Public Class BlogViewingLogModel        '<------ set set model Name and everywhere that matches this string
-        Inherits DbModel
+    Public Class BlogViewingLogModel
+        Inherits DbBaseModel
         '
         '====================================================================================================
-        '-- const
-        Public Const contentName As String = "Blog Viewing Log"      '<------ set content name
-        Public Const contentTableName As String = "BlogViewingLog"   '<------ set to tablename for the primary content (used for cache names)
-        Private Shadows Const contentDataSource As String = "default"             '<------ set to datasource if not default
+        ''' <summary>
+        '''table definition
+        '''</summary>
+        Public Shared ReadOnly Property tableMetadata As DbBaseTableMetadataModel = New DbBaseTableMetadataModel("Blog Viewing Log", "BlogViewingLog", "default", False)
         '
         '====================================================================================================
         ' -- instance properties
@@ -24,7 +17,5 @@ Namespace Models
         Public Property BlogEntryID As Integer
         Public Property MemberID As Integer
         Public Property VisitID As Integer
-        '
-
     End Class
 End Namespace
