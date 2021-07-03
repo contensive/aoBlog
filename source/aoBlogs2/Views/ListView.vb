@@ -57,7 +57,7 @@ Namespace Views
                         Else
                             Dim blogEntryCategory = DbBaseModel.create(Of Models.BlogCategorieModel)(cp, blogEntry.blogCategoryID)
                             If (blogEntryCategory IsNot Nothing) Then
-                                If (blogEntryCategory.UserBlocking) Then IsBlocked = Not genericController.isGroupListMember(cp, GroupModel.GetBlockingGroups(cp, blogEntryCategory.id))
+                                If (blogEntryCategory.userBlocking) Then IsBlocked = Not genericController.isGroupListMember(cp, Models.GroupModel.GetBlockingGroups(cp, blogEntryCategory.id))
                                 isBlogCategoryBlockedDict.Add(blogEntry.blogCategoryID, IsBlocked)
                             End If
                         End If
@@ -99,7 +99,7 @@ Namespace Views
                             Else
                                 Dim blogEntryCategory = DbBaseModel.create(Of Models.BlogCategorieModel)(cp, blogCategaory.id)
                                 If (blogEntryCategory IsNot Nothing) Then
-                                    If (blogEntryCategory.UserBlocking) Then IsBlocked = Not genericController.isGroupListMember(cp, GroupModel.GetBlockingGroups(cp, blogEntryCategory.id))
+                                    If (blogEntryCategory.userBlocking) Then IsBlocked = Not genericController.isGroupListMember(cp, Models.GroupModel.GetBlockingGroups(cp, blogEntryCategory.id))
                                     isBlogCategoryBlockedDict.Add(blogCategaory.id, IsBlocked)
                                 End If
                             End If

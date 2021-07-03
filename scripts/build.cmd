@@ -12,7 +12,7 @@ rem
 
 rem all paths are relative to the git scripts folder
 
-set appName=app210411
+set appName=app210530
 set majorVersion=5
 set minorVersion=1
 set collectionName=Blog

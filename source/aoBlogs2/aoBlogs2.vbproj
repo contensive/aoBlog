@@ -101,6 +101,7 @@
     <Compile Include="Models\BlogCategoryGroupRulesModel.vb" />
     <Compile Include="Models\BlogModel.vb" />
     <Compile Include="Models\BlogPostModel.vb" />
+    <Compile Include="Models\GroupModel.vb" />
     <Compile Include="Models\PersonModel.vb" />
     <Compile Include="Models\RSSFeedBlogRuleModel.vb" />
     <Compile Include="Models\RSSFeedModel.vb" />

@@ -82,7 +82,7 @@ Namespace Controllers
         ''' <param name="cp"></param>
         ''' <param name="groupList"></param>
         ''' <returns></returns>
-        Public Shared Function isGroupListMember(cp As CPBaseClass, groupList As List(Of GroupModel)) As Boolean
+        Public Shared Function isGroupListMember(cp As CPBaseClass, groupList As List(Of Models.GroupModel)) As Boolean
             For Each Group In groupList
                 If cp.User.IsInGroup(Group.name) Then Return True
             Next
