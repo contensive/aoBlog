@@ -112,9 +112,9 @@ Namespace Views
                 '              
                 '
                 Dim qs As String = app.blogListLink
-                qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogSearch.ToString())
+                'qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogSearch.ToString())
                 result &= "<div>&nbsp;</div>"
-                result &= "<div Class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>"
+                'result &= "<div Class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>"
                 qs = cp.Doc.RefreshQueryString()
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, "", True)
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostList.ToString())

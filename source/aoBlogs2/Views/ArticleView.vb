@@ -178,10 +178,10 @@ Namespace Views
                 '
                 ' Search
                 '
-                hint = 210
-                qs = cp.Doc.RefreshQueryString
-                qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogSearch, True)
-                result &= "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>"
+                'hint = 210
+                'qs = cp.Doc.RefreshQueryString
+                'qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogSearch, True)
+                'result &= "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>"
                 '
                 ' back to recent posts
                 result &= "<div class=""aoBlogFooterLink""><a href=""" & app.blogPageBaseLink & """>" & BackToRecentPostsMsg & "</a></div>"

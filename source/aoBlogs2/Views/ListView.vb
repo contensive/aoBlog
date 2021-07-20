@@ -136,12 +136,12 @@ Namespace Views
                 End If
                 result.Append(ReturnFooter)
                 result.Append(CategoryFooter)
-                '
-                ' Search
-                '
-                qs = cp.Doc.RefreshQueryString
-                qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogSearch.ToString(), True)
-                result.Append("<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>")
+                ''
+                '' Search
+                ''
+                'qs = cp.Doc.RefreshQueryString
+                'qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogSearch.ToString(), True)
+                'result.Append("<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>")
                 '
                 ' Link to RSS Feed
                 '
