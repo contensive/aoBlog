@@ -14,7 +14,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function GetFormBlogArchiveDateList(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel) As String
+        Public Shared Function GetFormBlogArchiveDateList(cp As CPBaseClass, app As ApplicationEnvironmentModel, request As View.RequestModel) As String
             '
             Dim result As String = ""
             Try
@@ -67,7 +67,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function GetFormBlogArchivedBlogs(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel) As String
+        Public Shared Function GetFormBlogArchivedBlogs(cp As CPBaseClass, app As ApplicationEnvironmentModel, request As View.RequestModel) As String
             '
             Dim result As String = ""
             Try

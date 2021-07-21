@@ -14,7 +14,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function ProcessForm(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel, ByRef RetryCommentPost As Boolean) As Integer
+        Public Shared Function ProcessForm(cp As CPBaseClass, app As ApplicationEnvironmentModel, request As View.RequestModel, ByRef RetryCommentPost As Boolean) As Integer
             '
             Try
                 If request.ButtonValue <> "" Then

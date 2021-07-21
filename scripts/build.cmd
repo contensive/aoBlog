@@ -1,20 +1,18 @@
-
-echo off
+rem echo off
 
 rem 
 rem Must be run from the projects git\project\scripts folder - everything is relative
-rem run >build [deploymentNumber]
-rem deploymentNumber is YYMMDD.build-number, like 190824.5
-rem
-rem Setup deployment folder
+rem run >build [versionNumber]
+rem versionNumber is YY.MM.DD.build-number, like 20.5.8.1
 rem
 
+
+c:
+cd \Git\aoBlog\scripts
 
 rem all paths are relative to the git scripts folder
 
-set appName=app210411
-set majorVersion=5
-set minorVersion=1
+set appName=app210629
 set collectionName=Blog
 set solutionName=aoBlogs2.sln
 set collectionPath=..\collections\blog\
@@ -26,30 +24,29 @@ rem prompt user if appName is correct
 @echo Build project and install on site: %appName%
 pause
 
-set deploymentNumber=%1
 set year=%date:~12,4%
 set month=%date:~4,2%
+if %month% GEQ 10 goto monthOk
+set month=%date:~5,1%
+:monthOk
 set day=%date:~7,2%
-
-rem
-rem if deployment number not entered, set it to date.1
-rem
-IF [%deploymentNumber%] == [] (
-	echo No deployment folder provided on the command line, use current date
-	set deploymentTimeStamp=%year%%month%%day%
-)
+if %day% GEQ 10 goto dayOk
+set day=%date:~8,1%
+:dayOk
+set versionMajor=%year%
+set versionMinor=%month%
+set versionBuild=%day%
+set versionRevision=1
 rem
 rem if deployment folder exists, delete it and make directory
 rem
-
-set suffix=1
 :tryagain
-set deploymentNumber=%deploymentTimeStamp%.%suffix%
-if not exist "%deploymentFolderRoot%%deploymentNumber%" goto :makefolder
-set /a suffix=%suffix%+1
+set versionNumber=%versionMajor%.%versionMinor%.%versionBuild%.%versionRevision%
+if not exist "%deploymentFolderRoot%%versionNumber%" goto :makefolder
+set /a versionRevision=%versionRevision%+1
 goto tryagain
 :makefolder
-md "%deploymentFolderRoot%%deploymentNumber%"
+md "%deploymentFolderRoot%%versionNumber%"
 
 rem ==============================================================
 rem
@@ -71,15 +68,30 @@ rem
 echo Build addon collection
 rem
 
-rem copy bin folder assemblies to collection folder
-copy "%binPath%*.dll" "%collectionPath%"
+rem build collection folder
+copy "%binPath%*.dll" %collectionPath%
 
-rem create new collection zip file
 c:
 cd %collectionPath%
+
+copy ..\..\ui\*.png .
+copy ..\..\ui\*.css .
+copy ..\..\ui\*.js .
+copy ..\..\ui\*.txt .
+copy ..\..\ui\*.jpg .
+
+rem create new collection zip file
 del "%collectionName%.zip" /Q
 "c:\program files\7-zip\7z.exe" a "%collectionName%.zip"
-xcopy "%collectionName%.zip" "%deploymentFolderRoot%%deploymentNumber%" /Y
+xcopy "%collectionName%.zip" "%deploymentFolderRoot%%versionNumber%" /Y
 cd ..\..\scripts
 
-pause
+rem clean collection folder
+del "%collectionPath%*.dll"
+del "%collectionPath%*.png"
+del "%collectionPath%*.css"
+del "%collectionPath%*.js"
+del "%collectionPath%*.txt"
+del "%collectionPath%*.jpg"
+
+

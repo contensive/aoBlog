@@ -1,34 +1,43 @@
-﻿
-
-Option Explicit On
-Option Strict On
-
-Imports System
-Imports System.Collections.Generic
-Imports System.Text
-Imports Contensive.BaseClasses
+﻿Imports Contensive.BaseClasses
 
 Namespace Models.View
     Public Class RequestModel
-        Inherits DbModel
         '
         '====================================================================================================
         '
-        Private cp As CPBaseClass
-        '''' <summary>
-        '''' string that represents the guid of the blog record to be displayed
-        '''' </summary>
-        '''' <returns></returns>
-        'Public ReadOnly Property instanceId As String
-        '    Get
-        '        If (_instanceId Is Nothing) Then
-        '            _instanceId = cp.Doc.GetText("instanceId")
-        '            If (String.IsNullOrWhiteSpace(_instanceId)) Then _instanceId = "BlogWithoutinstanceId-PageId-" & cp.Doc.PageId
-        '        End If
-        '        Return _instanceId
-        '    End Get
-        'End Property
-        'Private _instanceId As String = Nothing
+        Private ReadOnly cp As CPBaseClass
+        '
+        '
+        Public Sub New(cp As CPBaseClass)
+            Me.cp = cp
+
+        End Sub
+        '
+        '
+        Public ReadOnly Property page As Integer
+            Get
+                Return cp.Doc.GetInteger(rnPageNumber)
+            End Get
+        End Property
+        '
+        '
+        Public ReadOnly Property instanceGuid As String
+            Get
+                instanceGuid = cp.Doc.GetText("instanceId")
+                If (String.IsNullOrWhiteSpace(instanceGuid)) Then instanceGuid = "BlogWithoutinstanceId-PageId-" & cp.Doc.PageId
+                Return instanceGuid
+            End Get
+        End Property
+        '
+        '
+        Public ReadOnly Property srcViewId As Integer
+            Get
+                Return cp.Doc.GetInteger(RequestNameFormID)
+            End Get
+        End Property
+        '
+        '
+        Public Property dstViewId As Integer
         '
         '====================================================================================================
         ''' <summary>
@@ -208,11 +217,5 @@ Namespace Models.View
             End Get
         End Property
         Private _BlogEntryCategoryId As Integer? = Nothing
-        '
-        '====================================================================================================
-        '
-        Public Sub New(cp As CPBaseClass)
-            Me.cp = cp
-        End Sub
     End Class
 End Namespace

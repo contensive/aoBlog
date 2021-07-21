@@ -53,6 +53,7 @@ Public Module constants
     '
     ' -- request name
     ' 
+    Public Const rnPageNumber As String = "page"
     Public Const RequestNameQueryTag As String = "qTag"
     Public Const RequestNameFormID As String = "FormID"
     Public Const RequestNameSourceFormID As String = "SourceFormID"

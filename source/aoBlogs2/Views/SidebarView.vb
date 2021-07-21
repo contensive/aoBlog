@@ -14,7 +14,7 @@ Namespace Views
     '
     Public Class SidebarView
         '
-        Public Shared Function getSidebarView(cp As CPBaseClass, app As ApplicationController, request As RequestModel, legacyBlogBody As String) As String
+        Public Shared Function getSidebarView(cp As CPBaseClass, app As ApplicationEnvironmentModel, request As RequestModel, legacyBlogBody As String) As String
             Try
                 Dim blog As BlogModel = app.blog
                 Dim cellList As String = ""
@@ -252,7 +252,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function GetSidebarArchiveList(cp As CPBaseClass, app As ApplicationController) As String
+        Public Shared Function GetSidebarArchiveList(cp As CPBaseClass, app As ApplicationEnvironmentModel) As String
             Dim returnHtml As String = ""
             Try
                 Dim cs As CPCSBaseClass = cp.CSNew()

@@ -10,7 +10,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function getFormBlogEdit(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel) As String
+        Public Shared Function getFormBlogEdit(cp As CPBaseClass, app As ApplicationEnvironmentModel, request As View.RequestModel) As String
             Dim result As New StringBuilder()
             Try
                 '
@@ -186,7 +186,7 @@ Namespace Views
         ''' <param name="cp"></param>
         ''' <param name="request"></param>
         ''' <returns></returns>
-        Public Shared Function ProcessFormBlogEdit(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel) As Integer
+        Public Shared Function ProcessFormBlogEdit(cp As CPBaseClass, app As ApplicationEnvironmentModel, request As View.RequestModel) As Integer
             Try
                 Dim blog As BlogModel = app.blog
                 Dim blogEntry As BlogPostModel = app.blogEntry

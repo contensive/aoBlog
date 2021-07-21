@@ -17,7 +17,7 @@ Namespace Views
         ''' Inner Blog - the list of posts without sidebar. Blog object must be valid
         ''' </summary>
         ''' <returns></returns>
-        Public Shared Function getBlogBody(cp As CPBaseClass, app As ApplicationController, legacyRequest As View.RequestModel, blogBodyRequest As BlogBodyRequestModel) As String
+        Public Shared Function getBlogBody(cp As CPBaseClass, app As ApplicationEnvironmentModel, legacyRequest As View.RequestModel, blogBodyRequest As BlogBodyRequestModel) As String
             Dim result As String = ""
             Try
                 '
@@ -42,7 +42,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Private Shared Function GetForm(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel, dstFormID As Integer, RetryCommentPost As Boolean) As String
+        Private Shared Function GetForm(cp As CPBaseClass, app As ApplicationEnvironmentModel, request As View.RequestModel, dstFormID As Integer, RetryCommentPost As Boolean) As String
             Dim result As New StringBuilder()
             Try
                 Select Case dstFormID
@@ -66,7 +66,7 @@ Namespace Views
                             '
                             ' list all the entries
                             '
-                            result.Append(ListView.GetListView(cp, app, request))
+                            result.Append(ListView.getListView(cp, app, request))
                         End If
                 End Select
             Catch ex As Exception

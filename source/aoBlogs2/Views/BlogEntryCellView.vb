@@ -9,7 +9,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function getBlogPostCell(cp As CPBaseClass, app As ApplicationController, blogPost As BlogPostModel, isArticleView As Boolean, IsSearchListing As Boolean, Return_CommentCnt As Integer, entryEditLink As String) As String
+        Public Shared Function getBlogPostCell(cp As CPBaseClass, app As ApplicationEnvironmentModel, blogPost As BlogPostModel, isArticleView As Boolean, IsSearchListing As Boolean, Return_CommentCnt As Integer, entryEditLink As String) As String
             Dim hint As Integer = 0
             Try
                 Dim result As String = ""

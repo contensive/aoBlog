@@ -23,7 +23,7 @@ Namespace Views
                 Dim blog As BlogModel = BlogModel.verifyBlog(CP, blogBodyRequest.instanceGuid)
                 If (blog Is Nothing) Then Return "<!-- Could not find or create blog from instanceId [" & blogBodyRequest.instanceGuid & "] -->"
                 '
-                Dim app As New ApplicationController(CP, blog, blogBodyRequest.entryId)
+                Dim app As New ApplicationEnvironmentModel(CP, blog, blogBodyRequest.entryId)
                 '
                 ' -- process view requests
                 Select Case blogBodyRequest.srcViewId

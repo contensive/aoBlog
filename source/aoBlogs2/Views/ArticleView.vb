@@ -10,7 +10,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function getArticleView(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel, RetryCommentPost As Boolean) As String
+        Public Shared Function getArticleView(cp As CPBaseClass, app As ApplicationEnvironmentModel, request As View.RequestModel, RetryCommentPost As Boolean) As String
             Dim hint As Integer = 0
             Try
                 If app.blogEntry Is Nothing Then
@@ -212,7 +212,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function processArticleView(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel, ByRef RetryCommentPost As Boolean) As Integer
+        Public Shared Function processArticleView(cp As CPBaseClass, app As ApplicationEnvironmentModel, request As View.RequestModel, ByRef RetryCommentPost As Boolean) As Integer
             Dim result As Integer
             Try
                 Dim blog As BlogModel = app.blog

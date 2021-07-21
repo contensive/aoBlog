@@ -42,7 +42,7 @@ Namespace Models
         Public Property ImageWidthMax As Integer
         Public Property OverviewLength As Integer
         Public Property OwnerMemberID As Integer
-        Public Property PostsToDisplay As Integer
+        Public Property postsToDisplay As Integer
         Public Property recaptcha As Boolean
         Public Property RSSFeedID As Integer
         Public Property ThumbnailImageWidth As Integer
@@ -70,7 +70,7 @@ Namespace Models
                 Blog.AllowAnonymous = True
                 Blog.autoApproveComments = False
                 Blog.AllowCategories = True
-                Blog.PostsToDisplay = 5
+                Blog.postsToDisplay = 5
                 Blog.OverviewLength = 500
                 Blog.ThumbnailImageWidth = 200
                 Blog.ImageWidthMax = 400

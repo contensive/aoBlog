@@ -14,7 +14,7 @@ Namespace Views
         '
         '========================================================================
         '
-        Public Shared Function getBlogImage(cp As CPBaseClass, app As ApplicationController, blogImage As BlogImageModel, ByRef Return_ThumbnailFilename As String, ByRef Return_ImageFilename As String, ByRef Return_ImageDescription As String, ByRef Return_Imagename As String) As String
+        Public Shared Function getBlogImage(cp As CPBaseClass, app As ApplicationEnvironmentModel, blogImage As BlogImageModel, ByRef Return_ThumbnailFilename As String, ByRef Return_ImageFilename As String, ByRef Return_ImageDescription As String, ByRef Return_Imagename As String) As String
             Dim results As String = ""
             Try
                 '

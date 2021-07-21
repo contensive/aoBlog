@@ -92,7 +92,8 @@
   <ItemGroup>
     <Compile Include="Addons\BlogCategoriesClass.vb" />
     <Compile Include="constants.vb" />
-    <Compile Include="Controllers\ApplicationController.vb" />
+    <Compile Include="Models\ApplicationEnvironmentModel.vb" />
+    <Compile Include="Controllers\PaginationController.vb" />
     <Compile Include="Controllers\MetadataController.vb" />
     <Compile Include="Controllers\genericController.vb" />
     <Compile Include="Models\DbModel.vb" />
@@ -109,7 +110,7 @@
     <Compile Include="Models\RSSFeedModel.vb" />
     <Compile Include="Models\BlogCommentModel.vb" />
     <Compile Include="Models\BlogCopyModel.vb" />
-    <Compile Include="Models\BlogCategorieModel.vb" />
+    <Compile Include="Models\BlogCategoriesModel.vb" />
     <Compile Include="Models\BlogImageModel.vb" />
     <Compile Include="Models\BlogImageRuleModel.vb" />
     <Compile Include="Models\View\RequestModel.vb" />

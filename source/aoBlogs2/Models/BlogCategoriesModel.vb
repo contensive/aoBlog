@@ -9,7 +9,7 @@ Imports System.Text
 Imports Contensive.BaseClasses
 
 Namespace Models
-    Public Class BlogCategorieModel        '<------ set set model Name and everywhere that matches this string
+    Public Class BlogCategoriesModel        '<------ set set model Name and everywhere that matches this string
         Inherits DbModel
         '
         '====================================================================================================

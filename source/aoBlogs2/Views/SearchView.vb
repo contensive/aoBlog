@@ -9,7 +9,7 @@ Namespace Views
         '
         '====================================================================================
         '
-        Public Shared Function GetFormBlogSearch(cp As CPBaseClass, app As ApplicationController, request As View.RequestModel) As String
+        Public Shared Function GetFormBlogSearch(cp As CPBaseClass, app As ApplicationEnvironmentModel, request As View.RequestModel) As String
             Dim result As New StringBuilder()
             Try
                 Dim blog As BlogModel = app.blog
