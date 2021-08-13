@@ -14,7 +14,7 @@ Namespace Views
                 If IsSearchListing Then
                     Dim qs As String = cp.Doc.RefreshQueryString
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogEntry.id))
-                    qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostList.ToString())
+                    qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogPostList.ToString())
                     result &= "<div class=""aoBlogEntryName"">Comment to Blog Post " & blogEntry.name & ", <a href=""?" & qs & """>View this post</a></div>"
                     result &= "<div class=""aoBlogCommentDivider"">&nbsp;</div>"
                 End If

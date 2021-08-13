@@ -160,7 +160,7 @@ Namespace Views
                 End If
                 Dim qs As String = cp.Doc.RefreshQueryString()
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, "", True)
-                qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostList.ToString())
+                qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogPostList.ToString())
                 result.Append(vbCrLf & genericController.getFormTableRow2(cp, "<div class=""aoBlogFooterLink""><a href=""" & app.blogPageBaseLink & """>" & BackToRecentPostsMsg & "</a></div>"))
                 '
                 result.Append(cp.Html.Hidden(RequestNameBlogEntryID, blogEntry_id.ToString()))

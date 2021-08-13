@@ -30,7 +30,7 @@ Namespace Views
                     Dim isArticleView As Boolean = (request.blogEntryId > 0)
                     Dim allowListSidebar As Boolean = Blog.allowEmailSubscribe Or Blog.allowFacebookLink Or Blog.allowGooglePlusLink Or Blog.allowGooglePlusLink Or Blog.allowRSSSubscribe Or Blog.allowTwitterLink Or Blog.allowArchiveList Or Blog.allowSearch
                     Dim allowArticleSidebar As Boolean = allowListSidebar Or Blog.allowArticleCTA
-                    Dim dstFormId As Integer = cp.Doc.GetInteger(RequestNameFormID)
+                    Dim dstFormId As Integer = cp.Doc.GetInteger(rnFormID)
                     Dim allowSidebar As Boolean = Not (dstFormId = FormBlogEntryEditor) And ((isArticleView And allowArticleSidebar) Or (Not isArticleView And allowListSidebar))
                     '
                     ' Sidebar
@@ -156,7 +156,7 @@ Namespace Views
                             'blogListQs = cp.Utils.ModifyQueryString(blogListQs, RequestNameFormID, "")
                             'blogListQs = cp.Utils.ModifyQueryString(blogListQs, RequestNameBlogCategoryID, "")
                             'blogListQs = cp.Utils.ModifyQueryString(blogListQs, RequestNameBlogEntryID, "")
-                            Dim blogListLink As String = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, app.blogListLink, "?" & app.blogListLink)
+                            Dim blogListLink As String = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, app.blogBaseLink, "?" & app.blogBaseLink)
                             sideBar_ArchiveList = SidebarView.GetSidebarArchiveList(cp, app)
                             If (String.IsNullOrEmpty(sideBar_ArchiveList)) Then
                                 Blog.allowArchiveList = False
@@ -268,8 +268,8 @@ Namespace Views
                     & " AND (BlogID=" & app.blog.id & ")" _
                     & " ORDER BY year(dateadded) desc, Month(DateAdded) desc"
                 If cs.OpenSQL(SQL) Then
-                    qs = app.blogListLink
-                    qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogArchivedBlogs.ToString())
+                    qs = app.blogBaseLink
+                    qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogArchivedBlogs.ToString())
                     Do While cs.OK
                         ArchiveMonth = cs.GetInteger("ArchiveMonth")
                         ArchiveYear = cs.GetInteger("ArchiveYear")

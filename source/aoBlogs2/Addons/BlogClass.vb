@@ -63,7 +63,7 @@ Namespace Views
         Public Property entryId As Integer
         '
         Public Sub New(cp As CPBaseClass)
-            srcViewId = cp.Doc.GetInteger(RequestNameFormID)
+            srcViewId = cp.Doc.GetInteger(rnFormID)
             instanceGuid = cp.Doc.GetText("instanceId")
             If (String.IsNullOrWhiteSpace(instanceGuid)) Then instanceGuid = "BlogWithoutinstanceId-PageId-" & cp.Doc.PageId
             entryId = cp.Doc.GetInteger(RequestNameBlogEntryID)

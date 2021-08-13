@@ -32,7 +32,7 @@ Namespace Models.View
         '
         Public ReadOnly Property srcViewId As Integer
             Get
-                Return cp.Doc.GetInteger(RequestNameFormID)
+                Return cp.Doc.GetInteger(rnFormID)
             End Get
         End Property
         '
@@ -90,7 +90,7 @@ Namespace Models.View
         Public ReadOnly Property FormID As Integer
             Get
                 If (_FormID Is Nothing) Then
-                    _FormID = cp.Doc.GetInteger(RequestNameFormID)
+                    _FormID = cp.Doc.GetInteger(rnFormID)
                 End If
                 Return Convert.ToInt32(_FormID)
             End Get

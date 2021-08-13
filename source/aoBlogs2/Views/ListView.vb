@@ -12,11 +12,16 @@ Namespace Views
         Public Shared Function getListView(cp As CPBaseClass, app As ApplicationEnvironmentModel, request As View.RequestModel) As String
             Dim result As New StringBuilder()
             Try
+                '
+                ' -- set the page title if it is page 2 or more 
+                If request.page > 1 Then
+                    cp.Doc.AddTitle("Article Page " & request.page)
+                End If
                 Dim blog As BlogModel = app.blog
                 Dim user As PersonModel = app.user
                 Dim rssFeed As RSSFeedModel = app.rssFeed
                 If blog.Caption <> "" Then
-                    result.Append(vbCrLf & "<h2 Class=""aoBlogCaption"">" & blog.Caption & "</h2>")
+                    result.Append(vbCrLf & "<h1 Class=""aoBlogCaption"">" & blog.Caption & "</h1>")
                 End If
                 If blog.Copy <> "" Then
                     result.Append(vbCrLf & "<div Class=""aoBlogDescription"">" & blog.Copy & "</div>")
@@ -116,7 +121,7 @@ Namespace Views
                     ' Create a new entry if this is the Blog Owner
                     '
                     qs = cp.Doc.RefreshQueryString
-                    qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor.ToString(), True)
+                    qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogEntryEditor.ToString(), True)
                     result.Append("<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Create New Blog Post</a></div>")
                     '
                     ' Create a link to edit the blog record

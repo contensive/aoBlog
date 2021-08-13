@@ -18,23 +18,28 @@ Namespace Controllers
         ''' </summary>
         ''' <param name="cp"></param>
         ''' <param name="recordsPerPage"></param>
-        ''' <param name="pageNumber"></param>
+        ''' <param name="pageNumberCurrent"></param>
         ''' <param name="recordsOnThisPage"></param>
         ''' <param name="recordCount"></param>
         ''' <returns></returns>
-        Public Shared Function getRecordPagination(cp As CPBaseClass, recordsPerPage As Integer, pageNumber As Integer, recordsOnThisPage As Integer, recordCount As Integer) As String
+        Public Shared Function getRecordPagination(cp As CPBaseClass, recordsPerPage As Integer, pageNumberCurrent As Integer, recordsOnThisPage As Integer, recordCount As Integer) As String
             Try
                 Dim result As New StringBuilder()
-                If pageNumber > 1 Then result.Append("<li class=""page-item""><a class=""page-link"" href=""?page=1"">Previous</a></li>")
-                Dim recordTop As Integer = (pageNumber - 1) * recordsPerPage
+                Dim basePageUrl As String = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, "", "")
+                If pageNumberCurrent > 1 Then result.Append("<li class=""page-item""><a class=""page-link"" href=""" & getPageUrl(basePageUrl, pageNumberCurrent - 1) & """>Previous</a></li>")
+                Dim recordTop As Integer = (pageNumberCurrent - 1) * recordsPerPage
                 Dim pageCount As Integer = CInt(Math.Truncate((recordCount / recordsPerPage) + 0.999))
+                Dim pageFirst = pageNumberCurrent - 3
+                If pageFirst < 1 Then pageFirst = 1
+                Dim pageLast = pageFirst + 6
+                If pageLast > pageCount Then pageLast = pageCount
                 If (pageCount > 1) Then
-                    For page As Integer = 1 To pageCount
-                        result.Append("<li class=""page-item""><a class=""page-link"" href=""?page=" & page & """>" & page & "</a></li>")
+                    For pageNumber As Integer = pageFirst To pageLast
+                        result.Append("<li class=""page-item""><a class=""page-link"" href=""" & getPageUrl(basePageUrl, pageNumber) & """>" & pageNumber & "</a></li>")
                     Next
                 End If
-                If (pageCount > pageNumber) Then
-                    result.Append("<li class=""page-item""><a class=""page-link"" href=""?page=" & (pageNumber + 1) & """>Next</a></li>")
+                If (pageCount > pageNumberCurrent) Then
+                    result.Append("<li class=""page-item""><a class=""page-link"" href=""" & getPageUrl(basePageUrl, pageCount) & """>Next</a></li>")
                 End If
                 '
                 Return "<nav><ul class=""pagination"">" & result.ToString() & "</ul></nav>"
@@ -42,6 +47,14 @@ Namespace Controllers
                 cp.Site.ErrorReport(ex)
                 Throw
             End Try
+        End Function
+        '
+        Public Shared Function getPageUrl(basePageUrl As String, pageNumber As Integer) As String
+            If pageNumber < 2 Then
+                Return basePageUrl
+            Else
+                Return basePageUrl & "?page=" & pageNumber
+            End If
         End Function
     End Class
 End Namespace

@@ -54,8 +54,8 @@ Public Module constants
     ' -- request name
     ' 
     Public Const rnPageNumber As String = "page"
-    Public Const RequestNameQueryTag As String = "qTag"
-    Public Const RequestNameFormID As String = "FormID"
+    Public Const rnQueryTag As String = "qTag"
+    Public Const rnFormID As String = "FormID"
     Public Const RequestNameSourceFormID As String = "SourceFormID"
     Public Const RequestNameBlogTitle As String = "BlogTitle"
     Public Const RequestNameBlogCopy As String = "BlogCopy"

@@ -90,7 +90,7 @@ Namespace Models
 
                     'Dim qs As String = cp.Utils.ModifyQueryString(cp.Doc.RefreshQueryString, RequestNameBlogEntryID, CStr(blogEntry.id))
                     Dim qs As String = cp.Utils.ModifyQueryString("", RequestNameBlogEntryID, CStr(blogEntry.id))
-                    qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
+                    qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogPostDetails.ToString())
                     Call cp.Site.AddLinkAlias(Blog.Caption, cp.Doc.PageId, qs)
                     Dim LinkAlias As List(Of LinkAliasesModel) = DbModel.createList(Of LinkAliasesModel)(cp, "(pageid=" & cp.Doc.PageId & ")and(QueryStringSuffix=" & cp.Db.EncodeSQLText(qs) & ")")
                     If (LinkAlias.Count > 0) Then

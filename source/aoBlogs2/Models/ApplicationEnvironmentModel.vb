@@ -78,18 +78,14 @@ Namespace Models
         ''' link to the blogs list page
         ''' </summary>
         ''' <returns></returns>
-        Public ReadOnly Property blogListLink As String
+        Public ReadOnly Property blogBaseLink As String
             Get
-                If (local_blogListLink IsNot Nothing) Then Return local_blogListLink
-                local_blogListLink = cp.Doc.RefreshQueryString()
-                local_blogListLink = cp.Utils.ModifyQueryString(local_blogListLink, RequestNameSourceFormID, "")
-                local_blogListLink = cp.Utils.ModifyQueryString(local_blogListLink, RequestNameFormID, "")
-                local_blogListLink = cp.Utils.ModifyQueryString(local_blogListLink, RequestNameBlogCategoryID, "")
-                local_blogListLink = cp.Utils.ModifyQueryString(local_blogListLink, RequestNameBlogEntryID, "")
-                Return local_blogListLink
+                If (local_blogBaseLink IsNot Nothing) Then Return local_blogBaseLink
+                local_blogBaseLink = cp.Content.GetPageLink(cp.Doc.PageId)
+                Return local_blogBaseLink
             End Get
         End Property
-        Private local_blogListLink As String = Nothing
+        Private local_blogBaseLink As String = Nothing
         '
         '====================================================================================================
         ''' <summary>

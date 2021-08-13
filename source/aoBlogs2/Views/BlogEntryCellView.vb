@@ -20,18 +20,17 @@ Namespace Views
                 '
                 ' -- add link alias for this page
                 Dim qs As String = cp.Utils.ModifyQueryString("", RequestNameBlogEntryID, CStr(blogPost.id))
-                qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
+                qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogPostDetails.ToString())
                 Call cp.Site.AddLinkAlias(blogPost.name, cp.Doc.PageId, qs)
                 Dim entryLink As String = cp.Content.GetPageLink(cp.Doc.PageId, qs)
-                Dim TagListRow As String = ""
                 Dim blogImageList = BlogImageModel.createListFromBlogEntry(cp, blogPost.id)
                 hint = 20
-                '
+                Dim TagListRow As String = ""
                 If isArticleView Then
                     hint = 30
                     '
                     ' -- article view
-                    result &= vbCrLf & entryEditLink & "<h2 class=""aoBlogEntryName"">" & blogPost.name & "</h2>"
+                    result &= "<h1 class=""aoBlogEntryName"">" & blogPost.name & "</h1>"
                     result &= "<div class=""aoBlogEntryLikeLine"">" & cp.Addon.Execute(facebookLikeAddonGuid) & "</div>"
                     result &= "<div class=""aoBlogEntryCopy"">"
                     If (blogImageList.Count > 0) Then
@@ -61,34 +60,21 @@ Namespace Views
                     End If
                     hint = 50
                     result &= blogPost.copy & "</div>"
-                    qs = app.blogListLink
-                    qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogPost.id))
-                    qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor.ToString())
-                    Dim c As String = ""
                     If Not String.IsNullOrEmpty(blogPost.tagList) Then
                         hint = 60
                         '
                         ' -- make a clickable section
-                        Dim clickableLinkList As String = Replace(blogPost.tagList, ",", vbCrLf)
-                        Dim Tags() As String = Split(clickableLinkList, vbCrLf)
-                        clickableLinkList = ""
-                        Dim SQS As String = cp.Utils.ModifyQueryString(app.blogListLink, RequestNameFormID, FormBlogSearch.ToString(), True)
-                        For Ptr As Integer = 0 To UBound(Tags)
-                            Dim Link As String = "?" & cp.Utils.ModifyQueryString(SQS, RequestNameQueryTag, Tags(Ptr), True)
-                            clickableLinkList = clickableLinkList & ", " & "<a href=""" & Link & """>" & Tags(Ptr) & "</a>"
+                        Dim clickableLinkList As String = ""
+                        Dim tags() As String = Split(Replace(blogPost.tagList, ",", vbCrLf), vbCrLf)
+                        For Each tag In tags
+                            Dim Link As String = app.blogBaseLink & "?" & rnFormID & "=" & FormBlogSearch & "&" & rnQueryTag & "=" & cp.Utils.EncodeHTML(tag)
+                            clickableLinkList &= ", <a href=""" & Link & """>" & tag & "</a>"
                         Next
-                        clickableLinkList = Mid(clickableLinkList, 3)
-                        c = "" _
-                        & "<div class=""aoBlogTagListHeader"">" _
-                        & vbTab & "Tags" _
-                        & "</div>" _
-                        & "<div class=""aoBlogTagList"">" _
-                        & vbTab & clickableLinkList _
-                        & "</div>"
                         TagListRow = "" _
-                        & "<div class=""aoBlogTagListSection"">" _
-                        & cp.Html.Indent(c) _
-                        & "</div>"
+                            & "<div class=""aoBlogTagListSection"">" _
+                            & "<div class=""aoBlogTagListHeader"">Tags</div>" _
+                            & "<div class=""aoBlogTagList"">" & Mid(clickableLinkList, 3) & "</div>" _
+                            & "</div>"
                     End If
                 Else
                     hint = 70
@@ -179,9 +165,9 @@ Namespace Views
                             RowCopy &= " | " & BlogCommentModelList.Count & " Comments&nbsp;(" & BlogCommentModelList.Count & ")"
                         End If
                     Else
-                        qs = app.blogListLink
+                        qs = app.blogBaseLink
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogPost.id))
-                        qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
+                        qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogPostDetails.ToString())
                         If BlogCommentModelList.Count = 0 Then
                             RowCopy &= " | " & "<a href=""" & entryLink & """>Comment</a>"
                         Else
@@ -212,9 +198,9 @@ Namespace Views
                         '
                         Dim BlogCommentModelList As List(Of BlogCommentModel) = DbModel.createList(Of BlogCommentModel)(cp, "(Approved<>0)and(EntryID=" & blogPost.id & ")")
                         '
-                        qs = app.blogListLink
+                        qs = app.blogBaseLink
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogPost.id))
-                        qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostDetails.ToString())
+                        qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogPostDetails.ToString())
                         Dim CommentLine As String = ""
                         If BlogCommentModelList.Count = 0 Then
                             CommentLine = CommentLine & "<a href=""?" & qs & """>Comment</a>"
@@ -231,9 +217,9 @@ Namespace Views
                                 toolLine = toolLine & "&nbsp;|&nbsp;"
                             End If
                             toolLine = toolLine & "Unapproved Comments (" & unapprovedCommentCount & ")"
-                            qs = app.blogListLink
+                            qs = app.blogBaseLink
                             qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, CStr(blogPost.id))
-                            qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor.ToString())
+                            qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogEntryEditor.ToString())
                             If toolLine <> "" Then
                                 toolLine = toolLine & "&nbsp;|&nbsp;"
                             End If

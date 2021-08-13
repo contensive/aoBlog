@@ -24,7 +24,7 @@ Namespace Views
                 Dim OpenSQL As String = ""
                 Dim contentControlId As String = cp.Content.GetID(cnBlogEntries).ToString
                 '
-                result = vbCrLf & cp.Content.GetCopy("Blogs Archives Header for " & Blog.name, "<h2>" & Blog.name & " Blog Archive</h2>")
+                result = vbCrLf & cp.Content.GetCopy("Blogs Archives Header for " & blog.name, "<h1>" & blog.name & " Archives</h1>")
                 ' 
                 Dim archiveDateList As List(Of BlogCopyModel.ArchiveDateModel) = BlogCopyModel.createArchiveListFromBlogCopy(cp, Blog.Id)
                 If (archiveDateList.Count = 0) Then
@@ -44,8 +44,8 @@ Namespace Views
                     Else
                         '
                         ' Display List of archive
-                        Dim qs As String = cp.Utils.ModifyQueryString(app.blogListLink, RequestNameSourceFormID, FormBlogArchiveDateList.ToString())
-                        qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogArchivedBlogs.ToString())
+                        Dim qs As String = cp.Utils.ModifyQueryString(app.blogBaseLink, RequestNameSourceFormID, FormBlogArchiveDateList.ToString())
+                        qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogArchivedBlogs.ToString())
                         For Each archiveDate In archiveDateList
                             ArchiveMonth = archiveDate.Month
                             ArchiveYear = archiveDate.Year
@@ -111,13 +111,13 @@ Namespace Views
                 End If
                 '              
                 '
-                Dim qs As String = app.blogListLink
+                Dim qs As String = app.blogBaseLink
                 'qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogSearch.ToString())
                 result &= "<div>&nbsp;</div>"
                 'result &= "<div Class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>"
                 qs = cp.Doc.RefreshQueryString()
                 qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, "", True)
-                qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogPostList.ToString())
+                qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogPostList.ToString())
                 result &= "<div Class=""aoBlogFooterLink""><a href=""" & app.blogPageBaseLink & """>" & BackToRecentPostsMsg & "</a></div>"
                 Call cp.CSNew.Close()
                 result &= cp.Html.Hidden(RequestNameSourceFormID, FormBlogArchivedBlogs.ToString())

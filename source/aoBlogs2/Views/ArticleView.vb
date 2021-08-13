@@ -78,7 +78,7 @@ Namespace Views
                         ElseIf (Auth = 2) And (Not AllowMemberJoin) Then
                             Auth = 3
                         End If
-                        Call cp.Doc.AddRefreshQueryString(RequestNameFormID, FormBlogPostDetails.ToString())
+                        Call cp.Doc.AddRefreshQueryString(rnFormID, FormBlogPostDetails.ToString())
                         Call cp.Doc.AddRefreshQueryString(RequestNameBlogEntryID, app.blogEntry.id.ToString())
                         Call cp.Doc.AddRefreshQueryString("auth", "0")
                         qs = cp.Doc.RefreshQueryString()
@@ -172,7 +172,7 @@ Namespace Views
                 If app.user.isBlogEditor(cp, app.blog) Then
                     qs = cp.Doc.RefreshQueryString()
                     qs = cp.Utils.ModifyQueryString(qs, RequestNameBlogEntryID, app.blogEntry.id)
-                    qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogEntryEditor)
+                    qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogEntryEditor)
                     result &= "<div class=""aoBlogToolLink""><a href=""?" & qs & """>Edit</a></div>"
                 End If
                 '
