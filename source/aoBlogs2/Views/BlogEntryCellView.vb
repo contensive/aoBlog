@@ -80,7 +80,7 @@ Namespace Views
                     hint = 70
                     '
                     ' -- list view
-                    result &= vbCrLf & entryEditLink & "<h4 class=""aoBlogEntryName""><a href=""" & entryLink & """>" & blogPost.name & "</a></h4>"
+                    result &= vbCrLf & entryEditLink & "<h2 class=""aoBlogEntryName""><a href=""" & entryLink & """>" & blogPost.name & "</a></h2>"
                     result &= "<div class=""aoBlogEntryCopy"">"
                     If (blogImageList.Count > 0) Then
                         hint = 80
