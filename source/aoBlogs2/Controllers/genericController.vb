@@ -164,54 +164,6 @@ Namespace Controllers
             Return result
         End Function
         '
-        '========================================================================
-        '
-        Public Shared Function getLinkAlias(cp As CPBaseClass, sourceLink As String) As String
-            '
-            Dim result As String = ""
-            Try
-                result = sourceLink
-                If cp.Site.GetBoolean("allowLinkAlias", True) Then
-                    Dim Link As String = sourceLink
-                    '
-                    Dim pageQs() As String = Split(LCase(Link), "?")
-                    If UBound(pageQs) > 0 Then
-                        Dim nameValues() As String = Split(pageQs(1), "&")
-                        Dim cnt As Integer = UBound(nameValues) + 1
-                        If UBound(nameValues) < 0 Then
-                        Else
-                            Dim qs As String = ""
-                            Dim Ptr As Integer
-                            Dim pageId As Integer
-                            For Ptr = 0 To cnt - 1
-                                Dim NameValue As String = nameValues(Ptr)
-                                If pageId = 0 Then
-                                    If Mid(NameValue, 1, 4) = "bid=" Then
-                                        pageId = cp.Utils.EncodeInteger(Mid(NameValue, 5))
-                                        NameValue = ""
-                                    End If
-                                End If
-                                If NameValue <> "" Then
-                                    qs = qs & "&" & NameValue
-                                End If
-                            Next
-                            If pageId <> 0 Then
-                                If Len(qs) > 1 Then
-                                    qs = Mid(qs, 2)
-                                End If
-                                result = cp.Content.GetLinkAliasByPageID(pageId, qs, sourceLink)
-                            End If
-                        End If
-                    End If
-                End If
-                getLinkAlias = result
-                '
-            Catch ex As Exception
-                cp.Site.ErrorReport(ex)
-            End Try
-            Return result
-        End Function
-        '
         Public Shared Function addEditWrapper(ByVal cp As CPBaseClass, ByVal innerHtml As String, ByVal recordId As Integer, ByVal recordName As String, ByVal contentName As String) As String
             If (Not cp.User.IsEditingAnything) Then Return innerHtml
             Dim header As String = cp.Content.GetEditLink(contentName, recordId.ToString(), False, recordName, True)

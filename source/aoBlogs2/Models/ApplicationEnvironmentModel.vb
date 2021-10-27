@@ -1,4 +1,5 @@
 ﻿
+Imports Contensive.Addons.Blog.Controllers
 Imports Contensive.Addons.Blog.Models
 Imports Contensive.BaseClasses
 
@@ -47,12 +48,16 @@ Namespace Models
                 ' -- return if set
                 If (local_blogEntry IsNot Nothing) Then Return local_blogEntry
                 '
-                ' -- return null if no blog entry for this doc
+                ' -- return null if blogentryid is not valid
                 If (local_blogEntryId Is Nothing) OrElse (local_blogEntryId = 0) Then Return Nothing
                 '
-                ' -- lookup and return the blog entry
+                ' -- blogEntryId is valid, return blog entry
                 local_blogEntry = DbModel.create(Of BlogPostModel)(cp, cp.Utils.EncodeInteger(local_blogEntryId))
-                Return local_blogEntry
+                If (local_blogEntry IsNot Nothing) Then Return local_blogEntry
+                '
+                ' -- if blogentryid is not 0, and blog is null, remove link alias that might have caused this
+                LinkAliasController.deleteLinkAlias(cp, cp.Doc.PageId, CInt(local_blogEntryId))
+                Return Nothing
             End Get
         End Property
         Private ReadOnly local_blogEntryId As Integer? = Nothing

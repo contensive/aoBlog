@@ -92,6 +92,7 @@
   <ItemGroup>
     <Compile Include="Addons\BlogCategoriesClass.vb" />
     <Compile Include="constants.vb" />
+    <Compile Include="Controllers\LinkAliasController.vb" />
     <Compile Include="Models\ApplicationEnvironmentModel.vb" />
     <Compile Include="Controllers\PaginationController.vb" />
     <Compile Include="Controllers\MetadataController.vb" />

@@ -12,7 +12,7 @@ cd \Git\aoBlog\scripts
 
 rem all paths are relative to the git scripts folder
 
-set appName=app210629
+set appName=vivos
 set collectionName=Blog
 set solutionName=aoBlogs2.sln
 set collectionPath=..\collections\blog\

@@ -19,9 +19,12 @@ Namespace Views
                 If (blogPost Is Nothing) Then Throw New ApplicationException("BlogEntryCell called without valid BlogEntry")
                 '
                 ' -- add link alias for this page
-                Dim qs As String = cp.Utils.ModifyQueryString("", RequestNameBlogEntryID, CStr(blogPost.id))
-                qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogPostDetails.ToString())
-                Call cp.Site.AddLinkAlias(blogPost.name, cp.Doc.PageId, qs)
+                LinkAliasController.addLinkAlias(cp, blogPost.name, cp.Doc.PageId, blogPost.id)
+                'Dim qs As String = cp.Utils.ModifyQueryString("", RequestNameBlogEntryID, CStr(blogPost.id))
+                'qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogPostDetails.ToString())
+                'Call cp.Site.AddLinkAlias(blogPost.name, cp.Doc.PageId, qs)
+                '
+                Dim qs As String = LinkAliasController.getLinkAliasQueryString(cp, cp.Doc.PageId, blogPost.id)
                 Dim entryLink As String = cp.Content.GetPageLink(cp.Doc.PageId, qs)
                 Dim blogImageList = BlogImageModel.createListFromBlogEntry(cp, blogPost.id)
                 hint = 20
