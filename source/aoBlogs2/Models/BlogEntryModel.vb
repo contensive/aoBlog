@@ -10,17 +10,16 @@ Imports Contensive.BaseClasses
 
 Namespace Models
     ''' <summary>
-    ''' Blog copy is the root content for the ccBlogCopy table. 
-    ''' Blog Entries (posts) and Blog Comments (comments to posts) are both stored in Blog Copy
+    ''' Blog Posts
     ''' </summary>
-    Public Class BlogCopyModel
+    Public Class BlogEntryModel
         Inherits DbModel
         '
         '====================================================================================================
         '-- const
-        Public Const contentName As String = "Blog Copy"      '<------ set content name
-        Public Const contentTableName As String = "ccBlogCopy"   '<------ set to tablename for the primary content (used for cache names)
-        Private Shadows Const contentDataSource As String = "default"             '<------ set to datasource if not default
+        Public Const contentName As String = "Blog Entries"
+        Public Const contentTableName As String = "ccBlogCopy"
+        Private Shadows Const contentDataSource As String = "default"
         '
         '====================================================================================================
         ' -- instance properties
@@ -47,15 +46,15 @@ Namespace Models
         ''' <param name="cp"></param>
         ''' <param name="blogId">The id of the Blog Copy</param>
         ''' <returns></returns>
-        Public Shared Function createListFromBlogCopy(cp As CPBaseClass, blogId As Integer) As List(Of BlogCopyModel)
-            Dim result As New List(Of BlogCopyModel)
+        Public Shared Function createListFromBlogCopy(cp As CPBaseClass, blogId As Integer) As List(Of BlogEntryModel)
+            Dim result As New List(Of BlogEntryModel)
             Try
                 Dim Sql As String = "select p.ID" _
                         & " from (ccBlogCopy p" _
                         & " left join BlogCategories c on c.id=p.blogCategoryID)" _
                         & " where (p.blogid=" & blogId & ")" _
                         & " and((c.id is null)or(c.UserBlocking=0)or(c.UserBlocking is null))"
-                result = createList(Of BlogCopyModel)(cp, "(id in (" & Sql & "))")
+                result = createList(Of BlogEntryModel)(cp, "(id in (" & Sql & "))")
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)
             End Try

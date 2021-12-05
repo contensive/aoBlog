@@ -20,7 +20,7 @@ Namespace Views
                 Dim cellList As String = ""
                 Using sidebarCell As CPBlockBaseClass = cp.BlockNew()
                     Dim layout As CPBlockBaseClass = cp.BlockNew()
-                    layout.OpenLayout(BlogListLayout)
+                    layout.OpenLayout(guidBlogListLayout)
                     sidebarCell.Load(layout.GetOuter(".blogSidebarCellWrap"))
                     Dim cellTemplate As String = sidebarCell.GetHtml()
                     Dim adminSuggestions As String = ""
@@ -28,14 +28,14 @@ Namespace Views
                     '
                     ' -- wrap the blog body in the wrapper (sidebar, footer, etc)
                     Dim isArticleView As Boolean = (request.blogEntryId > 0)
-                    Dim allowListSidebar As Boolean = Blog.allowEmailSubscribe Or Blog.allowFacebookLink Or Blog.allowGooglePlusLink Or Blog.allowGooglePlusLink Or Blog.allowRSSSubscribe Or Blog.allowTwitterLink Or Blog.allowArchiveList Or Blog.allowSearch
-                    Dim allowArticleSidebar As Boolean = allowListSidebar Or Blog.allowArticleCTA
+                    Dim allowListSidebar As Boolean = blog.allowEmailSubscribe Or blog.allowFacebookLink Or blog.allowGooglePlusLink Or blog.allowGooglePlusLink Or blog.allowRSSSubscribe Or blog.allowTwitterLink Or blog.allowArchiveList Or blog.allowSearch
+                    Dim allowArticleSidebar As Boolean = allowListSidebar Or blog.allowArticleCTA
                     Dim dstFormId As Integer = cp.Doc.GetInteger(rnFormID)
                     Dim allowSidebar As Boolean = Not (dstFormId = FormBlogEntryEditor) And ((isArticleView And allowArticleSidebar) Or (Not isArticleView And allowListSidebar))
                     '
                     ' Sidebar
                     If allowSidebar Then
-                        If Blog.allowArticleCTA And isArticleView Then
+                        If blog.allowArticleCTA And isArticleView Then
                             '
                             ' CTA cells
                             Dim blogEntryCtaRuleList = DbModel.createList(Of BlogEntryCTARuleModel)(cp, "blogEntryid=" & request.blogEntryId)
@@ -58,13 +58,13 @@ Namespace Views
                             Next
                         End If
                         '
-                        If Blog.allowEmailSubscribe Then
+                        If blog.allowEmailSubscribe Then
                             '
                             ' Subscribe by email
                             '
-                            Dim subscribed As Boolean = cp.Visit.GetBoolean("EmailSubscribed-Blog" & Blog.id & "-user" & cp.User.Id)
+                            Dim subscribed As Boolean = cp.Visit.GetBoolean("EmailSubscribed-Blog" & blog.id & "-user" & cp.User.Id)
                             If Not subscribed Then
-                                subscribed = cp.User.IsInGroup(Blog.emailSubscribeGroupId.ToString())
+                                subscribed = cp.User.IsInGroup(blog.emailSubscribeGroupId.ToString())
                             End If
                             sidebarCell.Load(cellTemplate)
                             Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By Email")
@@ -84,38 +84,38 @@ Namespace Views
                             sidebarCnt += 1
                         End If
                         '
-                        If Blog.allowFacebookLink Or Blog.allowGooglePlusLink Or Blog.allowTwitterLink Then
+                        If blog.allowFacebookLink Or blog.allowGooglePlusLink Or blog.allowTwitterLink Then
                             '
                             ' Social Links
                             'Dim sidebarHtml As String = sidebarCell.GetHtml()
                             Dim sidebarHtml As String = ""
-                            If Blog.allowFacebookLink And (Blog.facebookLink <> "") Then
-                                sidebarHtml &= "<a href=""" & Blog.facebookLink & """ target=""_blank""><img Class=""blogSidebarSocialLogo"" src=""/blogs/facebook.jpg"" width=""32"" height=""32""></a>"
-                            ElseIf Blog.allowFacebookLink Then
+                            If blog.allowFacebookLink And (blog.facebookLink <> "") Then
+                                sidebarHtml &= "<a href=""" & blog.facebookLink & """ target=""_blank""><img Class=""blogSidebarSocialLogo"" src=""/blogs/facebook.jpg"" width=""32"" height=""32""></a>"
+                            ElseIf blog.allowFacebookLink Then
                                 If cp.User.IsAdmin Then
                                     sidebarHtml &= "<div Class=""blogAdminWarning""><h2>Administrator</h2><p>Add a facebook link For this blog, Or disable the Allow Facebook Sidebar checkbox.</p></div>"
                                 End If
                             End If
-                            If Blog.allowTwitterLink And (Blog.twitterLink <> "") Then
-                                sidebarHtml &= "<a href=""" & Blog.twitterLink & """ target=""_blank""><img Class=""blogSidebarSocialLogo"" src=""/blogs/twitter.jpg"" width=""32"" height=""32""></a>"
-                            ElseIf Blog.allowTwitterLink Then
+                            If blog.allowTwitterLink And (blog.twitterLink <> "") Then
+                                sidebarHtml &= "<a href=""" & blog.twitterLink & """ target=""_blank""><img Class=""blogSidebarSocialLogo"" src=""/blogs/twitter.jpg"" width=""32"" height=""32""></a>"
+                            ElseIf blog.allowTwitterLink Then
                                 If cp.User.IsAdmin Then
                                     sidebarHtml &= "<div Class=""blogAdminWarning""><h2>Administrator</h2><p>Add a twitter link For this blog, Or disable the Allow Twitter Sidebar checkbox.</p></div>"
                                 End If
                             End If
-                            If Blog.allowTwitterLink And (Blog.googlePlusLink <> "") Then
-                                sidebarHtml &= "<a href=""" & Blog.googlePlusLink & """ target=""_blank""><img Class=""blogSidebarSocialLogo"" src=""/blogs/GooglePlus.jpg"" width=""32"" height=""32""></a>"
-                            ElseIf Blog.allowGooglePlusLink Then
+                            If blog.allowTwitterLink And (blog.googlePlusLink <> "") Then
+                                sidebarHtml &= "<a href=""" & blog.googlePlusLink & """ target=""_blank""><img Class=""blogSidebarSocialLogo"" src=""/blogs/GooglePlus.jpg"" width=""32"" height=""32""></a>"
+                            ElseIf blog.allowGooglePlusLink Then
                                 If cp.User.IsAdmin Then
                                     sidebarHtml &= "<div Class=""blogAdminWarning""><h2>Administrator</h2><p>Add a GooglePlus link For this blog, Or disable the Allow Google Plus Sidebar checkbox.</p></div>"
                                 End If
                             End If
                             If sidebarHtml <> "" Then
-                                If Blog.followUsCaption = "" Then
-                                    Blog.followUsCaption = "Follow Us"
+                                If blog.followUsCaption = "" Then
+                                    blog.followUsCaption = "Follow Us"
                                 End If
                                 sidebarCell.Load(cellTemplate)
-                                Call sidebarCell.SetInner(".blogSidebarCellHeadline", Blog.followUsCaption)
+                                Call sidebarCell.SetInner(".blogSidebarCellHeadline", blog.followUsCaption)
                                 Call sidebarCell.SetOuter(".blogSidebarCellCopy", "")
                                 Call sidebarCell.SetOuter(".blogSidebarCellInput", "")
                                 Call sidebarCell.SetOuter(".blogSidebarCellButton", "")
@@ -125,7 +125,7 @@ Namespace Views
                             End If
                         End If
                         '
-                        If Blog.allowSearch Then
+                        If blog.allowSearch Then
                             '
                             ' Search 
                             Dim formInput As String
@@ -144,7 +144,7 @@ Namespace Views
                             sidebarCnt += 1
                         End If
                         '
-                        If Blog.allowArchiveList Then
+                        If blog.allowArchiveList Then
                             '
                             ' Archive List
                             Dim sideBar_ArchiveList As String = ""
@@ -159,7 +159,7 @@ Namespace Views
                             Dim blogListLink As String = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, app.blogBaseLink, "?" & app.blogBaseLink)
                             sideBar_ArchiveList = SidebarView.GetSidebarArchiveList(cp, app)
                             If (String.IsNullOrEmpty(sideBar_ArchiveList)) Then
-                                Blog.allowArchiveList = False
+                                blog.allowArchiveList = False
                             Else
                                 sidebarCell.Load(cellTemplate)
                                 Call sidebarCell.SetInner(".blogSidebarCellHeadline", "Archives")
@@ -172,8 +172,8 @@ Namespace Views
                             End If
                         End If
                         '
-                        If Blog.allowRSSSubscribe Then
-                            Dim rssFeed = DbModel.create(Of RSSFeedModel)(cp, Blog.RSSFeedID)
+                        If blog.allowRSSSubscribe Then
+                            Dim rssFeed = DbModel.create(Of RSSFeedModel)(cp, blog.RSSFeedID)
                             '
                             If ((rssFeed Is Nothing) OrElse (rssFeed.rssFilename = "")) Then
                                 adminSuggestions &= cp.Html.li("This blog includes an RSS Feed, but no feed has been created. It his persists, please contact the site developer. Disable RSS feeds for this blog to hide this message.")
@@ -207,7 +207,7 @@ Namespace Views
                             End If
                         End If
                         '
-                        If Blog.allowArticleCTA Then
+                        If blog.allowArticleCTA Then
                             '
                             ' Call To action List
                             '
@@ -229,7 +229,7 @@ Namespace Views
                     End If
                     '
                     layout.SetInner(".blogSidebar", cellList)
-                    layout.Append(cp.Html.Hidden("blogId", Blog.id.ToString(), "", "blogId"))
+                    layout.Append(cp.Html.Hidden("blogId", blog.id.ToString(), "", "blogId"))
                     If sidebarCnt = 0 Then
                         layout.SetInner(".blogWrapper", layout.GetInner(".blogColumn1"))
                     End If

@@ -26,7 +26,7 @@ Namespace Views
                 '
                 result = vbCrLf & cp.Content.GetCopy("Blogs Archives Header for " & blog.name, "<h1>" & blog.name & " Archives</h1>")
                 ' 
-                Dim archiveDateList As List(Of BlogCopyModel.ArchiveDateModel) = BlogCopyModel.createArchiveListFromBlogCopy(cp, Blog.Id)
+                Dim archiveDateList As List(Of BlogEntryModel.ArchiveDateModel) = BlogEntryModel.createArchiveListFromBlogCopy(cp, blog.id)
                 If (archiveDateList.Count = 0) Then
                     '
                     ' No archives, give them an error

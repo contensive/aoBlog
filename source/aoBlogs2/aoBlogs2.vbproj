@@ -110,7 +110,7 @@
     <Compile Include="Models\RSSFeedBlogRuleModel.vb" />
     <Compile Include="Models\RSSFeedModel.vb" />
     <Compile Include="Models\BlogCommentModel.vb" />
-    <Compile Include="Models\BlogCopyModel.vb" />
+    <Compile Include="Models\BlogEntryModel.vb" />
     <Compile Include="Models\BlogCategoriesModel.vb" />
     <Compile Include="Models\BlogImageModel.vb" />
     <Compile Include="Models\BlogImageRuleModel.vb" />

@@ -6,14 +6,18 @@ Public Module constants
     '
     Public Const AnonymousMemberName = "Anonymous"
     '
-    ' -- Guids
+    ' -- Layouts
+    Public Const guidBlogListLayout As String = "{58788483-D050-4464-9261-627278A57B35}"
     '
+    ' -- groups
+    Public Const guidStaffGroup As String = ""
+    '
+    ' -- misc guids
     Public Const reCaptchaDisplayGuid = "{E9E51C6E-9152-4284-A44F-D3ABC423AB90}"
     Public Const reCaptchaProcessGuid = "{030AC5B0-F796-4EA4-B94C-986B1C29C16C}"
     Public Const RSSProcessAddonGuid = "{2119C2DA-1D57-4C32-B13C-28CD2D85EDF5}"
     Public Const addonGuidWebcast As String = "{F6037DEE-023C-4A14-A972-ADAFA5538240}"
     Public Const guidDefaultCallToAction As String = "{3ab72599-bfec-4f8c-9801-a21fd7b6a084}"
-    Public Const BlogListLayout As String = "{58788483-D050-4464-9261-627278A57B35}"
     Public Const LegacyBlogAddon As String = "{656E95EA-2799-45CD-9712-D4CEDF0E2D02}"
     Public Const facebookLikeAddonGuid As String = "{17919A35-06B3-4F32-9607-4DB3228A15DF}"
     Public Const reCaptchaWorkingGuid As String = "{500A1F57-86A2-4D47-B747-4EF4D30A83E2}"
@@ -34,7 +38,7 @@ Public Module constants
     '
     Public Const cnPeople As String = "people"
     Public Const cnBlogs As String = "Blogs"
-    Public Const cnBlogCopy As String = "Blog Copy"
+    'Public Const cnBlogCopy As String = "Blog Copy"
     Public Const cnBlogEntries As String = "Blog Entries"
     Public Const cnBlogComments As String = "Blog Comments"
     Public Const cnBlogTypes As String = "Blog Types"

@@ -9,14 +9,14 @@ Imports System.Text
 Imports Contensive.BaseClasses
 
 Namespace Models
-    Public Class BlogCommentModel       '<------ set set model Name and everywhere that matches this string
+    Public Class BlogCommentModel
         Inherits DbModel
         '
         '====================================================================================================
         '-- const
-        Public Const contentName As String = "Blog Comments"      '<------ set content name
-        Public Const contentTableName As String = "ccBlogCopy"   '<------ set to tablename for the primary content (used for cache names)
-        Private Shadows Const contentDataSource As String = "default"             '<------ set to datasource if not default
+        Public Const contentName As String = "Blog Comments"
+        Public Const contentTableName As String = "ccBlogComments"
+        Private Shadows Const contentDataSource As String = "default"
         '
         '====================================================================================================
         ' -- instance properties
