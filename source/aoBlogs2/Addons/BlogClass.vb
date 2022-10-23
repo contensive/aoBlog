@@ -23,8 +23,6 @@ Namespace Views
                 Dim blog As BlogModel = BlogModel.verifyBlog(CP, blogBodyRequest.instanceGuid)
                 If (blog Is Nothing) Then Return "<!-- Could not find or create blog from instanceId [" & blogBodyRequest.instanceGuid & "] -->"
                 '
-                Dim app As New ApplicationEnvironmentModel(CP, blog, blogBodyRequest.entryId)
-                '
                 ' -- process view requests
                 Select Case blogBodyRequest.srcViewId
                     Case Else
@@ -38,6 +36,8 @@ Namespace Views
                         '
                         ' -- default view
                 End Select
+                '
+                Dim app As New ApplicationEnvironmentModel(CP, blog, blogBodyRequest.entryId)
                 '
                 ' -- get legacy Blog Body -- the body is the area down the middle that includes the Blog View (Article View, List View, Edit View)
                 Dim legacyBlogBody As String = BlogBodyView.getBlogBody(CP, app, legacyRequest, blogBodyRequest)

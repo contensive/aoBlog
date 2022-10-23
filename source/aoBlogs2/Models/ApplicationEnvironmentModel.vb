@@ -138,5 +138,16 @@ Namespace Models
             local_blog = blog
             local_blogEntryId = blogEntryId
         End Sub
+        '
+        '
+        ''' <summary>
+        ''' if false, do now show tags. This blocks all the additional pages that hurt SEO
+        ''' </summary>
+        ''' <returns></returns>
+        Public ReadOnly Property sitePropertyAllowTags As Boolean
+            Get
+                Return cp.Site.GetBoolean("blog allow tags", False)
+            End Get
+        End Property
     End Class
 End Namespace

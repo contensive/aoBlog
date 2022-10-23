@@ -63,7 +63,7 @@ Namespace Views
                     End If
                     hint = 50
                     result &= blogPost.copy & "</div>"
-                    If Not String.IsNullOrEmpty(blogPost.tagList) Then
+                    If app.sitePropertyAllowTags And (Not String.IsNullOrEmpty(blogPost.tagList)) Then
                         hint = 60
                         '
                         ' -- make a clickable section

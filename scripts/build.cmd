@@ -1,4 +1,4 @@
-rem echo off
+echo off
 
 rem 
 rem Must be run from the projects git\project\scripts folder - everything is relative
@@ -12,7 +12,6 @@ cd \Git\aoBlog\scripts
 
 rem all paths are relative to the git scripts folder
 
-set appName=vivos
 set collectionName=Blog
 set solutionName=aoBlogs2.sln
 set collectionPath=..\collections\blog\

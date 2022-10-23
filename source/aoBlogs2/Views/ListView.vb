@@ -160,6 +160,11 @@ Namespace Views
                     result.Append("<div class=""aoBlogFooterLink"">" & FeedFooter & "</div>")
                 End If
                 result.Append(cp.Html.Hidden(RequestNameSourceFormID, FormBlogPostList.ToString()))
+                '
+                ' -- metadata for blog landing page
+                cp.Doc.AddMetaDescription(blog.metaDescription)
+                cp.Doc.AddTitle(blog.metaTitle)
+                cp.Doc.AddMetaKeywordList(blog.metaKeywordList)
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)
             End Try

@@ -47,7 +47,13 @@ Namespace Models
         Public Property RSSFeedID As Integer
         Public Property ThumbnailImageWidth As Integer
         Public Property twitterLink As String
-        'Public Property Id As Integer
+        ''' <summary>
+        ''' Meta data for the landing page of the blog
+        ''' </summary>
+        ''' <returns></returns>
+        Public Property metaTitle As String
+        Public Property metaDescription As String
+        Public Property metaKeywordList As String
         '
         '====================================================================================================
         ''' <summary>
