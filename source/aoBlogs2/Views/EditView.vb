@@ -31,24 +31,26 @@ Namespace Views
                         ' entry posted, but process could not save, display what was submitted
                         blogEntry_name = request.BlogEntryName
                         blogEntry_copy = request.BlogEntryCopy
-                        blogEntry_tagList = request.BlogEntryTagList
                         blongEntry_blogCategoryId = request.BlogEntryCategoryId
+                        blogEntry_tagList = request.BlogEntryTagList
                     End If
                 Else
                     '
                     ' Edit an entry
                     blogEntry_id = app.blogEntry.id
                     blogEntry_name = app.blogEntry.name
-                    blogEntry_tagList = app.blogEntry.tagList
                     blongEntry_blogCategoryId = app.blogEntry.blogCategoryID
                     blogEntry_copy = app.blogEntry.copy
                     If blogEntry_copy = "" Then
                         blogEntry_copy = "<!-- cc --><p><br></p><!-- /cc -->"
                     End If
+                    blogEntry_tagList = app.blogEntry.tagList
                 End If
                 result.Append(genericController.getFormTableRow(cp, "<div style=""padding-top:3px"">Title: </div>", cp.Html.InputText(RequestNameBlogEntryName, blogEntry_name, 255, "form-control")))
                 result.Append(genericController.getFormTableRow(cp, "<div style=""padding-top:108px"">Post: </div>", cp.Html.InputWysiwyg(RequestNameBlogEntryCopy, blogEntry_copy, CPHtmlBaseClass.EditorUserScope.ContentManager)))
-                result.Append(genericController.getFormTableRow(cp, "<div style=""padding-top:3px"">Tag List: </div>", cp.Html.InputText(RequestNameBlogEntryTagList, blogEntry_tagList, 255, "form-control")))
+                If app.sitePropertyAllowTags Then
+                    result.Append(genericController.getFormTableRow(cp, "<div style=""padding-top:3px"">Tag List: </div>", cp.Html.InputText(RequestNameBlogEntryTagList, blogEntry_tagList, 255, "form-control")))
+                End If
                 If app.blog.AllowCategories Then
                     Dim CategorySelect As String = cp.Html.SelectContent(RequestNameBlogEntryCategoryID, blongEntry_blogCategoryId.ToString(), "Blog Categories")
                     If (InStr(1, CategorySelect, "<option value=""""></option></select>", vbTextCompare) <> 0) Then
@@ -220,78 +222,81 @@ Namespace Views
 
                         blogEntry.name = request.BlogEntryName
                         blogEntry.copy = request.BlogEntryCopy
-                        blogEntry.tagList = request.BlogEntryTagList
-                        blogEntry.blogCategoryID = request.BlogEntryCategoryId
                         blogEntry.blogID = blog.id
                         blogEntry.save(Of BlogPostModel)(cp)
-                        '
+                        If app.sitePropertyAllowTags Then                        '
+                            blogEntry.tagList = request.BlogEntryTagList
+                        End If
+                        If app.blog.AllowCategories Then
+                            blogEntry.blogCategoryID = request.BlogEntryCategoryId
+                        End If
                         ' Upload files
                         '
                         Dim UploadCount As Integer = cp.Doc.GetInteger("LibraryUploadCount")
-                        If UploadCount > 0 Then
-                            Dim UploadPointer As Integer
-                            For UploadPointer = 1 To UploadCount
-                                Dim ImageID As Integer = cp.Doc.GetInteger(rnBlogImageID & "." & UploadPointer)
-                                Dim imageFilename As String = cp.Doc.GetText(rnBlogUploadPrefix & "." & UploadPointer)
-                                Dim imageOrder As Integer = cp.Doc.GetInteger(rnBlogImageOrder & "." & UploadPointer)
-                                Dim imageName As String = cp.Doc.GetText(rnBlogImageName & "." & UploadPointer)
-                                Dim imageDescription As String = cp.Doc.GetText(rnBlogImageDescription & "." & UploadPointer)
-                                Dim BlogImageID As Integer = 0
-                                If ImageID <> 0 Then
-                                    '
-                                    ' edit image
-                                    '
-                                    Dim BlogImage As BlogImageModel = DbModel.add(Of BlogImageModel)(cp)
-                                    If cp.Doc.GetBoolean(rnBlogImageDelete & "." & UploadPointer) Then
-                                        Call cp.Content.Delete(cnBlogImages, ImageID.ToString())
-                                    Else
+                            If UploadCount > 0 Then
+                                Dim UploadPointer As Integer
+                                For UploadPointer = 1 To UploadCount
+                                    Dim ImageID As Integer = cp.Doc.GetInteger(rnBlogImageID & "." & UploadPointer)
+                                    Dim imageFilename As String = cp.Doc.GetText(rnBlogUploadPrefix & "." & UploadPointer)
+                                    Dim imageOrder As Integer = cp.Doc.GetInteger(rnBlogImageOrder & "." & UploadPointer)
+                                    Dim imageName As String = cp.Doc.GetText(rnBlogImageName & "." & UploadPointer)
+                                    Dim imageDescription As String = cp.Doc.GetText(rnBlogImageDescription & "." & UploadPointer)
+                                    Dim BlogImageID As Integer = 0
+                                    If ImageID <> 0 Then
+                                        '
+                                        ' edit image
+                                        '
+                                        Dim BlogImage As BlogImageModel = DbModel.add(Of BlogImageModel)(cp)
+                                        If cp.Doc.GetBoolean(rnBlogImageDelete & "." & UploadPointer) Then
+                                            Call cp.Content.Delete(cnBlogImages, ImageID.ToString())
+                                        Else
 
+                                            If (BlogImage IsNot Nothing) Then
+                                                BlogImage.name = imageName
+                                                BlogImage.description = imageDescription
+                                                BlogImage.SortOrder = New String(CChar("0"), 12 - imageOrder.ToString().Length) & imageOrder.ToString() ' String.Empty.PadLeft((12 - Len(imageOrder.ToString())), "0") & imageOrder
+                                                blogEntry.save(Of BlogPostModel)(cp)
+                                            End If
+                                        End If
+                                    ElseIf imageFilename <> "" Then
+                                        '
+                                        ' upload image
+                                        '
+                                        'CS = Main.InsertCSRecord(cnBlogImages)
+                                        'If Main.IsCSOK(CS) Then
+                                        Dim BlogImage As BlogImageModel = DbModel.add(Of BlogImageModel)(cp)
                                         If (BlogImage IsNot Nothing) Then
+                                            BlogImageID = BlogImage.id
                                             BlogImage.name = imageName
                                             BlogImage.description = imageDescription
-                                            BlogImage.SortOrder = New String(CChar("0"), 12 - imageOrder.ToString().Length) & imageOrder.ToString() ' String.Empty.PadLeft((12 - Len(imageOrder.ToString())), "0") & imageOrder
-                                            blogEntry.save(Of BlogPostModel)(cp)
+                                            Dim FileExtension As String = ""
+                                            Dim FilenameNoExtension As String = ""
+                                            Dim Pos As Integer = InStrRev(imageFilename, ".")
+                                            If Pos > 0 Then
+                                                FileExtension = Mid(imageFilename, Pos + 1)
+                                                FilenameNoExtension = Left(imageFilename, Pos - 1)
+                                            End If
+                                            Dim VirtualFilePath As String = BlogImage.getUploadPath(Of BlogImageModel)("filename")
+                                            Call cp.Html.ProcessInputFile(rnBlogUploadPrefix & "." & UploadPointer, VirtualFilePath)
+                                            BlogImage.Filename = VirtualFilePath & imageFilename
+                                            BlogImage.save(Of BlogImageModel)(cp)
+                                            BlogImage.SortOrder = New String("0"c, 12 - imageOrder.ToString().Length) & imageOrder.ToString()
+                                        End If
+                                        '
+                                        Dim ImageRule As BlogImageRuleModel = BlogImageRuleModel.add(Of BlogImageRuleModel)(cp)
+                                        If (ImageRule IsNot Nothing) Then
+                                            ImageRule.BlogEntryID = blogEntry.id
+                                            ImageRule.BlogImageID = BlogImageID
+                                            ImageRule.save(Of BlogImageRuleModel)(cp)
                                         End If
                                     End If
-                                ElseIf imageFilename <> "" Then
-                                    '
-                                    ' upload image
-                                    '
-                                    'CS = Main.InsertCSRecord(cnBlogImages)
-                                    'If Main.IsCSOK(CS) Then
-                                    Dim BlogImage As BlogImageModel = DbModel.add(Of BlogImageModel)(cp)
-                                    If (BlogImage IsNot Nothing) Then
-                                        BlogImageID = BlogImage.id
-                                        BlogImage.name = imageName
-                                        BlogImage.description = imageDescription
-                                        Dim FileExtension As String = ""
-                                        Dim FilenameNoExtension As String = ""
-                                        Dim Pos As Integer = InStrRev(imageFilename, ".")
-                                        If Pos > 0 Then
-                                            FileExtension = Mid(imageFilename, Pos + 1)
-                                            FilenameNoExtension = Left(imageFilename, Pos - 1)
-                                        End If
-                                        Dim VirtualFilePath As String = BlogImage.getUploadPath(Of BlogImageModel)("filename")
-                                        Call cp.Html.ProcessInputFile(rnBlogUploadPrefix & "." & UploadPointer, VirtualFilePath)
-                                        BlogImage.Filename = VirtualFilePath & imageFilename
-                                        BlogImage.save(Of BlogImageModel)(cp)
-                                        BlogImage.SortOrder = New String("0"c, 12 - imageOrder.ToString().Length) & imageOrder.ToString()
-                                    End If
-                                    '
-                                    Dim ImageRule As BlogImageRuleModel = BlogImageRuleModel.add(Of BlogImageRuleModel)(cp)
-                                    If (ImageRule IsNot Nothing) Then
-                                        ImageRule.BlogEntryID = blogEntry.id
-                                        ImageRule.BlogImageID = BlogImageID
-                                        ImageRule.save(Of BlogImageRuleModel)(cp)
-                                    End If
-                                End If
-                            Next
+                                Next
+                            End If
+                            '
+                            Call RSSFeedModel.UpdateBlogFeed(cp)
+                            ProcessFormBlogEdit = FormBlogPostList
                         End If
-                        '
-                        Call RSSFeedModel.UpdateBlogFeed(cp)
-                        ProcessFormBlogEdit = FormBlogPostList
                     End If
-                End If
                 '
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)

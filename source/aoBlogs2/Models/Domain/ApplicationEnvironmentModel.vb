@@ -1,4 +1,5 @@
 ﻿
+Imports System.Linq
 Imports Contensive.Addons.Blog.Controllers
 Imports Contensive.Addons.Blog.Models
 Imports Contensive.BaseClasses
@@ -127,6 +128,38 @@ Namespace Models
             End Get
         End Property
         Private local_blogPageBaseLink As String = Nothing
+        '
+        '
+        Public ReadOnly Property nextArticle As BlogPostModel
+            Get
+                If nextArticle_local IsNot Nothing Then Return nextArticle_local
+                Dim postList As List(Of BlogPostModel) = DbModel.createList(Of BlogPostModel)(cp, "(blogID=" & blog.id & ")and(DateAdded>" & cp.Db.EncodeSQLDate(blogEntry.DateAdded) & ")", "DateAdded", 1, 1)
+                If postList.Count = 0 Then Return Nothing
+                nextArticle_local = postList.First()
+                Return nextArticle_local
+            End Get
+        End Property
+        Private nextArticle_local As BlogPostModel = Nothing
+        '
+        '
+        Public ReadOnly Property nextArticleLink As String
+            Get
+                If nextArticle Is Nothing Then Return Nothing
+                '
+                Dim qs As String = LinkAliasController.getLinkAliasQueryString(cp, cp.Doc.PageId, nextArticle.id)
+                nextArticleLink_local = cp.Content.GetPageLink(cp.Doc.PageId, qs)
+                Return nextArticleLink_local
+            End Get
+        End Property
+        Private nextArticleLink_local As String = Nothing
+        '
+        '
+        Public ReadOnly Property nextArticleLinkCaption As String
+            Get
+                If nextArticle Is Nothing Then Return Nothing
+                Return nextArticle.name
+            End Get
+        End Property
 
         '
         '====================================================================================================

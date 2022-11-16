@@ -75,7 +75,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CPBase, Version=4.1.2.0, Culture=neutral, PublicKeyToken=10b3c53389b845fb, processorArchitecture=MSIL">
-      <HintPath>..\packages\Contensive.CPBaseClass.21.5.6.1\lib\net45\CPBase.dll</HintPath>
+      <HintPath>..\packages\Contensive.CPBaseClass.22.8.16.1\lib\net472\CPBase.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -93,33 +93,33 @@
     <Compile Include="Addons\BlogCategoriesClass.vb" />
     <Compile Include="constants.vb" />
     <Compile Include="Controllers\LinkAliasController.vb" />
-    <Compile Include="Models\ApplicationEnvironmentModel.vb" />
+    <Compile Include="Models\Domain\ApplicationEnvironmentModel.vb" />
     <Compile Include="Controllers\PaginationController.vb" />
     <Compile Include="Controllers\MetadataController.vb" />
     <Compile Include="Controllers\genericController.vb" />
-    <Compile Include="Models\DbModel.vb" />
-    <Compile Include="Models\EmailModel.vb" />
-    <Compile Include="Models\GroupModel.vb" />
-    <Compile Include="Models\GroupRuleModel.vb" />
-    <Compile Include="Models\MemberRuleModel.vb" />
-    <Compile Include="Models\PersonModel.vb" />
-    <Compile Include="Models\BlogCategoryGroupRulesModel.vb" />
-    <Compile Include="Models\BlogModel.vb" />
-    <Compile Include="Models\BlogPostModel.vb" />
-    <Compile Include="Models\LinkAliasesModel.vb" />
-    <Compile Include="Models\RSSFeedBlogRuleModel.vb" />
-    <Compile Include="Models\RSSFeedModel.vb" />
-    <Compile Include="Models\BlogCommentModel.vb" />
-    <Compile Include="Models\BlogCopyModel.vb" />
-    <Compile Include="Models\BlogCategoriesModel.vb" />
-    <Compile Include="Models\BlogImageModel.vb" />
-    <Compile Include="Models\BlogImageRuleModel.vb" />
-    <Compile Include="Models\View\RequestModel.vb" />
-    <Compile Include="Models\VisitModel.vb" />
-    <Compile Include="Models\BlogViewingLogModel.vb" />
-    <Compile Include="Models\BlogEntryCtaRules.vb" />
-    <Compile Include="Models\CallsToActionModel.vb" />
-    <Compile Include="Models\_blankModel.vb" />
+    <Compile Include="Models\Db\DbModel.vb" />
+    <Compile Include="Models\Db\EmailModel.vb" />
+    <Compile Include="Models\Db\GroupModel.vb" />
+    <Compile Include="Models\Db\GroupRuleModel.vb" />
+    <Compile Include="Models\Db\MemberRuleModel.vb" />
+    <Compile Include="Models\Db\PersonModel.vb" />
+    <Compile Include="Models\Db\BlogCategoryGroupRulesModel.vb" />
+    <Compile Include="Models\Db\BlogModel.vb" />
+    <Compile Include="Models\Db\BlogPostModel.vb" />
+    <Compile Include="Models\Db\LinkAliasesModel.vb" />
+    <Compile Include="Models\Db\RSSFeedBlogRuleModel.vb" />
+    <Compile Include="Models\Db\RSSFeedModel.vb" />
+    <Compile Include="Models\Db\BlogCommentModel.vb" />
+    <Compile Include="Models\Db\BlogCopyModel.vb" />
+    <Compile Include="Models\Db\BlogCategoriesModel.vb" />
+    <Compile Include="Models\Db\BlogImageModel.vb" />
+    <Compile Include="Models\Db\BlogImageRuleModel.vb" />
+    <Compile Include="Models\Domain\RequestModel.vb" />
+    <Compile Include="Models\Db\VisitModel.vb" />
+    <Compile Include="Models\Db\BlogViewingLogModel.vb" />
+    <Compile Include="Models\Db\BlogEntryCtaRules.vb" />
+    <Compile Include="Models\Db\CallsToActionModel.vb" />
+    <Compile Include="Models\Db\_blankModel.vb" />
     <Compile Include="Views\ArchiveView.vb" />
     <Compile Include="Views\BlogCommentCellView.vb" />
     <Compile Include="Views\BlogEntryCellView.vb" />
@@ -188,7 +188,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Models\modelData.txt" />
     <Content Include="Resources\LegacyVb6-ccCommonModule.txt" />
     <Content Include="Resources\LegacyVb6-KmaCommonModule.txt" />
   </ItemGroup>

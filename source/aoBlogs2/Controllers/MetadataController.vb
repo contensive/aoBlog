@@ -27,8 +27,8 @@ Namespace Controllers
             End If
             '
             ' -- set article meta data
-            Call cp.Doc.AddTitle(blogEntry.metaTitle)
-            Call cp.Doc.AddMetaDescription(blogEntry.metaDescription)
+            Call cp.Doc.AddTitle(If(Not String.IsNullOrEmpty(blogEntry.metaTitle), blogEntry.metaTitle, blogEntry.name))
+            Call cp.Doc.AddMetaDescription(If(Not String.IsNullOrEmpty(blogEntry.metaDescription), blogEntry.metaDescription, blogEntry.name))
             Call cp.Doc.AddMetaKeywordList((blogEntry.metaKeywordList & "," & blogEntry.tagList).Replace(vbCrLf, ",").Replace(vbCr, ",").Replace(vbLf, ",").Replace(",,", ","))
             '
             ' -- set open graph properties modified by the Blog

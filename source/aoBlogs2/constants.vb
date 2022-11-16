@@ -24,7 +24,8 @@ Public Module constants
     '
     ' -- messages
     '
-    Public Const BackToRecentPostsMsg = "« Back to recent posts"
+    Public Const BackToRecentPostsMsg = "« Back to Recent Articles"
+    Public Const NextArticlePrefix = "» Next Article, "
     ''' <summary>
     ''' copy that will be used as the automatic first post if the virtual file blogs/DefaultPostCopy.txt is not found
     ''' </summary>

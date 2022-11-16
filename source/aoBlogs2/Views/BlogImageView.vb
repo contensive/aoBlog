@@ -19,10 +19,15 @@ Namespace Views
             Try
                 '
                 If (blogImage IsNot Nothing) Then
+                    Dim imageSizeList As List(Of String) = blogImage.AltSizeList.Split(","c).ToList()
                     Return_ImageDescription = blogImage.description
                     Return_Imagename = blogImage.name
-                    Return_ThumbnailFilename = blogImage.Filename
-                    Return_ImageFilename = blogImage.Filename
+                    Return_ThumbnailFilename = cp.Image.GetBestFitWebP(blogImage.Filename, app.blog.ImageWidthMax, CInt(app.blog.ImageWidthMax * 0.75), imageSizeList)
+                    Return_ImageFilename = cp.Image.GetBestFitWebP(blogImage.Filename, app.blog.ThumbnailImageWidth, 0, imageSizeList)
+                    If (String.Join(",", imageSizeList) <> blogImage.AltSizeList) Then
+                        blogImage.AltSizeList = String.Join(",", imageSizeList)
+                        blogImage.save(Of BlogImageModel)(cp)
+                    End If
                 End If
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)

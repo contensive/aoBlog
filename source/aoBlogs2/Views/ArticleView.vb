@@ -185,6 +185,7 @@ Namespace Views
                 '
                 ' back to recent posts
                 result &= "<div class=""aoBlogFooterLink""><a href=""" & app.blogPageBaseLink & """>" & BackToRecentPostsMsg & "</a></div>"
+                If (Not String.IsNullOrEmpty(app.nextArticleLink)) Then result &= "<div class=""aoBlogFooterLink""><a href=""" & app.nextArticleLink & """>" & NextArticlePrefix & app.nextArticleLinkCaption & "</a></div>"
                 '
                 result &= vbCrLf & cp.Html5.Hidden(RequestNameSourceFormID, FormBlogPostDetails)
                 result &= vbCrLf & cp.Html5.Hidden(RequestNameBlogEntryID, app.blogEntry.id)

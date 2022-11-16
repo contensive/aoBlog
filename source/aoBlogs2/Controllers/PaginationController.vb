@@ -39,7 +39,7 @@ Namespace Controllers
                     Next
                 End If
                 If (pageCount > pageNumberCurrent) Then
-                    result.Append("<li class=""page-item""><a class=""page-link"" href=""" & getPageUrl(basePageUrl, pageCount) & """>Next</a></li>")
+                    result.Append("<li class=""page-item""><a class=""page-link"" href=""" & getPageUrl(basePageUrl, pageNumberCurrent + 1) & """>Next</a></li>")
                 End If
                 '
                 Return "<nav><ul class=""pagination"">" & result.ToString() & "</ul></nav>"

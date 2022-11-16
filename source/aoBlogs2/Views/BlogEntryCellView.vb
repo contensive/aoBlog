@@ -263,9 +263,6 @@ Namespace Views
                 result &= vbCrLf & cp.Html.Hidden("CommentCnt" & blogPost.id, CommentPtr.ToString())
                 '
                 Return_CommentCnt = CommentPtr
-                getBlogPostCell = result
-
-                hint = 999
                 Return result
             Catch ex As Exception
                 cp.Site.ErrorReport(ex, "hint " & hint)

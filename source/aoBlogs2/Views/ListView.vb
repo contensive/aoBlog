@@ -12,33 +12,35 @@ Namespace Views
         Public Shared Function getListView(cp As CPBaseClass, app As ApplicationEnvironmentModel, request As View.RequestModel) As String
             Dim result As New StringBuilder()
             Try
-                '
-                ' -- set the page title if it is page 2 or more 
-                If request.page > 1 Then
-                    cp.Doc.AddTitle("Article Page " & request.page)
-                End If
                 Dim blog As BlogModel = app.blog
                 Dim user As PersonModel = app.user
                 Dim rssFeed As RSSFeedModel = app.rssFeed
-                If blog.Caption <> "" Then
-                    result.Append(vbCrLf & "<h1 Class=""aoBlogCaption"">" & blog.Caption & "</h1>")
-                End If
-                If blog.Copy <> "" Then
-                    result.Append(vbCrLf & "<div Class=""aoBlogDescription"">" & blog.Copy & "</div>")
-                End If
 
-                Dim NoneMsg As String = "There are no blog posts available"
+                Dim NoneMsg As String = "There are no articles available"
                 Dim criteria As String = "(BlogID=" & blog.id & ")"
                 Dim blogCategory = If(request.categoryId.Equals(0), Nothing, DbModel.create(Of Models.BlogCategoriesModel)(cp, request.categoryId))
-                If (blogCategory IsNot Nothing) Then
+                If blogCategory IsNot Nothing Then
                     criteria &= "and(BlogCategoryID=" & request.categoryId & ")"
-                    result.Append("<div Class=""aoBlogCategoryCaption"">Category " & blogCategory.name & "</div>")
-                    NoneMsg = "There are no blog posts available in the category " & blogCategory.name
+                    NoneMsg = "There are no articles available in the category " & blogCategory.name
                 End If
+
                 Dim recordCount As Integer = DbModel.getCount(Of BlogPostModel)(cp, criteria)
                 Dim pageNumber As Integer = request.page
                 If (pageNumber > recordCount) Then pageNumber = recordCount
                 If (pageNumber < 1) Then pageNumber = 1
+                Dim pageCount As Integer = CInt(Math.Truncate((recordCount / blog.postsToDisplay) + 0.999))
+                Dim paginationSuffix As String = ", " & "page " & pageNumber & " of " & pageCount & ""
+                '
+                If Not String.IsNullOrEmpty(blog.Caption) Then
+                    result.Append(vbCrLf & "<h1 Class=""aoBlogCaption"">" & blog.Caption & If(pageNumber = 1, "", paginationSuffix) & "</h1>")
+                End If
+                If Not String.IsNullOrEmpty(blog.Copy) Then
+                    result.Append(vbCrLf & "<div Class=""aoBlogDescription"">" & blog.Copy & "</div>")
+                End If
+
+                If blogCategory IsNot Nothing Then
+                    result.Append("<div Class=""aoBlogCategoryCaption"">Category " & blogCategory.name & "</div>")
+                End If
                 '
                 ' Display the most recent entries
                 Dim postList As List(Of BlogPostModel) = DbModel.createList(Of BlogPostModel)(cp, criteria, "DateAdded Desc", blog.postsToDisplay, pageNumber)
@@ -161,9 +163,16 @@ Namespace Views
                 End If
                 result.Append(cp.Html.Hidden(RequestNameSourceFormID, FormBlogPostList.ToString()))
                 '
-                ' -- metadata for blog landing page
-                cp.Doc.AddMetaDescription(blog.metaDescription)
-                cp.Doc.AddTitle(blog.metaTitle)
+                ' -- meta data
+                If pageNumber > 1 Then
+                    '
+                    ' -- set the page title if it is page 2 or more 
+                    cp.Doc.AddTitle(blog.metaTitle & paginationSuffix)
+                    cp.Doc.AddMetaDescription(blog.metaDescription & paginationSuffix)
+                Else
+                    cp.Doc.AddMetaDescription(blog.metaDescription)
+                    cp.Doc.AddTitle(blog.metaTitle)
+                End If
                 cp.Doc.AddMetaKeywordList(blog.metaKeywordList)
             Catch ex As Exception
                 cp.Site.ErrorReport(ex)
