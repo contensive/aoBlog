@@ -276,7 +276,7 @@ Namespace Views
                         NameOfMonth = MonthName(ArchiveMonth)
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameArchiveMonth, CStr(ArchiveMonth))
                         qs = cp.Utils.ModifyQueryString(qs, RequestNameArchiveYear, CStr(ArchiveYear))
-                        returnHtml = returnHtml & vbCrLf & vbTab & vbTab & "<li class=""aoBlogArchiveLink""><a href=""?" & qs & """>" & NameOfMonth & "&nbsp;" & ArchiveYear & "</a></li>"
+                        returnHtml = returnHtml & vbCrLf & vbTab & vbTab & "<li class=""aoBlogArchiveLink""><a href=""" & qs & """>" & NameOfMonth & "&nbsp;" & ArchiveYear & "</a></li>"
                         Call cs.GoNext()
                     Loop
                 End If

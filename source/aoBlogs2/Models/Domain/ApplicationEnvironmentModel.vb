@@ -133,9 +133,14 @@ Namespace Models
         Public ReadOnly Property nextArticle As BlogPostModel
             Get
                 If nextArticle_local IsNot Nothing Then Return nextArticle_local
-                Dim postList As List(Of BlogPostModel) = DbModel.createList(Of BlogPostModel)(cp, "(blogID=" & blog.id & ")and(DateAdded<" & cp.Db.EncodeSQLDate(blogEntry.DateAdded) & ")", "DateAdded desc", 1, 1)
-                If postList.Count = 0 Then Return Nothing
-                nextArticle_local = postList.First()
+                Dim articleList As List(Of BlogPostModel) = DbModel.createList(Of BlogPostModel)(cp, "(blogID=" & blog.id & ")and(DateAdded<" & cp.Db.EncodeSQLDate(blogEntry.DateAdded) & ")", "DateAdded desc", 1, 1)
+                If articleList.Count = 0 Then
+                    '
+                    ' -- this may be the last article in the list, the next article should be the first to loop around
+                    articleList = DbModel.createList(Of BlogPostModel)(cp, "(blogID=" & blog.id & ")", "DateAdded desc", 1, 1)
+                    If articleList.Count = 0 Then Return Nothing
+                End If
+                nextArticle_local = articleList.First()
                 Return nextArticle_local
             End Get
         End Property
