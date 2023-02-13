@@ -140,6 +140,9 @@ Namespace Views
                 ' Author Row
                 '
                 Dim RowCopy As String = ""
+                Dim datePublished As Date? = blogPost.datePublished
+                If (datePublished Is Nothing) Then datePublished = blogPost.DateAdded
+                '
                 If (blogPost.AuthorMemberID = 0) And (blogPost.CreatedBy > 0) Then
                     blogPost.AuthorMemberID = blogPost.CreatedBy
                     blogPost.save(Of BlogPostModel)(cp)
@@ -147,12 +150,12 @@ Namespace Views
                 Dim author = DbModel.create(Of PersonModel)(cp, blogPost.AuthorMemberID)
                 If (author IsNot Nothing) Then
                     RowCopy &= "By " & author.name
-                    If blogPost.DateAdded <> Date.MinValue Then
-                        RowCopy &= " | " & blogPost.DateAdded
+                    If datePublished <> Date.MinValue Then
+                        RowCopy &= " | " & datePublished
                     End If
                 Else
-                    If blogPost.DateAdded <> Date.MinValue Then
-                        RowCopy &= blogPost.DateAdded
+                    If datePublished <> Date.MinValue Then
+                        RowCopy &= datePublished
                     End If
                 End If
                 Dim visit As VisitModel = VisitModel.create(cp, cp.Visit.Id)

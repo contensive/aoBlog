@@ -77,5 +77,10 @@ Namespace Models
         Public Property PodcastSize As Integer
         '
         Public Property blogID As Integer
+        ''' <summary>
+        ''' if provided, this is the public date displayed. Else, the dateAdded is used
+        ''' </summary>
+        ''' <returns></returns>
+        Public Property datePublished As Date?
     End Class
 End Namespace
