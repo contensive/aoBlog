@@ -23,7 +23,6 @@
 	<Addon name="Blog" guid="{7B7614BB-92E5-4D91-8A60-2058401B8524}" type="Add-on">
 		<Copy></Copy>
 		<CopyText></CopyText>
-		<ActiveXProgramID></ActiveXProgramID>
 		<DotNetClass><![CDATA[Contensive.Addons.Blog.Views.BlogClass]]></DotNetClass>
 		<ArgumentList></ArgumentList>
 		<AsAjax>No</AsAjax>
@@ -67,7 +66,6 @@
 	<Addon name="Blog Change Processing" guid="{A139DCC9-88C0-4EE4-8702-58EB669D6B7B}" type="Add-on">
 		<Copy></Copy>
 		<CopyText></CopyText>
-		<ActiveXProgramID></ActiveXProgramID>
 		<DotNetClass></DotNetClass>
 		<ArgumentList></ArgumentList>
 		<AsAjax>No</AsAjax>
@@ -116,7 +114,6 @@
 	<Addon name="blogSubscribeByEmailHandler" guid="{499CE116-2516-42C6-9AF7-9E190E2929D0}" type="Add-on">
 		<Copy></Copy>
 		<CopyText></CopyText>
-		<ActiveXProgramID></ActiveXProgramID>
 		<DotNetClass><![CDATA[Contensive.Addons.Blog.Views.SubscribeEmailClass]]></DotNetClass>
 		<ArgumentList><![CDATA[BlogName=Default]]></ArgumentList>
 		<AsAjax>No</AsAjax>
