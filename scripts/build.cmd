@@ -47,6 +47,29 @@ goto tryagain
 :makefolder
 md "%deploymentFolderRoot%%versionNumber%"
 
+rem pause
+
+rem ==============================================================
+rem
+rem create helpfiles.zip file for install in private/helpfiles/
+rem 
+rem make a \help folder in the addon Git folder and store the collections markup files there. 
+rem a comma in the filename represents a topic on the navigation, so to make an article "Shopping" in the "Ecommerce" topic, create a document "Ecommerce,Shopping.md"
+rem help files are installed in the "privateFiles\helpfiles\(collectionname)" folder. The collectionname must match the addoon collections name exactly.
+rem add a resource node to the collection xml file to install the helpfile zip to the site. For example
+rem    <Resource name="HelpFiles.zip" type="privatefiles" path="helpfiles/(collectionname)" />
+rem then if the first install, 
+rem
+
+cd ..\help
+del %collectionPath%HelpFiles.zip
+
+rem copy default article and articles for the  Help Pages collection
+"c:\program files\7-zip\7z.exe" a "%collectionPath%HelpFiles.zip" 
+cd ..\scripts
+
+rem pause
+
 rem ==============================================================
 rem
 echo build 
@@ -92,5 +115,6 @@ del "%collectionPath%*.css"
 del "%collectionPath%*.js"
 del "%collectionPath%*.txt"
 del "%collectionPath%*.jpg"
+del "%collectionPath%HelpFiles.zip" 
 
 

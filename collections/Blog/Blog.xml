@@ -581,4 +581,5 @@
 	<Resource name="blogs.css" type="www" path="blogs" />
 	<Resource name="blogs.js" type="www" path="blogs" />
 	<Resource name="aoBlogs2.dll" type="executable" path="" />
+	<Resource name="HelpFiles.zip" type="privatefiles" path="helpfiles/Blog" />
 </Collection>
