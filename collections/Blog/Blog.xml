@@ -15,6 +15,9 @@
 			'
 			' -- setup blog entry author select - not installing correctly
 			cp.db.executeNonQuery("update ccfields set MemberSelectGroupID=" & cp.content.getrecordid( "groups", "Site Managers" ) & " where name='authormemberid'")
+			'
+			' -- boad field
+			cp.db.executeNonQuery("delete from ccfields where name='boaddedupuserid'")
 			f=""
 		end function
 		]]></Code>
