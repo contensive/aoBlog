@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C4E29804-17F1-4177-8AE9-7361DC8EBDF2}</ProjectGuid>
+    <ProjectGuid>{76C6196F-DBA9-0E86-08B1-B91FBE198952}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Contensive.Addons.Blog</RootNamespace>
     <AssemblyName>aoBlogs2</AssemblyName>
@@ -32,28 +32,28 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(ProjectDir)**\*.vb</DefaultItemExcludes>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <DefineDebug>true</DefineDebug>
-    <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>aoBlogs2.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\aoBlogs2.xml</DocumentationFile>
     <NoWarn>42353,42354,42355</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <DefineDebug>false</DefineDebug>
-    <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>aoBlogs2.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\aoBlogs2.xml</DocumentationFile>
     <NoWarn>42353,42354,42355</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
     <OptionExplicit>On</OptionExplicit>
@@ -74,12 +74,22 @@
     <AssemblyOriginatorKeyFile>blogkey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CPBase, Version=4.1.2.0, Culture=neutral, PublicKeyToken=10b3c53389b845fb, processorArchitecture=MSIL">
-      <HintPath>..\packages\Contensive.CPBaseClass.22.8.16.1\lib\net472\CPBase.dll</HintPath>
+    <Reference Include="ContensiveDbModels, Version=20.0.0.0, Culture=neutral, PublicKeyToken=c014b235a9c6bb22, processorArchitecture=MSIL">
+      <HintPath>..\packages\Contensive.DbModels.23.7.12.1\lib\net472\ContensiveDbModels.dll</HintPath>
     </Reference>
+    <Reference Include="CPBase, Version=4.1.2.0, Culture=neutral, PublicKeyToken=10b3c53389b845fb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Contensive.CPBaseClass.23.7.12.1\lib\net472\CPBase.dll</HintPath>
+    </Reference>
+    <Reference Include="DesignBlockBase, Version=23.10.6.10, Culture=neutral, PublicKeyToken=81704b61c3d18a5b, processorArchitecture=MSIL">
+      <HintPath>..\packages\Contensive.DesignBlockBase.23.10.6.10\lib\net472\DesignBlockBase.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
@@ -90,73 +100,76 @@
     <Import Include="System.Diagnostics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Addons\BlogCategoriesClass.vb" />
-    <Compile Include="constants.vb" />
-    <Compile Include="Controllers\LatestPostWidgetController.vb" />
-    <Compile Include="Controllers\LinkAliasController.vb" />
-    <Compile Include="Models\Domain\ApplicationEnvironmentModel.vb" />
-    <Compile Include="Controllers\PaginationController.vb" />
-    <Compile Include="Controllers\MetadataController.vb" />
-    <Compile Include="Controllers\genericController.vb" />
-    <Compile Include="Models\Db\DbModel.vb" />
-    <Compile Include="Models\Db\EmailModel.vb" />
-    <Compile Include="Models\Db\GroupModel.vb" />
-    <Compile Include="Models\Db\GroupRuleModel.vb" />
-    <Compile Include="Models\Db\MemberRuleModel.vb" />
-    <Compile Include="Models\Db\PersonModel.vb" />
-    <Compile Include="Models\Db\BlogCategoryGroupRulesModel.vb" />
-    <Compile Include="Models\Db\BlogModel.vb" />
-    <Compile Include="Models\Db\BlogPostModel.vb" />
-    <Compile Include="Models\Db\LinkAliasesModel.vb" />
-    <Compile Include="Models\Db\RSSFeedBlogRuleModel.vb" />
-    <Compile Include="Models\Db\RSSFeedModel.vb" />
-    <Compile Include="Models\Db\BlogCommentModel.vb" />
-    <Compile Include="Models\Db\BlogCopyModel.vb" />
-    <Compile Include="Models\Db\BlogCategoriesModel.vb" />
-    <Compile Include="Models\Db\BlogImageModel.vb" />
-    <Compile Include="Models\Db\BlogImageRuleModel.vb" />
-    <Compile Include="Models\Domain\RequestModel.vb" />
-    <Compile Include="Models\Db\VisitModel.vb" />
-    <Compile Include="Models\Db\BlogViewingLogModel.vb" />
-    <Compile Include="Models\Db\BlogEntryCtaRules.vb" />
-    <Compile Include="Models\Db\CallsToActionModel.vb" />
-    <Compile Include="Models\Db\_blankModel.vb" />
-    <Compile Include="View Models\LatestPostWidgetViewModel.vb" />
-    <Compile Include="Views\ArchiveView.vb" />
-    <Compile Include="Views\BlogCommentCellView.vb" />
-    <Compile Include="Views\BlogEntryCellView.vb" />
-    <Compile Include="Views\BlogBodyView.vb" />
-    <Compile Include="Views\LatestPostWidget.vb" />
-    <Compile Include="Views\SidebarView.vb" />
-    <Compile Include="Views\BlogImageView.vb" />
-    <Compile Include="Views\ListView.vb" />
-    <Compile Include="Views\SearchView.vb" />
-    <Compile Include="Views\ArticleView.vb" />
-    <Compile Include="Views\EditView.vb" />
-    <Compile Include="Addons\BlogClass.vb" />
-    <Compile Include="Controllers\BlogBodyController.vb" />
-    <Compile Include="My Project\AssemblyInfo.vb" />
-    <Compile Include="My Project\Application.Designer.vb">
+    <Compile Include="Models\Db\DbLatestPostsWidgetsModel.cs" />
+    <Compile Include="My Project\MyNamespace.Static.1.Designer.cs" />
+    <Compile Include="Addons\BlogCategoriesClass.cs" />
+    <Compile Include="constants.cs" />
+    <Compile Include="Controllers\LatestPostWidgetController.cs" />
+    <Compile Include="Controllers\LinkAliasController.cs" />
+    <Compile Include="Models\Domain\ApplicationEnvironmentModel.cs" />
+    <Compile Include="Controllers\PaginationController.cs" />
+    <Compile Include="Controllers\MetadataController.cs" />
+    <Compile Include="Controllers\genericController.cs" />
+    <Compile Include="Models\Db\DbModel.cs" />
+    <Compile Include="Models\Db\EmailModel.cs" />
+    <Compile Include="Models\Db\GroupModel.cs" />
+    <Compile Include="Models\Db\GroupRuleModel.cs" />
+    <Compile Include="Models\Db\MemberRuleModel.cs" />
+    <Compile Include="Models\Db\PersonModel.cs" />
+    <Compile Include="Models\Db\BlogCategoryGroupRulesModel.cs" />
+    <Compile Include="Models\Db\BlogModel.cs" />
+    <Compile Include="Models\Db\BlogPostModel.cs" />
+    <Compile Include="Models\Db\LinkAliasesModel.cs" />
+    <Compile Include="Models\Db\RSSFeedBlogRuleModel.cs" />
+    <Compile Include="Models\Db\RSSFeedModel.cs" />
+    <Compile Include="Models\Db\BlogCommentModel.cs" />
+    <Compile Include="Models\Db\BlogCopyModel.cs" />
+    <Compile Include="Models\Db\BlogCategoriesModel.cs" />
+    <Compile Include="Models\Db\BlogImageModel.cs" />
+    <Compile Include="Models\Db\BlogImageRuleModel.cs" />
+    <Compile Include="Models\Domain\RequestModel.cs" />
+    <Compile Include="Models\Db\VisitModel.cs" />
+    <Compile Include="Models\Db\BlogViewingLogModel.cs" />
+    <Compile Include="Models\Db\BlogEntryCtaRules.cs" />
+    <Compile Include="Models\Db\CallsToActionModel.cs" />
+    <Compile Include="Models\Db\_blankModel.cs" />
+    <Compile Include="View Models\LatestPostItemViewModel.cs" />
+    <Compile Include="View Models\LatestPostWidgetViewModel.cs" />
+    <Compile Include="Views\ArchiveView.cs" />
+    <Compile Include="Views\BlogCommentCellView.cs" />
+    <Compile Include="Views\BlogEntryCellView.cs" />
+    <Compile Include="Views\BlogBodyView.cs" />
+    <Compile Include="Views\LatestPostWidget.cs" />
+    <Compile Include="Views\SidebarView.cs" />
+    <Compile Include="Views\BlogImageView.cs" />
+    <Compile Include="Views\ListView.cs" />
+    <Compile Include="Views\SearchView.cs" />
+    <Compile Include="Views\ArticleView.cs" />
+    <Compile Include="Views\EditView.cs" />
+    <Compile Include="Addons\BlogClass.cs" />
+    <Compile Include="Controllers\BlogBodyController.cs" />
+    <Compile Include="My Project\AssemblyInfo.cs" />
+    <Compile Include="My Project\Application.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
     </Compile>
-    <Compile Include="My Project\Resources.Designer.vb">
+    <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="My Project\Settings.Designer.vb">
+    <Compile Include="My Project\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Addons\SubscribeEmailClass.vb" />
+    <Compile Include="Addons\SubscribeEmailClass.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="My Project\Resources.resx">
-      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
-      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+    <EmbeddedResource Include="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Contensive.Addons.Blog.My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
@@ -164,12 +177,12 @@
     <None Include="blogkey.snk" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
-      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+      <LastGenOutput>Application.Designer.cs</LastGenOutput>
     </None>
     <None Include="My Project\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <CustomToolNamespace>My</CustomToolNamespace>
-      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>Contensive.Addons.Blog.My</CustomToolNamespace>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
@@ -194,7 +207,7 @@
     <Content Include="Resources\LegacyVb6-ccCommonModule.txt" />
     <Content Include="Resources\LegacyVb6-KmaCommonModule.txt" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
