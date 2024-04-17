@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Contensive.Addons.Blog.Models.Db {
     public class DbLatestPostsWidgetsModel : SettingsBaseModel {
-        public static DbBaseTableMetadataModel tableMetadata { get; } = new DbBaseTableMetadataModel("Latest Posts Widgets", "LatestPostsWidgets", "default", false);
+        public static DbBaseTableMetadataModel tableMetadata { get; } = new DbBaseTableMetadataModel("Latest Posts Widgets", "LatestPostWidgets", "default", false);
 
         public static new DbLatestPostsWidgetsModel createOrAddSettings(CPBaseClass cp, string settingsGuid, string recordNameSuffix) {
             try {

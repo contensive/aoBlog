@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Contensive.Addons.Blog.View_Models {
     public class LatestPostItemViewModel {
-        public string newsImage { get; set; }
-        public string newsDate { get; set; }
+        public string postImage { get; set; }
+        public string postDate { get; set; }
         public string header { get; set; }
         public string description { get; set; }
         public string continueURL { get; set; }
-        public string LatestNewsElementEditTag { get; set; }
+        public string LatestPostElementEditTag { get; set; }
     }
 }

@@ -10,13 +10,13 @@ namespace Contensive.Addons.Blog {
 
         public override object Execute(CPBaseClass cp) {
             try {
-                string widgetName = "Latest News Widget";
+                string widgetName = "Latest Posts Widget";
                 return DesignBlockController.renderWidget<DbLatestPostsWidgetsModel, LatestPostWidgetViewModel>(cp,
                     widgetName: widgetName, 
-                    layoutGuid: "{cf55cad2-a7a4-4c74-8ffe-4327e3174372}", 
-                    layoutName: "News Home Layout", 
-                    layoutPathFilename: @"Watf\index.html", 
-                    layoutBS5PathFilename: @"Watf\index.html");
+                    layoutGuid: "{987cb36b-22f8-4896-a54e-aa7dbab98f93}", 
+                    layoutName: "Latest Posts Layout", 
+                    layoutPathFilename: @"aoBlog\LatestPostLayout.html", 
+                    layoutBS5PathFilename: @"aoBlog\LatestPostLayout.html");
             }
             catch (Exception ex) {
                 cp.Site.ErrorReport(ex);
