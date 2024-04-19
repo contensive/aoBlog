@@ -69,7 +69,7 @@ namespace Contensive.Addons.Blog {
                     result.lastCell.LatestPostElementEditTag = cp.Content.GetEditLink("Blog Entries", latestPost[3].id, "Edit Latest Post element");
                 }
 
-                result.latestPostAddTag = cp.User.IsEditing("") ? cp.Content.GetAddLink("Blog Entries") : "";
+                //result.latestPostAddTag = cp.User.IsEditing("") ? cp.Content.GetAddLink("Blog Entries") : "";
                 return result;
             }
             catch (Exception ex) {
