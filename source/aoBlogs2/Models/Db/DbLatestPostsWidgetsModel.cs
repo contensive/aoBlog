@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Contensive.Addons.Blog.Models.Db {
     public class DbLatestPostsWidgetsModel : SettingsBaseModel {
         public static DbBaseTableMetadataModel tableMetadata { get; } = new DbBaseTableMetadataModel("Latest Posts Widgets", "LatestPostWidgets", "default", false);
-
+        public string defaultpostimage { get; set; }
         public static new DbLatestPostsWidgetsModel createOrAddSettings(CPBaseClass cp, string settingsGuid, string recordNameSuffix) {
             try {
                 var result = create<DbLatestPostsWidgetsModel>(cp, settingsGuid);

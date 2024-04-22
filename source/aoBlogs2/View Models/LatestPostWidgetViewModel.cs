@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Contensive.Addons.Blog.Controllers;
 using Contensive.Addons.Blog.Models;
 using Contensive.Addons.Blog.Models.Db;
@@ -23,50 +24,115 @@ namespace Contensive.Addons.Blog {
             try {
                 var result = create<LatestPostWidgetViewModel>(cp, settings);
                 List<BlogPostModel> latestPost = BlogPostModel.createList<BlogPostModel>(cp, "", "dateadded desc", 4, 1);
-                int newsPageId = cp.Site.GetInteger("latest post widget pageid");
                 result.mainCell = new LatestPostItemViewModel();
                 result.secondCell = new LatestPostItemViewModel();
                 result.thirdCell = new LatestPostItemViewModel();
                 result.lastCell = new LatestPostItemViewModel();
 
                 if (latestPost.Count >= 1) {
-                    LinkAliasController.addLinkAlias(cp, latestPost[0].name, newsPageId, latestPost[0].id);
-                    result.mainCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + latestPost[0].name.Trim().Replace(" ", "-"), newsPageId);
+                    result.mainCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + "/" + latestPost[0].name.Trim().Replace(" ", "-"), latestPost[0].blogpostpageid);
                     result.mainCell.description = LatestPostWidgetController.limitString(cp, cp.Utils.ConvertHTML2Text(latestPost[0].copy), 175);
                     result.mainCell.postDate = latestPost[0].DateAdded.ToString("MMMM dd, yyyy");
                     result.mainCell.header = latestPost[0].header;
-                    result.mainCell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.GetBestFitWebP(latestPost[0].blogImage, 550, 452);
                     result.mainCell.LatestPostElementEditTag = cp.Content.GetEditLink("Blog Entries", latestPost[0].id, "Edit Latest Post element");
+
+                    List<BlogImageRuleModel> imageRule = BlogImageRuleModel.createList<BlogImageRuleModel>(cp, "blogentryid = " + latestPost[0].id, "sortorder asc");
+                    if(imageRule.Count > 0) {
+                        BlogImageModel postImage = BlogImageModel.create<BlogImageModel>(cp, imageRule.First().BlogImageID);
+                        if(postImage != null) {
+                            result.mainCell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.GetBestFitWebP(postImage.Filename, 550, 452);
+                        }
+                    }
+                    else {
+                        //there is no image rule so use the default image from the widget
+                        DbLatestPostsWidgetsModel latestPostWidget = DbLatestPostsWidgetsModel.create<DbLatestPostsWidgetsModel>(cp, settings.id);
+                        if (latestPostWidget != null) {
+                            result.mainCell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.GetBestFitWebP(latestPostWidget.defaultpostimage, 550, 452);
+                        }
+                    }
                 }
 
                 if (latestPost.Count >= 2) {
-                    LinkAliasController.addLinkAlias(cp, latestPost[1].name, newsPageId, latestPost[1].id);
-                    result.secondCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + latestPost[1].name.Trim().Replace(" ", "-"), newsPageId);
+                    result.secondCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + "/" + latestPost[1].name.Trim().Replace(" ", "-"), latestPost[1].blogpostpageid);
                     result.secondCell.description = LatestPostWidgetController.limitString(cp, cp.Utils.ConvertHTML2Text(latestPost[1].copy), 175);
                     result.secondCell.postDate = latestPost[1].DateAdded.ToString("MMMM dd, yyyy");
                     result.secondCell.header = latestPost[1].header;
-                    result.secondCell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.GetBestFitWebP(latestPost[1].blogImage, 191, 148);
                     result.secondCell.LatestPostElementEditTag = cp.Content.GetEditLink("Blog Entries", latestPost[1].id, "Edit Latest Post element");
+
+                    List<BlogImageRuleModel> imageRule = BlogImageRuleModel.createList<BlogImageRuleModel>(cp, "blogentryid = " + latestPost[1].id, "sortorder asc");
+                    if (imageRule.Count > 0) {
+                        BlogImageModel postImage = BlogImageModel.create<BlogImageModel>(cp, imageRule.First().BlogImageID);
+                        if (postImage != null) {
+                            result.secondCell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.GetBestFitWebP(postImage.Filename, 550, 452);
+                        }
+                    }
+                    else {
+                        //there is no image rule so use the default image from the widget
+                        DbLatestPostsWidgetsModel latestPostWidget = DbLatestPostsWidgetsModel.create<DbLatestPostsWidgetsModel>(cp, settings.id);
+                        if (latestPostWidget != null) {
+                            result.secondCell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.GetBestFitWebP(latestPostWidget.defaultpostimage, 550, 452);
+                        }
+                    }
                 }
 
                 if (latestPost.Count >= 3) {
-                    LinkAliasController.addLinkAlias(cp, latestPost[2].name, newsPageId, latestPost[2].id);
-                    result.thirdCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + latestPost[2].name.Trim().Replace(" ", "-"), newsPageId);
+                    result.thirdCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + "/" + latestPost[2].name.Trim().Replace(" ", "-"), latestPost[2].blogpostpageid);
                     result.thirdCell.description = LatestPostWidgetController.limitString(cp, cp.Utils.ConvertHTML2Text(latestPost[2].copy), 175);
                     result.thirdCell.postDate = latestPost[2].DateAdded.ToString("MMMM dd, yyyy");
                     result.thirdCell.header = latestPost[2].header;
-                    result.thirdCell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.GetBestFitWebP(latestPost[2].blogImage, 191, 148);
                     result.thirdCell.LatestPostElementEditTag = cp.Content.GetEditLink("Blog Entries", latestPost[2].id, "Edit Latest Post element");
+
+                    List<BlogImageRuleModel> imageRule = BlogImageRuleModel.createList<BlogImageRuleModel>(cp, "blogentryid = " + latestPost[2].id, "sortorder asc");
+                    if (imageRule.Count > 0) {
+                        BlogImageModel postImage = BlogImageModel.create<BlogImageModel>(cp, imageRule.First().BlogImageID);
+                        if (postImage != null) {
+                            result.thirdCell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.GetBestFitWebP(postImage.Filename, 550, 452);
+                        }
+                        if (string.IsNullOrEmpty(postImage.Filename)) {
+                            //there is no image rule so use the default image from the widget
+                            DbLatestPostsWidgetsModel latestPostWidget = DbLatestPostsWidgetsModel.create<DbLatestPostsWidgetsModel>(cp, settings.id);
+                            if (latestPostWidget != null) {
+                                result.thirdCell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.GetBestFitWebP(latestPostWidget.defaultpostimage, 550, 452);
+                            }
+                        }
+                    }
+                    else {
+                        //there is no image rule so use the default image from the widget
+                        DbLatestPostsWidgetsModel latestPostWidget = DbLatestPostsWidgetsModel.create<DbLatestPostsWidgetsModel>(cp, settings.id);
+                        if (latestPostWidget != null) {
+                            result.thirdCell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.GetBestFitWebP(latestPostWidget.defaultpostimage, 550, 452);
+                        }
+                    }
                 }
 
                 if (latestPost.Count >= 4) {
-                    LinkAliasController.addLinkAlias(cp, latestPost[3].name, newsPageId, latestPost[3].id);
-                    result.lastCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + latestPost[3].name.Trim().Replace(" ", "-"), newsPageId);
+                    result.lastCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + "/" + latestPost[3].name.Trim().Replace(" ", "-"), latestPost[3].blogpostpageid);
                     result.lastCell.description = LatestPostWidgetController.limitString(cp, cp.Utils.ConvertHTML2Text(latestPost[3].copy), 175);
                     result.lastCell.postDate = latestPost[3].DateAdded.ToString("MMMM dd, yyyy");
                     result.lastCell.header = latestPost[3].header;
-                    result.lastCell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.GetBestFitWebP(latestPost[3].blogImage, 191, 148);
                     result.lastCell.LatestPostElementEditTag = cp.Content.GetEditLink("Blog Entries", latestPost[3].id, "Edit Latest Post element");
+
+                    List<BlogImageRuleModel> imageRule = BlogImageRuleModel.createList<BlogImageRuleModel>(cp, "blogentryid = " + latestPost[3].id, "sortorder asc");
+                    if (imageRule.Count > 0) {
+                        BlogImageModel postImage = BlogImageModel.create<BlogImageModel>(cp, imageRule.First().BlogImageID);
+                        if (postImage != null) {
+                            result.lastCell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.GetBestFitWebP(postImage.Filename, 550, 452);
+                        }
+                        if(string.IsNullOrEmpty(postImage.Filename)) {
+                            //there is no image rule so use the default image from the widget
+                            DbLatestPostsWidgetsModel latestPostWidget = DbLatestPostsWidgetsModel.create<DbLatestPostsWidgetsModel>(cp, settings.id);
+                            if (latestPostWidget != null) {
+                                result.lastCell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.GetBestFitWebP(latestPostWidget.defaultpostimage, 550, 452);
+                            }
+                        }
+                    }
+                    else {
+                        //there is no image rule so use the default image from the widget
+                        DbLatestPostsWidgetsModel latestPostWidget = DbLatestPostsWidgetsModel.create<DbLatestPostsWidgetsModel>(cp, settings.id);
+                        if (latestPostWidget != null) {
+                            result.lastCell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.GetBestFitWebP(latestPostWidget.defaultpostimage, 550, 452);
+                        }
+                    }
                 }
 
                 //result.latestPostAddTag = cp.User.IsEditing("") ? cp.Content.GetAddLink("Blog Entries") : "";

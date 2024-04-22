@@ -24,6 +24,8 @@ namespace Contensive.Addons.Blog.Views {
                 // 
                 // -- add link alias for this page
                 LinkAliasController.addLinkAlias(cp, blogPost.name, cp.Doc.PageId, blogPost.id);
+                blogPost.blogpostpageid = cp.Doc.PageId;
+                blogPost.save<BlogPostModel>(cp);
                 // Dim qs As String = cp.Utils.ModifyQueryString("", RequestNameBlogEntryID, CStr(blogPost.id))
                 // qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogPostDetails.ToString())
                 // Call cp.Site.AddLinkAlias(blogPost.name, cp.Doc.PageId, qs)

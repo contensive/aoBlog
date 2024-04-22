@@ -75,7 +75,7 @@ namespace Contensive.Addons.Blog.Models {
         /// </summary>
         /// <returns></returns>
         public DateTime? datePublished { get; set; }
-        public string blogImage { get; set; }
         public string header { get; set; }
+        public int blogpostpageid { get; set; }
     }
 }
