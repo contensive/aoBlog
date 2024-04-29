@@ -12,5 +12,6 @@ namespace Contensive.Addons.Blog.View_Models {
         public string description { get; set; }
         public string continueURL { get; set; }
         public string LatestPostElementEditTag { get; set; }
+        
     }
 }
