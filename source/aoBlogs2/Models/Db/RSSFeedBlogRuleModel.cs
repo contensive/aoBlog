@@ -10,7 +10,7 @@ namespace Contensive.Addons.Blog.Models {
         // -- const
         public const string contentName = "RSS Feed Blog Rules";      // <------ set content name
         public const string contentTableName = "ccRSSFeedRules";   // <------ set to tablename for the primary content (used for cache names)
-        private new const string contentDataSource = "default";             // <------ set to datasource if not default
+        private  const string contentDataSource = "default";             // <------ set to datasource if not default
         // 
         // ====================================================================================================
         // -- instance properties

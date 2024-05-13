@@ -40,7 +40,7 @@
     <DebugType>full</DebugType>
     <OutputPath>bin\Debug\</OutputPath>
     <DocumentationFile>bin\Debug\aoBlogs2.xml</DocumentationFile>
-    <NoWarn>42353,42354,42355</NoWarn>
+    <NoWarn>42353,42354,42355,CS1591,1591</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
@@ -132,7 +132,6 @@
     <Compile Include="Models\Db\BlogViewingLogModel.cs" />
     <Compile Include="Models\Db\BlogEntryCtaRules.cs" />
     <Compile Include="Models\Db\CallsToActionModel.cs" />
-    <Compile Include="Models\Db\_blankModel.cs" />
     <Compile Include="View Models\LatestPostItemViewModel.cs" />
     <Compile Include="View Models\LatestPostWidgetViewModel.cs" />
     <Compile Include="Views\ArchiveView.cs" />

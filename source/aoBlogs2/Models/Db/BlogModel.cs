@@ -9,7 +9,7 @@ namespace Contensive.Addons.Blog.Models {
         // -- const
         public const string contentName = "Blogs";
         public const string contentTableName = "ccBlogs";
-        private new const string contentDataSource = "default";
+        private  const string contentDataSource = "default";
         // 
         // ====================================================================================================
         // -- instance properties

@@ -16,7 +16,8 @@ set collectionName=Blog
 set solutionName=aoBlogs2.sln
 set collectionPath=..\collections\blog\
 set binPath=..\source\aoblogs2\bin\debug\
-set msbuildLocation=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\
+rem set msbuildLocation=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin\
+set msbuildLocation=C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\
 set deploymentFolderRoot=C:\deployments\aoBlog\Dev\
 
 rem prompt user if appName is correct

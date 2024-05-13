@@ -1,13 +1,13 @@
 ﻿
 
 namespace Contensive.Addons.Blog.Models {
-    public class BlogCategoriesModel : DbModel {        // <------ set set model Name and everywhere that matches this string
+    public class BlogCategoriesModel : DbModel {
         // 
         // ====================================================================================================
         // -- const
-        public const string contentName = "Blog Categories";      // <------ set content name
-        public const string contentTableName = "BlogCategories";   // <------ set to tablename for the primary content (used for cache names)
-        private new const string contentDataSource = "default";             // <------ set to datasource if not default
+        public const string contentName = "Blog Categories";      
+        public const string contentTableName = "BlogCategories";   
+        private  const string contentDataSource = "default";            
         // 
         // ====================================================================================================
         // -- instance properties
