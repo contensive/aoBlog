@@ -168,11 +168,14 @@ namespace Contensive.Addons.Blog.Controllers {
         }
         // 
         public static string addEditWrapper(CPBaseClass cp, string innerHtml, int recordId, string recordName, string contentName) {
-            if (!cp.User.IsEditingAnything)
-                return innerHtml;
-            string header = cp.Content.GetEditLink(contentName, recordId.ToString(), false, recordName, true);
-            string content = cp.Html.div(innerHtml, "", "");
-            return cp.Html.div(header + content, "", "ccEditWrapper");
+
+            return cp.Content.GetEditWrapper(innerHtml, contentName, recordId, recordName);
+
+            //if (!cp.User.IsEditingAnything)
+            //    return innerHtml;
+            //string header = cp0.Content.GetEditLink(contentName, recordId.ToString(), false, recordName, true);
+            //string content = cp.Html.div(innerHtml, "", "");
+            //return cp.Html.div(header + content, "", "ccEditWrapper");
         }
 
     }
