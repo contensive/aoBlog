@@ -33,7 +33,7 @@ namespace Contensive.Addons.Blog {
                 result.lastCell = new LatestPostItemViewModel();
                 
                 if (latestPost.Count >= 1) {
-                    result.mainCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + "/" + latestPost[0].name.Trim().Replace(" ", "-").Replace(":", ""), latestPost[0].blogpostpageid);
+                    result.mainCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + "/" + latestPost[0].name.Trim().Replace(" ", "-").Replace(":", "").ToLower(), latestPost[0].blogpostpageid);
                     result.mainCell.description = LatestPostWidgetController.limitString(cp, cp.Utils.ConvertHTML2Text(latestPost[0].copy), 175);
                     result.mainCell.postDate = latestPost[0].DateAdded.ToString("MMMM dd, yyyy");
                     result.mainCell.header = latestPost[0].name;
@@ -56,7 +56,7 @@ namespace Contensive.Addons.Blog {
                 }
 
                 if (latestPost.Count >= 2) {
-                    result.secondCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + "/" + latestPost[1].name.Trim().Replace(" ", "-").Replace(":", ""), latestPost[1].blogpostpageid);
+                    result.secondCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + "/" + latestPost[1].name.Trim().Replace(" ", "-").Replace(":", "").ToLower(), latestPost[1].blogpostpageid);
                     result.secondCell.description = LatestPostWidgetController.limitString(cp, cp.Utils.ConvertHTML2Text(latestPost[1].copy), 175);
                     result.secondCell.postDate = latestPost[1].DateAdded.ToString("MMMM dd, yyyy");
                     result.secondCell.header = latestPost[1].name;
@@ -82,7 +82,7 @@ namespace Contensive.Addons.Blog {
                 }
 
                 if (latestPost.Count >= 3) {
-                    result.thirdCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + "/" + latestPost[2].name.Trim().Replace(" ", "-").Replace(":", ""), latestPost[2].blogpostpageid);
+                    result.thirdCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + "/" + latestPost[2].name.Trim().Replace(" ", "-").Replace(":", "").ToLower(), latestPost[2].blogpostpageid);
                     result.thirdCell.description = LatestPostWidgetController.limitString(cp, cp.Utils.ConvertHTML2Text(latestPost[2].copy), 175);
                     result.thirdCell.postDate = latestPost[2].DateAdded.ToString("MMMM dd, yyyy");
                     result.thirdCell.header = latestPost[2].name;
@@ -115,7 +115,7 @@ namespace Contensive.Addons.Blog {
                 }
 
                 if (latestPost.Count >= 4) {
-                    result.lastCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + "/" + latestPost[3].name.Trim().Replace(" ", "-").Replace(":", ""), latestPost[3].blogpostpageid);
+                    result.lastCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + "/" + latestPost[3].name.Trim().Replace(" ", "-").Replace(":", "").ToLower(), latestPost[3].blogpostpageid);
                     result.lastCell.description = LatestPostWidgetController.limitString(cp, cp.Utils.ConvertHTML2Text(latestPost[3].copy), 175);
                     result.lastCell.postDate = latestPost[3].DateAdded.ToString("MMMM dd, yyyy");
                     result.lastCell.header = latestPost[3].name;
