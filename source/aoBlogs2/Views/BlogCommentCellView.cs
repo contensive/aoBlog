@@ -1,6 +1,7 @@
 ﻿using System;
 using Contensive.Addons.Blog.Models;
 using Contensive.BaseClasses;
+using Contensive.Models.Db;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
 
@@ -10,7 +11,7 @@ namespace Contensive.Addons.Blog.Views {
         // 
         // ====================================================================================
         // 
-        public static string getBlogCommentCell(CPBaseClass cp, BlogModel blog, BlogPostModel blogEntry, BlogCommentModel blogComment, PersonModel user, bool IsSearchListing) {
+        public static string getBlogCommentCell(CPBaseClass cp, BlogModel blog, BlogPostModel blogEntry, BlogCommentModel blogComment, Models.PersonModel user, bool IsSearchListing) {
             try {
                 string result = "";
                 // 
@@ -28,15 +29,15 @@ namespace Contensive.Addons.Blog.Views {
                 result += "<div class=\"aoBlogCommentCopy\">" + Copy + "</div>";
                 string rowCopy = "";
                 if (true) {
-                    var author = DbModel.create<PersonModel>(cp, blogEntry.AuthorMemberID);
+                    var author = DbBaseModel.create<Models.PersonModel>(cp, blogEntry.AuthorMemberID);
                     if (author is not null && !string.IsNullOrEmpty(author.name)) {
                         rowCopy += "by " + cp.Utils.EncodeHTML(author.name);
-                        if (blogComment.DateAdded != DateTime.MinValue) {
-                            rowCopy += " | " + Conversions.ToString(blogComment.DateAdded);
+                        if (blogComment.dateAdded != DateTime.MinValue) {
+                            rowCopy += " | " + Conversions.ToString(blogComment.dateAdded);
                         }
                     }
-                    else if (blogComment.DateAdded != DateTime.MinValue) {
-                        rowCopy += Conversions.ToString(blogComment.DateAdded);
+                    else if (blogComment.dateAdded != DateTime.MinValue) {
+                        rowCopy += Conversions.ToString(blogComment.dateAdded);
                     }
                 }
                 // 

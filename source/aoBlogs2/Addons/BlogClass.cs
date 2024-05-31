@@ -51,7 +51,8 @@ namespace Contensive.Addons.Blog.Views {
                 string blogSidebarHtml = SidebarView.getSidebarView(CP, app, legacyRequest, legacyBlogBody);
                 // 
                 // -- if editing enabled, add the link and wrapperwrapper
-                return genericController.addEditWrapper(CP, blogSidebarHtml, blog.id, blog.name, BlogModel.contentName);
+                return DesignBlockBase.Controllers.DesignBlockController.addDesignBlockEditWrapper(CP, blogSidebarHtml, blog, Models.BlogModel.tableMetadata.contentName);
+                //return genericController.addEditWrapper(CP, blogSidebarHtml, blog.id, blog.name, BlogModel.tableMetadata.contentName);
             }
             // 
             catch (Exception ex) {

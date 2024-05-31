@@ -46,7 +46,7 @@ Namespace Views
                 Dim blogSidebarHtml As String = SidebarView.getSidebarView(CP, app, legacyRequest, legacyBlogBody)
                 '
                 ' -- if editing enabled, add the link and wrapperwrapper
-                Return genericController.addEditWrapper(CP, blogSidebarHtml, blog.id, blog.name, BlogModel.contentName)
+                Return genericController.addEditWrapper(CP, blogSidebarHtml, blog.id, blog.name, BlogModel.tableMetadata.tableMetadata.contentName)
                 '
             Catch ex As Exception
                 CP.Site.ErrorReport(ex, "execute")

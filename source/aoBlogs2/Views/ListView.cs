@@ -4,6 +4,7 @@ using System.Text;
 using Contensive.Addons.Blog.Controllers;
 using Contensive.Addons.Blog.Models;
 using Contensive.BaseClasses;
+using Contensive.Models.Db;
 using Microsoft.VisualBasic;
 
 namespace Contensive.Addons.Blog.Views {
@@ -21,13 +22,13 @@ namespace Contensive.Addons.Blog.Views {
 
                 string NoneMsg = "There are no articles available";
                 string criteria = "(BlogID=" + blog.id + ")";
-                var blogCategory = request.categoryId.Equals(0) ? null : DbModel.create<BlogCategoriesModel>(cp, request.categoryId);
+                var blogCategory = request.categoryId.Equals(0) ? null : Contensive.Models.Db.DbBaseModel.create<BlogCategoriesModel>(cp, request.categoryId);
                 if (blogCategory is not null) {
                     criteria += "and(BlogCategoryID=" + request.categoryId + ")";
                     NoneMsg = "There are no articles available in the category " + blogCategory.name;
                 }
 
-                int recordCount = DbModel.getCount<BlogPostModel>(cp, criteria);
+                int recordCount = DbBaseModel.getCount<BlogPostModel>(cp, criteria);
                 int pageNumber = request.page;
                 if (pageNumber > recordCount)
                     pageNumber = recordCount;
@@ -48,7 +49,7 @@ namespace Contensive.Addons.Blog.Views {
                 }
                 // 
                 // Display the most recent entries
-                var postList = DbModel.createList<BlogPostModel>(cp, criteria, "DateAdded Desc", blog.postsToDisplay, pageNumber);
+                var postList = DbBaseModel.createList<BlogPostModel>(cp, criteria, "dateAdded Desc", blog.postsToDisplay, pageNumber);
                 var isBlogCategoryBlockedDict = new Dictionary<int, bool>();
                 int recordsOnThisPage = 0;
                 if (postList.Count.Equals(0)) {
@@ -56,7 +57,7 @@ namespace Contensive.Addons.Blog.Views {
                     result.Append("<div Class=\"aoBlogProblem\">" + NoneMsg + "</div>");
                 }
                 else {
-                    var blogCategoryList = DbModel.createList<BlogCategoriesModel>(cp, "");
+                    var blogCategoryList = DbBaseModel.createList<BlogCategoriesModel>(cp, "");
                     var Return_CommentCnt = default(int);
                     foreach (BlogPostModel blogEntry in postList) {
                         if (recordsOnThisPage >= blog.postsToDisplay)
@@ -66,10 +67,10 @@ namespace Contensive.Addons.Blog.Views {
                             IsBlocked = isBlogCategoryBlockedDict[blogEntry.blogCategoryID];
                         }
                         else {
-                            var blogEntryCategory = DbModel.create<BlogCategoriesModel>(cp, blogEntry.blogCategoryID);
+                            var blogEntryCategory = DbBaseModel.create<BlogCategoriesModel>(cp, blogEntry.blogCategoryID);
                             if (blogEntryCategory is not null) {
                                 if (blogEntryCategory.UserBlocking)
-                                    IsBlocked = !genericController.isGroupListMember(cp, GroupModel.GetBlockingGroups(cp, blogEntryCategory.id));
+                                    IsBlocked = !genericController.isGroupListMember(cp, Models.GroupModel.GetBlockingGroups(cp, blogEntryCategory.id));
                                 isBlogCategoryBlockedDict.Add(blogEntry.blogCategoryID, IsBlocked);
                             }
                         }
@@ -77,7 +78,7 @@ namespace Contensive.Addons.Blog.Views {
                             string blogArticleCell = BlogEntryCellView.getBlogPostCell(cp, app, blogEntry, false, true, Return_CommentCnt, "");
                             // 
                             // -- if editing enabled, add the link and wrapperwrapper
-                            blogArticleCell = genericController.addEditWrapper(cp, blogArticleCell, blogEntry.id, blogEntry.name, BlogPostModel.contentName);
+                            blogArticleCell = genericController.addEditWrapper(cp, blogArticleCell, blogEntry.id, blogEntry.name, BlogPostModel.tableMetadata.contentName);
 
                             result.Append(blogArticleCell);
                             result.Append("<hr>");
@@ -104,7 +105,7 @@ namespace Contensive.Addons.Blog.Views {
                     // 
                     // select a category
                     qs = cp.Doc.RefreshQueryString;
-                    var BlogCategoryList = DbModel.createList<BlogCategoriesModel>(cp, "");
+                    var BlogCategoryList = DbBaseModel.createList<BlogCategoriesModel>(cp, "");
                     if (BlogCategoryList.Count > 0) {
                         foreach (var blogCategaory in BlogCategoryList) {
                             bool IsBlocked = false;
@@ -112,10 +113,10 @@ namespace Contensive.Addons.Blog.Views {
                                 IsBlocked = isBlogCategoryBlockedDict[blogCategaory.id];
                             }
                             else {
-                                var blogEntryCategory = DbModel.create<BlogCategoriesModel>(cp, blogCategaory.id);
+                                var blogEntryCategory = DbBaseModel.create<BlogCategoriesModel>(cp, blogCategaory.id);
                                 if (blogEntryCategory is not null) {
                                     if (blogEntryCategory.UserBlocking)
-                                        IsBlocked = !genericController.isGroupListMember(cp, GroupModel.GetBlockingGroups(cp, blogEntryCategory.id));
+                                        IsBlocked = !genericController.isGroupListMember(cp, Models.GroupModel.GetBlockingGroups(cp, blogEntryCategory.id));
                                     isBlogCategoryBlockedDict.Add(blogCategaory.id, IsBlocked);
                                 }
                             }

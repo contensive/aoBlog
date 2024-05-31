@@ -23,8 +23,8 @@ Public Type fieldEditorType
     addonid As Long
 End Type
 '
-Public Const protectedContentSetControlFieldList = "ID,CREATEDBY,DATEADDED,MODIFIEDBY,MODIFIEDDATE,EDITSOURCEID,EDITARCHIVE,EDITBLANK,CONTENTCONTROLID"
-'Public Const protectedContentSetControlFieldList = "ID,CREATEDBY,DATEADDED,MODIFIEDBY,MODIFIEDDATE,EDITSOURCEID,EDITARCHIVE,EDITBLANK"
+Public Const protectedContentSetControlFieldList = "ID,CREATEDBY,dateAdded,MODIFIEDBY,MODIFIEDDATE,EDITSOURCEID,EDITARCHIVE,EDITBLANK,CONTENTCONTROLID"
+'Public Const protectedContentSetControlFieldList = "ID,CREATEDBY,dateAdded,MODIFIEDBY,MODIFIEDDATE,EDITSOURCEID,EDITARCHIVE,EDITBLANK"
 '
 Public Const HTMLEditorDefaultCopyStartMark = "<!-- cc -->"
 Public Const HTMLEditorDefaultCopyEndMark = "<!-- /cc -->"
@@ -1236,7 +1236,7 @@ Public Const PCC_CopyFilename = 31
 Public Const PCC_BriefFilename = 32
 Public Const PCC_AllowChildListDisplay = 33
 Public Const PCC_SortOrder = 34
-Public Const PCC_DateAdded = 35
+Public Const PCC_dateAdded = 35
 Public Const PCC_ModifiedDate = 36
 Public Const PCC_ChildPagesFound = 37
 Public Const PCC_AllowInMenus = 38

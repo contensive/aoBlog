@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Contensive.Addons.Blog.Models;
 using Contensive.BaseClasses;
+using Contensive.Models.Db;
 using Microsoft.VisualBasic;
 
 namespace Contensive.Addons.Blog.Controllers {
@@ -80,7 +81,7 @@ namespace Contensive.Addons.Blog.Controllers {
         /// <param name="cp"></param>
         /// <param name="groupList"></param>
         /// <returns></returns>
-        public static bool isGroupListMember(CPBaseClass cp, List<GroupModel> groupList) {
+        public static bool isGroupListMember(CPBaseClass cp, List<Models.GroupModel> groupList) {
             foreach (var Group in groupList) {
                 if (cp.User.IsInGroup(Group.name))
                     return true;

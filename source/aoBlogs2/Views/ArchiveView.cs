@@ -1,4 +1,5 @@
 ﻿
+using Contensive.Models.Db;
 using System;
 using System.Linq;
 using Contensive.Addons.Blog.Models;
@@ -29,8 +30,7 @@ namespace Contensive.Addons.Blog.Views {
                     // No archives, give them an error
                     result += "<div class=\"aoBlogProblem\">There are no current blog entries</div>";
                     result += "<div class=\"aoBlogFooterLink\"><a href=\"" + app.blogPageBaseLink + "\">" + constants.BackToRecentPostsMsg + "</a></div>";
-                }
-                else {
+                } else {
                     int ArchiveMonth;
                     int ArchiveYear;
                     if (archiveDateList.Count == 1) {
@@ -39,8 +39,7 @@ namespace Contensive.Addons.Blog.Views {
                         ArchiveMonth = archiveDateList.First().Month;
                         ArchiveYear = archiveDateList.First().Year;
                         result += GetFormBlogArchivedBlogs(cp, app, request);
-                    }
-                    else {
+                    } else {
                         // 
                         // Display List of archive
                         string qs = cp.Utils.ModifyQueryString(app.blogBaseLink, constants.RequestNameSourceFormID, constants.FormBlogArchiveDateList.ToString());
@@ -81,11 +80,10 @@ namespace Contensive.Addons.Blog.Views {
                 // 
                 // List Blog Entries
                 // 
-                var BlogEntryModelList = DbModel.createList<BlogPostModel>(cp, "(Month(DateAdded) = " + request.ArchiveMonth + ")And(year(DateAdded)=" + request.ArchiveYear + ")And(BlogID=" + blog.id + ")", "DateAdded Desc");
+                var BlogEntryModelList = DbBaseModel.createList<BlogPostModel>(cp, "(Month(dateAdded) = " + request.ArchiveMonth + ")And(year(dateAdded)=" + request.ArchiveYear + ")And(BlogID=" + blog.id + ")", "dateAdded Desc");
                 if (BlogEntryModelList.Count == 0) {
                     result = "<div Class=\"aoBlogProblem\">There are no blog archives For " + request.ArchiveMonth + "/" + request.ArchiveYear + "</div>";
-                }
-                else {
+                } else {
                     int EntryPtr = 0;
                     string entryEditLink = "";
                     var Return_CommentCnt = default(int);
@@ -93,9 +91,9 @@ namespace Contensive.Addons.Blog.Views {
                         int EntryID = blogEntry.id;
                         int AuthorMemberID = blogEntry.AuthorMemberID;
                         if (AuthorMemberID == 0) {
-                            AuthorMemberID = blogEntry.CreatedBy;
+                            AuthorMemberID = cp.Utils.EncodeInteger(blogEntry.createdBy);
                         }
-                        var DateAdded = blogEntry.DateAdded;
+                        var dateAdded = blogEntry.dateAdded;
                         string EntryName = blogEntry.name;
                         if (app.userIsEditing) {
                             entryEditLink = cp.Content.GetEditLink(EntryName, EntryID.ToString(), true, EntryName, true);

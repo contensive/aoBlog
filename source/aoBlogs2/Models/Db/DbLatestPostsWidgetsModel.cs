@@ -2,10 +2,6 @@
 using Contensive.DesignBlockBase.Models.Db;
 using Contensive.Models.Db;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Contensive.Addons.Blog.Models.Db {
     public class DbLatestPostsWidgetsModel : SettingsBaseModel {

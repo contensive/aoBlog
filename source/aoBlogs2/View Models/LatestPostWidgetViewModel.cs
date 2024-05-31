@@ -26,7 +26,7 @@ namespace Contensive.Addons.Blog {
 
             try {
                 var result = create<LatestPostWidgetViewModel>(cp, settings);
-                List<BlogPostModel> latestPost = BlogPostModel.createList<BlogPostModel>(cp, "", "dateadded desc", 4, 1);
+                List<BlogPostModel> latestPost = BlogPostModel.createList<BlogPostModel>(cp, "", "dateAdded desc", 4, 1);
                 result.mainCell = new LatestPostItemViewModel();
                 result.secondCell = new LatestPostItemViewModel();
                 result.thirdCell = new LatestPostItemViewModel();
@@ -35,7 +35,7 @@ namespace Contensive.Addons.Blog {
                 if (latestPost.Count >= 1) {
                     result.mainCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + "/" + latestPost[0].name.Trim().Replace(" ", "-").Replace(":", "").ToLower(), latestPost[0].blogpostpageid);
                     result.mainCell.description = LatestPostWidgetController.limitString(cp, cp.Utils.ConvertHTML2Text(latestPost[0].copy), 175);
-                    result.mainCell.postDate = latestPost[0].DateAdded.ToString("MMMM dd, yyyy");
+                    result.mainCell.postDate = latestPost[0].dateAdded.ToString(); //.ToString("MMMM dd, yyyy");
                     result.mainCell.header = latestPost[0].name;
                     result.mainCell.LatestPostElementEditTag = cp.Content.GetEditLink("Blog Entries", latestPost[0].id, "Edit Latest Post element");
 
@@ -58,7 +58,7 @@ namespace Contensive.Addons.Blog {
                 if (latestPost.Count >= 2) {
                     result.secondCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + "/" + latestPost[1].name.Trim().Replace(" ", "-").Replace(":", "").ToLower(), latestPost[1].blogpostpageid);
                     result.secondCell.description = LatestPostWidgetController.limitString(cp, cp.Utils.ConvertHTML2Text(latestPost[1].copy), 175);
-                    result.secondCell.postDate = latestPost[1].DateAdded.ToString("MMMM dd, yyyy");
+                    result.secondCell.postDate = latestPost[1].dateAdded.ToString(); // ("MMMM dd, yyyy");
                     result.secondCell.header = latestPost[1].name;
                     result.secondCell.LatestPostElementEditTag = cp.Content.GetEditLink("Blog Entries", latestPost[1].id, "Edit Latest Post element");
                     result.showCellTwo = true;
@@ -84,7 +84,7 @@ namespace Contensive.Addons.Blog {
                 if (latestPost.Count >= 3) {
                     result.thirdCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + "/" + latestPost[2].name.Trim().Replace(" ", "-").Replace(":", "").ToLower(), latestPost[2].blogpostpageid);
                     result.thirdCell.description = LatestPostWidgetController.limitString(cp, cp.Utils.ConvertHTML2Text(latestPost[2].copy), 175);
-                    result.thirdCell.postDate = latestPost[2].DateAdded.ToString("MMMM dd, yyyy");
+                    result.thirdCell.postDate = latestPost[2].dateAdded.ToString(); //("MMMM dd, yyyy");
                     result.thirdCell.header = latestPost[2].name;
                     result.thirdCell.LatestPostElementEditTag = cp.Content.GetEditLink("Blog Entries", latestPost[2].id, "Edit Latest Post element");
                     result.showCellThree = true;
@@ -117,7 +117,7 @@ namespace Contensive.Addons.Blog {
                 if (latestPost.Count >= 4) {
                     result.lastCell.continueURL = LinkAliasController.getLinkAlias(cp, cp.Http.WebAddressProtocolDomain + "/" + latestPost[3].name.Trim().Replace(" ", "-").Replace(":", "").ToLower(), latestPost[3].blogpostpageid);
                     result.lastCell.description = LatestPostWidgetController.limitString(cp, cp.Utils.ConvertHTML2Text(latestPost[3].copy), 175);
-                    result.lastCell.postDate = latestPost[3].DateAdded.ToString("MMMM dd, yyyy");
+                    result.lastCell.postDate = latestPost[3].dateAdded.ToString(); //("MMMM dd, yyyy");
                     result.lastCell.header = latestPost[3].name;
                     result.lastCell.LatestPostElementEditTag = cp.Content.GetEditLink("Blog Entries", latestPost[3].id, "Edit Latest Post element");
                     result.showCellFour = true;

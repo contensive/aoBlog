@@ -22,7 +22,7 @@ namespace Contensive.Addons.Blog.Views {
                     Return_ImageFilename = cp.Image.GetBestFitWebP(blogImage.Filename, app.blog.ThumbnailImageWidth, 0, imageSizeList);
                     if ((string.Join(",", imageSizeList) ?? "") != (blogImage.AltSizeList ?? "")) {
                         blogImage.AltSizeList = string.Join(",", imageSizeList);
-                        blogImage.save<BlogImageModel>(cp);
+                        blogImage.save(cp);
                     }
                 }
             }

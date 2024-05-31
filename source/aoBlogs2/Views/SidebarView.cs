@@ -1,4 +1,5 @@
 ﻿
+using Contensive.Models.Db;
 using System;
 using Contensive.Addons.Blog.Models;
 using Contensive.Addons.Blog.Models.View;
@@ -33,9 +34,9 @@ namespace Contensive.Addons.Blog.Views {
                         if (blog.allowArticleCTA & isArticleView) {
                             // 
                             // CTA cells
-                            var blogEntryCtaRuleList = DbModel.createList<BlogEntryCTARuleModel>(cp, "blogEntryid=" + request.blogEntryId);
+                            var blogEntryCtaRuleList = DbBaseModel.createList<BlogEntryCTARuleModel>(cp, "blogEntryid=" + request.blogEntryId);
                             foreach (var rule in blogEntryCtaRuleList) {
-                                var cta = DbModel.create<CallsToActionModel>(cp, rule.calltoactionid);
+                                var cta = DbBaseModel.create<CallsToActionModel>(cp, rule.calltoactionid);
                                 if (cta is not null) {
                                     sidebarCell.Load(cellTemplate);
                                     sidebarCell.SetInner(".blogSidebarCellHeadline", cta.headline + "<br>");
@@ -174,7 +175,7 @@ namespace Contensive.Addons.Blog.Views {
                         }
                         // 
                         if (blog.allowRSSSubscribe) {
-                            var rssFeed = DbModel.create<RSSFeedModel>(cp, blog.RSSFeedID);
+                            var rssFeed = DbBaseModel.create<RSSFeedModel>(cp, blog.RSSFeedID);
                             // 
                             if (rssFeed is null || string.IsNullOrEmpty(rssFeed.rssFilename)) {
                                 adminSuggestions += cp.Html.li("This blog includes an RSS Feed, but no feed has been created. It his persists, please contact the site developer. Disable RSS feeds for this blog to hide this message.");
@@ -194,7 +195,7 @@ namespace Contensive.Addons.Blog.Views {
                         }
                         // 
                         if (isArticleView) {
-                            var emtyblogEntryCtaRuleList = DbModel.createList<BlogEntryCTARuleModel>(cp, "blogEntryid=" + request.blogEntryId);
+                            var emtyblogEntryCtaRuleList = DbBaseModel.createList<BlogEntryCTARuleModel>(cp, "blogEntryid=" + request.blogEntryId);
                             if (emtyblogEntryCtaRuleList.Count > 0) {
                             }
 
@@ -266,7 +267,7 @@ namespace Contensive.Addons.Blog.Views {
                 string qs;
                 string SQL;
                 // 
-                SQL = "SELECT distinct Month(DateAdded) as ArchiveMonth, year(dateadded) as ArchiveYear " + " From ccBlogCopy" + " Where (ContentControlID = " + cp.Content.GetID(constants.cnBlogEntries) + ") And (Active <> 0)" + " AND (BlogID=" + app.blog.id + ")" + " ORDER BY year(dateadded) desc, Month(DateAdded) desc";
+                SQL = "SELECT distinct Month(dateAdded) as ArchiveMonth, year(dateAdded) as ArchiveYear " + " From ccBlogCopy" + " Where (ContentControlID = " + cp.Content.GetID(constants.cnBlogEntries) + ") And (Active <> 0)" + " AND (BlogID=" + app.blog.id + ")" + " ORDER BY year(dateAdded) desc, Month(dateAdded) desc";
 
 
 

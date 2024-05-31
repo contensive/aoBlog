@@ -4,6 +4,7 @@ using Contensive.Addons.Blog.Controllers;
 using Contensive.Addons.Blog.Models;
 using Contensive.BaseClasses;
 using Microsoft.VisualBasic;
+using Contensive.Models.Db;
 
 namespace Contensive.Addons.Blog.Views {
     // 
@@ -75,7 +76,7 @@ namespace Contensive.Addons.Blog.Views {
                     }
                     result.Append("<h4 class=\"aoBlogEntryCopy\">" + Subcaption + "</h4>");
                     // 
-                    var BlogEntryList = DbModel.createList<BlogPostModel>(cp, sqlCriteria.ToString());
+                    var BlogEntryList = DbBaseModel.createList<BlogPostModel>(cp, sqlCriteria.ToString());
                     if (BlogEntryList.Count == 0) {
                         result.Append("</br>" + "<div class=\"aoBlogProblem\">There were no matches to your search</div>");
                     }
@@ -85,7 +86,7 @@ namespace Contensive.Addons.Blog.Views {
                         foreach (var blogEntry in BlogEntryList) {
                             int AuthorMemberID = blogEntry.AuthorMemberID;
                             if (AuthorMemberID == 0)
-                                AuthorMemberID = blogEntry.CreatedBy;
+                                AuthorMemberID = cp.Utils.EncodeInteger( blogEntry.createdBy);
                             result.Append(BlogEntryCellView.getBlogPostCell(cp, app, blogEntry, false, true, Return_CommentCnt, ""));
                             result.Append("<hr>");
                         }

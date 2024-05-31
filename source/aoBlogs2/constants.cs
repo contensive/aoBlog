@@ -8,6 +8,9 @@ namespace Contensive.Addons.Blog {
         // 
         // -- Guids
         // 
+        public const string guidGroupBlogAuthors = "{082E5ADC-9477-4DB6-A3D7-39B6EAB3A519}";
+        public const string nameGroupBlogAuthors = "Blog Authors";
+        //
         public const string reCaptchaDisplayGuid = "{E9E51C6E-9152-4284-A44F-D3ABC423AB90}";
         public const string reCaptchaProcessGuid = "{030AC5B0-F796-4EA4-B94C-986B1C29C16C}";
         public const string RSSProcessAddonGuid = "{2119C2DA-1D57-4C32-B13C-28CD2D85EDF5}";
@@ -61,7 +64,7 @@ namespace Contensive.Addons.Blog {
         public const string RequestNameBlogTitle = "BlogTitle";
         public const string RequestNameBlogCopy = "BlogCopy";
         public const string RequestNameBlogTagList = "BlogTagList";
-        public const string RequestNameDateAdded = "DateAdded";
+        public const string RequestNamedateAdded = "dateAdded";
         public const string RequestNameBlogCategoryID = "BlogCategoryID";
         public const string RequestNameBlogCategoryIDSet = "SetBlogCategoryID";
         public const string RequestNameBlogPodcastMediaLink = "PodcastMediaLink";

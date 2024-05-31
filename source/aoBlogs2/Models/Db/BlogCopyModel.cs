@@ -1,20 +1,22 @@
 ﻿
+using Contensive.BaseClasses;
+using Contensive.Models.Db;
 using System;
 using System.Collections.Generic;
-using Contensive.BaseClasses;
 
 namespace Contensive.Addons.Blog.Models {
     /// <summary>
     /// Blog copy is the root content for the ccBlogCopy table. 
     /// Blog Entries (posts) and Blog Comments (comments to posts) are both stored in Blog Copy
     /// </summary>
-    public class BlogCopyModel : DbModel {
+    public class BlogCopyModel : Contensive.Models.Db.DbBaseModel {
         // 
         // ====================================================================================================
+        public static DbBaseTableMetadataModel tableMetadata { get; private set; } = new DbBaseTableMetadataModel("Blog Copy", "ccBlogCopy", "default", false);
         // -- const
-        public const string contentName = "Blog Copy";      // <------ set content name
-        public const string contentTableName = "ccBlogCopy";   // <------ set to tablename for the primary content (used for cache names)
-        private  const string contentDataSource = "default";             // <------ set to datasource if not default
+        //public const string contentName = "Blog Copy";      // <------ set content name
+        //public const string contentTableName = "ccBlogCopy";   // <------ set to tablename for the primary content (used for cache names)
+        //private  const string contentDataSource = "default";             // <------ set to datasource if not default
         // 
         // ====================================================================================================
         // -- instance properties
@@ -65,8 +67,8 @@ namespace Contensive.Addons.Blog.Models {
         public static List<ArchiveDateModel> createArchiveListFromBlogCopy(CPBaseClass cp, int blogId) {
             var result = new List<ArchiveDateModel>();
             try {
-                // result = createList(cp, "(BlogID=" & blogId & ")", "year(dateadded) desc, Month(DateAdded) desc")
-                string SQL = "SELECT DISTINCT month(dateadded) as archiveMonth, year(dateadded) as archiveYear" + " From ccBlogCopy" + " Where (ContentControlID = " + cp.Content.GetID(constants.cnBlogEntries) + ") And (Active <> 0)" + " AND (BlogID=" + blogId + ")" + " ORDER BY year(dateadded) desc, month(dateadded) desc ";
+                // result = createList(cp, "(BlogID=" & blogId & ")", "year(dateAdded) desc, Month(dateAdded) desc")
+                string SQL = "SELECT DISTINCT month(dateAdded) as archiveMonth, year(dateAdded) as archiveYear" + " From ccBlogCopy" + " Where (ContentControlID = " + cp.Content.GetID(constants.cnBlogEntries) + ") And (Active <> 0)" + " AND (BlogID=" + blogId + ")" + " ORDER BY year(dateAdded) desc, month(dateAdded) desc ";
 
 
 

@@ -5,6 +5,7 @@ using Contensive.Addons.Blog.Controllers;
 using Contensive.Addons.Blog.Models;
 using Contensive.BaseClasses;
 using Microsoft.VisualBasic;
+using Contensive.Models.Db;
 
 namespace Contensive.Addons.Blog.Views {
     // 
@@ -200,7 +201,7 @@ namespace Contensive.Addons.Blog.Views {
                     else if ((request.ButtonValue ?? "") == constants.FormButtonDelete) {
                         // 
                         // Delete
-                        DbModel.delete<BlogPostModel>(cp, blogEntry.id);
+                        DbBaseModel.delete<BlogPostModel>(cp, blogEntry.id);
                         RSSFeedModel.UpdateBlogFeed(cp);
                         blogEntry = null;
                         return constants.FormBlogPostList;
@@ -210,7 +211,7 @@ namespace Contensive.Addons.Blog.Views {
                         // Post
                         // 
                         if (blogEntry is null) {
-                            blogEntry = DbModel.@add<BlogPostModel>(cp);
+                            blogEntry = DbBaseModel.addDefault<BlogPostModel>(cp);
                             // 
                             // -- by default, the RSS feed should be checked for this new blog entry
                             var rule = RSSFeedBlogRuleModel.@add(cp);
@@ -222,7 +223,7 @@ namespace Contensive.Addons.Blog.Views {
                         blogEntry.name = request.BlogEntryName;
                         blogEntry.copy = request.BlogEntryCopy;
                         blogEntry.blogID = blog.id;
-                        blogEntry.save<BlogPostModel>(cp);
+                        blogEntry.save(cp);
                         if (app.sitePropertyAllowTags) {                        // 
                             blogEntry.tagList = request.BlogEntryTagList;
                         }
@@ -250,12 +251,12 @@ namespace Contensive.Addons.Blog.Views {
                                         cp.Content.Delete(constants.cnBlogImages, ImageID.ToString());
                                     }
                                     else {
-                                        var BlogImage = DbModel.create<BlogImageModel>(cp, ImageID);
+                                        var BlogImage = DbBaseModel.create<BlogImageModel>(cp, ImageID);
                                         if (BlogImage is not null) {
                                             BlogImage.name = imageName;
                                             // BlogImage.description = imageDescription
-                                            BlogImage.SortOrder = new string('0', 12 - imageOrder.ToString().Length) + imageOrder.ToString();
-                                            BlogImage.save<BlogImageModel>(cp);
+                                            BlogImage.sortOrder = new string('0', 12 - imageOrder.ToString().Length) + imageOrder.ToString();
+                                            BlogImage.save(cp);
                                         }
                                     }
                                 }
@@ -265,7 +266,7 @@ namespace Contensive.Addons.Blog.Views {
                                     // 
                                     // CS = Main.InsertCSRecord(cnBlogImages)
                                     // If Main.IsCSOK(CS) Then
-                                    var BlogImage = DbModel.@add<BlogImageModel>(cp);
+                                    var BlogImage = DbBaseModel.addDefault<BlogImageModel>(cp);
                                     if (BlogImage is not null) {
                                         BlogImageID = BlogImage.id;
                                         BlogImage.name = imageName;
@@ -277,18 +278,18 @@ namespace Contensive.Addons.Blog.Views {
                                             FileExtension = Strings.Mid(imageFilename, Pos + 1);
                                             FilenameNoExtension = Strings.Left(imageFilename, Pos - 1);
                                         }
-                                        string VirtualFilePath = BlogImage.getUploadPath<BlogImageModel>("filename");
+                                        string VirtualFilePath = BlogImage.getUploadPath("filename");
                                         cp.Html.ProcessInputFile(constants.rnBlogUploadPrefix + "." + UploadPointer, VirtualFilePath);
                                         BlogImage.Filename = VirtualFilePath + imageFilename;
-                                        BlogImage.save<BlogImageModel>(cp);
-                                        BlogImage.SortOrder = new string('0', 12 - imageOrder.ToString().Length) + imageOrder.ToString();
+                                        BlogImage.save(cp);
+                                        BlogImage.sortOrder = new string('0', 12 - imageOrder.ToString().Length) + imageOrder.ToString();
                                     }
                                     // 
-                                    var ImageRule = DbModel.@add<BlogImageRuleModel>(cp);
+                                    var ImageRule = DbBaseModel.addDefault<BlogImageRuleModel>(cp);
                                     if (ImageRule is not null) {
                                         ImageRule.BlogEntryID = blogEntry.id;
                                         ImageRule.BlogImageID = BlogImageID;
-                                        ImageRule.save<BlogImageRuleModel>(cp);
+                                        ImageRule.save(cp);
                                     }
                                 }
                             }

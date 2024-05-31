@@ -1,16 +1,18 @@
 ﻿
+using Contensive.BaseClasses;
+using Contensive.Models.Db;
 using System;
 using System.Collections.Generic;
-using Contensive.BaseClasses;
 
 namespace Contensive.Addons.Blog.Models {
-    public class BlogImageModel : DbModel {        // <------ set set model Name and everywhere that matches this string
+    public class BlogImageModel : Contensive.Models.Db.DbBaseModel {        // <------ set set model Name and everywhere that matches this string
         // 
         // ====================================================================================================
+        public static DbBaseTableMetadataModel tableMetadata { get; private set; } = new DbBaseTableMetadataModel("Blog Images", "BlogImages", "default", false);
         // -- const
-        public const string contentName = "Blog Images";      // <------ set content name
-        public const string contentTableName = "BlogImages";   // <------ set to tablename for the primary content (used for cache names)
-        private new const string contentDataSource = "default";             // <------ set to datasource if not default
+        //public const string contentName = "Blog Images";      // <------ set content name
+        //public const string contentTableName = "BlogImages";   // <------ set to tablename for the primary content (used for cache names)
+        //private new const string contentDataSource = "default";             // <------ set to datasource if not default
         // 
         // ====================================================================================================
         // -- instance properties
@@ -20,6 +22,12 @@ namespace Contensive.Addons.Blog.Models {
         public string Filename { get; set; }
         public int height { get; set; }
         public int width { get; set; }
+
+        public string getUploadPath(string fieldName) {
+            return tableMetadata.tableNameLower + "/" + fieldName.ToLower() + "/" + id.ToString().PadLeft(12, '0') + "/";
+        }
+
+
         // 
         /// <summary>
         /// Return a list of blog entry images for the blog entry

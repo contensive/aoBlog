@@ -1,15 +1,17 @@
 ﻿
 using System;
 using Contensive.BaseClasses;
+using Contensive.Models.Db;
 
 namespace Contensive.Addons.Blog.Models {
-    public class RSSFeedModel : DbModel {
+    public class RSSFeedModel : Contensive.Models.Db.DbBaseModel {
         // 
         // ====================================================================================================
+        public static DbBaseTableMetadataModel tableMetadata { get; private set; } = new DbBaseTableMetadataModel("RSS Feeds", "ccRSSFeeds", "default", false);
         // -- const
-        public const string contentName = "RSS Feeds";      // <------ set content name
-        public const string contentTableName = "ccRSSFeeds";   // <------ set to tablename for the primary content (used for cache names)
-        private  const string contentDataSource = "default";             // <------ set to datasource if not default
+        //public const string contentName = "RSS Feeds";      // <------ set content name
+        //public const string contentTableName = "ccRSSFeeds";   // <------ set to tablename for the primary content (used for cache names)
+        //private  const string contentDataSource = "default";             // <------ set to datasource if not default
         // 
         // ====================================================================================================
         // -- instance properties
@@ -34,7 +36,7 @@ namespace Contensive.Addons.Blog.Models {
                     if (rssFeed is not null)
                         return rssFeed;
                 }
-                rssFeed = @add<RSSFeedModel>(cp);
+                rssFeed = DbBaseModel.addDefault<RSSFeedModel>(cp);
                 rssFeed.copyright = "Copyright " + DateTime.Now.Year;
                 rssFeed.description = "";
                 rssFeed.link = "";
@@ -42,7 +44,7 @@ namespace Contensive.Addons.Blog.Models {
                 rssFeed.name = "RSS Feed for Blog #" + blog.id + ", " + blog.Caption;
                 rssFeed.rssDateUpdated = DateTime.MinValue;
                 rssFeed.rssFilename = "RSS" + rssFeed.id + ".xml";
-                rssFeed.save<RSSFeedModel>(cp);
+                rssFeed.save(cp);
                 return rssFeed;
             }
 

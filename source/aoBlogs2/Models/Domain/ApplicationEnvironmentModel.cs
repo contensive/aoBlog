@@ -2,6 +2,7 @@
 using System.Linq;
 using Contensive.Addons.Blog.Controllers;
 using Contensive.BaseClasses;
+using Contensive.Models.Db;
 
 namespace Contensive.Addons.Blog.Models {
     public class ApplicationEnvironmentModel {
@@ -54,7 +55,7 @@ namespace Contensive.Addons.Blog.Models {
                     return null;
                 // 
                 // -- blogEntryId is valid, return blog entry
-                local_blogEntry = DbModel.create<BlogPostModel>(cp, cp.Utils.EncodeInteger(local_blogEntryId));
+                local_blogEntry = DbBaseModel.create<BlogPostModel>(cp, cp.Utils.EncodeInteger(local_blogEntryId));
                 if (local_blogEntry is not null)
                     return local_blogEntry;
                 // 
@@ -71,10 +72,10 @@ namespace Contensive.Addons.Blog.Models {
         /// The current user at the keyboard
         /// </summary>
         /// <returns></returns>
-        public PersonModel user {
+        public Contensive.Addons.Blog.Models.PersonModel user {
             get {
                 if (local_user is null) {
-                    local_user = PersonModel.create(cp, cp.User.Id);
+                    local_user = PersonModel.create<PersonModel>(cp, cp.User.Id);
                 }
                 return local_user;
             }
@@ -106,14 +107,14 @@ namespace Contensive.Addons.Blog.Models {
                 if (local_RSSFeed is null) {
                     // 
                     // Get the Feed Args
-                    local_RSSFeed = DbModel.create<RSSFeedModel>(cp, blog.RSSFeedID);
+                    local_RSSFeed = DbBaseModel.create<RSSFeedModel>(cp, blog.RSSFeedID);
                     if (local_RSSFeed is null) {
-                        local_RSSFeed = DbModel.@add<RSSFeedModel>(cp);
+                        local_RSSFeed = DbBaseModel.addDefault<RSSFeedModel>(cp);
                         local_RSSFeed.name = blog.Caption;
                         local_RSSFeed.description = "This is your First RssFeed";
-                        local_RSSFeed.save<BlogModel>(cp);
+                        local_RSSFeed.save(cp);
                         blog.RSSFeedID = local_RSSFeed.id;
-                        blog.save<BlogModel>(cp);
+                        blog.save(cp);
                     }
                 }
                 return local_RSSFeed;
@@ -138,11 +139,11 @@ namespace Contensive.Addons.Blog.Models {
             get {
                 if (nextArticle_local is not null)
                     return nextArticle_local;
-                var articleList = DbModel.createList<BlogPostModel>(cp, "(blogID=" + blog.id + ")and(DateAdded<" + cp.Db.EncodeSQLDate(blogEntry.DateAdded) + ")", "DateAdded desc", 1, 1);
+                var articleList = DbBaseModel.createList<BlogPostModel>(cp, "(blogID=" + blog.id + ")and(dateAdded<" + cp.Db.EncodeSQLDate(cp.Utils.EncodeDate(blogEntry.dateAdded)) + ")", "dateAdded desc", 1, 1);
                 if (articleList.Count == 0) {
                     // 
                     // -- this may be the last article in the list, the next article should be the first to loop around
-                    articleList = DbModel.createList<BlogPostModel>(cp, "(blogID=" + blog.id + ")", "DateAdded desc", 1, 1);
+                    articleList = DbBaseModel.createList<BlogPostModel>(cp, "(blogID=" + blog.id + ")", "dateAdded desc", 1, 1);
                     if (articleList.Count == 0)
                         return null;
                 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Contensive.Models.Db;
+using System;
 using System.Linq;
 using Contensive.Addons.Blog.Controllers;
 using Contensive.Addons.Blog.Models;
@@ -25,7 +26,7 @@ namespace Contensive.Addons.Blog.Views {
                 // -- add link alias for this page
                 LinkAliasController.addLinkAlias(cp, blogPost.name.Trim().Replace(" ", "-").Replace(":", "").ToLower(), cp.Doc.PageId, blogPost.id);
                 blogPost.blogpostpageid = cp.Doc.PageId;
-                blogPost.save<BlogPostModel>(cp);
+                blogPost.save(cp);
                 // Dim qs As String = cp.Utils.ModifyQueryString("", RequestNameBlogEntryID, CStr(blogPost.id))
                 // qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogPostDetails.ToString())
                 // Call cp.Site.AddLinkAlias(blogPost.name, cp.Doc.PageId, qs)
@@ -166,13 +167,13 @@ namespace Contensive.Addons.Blog.Views {
                 string RowCopy = "";
                 var datePublished = blogPost.datePublished;
                 if (datePublished is null)
-                    datePublished = blogPost.DateAdded;
+                    datePublished = blogPost.dateAdded;
                 // 
-                if (blogPost.AuthorMemberID == 0 & blogPost.CreatedBy > 0) {
-                    blogPost.AuthorMemberID = blogPost.CreatedBy;
-                    blogPost.save<BlogPostModel>(cp);
+                if (blogPost.AuthorMemberID == 0 & blogPost.createdBy > 0) {
+                    blogPost.AuthorMemberID = cp.Utils.EncodeInteger(blogPost.createdBy);
+                    blogPost.save(cp);
                 }
-                var author = DbModel.create<PersonModel>(cp, blogPost.AuthorMemberID);
+                var author = DbBaseModel.create<Models.PersonModel>(cp, blogPost.AuthorMemberID);
                 if (author is not null) {
                     RowCopy += "By " + author.name;
                     if (datePublished.HasValue && datePublished.Value != DateTime.MinValue) {
@@ -182,12 +183,12 @@ namespace Contensive.Addons.Blog.Views {
                 else if (datePublished.HasValue && datePublished.Value != DateTime.MinValue) {
                     RowCopy = Conversions.ToString((RowCopy + datePublished));
                 }
-                var visit = VisitModel.create(cp, cp.Visit.Id);
-                if (blogPost.AllowComments & (visit is not null && cp.Visit.CookieSupport & !visit.Bot)) {
+                var visit = DbBaseModel.create<VisitModel>(cp, cp.Visit.Id);
+                if (blogPost.AllowComments & (visit is not null && cp.Visit.CookieSupport & !visit.bot)) {
                     hint = 110;
                     // 
                     // Show comment count
-                    var BlogCommentModelList = DbModel.createList<BlogCommentModel>(cp, "(Approved<>0)and(EntryID=" + blogPost.id + ")");
+                    var BlogCommentModelList = DbBaseModel.createList<BlogCommentModel>(cp, "(Approved<>0)and(EntryID=" + blogPost.id + ")");
                     if (isArticleView) {
                         if (BlogCommentModelList.Count == 1) {
                             RowCopy += " | 1 Comment";
@@ -220,7 +221,7 @@ namespace Contensive.Addons.Blog.Views {
                 }
                 string toolLine = "";
                 var CommentPtr = default(int);
-                if (blogPost.AllowComments & cp.Visit.CookieSupport & (visit is not null && !visit.Bot)) {
+                if (blogPost.AllowComments & cp.Visit.CookieSupport & (visit is not null && !visit.bot)) {
                     hint = 130;
                     // 
                     // --
@@ -229,7 +230,7 @@ namespace Contensive.Addons.Blog.Views {
                         // 
                         // Show comment count
                         // 
-                        var BlogCommentModelList = DbModel.createList<BlogCommentModel>(cp, "(Approved<>0)and(EntryID=" + blogPost.id + ")");
+                        var BlogCommentModelList = DbBaseModel.createList<BlogCommentModel>(cp, "(Approved<>0)and(EntryID=" + blogPost.id + ")");
                         // 
                         qs = app.blogBaseLink;
                         qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameBlogEntryID, blogPost.id.ToString());
@@ -245,7 +246,7 @@ namespace Contensive.Addons.Blog.Views {
                         // get the unapproved comments
                         if (app.user.isBlogEditor(cp, app.blog)) {
                             hint = 150;
-                            var BlogUnapprovedCommentModelList = DbModel.createList<BlogCommentModel>(cp, "(Approved=0)and(EntryID=" + blogPost.id + ")");
+                            var BlogUnapprovedCommentModelList = DbBaseModel.createList<BlogCommentModel>(cp, "(Approved=0)and(EntryID=" + blogPost.id + ")");
                             int unapprovedCommentCount = BlogUnapprovedCommentModelList.Count;
                             if (!string.IsNullOrEmpty(toolLine)) {
                                 toolLine = toolLine + "&nbsp;|&nbsp;";
@@ -272,13 +273,13 @@ namespace Contensive.Addons.Blog.Views {
                             // 
                             Criteria += "and((Approved<>0)or(AuthorMemberID=" + cp.User.Id + "))";
                         }
-                        var BlogCommentModelList = DbModel.createList<BlogCommentModel>(cp, Criteria, "DateAdded");
+                        var BlogCommentModelList = DbBaseModel.createList<BlogCommentModel>(cp, Criteria, "dateAdded");
                         if (BlogCommentModelList.Count > 0) {
                             string Divider = "<div class=\"aoBlogCommentDivider\">&nbsp;</div>";
                             result += "<div class=\"aoBlogCommentHeader\">Comments</div>";
                             result += Constants.vbCrLf + Divider;
                             CommentPtr = 0;
-                            foreach (var blogComment in DbModel.createList<BlogCommentModel>(cp, Criteria)) {
+                            foreach (var blogComment in DbBaseModel.createList<BlogCommentModel>(cp, Criteria)) {
 
                                 result += BlogCommentCellView.getBlogCommentCell(cp, app.blog, blogPost, blogComment, app.user, false);
                                 result += Constants.vbCrLf + Divider;

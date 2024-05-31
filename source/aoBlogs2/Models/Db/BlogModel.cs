@@ -1,15 +1,18 @@
-﻿using System;
-using Contensive.Addons.Blog.Controllers;
+﻿using Contensive.Addons.Blog.Controllers;
 using Contensive.BaseClasses;
+using Contensive.DesignBlockBase.Models.Db;
+using Contensive.Models.Db;
+using System;
 
 namespace Contensive.Addons.Blog.Models {
-    public class BlogModel : DbModel {
+    public class BlogModel : SettingsBaseModel {
         // 
         // ====================================================================================================
+        public static DbBaseTableMetadataModel tableMetadata { get; private set; } = new DbBaseTableMetadataModel("Blogs", "ccBlogs", "default", false);
         // -- const
-        public const string contentName = "Blogs";
-        public const string contentTableName = "ccBlogs";
-        private  const string contentDataSource = "default";
+        //public const string contentName = "Blogs";
+        //public const string contentTableName = "ccBlogs";
+        //private  const string contentDataSource = "default";
         // 
         // ====================================================================================================
         // -- instance properties
@@ -64,7 +67,7 @@ namespace Contensive.Addons.Blog.Models {
                 if (!cp.User.IsAdmin)
                     return null;
 
-                Blog = @add<BlogModel>(cp);
+                Blog =  DbBaseModel.addDefault<BlogModel>(cp);
                 Blog.name = "Default Blog";
                 Blog.Caption = "The New Blog";
                 Blog.Copy = "<p>This is the description of your new blog. It always appears at the top of your list of blog posts. Edit or remove this description by editing the blog features.</p>";
@@ -79,12 +82,12 @@ namespace Contensive.Addons.Blog.Models {
                 Blog.ImageWidthMax = 400;
                 Blog.allowArticleCTA = true;
                 Blog.ccguid = instanceGuid;
-                Blog.save<BlogModel>(cp);
+                Blog.save(cp);
                 var rssFeed = RSSFeedModel.verifyFeed(cp, Blog);
                 Blog.RSSFeedID = rssFeed is not null ? rssFeed.id : 0;
-                Blog.save<BlogModel>(cp);
+                Blog.save(cp);
 
-                var blogEntry = @add<BlogPostModel>(cp);
+                var blogEntry = DbBaseModel.addDefault<BlogPostModel>(cp);
                 if (blogEntry is not null) {
                     blogEntry.blogID = Blog.id;
                     blogEntry.name = "Welcome to the New Blog!";
@@ -96,12 +99,12 @@ namespace Contensive.Addons.Blog.Models {
                     // Dim qs As String = cp.Utils.ModifyQueryString("", RequestNameBlogEntryID, CStr(blogEntry.id))
                     // qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogPostDetails.ToString())
                     // Call cp.Site.AddLinkAlias(Blog.Caption, cp.Doc.PageId, qs)
-                    // Dim LinkAlias As List(Of LinkAliasesModel) = DbModel.createList(Of LinkAliasesModel)(cp, "(pageid=" & cp.Doc.PageId & ")and(QueryStringSuffix=" & cp.Db.EncodeSQLText(qs) & ")")
+                    // Dim LinkAlias As List(Of LinkAliasModel) = DbBaseModel.createList(Of LinkAliasModel)(cp, "(pageid=" & cp.Doc.PageId & ")and(QueryStringSuffix=" & cp.Db.EncodeSQLText(qs) & ")")
                     // If (LinkAlias.Count > 0) Then
                     // Dim EntryLink As String = LinkAlias.First().name
                     // End If
                     blogEntry.RSSDescription = genericController.getBriefCopy(cp, blogEntry.copy, 150);
-                    blogEntry.save<BlogPostModel>(cp);
+                    blogEntry.save(cp);
                 }
                 // 
                 // Add this new default post to the new feed
@@ -111,20 +114,20 @@ namespace Contensive.Addons.Blog.Models {
                     RSSFeedBlogRules.RSSFeedID = rssFeed.id;
                     RSSFeedBlogRules.BlogPostID = blogEntry.id;
                     RSSFeedBlogRules.name = "RSS Feed [" + rssFeed.name + "], Blog Post [" + blogEntry.name + "]";
-                    RSSFeedBlogRules.save<BlogModel>(cp);
+                    RSSFeedBlogRules.save(cp);
                 }
                 // 
                 // Add this new Call to Action
                 // 
                 var callToAction = create<CallsToActionModel>(cp, constants.guidDefaultCallToAction);
                 if (callToAction is null) {
-                    callToAction = @add<CallsToActionModel>(cp);
+                    callToAction = DbBaseModel.addDefault<CallsToActionModel>(cp);
                     callToAction.name = "Find Out More";
                     callToAction.link = "http://www.MemberBoss.com";
                     callToAction.headline = " Manage Your Membership Community";
                     callToAction.brief = "<p>The best all-in-one-place solution to build and manage your membership community.</p>";
                     callToAction.ccguid = constants.guidDefaultCallToAction;
-                    callToAction.save<BlogModel>(cp);
+                    callToAction.save(cp);
                 }
                 // 
                 RSSFeedModel.UpdateBlogFeed(cp);

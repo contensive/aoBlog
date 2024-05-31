@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Contensive.Models.Db;
+using System;
 using Contensive.Addons.Blog.Controllers;
 using Contensive.Addons.Blog.Models;
 using Contensive.BaseClasses;
@@ -22,7 +23,7 @@ namespace Contensive.Addons.Blog.Views {
                 }
                 // 
                 // -- count the viewing
-                cp.Db.ExecuteNonQuery("update " + BlogPostModel.contentTableName + " set viewings=" + (app.blogEntry.Viewings + 1));
+                cp.Db.ExecuteNonQuery("update " + BlogPostModel.tableMetadata.tableNameLower + " set viewings=" + (app.blogEntry.Viewings + 1));
                 hint = 10;
                 // 
                 string result = "";
@@ -33,23 +34,23 @@ namespace Contensive.Addons.Blog.Views {
                 result += "<div class=\"aoBlogHeaderLink\"><a href=\"" + app.blogPageBaseLink + "\">" + constants.BackToRecentPostsMsg + "</a></div>";
                 hint = 20;
                 // 
-                string entryEditLink = app.userIsEditing ? cp.Content.GetEditLink(BlogModel.contentName, app.blogEntry.id.ToString(), false, app.blogEntry.name, true) : "";
+                string entryEditLink = app.userIsEditing ? cp.Content.GetEditLink(BlogModel.tableMetadata.contentName, app.blogEntry.id.ToString(), false, app.blogEntry.name, true) : "";
                 // 
                 // Print the Blog Entry
                 var return_CommentCnt = default(int);
                 result += BlogEntryCellView.getBlogPostCell(cp, app, app.blogEntry, true, false, return_CommentCnt, entryEditLink);
                 // 
-                var visit = VisitModel.create(cp, cp.Visit.Id);
+                var visit = DbBaseModel.create<VisitModel>(cp, cp.Visit.Id);
                 if (visit is not null) {
-                    if (!visit.ExcludeFromAnalytics) {
+                    if (!visit.excludeFromAnalytics) {
                         int blogEntryId = app.blogEntry is not null ? app.blogEntry.id : 0;
-                        var BlogViewingLog = DbModel.@add<BlogViewingLogModel>(cp);
+                        var BlogViewingLog = DbBaseModel.addDefault<BlogViewingLogModel>(cp);
                         if (BlogViewingLog is not null) {
                             BlogViewingLog.name = cp.User.Name + ", post " + blogEntryId.ToString() + ", " + Conversions.ToString(DateTime.Now);
                             BlogViewingLog.BlogEntryID = blogEntryId;
                             BlogViewingLog.MemberID = cp.User.Id;
                             BlogViewingLog.VisitID = cp.Visit.Id;
-                            BlogViewingLog.save<BlogModel>(cp);
+                            BlogViewingLog.save(cp);
                         }
                     }
                 }
@@ -61,7 +62,7 @@ namespace Contensive.Addons.Blog.Views {
                 // 
                 hint = 60;
                 string qs;
-                if (app.blogEntry.AllowComments & cp.Visit.CookieSupport & !visit.Bot) {
+                if (app.blogEntry.AllowComments & cp.Visit.CookieSupport & !visit.bot) {
                     hint = 70;
                     result += "<div class=\"aoBlogCommentHeader\">Post a Comment</div>";
                     // 
@@ -212,7 +213,7 @@ namespace Contensive.Addons.Blog.Views {
                 // 
                 // -- if editing enabled, add the link and wrapperwrapper
                 hint = 240;
-                result = genericController.addEditWrapper(cp, result, app.blogEntry.id, app.blogEntry.name, BlogPostModel.contentName);
+                result = genericController.addEditWrapper(cp, result, app.blogEntry.id, app.blogEntry.name, BlogPostModel.tableMetadata.contentName);
                 // 
                 return result;
             }
@@ -271,23 +272,23 @@ namespace Contensive.Addons.Blog.Views {
                         formKey = cp.Doc.GetText("formkey");
                         Copy = cp.Doc.GetText(constants.RequestNameCommentCopy);
                         if (!string.IsNullOrEmpty(Copy)) {
-                            var BlogCommentModelList = DbModel.createList<BlogCommentModel>(cp, "(formkey=" + cp.Db.EncodeSQLText(formKey) + ")", "ID");
+                            var BlogCommentModelList = DbBaseModel.createList<BlogCommentModel>(cp, "(formkey=" + cp.Db.EncodeSQLText(formKey) + ")", "ID");
                             if (BlogCommentModelList.Count != 0) {
                                 cp.UserError.Add("<p>This comment has already been accepted.</p>");
                                 RetryCommentPost = false;
                             }
                             else {
                                 // Dim EntryID = cp.Doc.GetInteger(RequestNameBlogEntryID)
-                                // Dim BlogEntry As BlogEntryModel = DbModel.create(Of BlogEntryModel)(cp, EntryID)
-                                var BlogComment = DbModel.@add<BlogCommentModel>(cp);
+                                // Dim BlogEntry As BlogEntryModel = DbBaseModel.create(Of BlogEntryModel)(cp, EntryID)
+                                var BlogComment = DbBaseModel.addDefault<BlogCommentModel>(cp);
                                 BlogComment.BlogID = blog.id;
-                                BlogComment.Active = true;
+                                BlogComment.active = true;
                                 BlogComment.name = cp.Doc.GetText(constants.RequestNameCommentTitle);
                                 BlogComment.CopyText = Copy;
                                 BlogComment.EntryID = blogEntry.id;
                                 BlogComment.Approved = user.isBlogEditor(cp, blog) | blog.autoApproveComments;
                                 BlogComment.FormKey = formKey;
-                                BlogComment.save<BlogCommentModel>(cp);
+                                BlogComment.save(cp);
                                 CommentID = BlogComment.id;
                                 RetryCommentPost = false;
                                 // 
@@ -319,16 +320,16 @@ namespace Contensive.Addons.Blog.Views {
                                     }
 
                                     // If blog.AuthoringGroupID <> 0 Then
-                                    // Dim MemberRuleList As List(Of MemberRuleModel) = DbModel.createList(Of MemberRuleModel)(cp, "GroupId=" & blog.AuthoringGroupID)
+                                    // Dim MemberRuleList As List(Of MemberRuleModel) = DbBaseModel.createList(Of MemberRuleModel)(cp, "GroupId=" & blog.AuthoringGroupID)
                                     // For Each MemberRule In MemberRuleList
                                     // Call cp.Email.sendUser(MemberRule.MemberID.ToString(), EmailFromAddress, "Blog comment on " & blog.name, EmailBody, False, False)
                                     // Next
                                     // End If
                                     int blogAuthorsGroupId = cp.Group.GetId("Blog Authors");
                                     if (blogAuthorsGroupId != 0) {
-                                        var MemberRuleList = DbModel.createList<MemberRuleModel>(cp, "GroupId=" + blogAuthorsGroupId);
+                                        var MemberRuleList = DbBaseModel.createList<MemberRuleModel>(cp, "GroupId=" + blogAuthorsGroupId);
                                         foreach (var MemberRule in MemberRuleList)
-                                            cp.Email.sendUser(MemberRule.MemberID, EmailFromAddress, "Blog comment on " + blog.name, EmailBody, false, false);
+                                            cp.Email.sendUser(MemberRule.memberId, EmailFromAddress, "Blog comment on " + blog.name, EmailBody, false, false);
                                     }
                                 }
 
@@ -363,9 +364,9 @@ namespace Contensive.Addons.Blog.Views {
                                                 // 
                                                 // Approve Comment
                                                 // 
-                                                var BlogCommentModelList = DbModel.createList<BlogCommentModel>(cp, "(name=" + cp.Utils.EncodeRequestVariable(blog.name) + ")", "ID");
+                                                var BlogCommentModelList = DbBaseModel.createList<BlogCommentModel>(cp, "(name=" + cp.Utils.EncodeRequestVariable(blog.name) + ")", "ID");
                                                 if (BlogCommentModelList.Count > 0) {
-                                                    var BlogComment = DbModel.@add<BlogCommentModel>(cp);
+                                                    var BlogComment = DbBaseModel.addDefault<BlogCommentModel>(cp);
                                                     if (cp.CSNew().OK()) {
                                                         BlogComment.Approved = true;
                                                     }
@@ -374,7 +375,7 @@ namespace Contensive.Addons.Blog.Views {
                                                     // 
                                                     // Unapprove comment
                                                     // 
-                                                    var BlogComment = DbModel.@add<BlogCommentModel>(cp);
+                                                    var BlogComment = DbBaseModel.addDefault<BlogCommentModel>(cp);
                                                     if (BlogComment is not null) {
                                                         BlogComment.Approved = false;
                                                     }

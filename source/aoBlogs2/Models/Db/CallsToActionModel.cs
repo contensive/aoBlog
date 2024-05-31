@@ -1,13 +1,16 @@
 ﻿
 
+using Contensive.Models.Db;
+
 namespace Contensive.Addons.Blog.Models {
-    public class CallsToActionModel : DbModel {
+    public class CallsToActionModel : Contensive.Models.Db.DbBaseModel {
         // 
         // ====================================================================================================
+        public static DbBaseTableMetadataModel tableMetadata { get; private set; } = new DbBaseTableMetadataModel("Calls To Action", "callsToAction", "default", false);
         // -- const
-        public const string contentName = "Calls To Action";
-        public const string contentTableName = "callsToAction";
-        private new const string contentDataSource = "default";
+        //public const string contentName = "Calls To Action";
+        //public const string contentTableName = "callsToAction";
+        //private new const string contentDataSource = "default";
         // 
         // ====================================================================================================
         // -- instance properties

@@ -1,13 +1,15 @@
 ﻿
+using Contensive.Models.Db;
 
 namespace Contensive.Addons.Blog.Models {
-    public class BlogCommentModel : DbModel {       // <------ set set model Name and everywhere that matches this string
+    public class BlogCommentModel : Contensive.Models.Db.DbBaseModel {       // <------ set set model Name and everywhere that matches this string
         // 
         // ====================================================================================================
+        public static DbBaseTableMetadataModel tableMetadata { get; private set; } = new DbBaseTableMetadataModel("Blog Comments", "ccBlogCopy", "default", false);
         // -- const
-        public const string contentName = "Blog Comments";      // <------ set content name
-        public const string contentTableName = "ccBlogCopy";   // <------ set to tablename for the primary content (used for cache names)
-        private new const string contentDataSource = "default";             // <------ set to datasource if not default
+        //public const string contentName = "Blog Comments";      // <------ set content name
+        //public const string contentTableName = "ccBlogCopy";   // <------ set to tablename for the primary content (used for cache names)
+        //private new const string contentDataSource = "default";             // <------ set to datasource if not default
         // 
         // ====================================================================================================
         // -- instance properties

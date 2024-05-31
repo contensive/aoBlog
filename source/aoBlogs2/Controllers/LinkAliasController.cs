@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+using Contensive.Models.Db;
+using System;
 using Contensive.Addons.Blog.Models;
 using Contensive.BaseClasses;
 using Microsoft.VisualBasic;
@@ -146,8 +148,8 @@ namespace Contensive.Addons.Blog.Controllers {
         /// <param name="blogEntryId"></param>
         public static void deleteLinkAlias(CPBaseClass cp, int pageId, int blogEntryId) {
             string linkAliasQS = getLinkAliasQueryString(cp, pageId, blogEntryId);
-            foreach (var linkAlias in DbModel.createList<LinkAliasesModel>(cp, "(QueryStringSuffix=" + cp.Db.EncodeSQLText(linkAliasQS) + ")"))
-                DbModel.delete<LinkAliasesModel>(cp, linkAlias.id);
+            foreach (var linkAlias in DbBaseModel.createList<LinkAliasModel>(cp, "(QueryStringSuffix=" + cp.Db.EncodeSQLText(linkAliasQS) + ")"))
+                DbBaseModel.delete<LinkAliasModel>(cp, linkAlias.id);
         }
 
     }
