@@ -56,8 +56,7 @@ namespace Contensive.Addons.Blog.Controllers {
         public static string getDateForHtmlInput(DateTime source) {
             if (isDateEmpty(source)) {
                 return "";
-            }
-            else {
+            } else {
                 return source.Year.ToString() + "-" + source.Month.ToString().PadLeft(2, '0') + "-" + source.Day.ToString().PadLeft(2, '0');
             }
         }
@@ -105,8 +104,7 @@ namespace Contensive.Addons.Blog.Controllers {
                     Copy = Copy + "...";
                 }
                 return Copy;
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 cp.Site.ErrorReport(ex);
                 return "";
             }
@@ -125,26 +123,16 @@ namespace Contensive.Addons.Blog.Controllers {
             // 
             string Stream = "";
             try {
-                string AlignmentString;
-                // 
-                if (!AlignLeft) {
-                    AlignmentString = " align=right";
-                }
-                else {
-                    AlignmentString = " align=left";
-                }
-                // 
+                string AlignmentString = AlignLeft ? " align=right" : " align=left";
                 Stream = Stream + "<tr>";
                 Stream = Stream + "<td Class=\"aoBlogTableRowCellLeft\" " + AlignmentString + ">" + FieldCaption + "</td>";
                 Stream = Stream + "<td Class=\"aoBlogTableRowCellRight\">" + Innards + "</td>";
                 Stream = Stream + "</tr>";
-            }
-            // 
-            // GetFormTableRow = Stream
-            catch (Exception ex) {
+                return Stream;
+            } catch (Exception ex) {
                 cp.Site.ErrorReport(ex);
+                throw;
             }
-            return Stream;
         }
         // 
         // ====================================================================================
@@ -161,8 +149,7 @@ namespace Contensive.Addons.Blog.Controllers {
                 // 
                 result = cp.Html.InputText(RequestName, DefaultValue, 255);
                 result = Strings.Replace(result, "<INPUT ", "<INPUT maxlength=\"" + MaxLenghth + "\" ", 1, 99, CompareMethod.Text);
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 cp.Site.ErrorReport(ex);
             }
             return result;
@@ -170,13 +157,7 @@ namespace Contensive.Addons.Blog.Controllers {
         // 
         public static string addEditWrapper(CPBaseClass cp, string innerHtml, int recordId, string recordName, string contentName) {
 
-            return cp.Content.GetEditWrapper(innerHtml, contentName, recordId, recordName);
-
-            //if (!cp.User.IsEditingAnything)
-            //    return innerHtml;
-            //string header = cp0.Content.GetEditLink(contentName, recordId.ToString(), false, recordName, true);
-            //string content = cp.Html.div(innerHtml, "", "");
-            //return cp.Html.div(header + content, "", "ccEditWrapper");
+            return cp.Content.GetEditWrapper(innerHtml, contentName, recordId);
         }
 
     }
