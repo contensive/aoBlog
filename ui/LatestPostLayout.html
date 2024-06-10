@@ -25,13 +25,13 @@
                 section.post .post-inr .column {
                 margin-bottom: 42px;
                 }
-                section.post .post-inr .column img {
+                section.post .post-inr .column img.latestPostImgs {
                 width: 100%;
                 object-fit: cover;
                 margin-bottom: 20px;
                 }
                 @media (min-width: 768px) {
-                section.post .post-inr .column img {
+                section.post .post-inr .column img.latestPostImgs {
                     height: 164px;
                     width: 172px;
                     margin-right: 20px;
@@ -54,7 +54,7 @@
                 }
                 }
                 @media (min-width: 992px) and (min-width: 992px) {
-                section.post .post-inr .column.col1 img {
+                section.post .post-inr .column.col1 img.firstPostImg {
                     height: 452px;
                     width: 100%;
                 }
@@ -64,7 +64,7 @@
                     display: flex;
                 }
                 
-                section.post .post-inr .column.col2 img, section.post .post-inr .column.col3 img, section.post .post-inr .column.col4 img {
+                section.post .post-inr .column.col2 img.latestPostImgs, section.post .post-inr .column.col3 img.latestPostImgs, section.post .post-inr .column.col4 img.latestPostImgs.latestPostImgs {
                     width: 191px;
                     height: 172px;
                     margin-right: 20px;
@@ -115,7 +115,7 @@
                                     <div class="editWrapper">
                                         <div>{{{mainCell.LatestpostElementEditTag}}}</div>     
                                         <div class="d-md-flex d-lg-block">
-                                            <img src="{{mainCell.postImage}}" alt="">
+                                            <img src="{{mainCell.postImage}}" alt="{{alt}}" class="firstPostImg latestPostImgs">
                                             <div>
                                                 <p class="txt-hghlt">{{mainCell.postDate}}</p>
                                                 <h4 class="hdr-conR">{{mainCell.header}}</h4>
@@ -131,7 +131,7 @@
                                     <div class="editWrapper">
                                         {{#showCellTwo}}
                                         <div class="column col2">
-                                            <img src="{{secondCell.postImage}}" alt="">
+                                            <img src="{{secondCell.postImage}}"  alt="{{alt}}" class="latestPostImgs">
                                             <div>
                                                 <p class="txt-hghlt">{{secondCell.postDate}}</p>
                                                 <h4 class="hdr-conR">{{secondCell.header}}</h4>
@@ -147,7 +147,7 @@
                                     <div class="editWrapper">
                                         {{#showCellThree}}
                                         <div class="column col3">
-                                            <img src="{{thirdCell.postImage}}" alt="">
+                                            <img src="{{thirdCell.postImage}}"  alt="{{alt}}" class="latestPostImgs">
                                             <div>
                                                 <p class="txt-hghlt">{{thirdCell.postDate}}</p>
                                                 <h4 class="hdr-conR">{{thirdCell.header}}</h4>
@@ -162,7 +162,7 @@
                                     <div class="editWrapper">
                                         {{#showCellFour}}
                                         <div class="column col4">
-                                            <img src="{{lastCell.postImage}}" alt="">
+                                            <img src="{{lastCell.postImage}}" alt="{{alt}}" class="latestPostImgs">
                                             <div>
                                                 <p class="txt-hghlt">{{lastCell.postDate}}</p>
                                                 <h4 class="hdr-conR">{{lastCell.header}}</h4>
