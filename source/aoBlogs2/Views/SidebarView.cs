@@ -264,7 +264,6 @@ namespace Contensive.Addons.Blog.Views {
                 int ArchiveMonth;
                 int ArchiveYear;
                 string NameOfMonth;
-                string qs;
                 string SQL;
                 // 
                 SQL = "SELECT distinct Month(dateAdded) as ArchiveMonth, year(dateAdded) as ArchiveYear " + " From ccBlogCopy" + " Where (ContentControlID = " + cp.Content.GetID(constants.cnBlogEntries) + ") And (Active <> 0)" + " AND (BlogID=" + app.blog.id + ")" + " ORDER BY year(dateAdded) desc, Month(dateAdded) desc";
@@ -272,15 +271,15 @@ namespace Contensive.Addons.Blog.Views {
 
 
                 if (cs.OpenSQL(SQL)) {
-                    qs = app.blogBaseLink;
-                    qs = cp.Utils.ModifyQueryString(qs, constants.rnFormID, constants.FormBlogArchivedBlogs.ToString());
+                    //qs = app.blogBaseLink;
+                    string qs = cp.Utils.ModifyQueryString("", constants.rnFormID, constants.FormBlogArchivedBlogs.ToString());
                     while (cs.OK()) {
                         ArchiveMonth = cs.GetInteger("ArchiveMonth");
                         ArchiveYear = cs.GetInteger("ArchiveYear");
                         NameOfMonth = DateAndTime.MonthName(ArchiveMonth);
                         qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameArchiveMonth, ArchiveMonth.ToString());
                         qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameArchiveYear, ArchiveYear.ToString());
-                        returnHtml = returnHtml + Constants.vbCrLf + Constants.vbTab + Constants.vbTab + "<li class=\"aoBlogArchiveLink\"><a href=\"" + qs + "\">" + NameOfMonth + "&nbsp;" + ArchiveYear + "</a></li>";
+                        returnHtml = returnHtml + Constants.vbCrLf + Constants.vbTab + Constants.vbTab + "<li class=\"aoBlogArchiveLink\"><a href=\"" + app.blogBaseLink + "?" + qs + "\">" + NameOfMonth + "&nbsp;" + ArchiveYear + "</a></li>";
                         cs.GoNext();
                     }
                 }
