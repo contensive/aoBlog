@@ -41,7 +41,7 @@ namespace Contensive.Addons.Blog.Views {
                 result += BlogEntryCellView.getBlogPostCell(cp, app, app.blogEntry, true, false, return_CommentCnt, entryEditLink);
                 // 
                 var visit = DbBaseModel.create<VisitModel>(cp, cp.Visit.Id);
-                if (visit is not null) {
+                if (app?.user != null && visit is not null) {
                     if (!visit.excludeFromAnalytics) {
                         int blogEntryId = app.blogEntry is not null ? app.blogEntry.id : 0;
                         var BlogViewingLog = DbBaseModel.addDefault<BlogViewingLogModel>(cp);
@@ -56,7 +56,7 @@ namespace Contensive.Addons.Blog.Views {
                 }
                 hint = 50;
                 // 
-                if (app.user.isBlogEditor(cp, app.blog) & return_CommentCnt > 0) {
+                if (app?.user != null && app.user.isBlogEditor(cp, app.blog) && return_CommentCnt > 0) {
                     result += "<div class=\"aoBlogCommentCopy\">" + cp.Html.Button(constants.FormButtonApplyCommentChanges) + "</div>";
                 }
                 // 
@@ -66,7 +66,7 @@ namespace Contensive.Addons.Blog.Views {
                     hint = 70;
                     result += "<div class=\"aoBlogCommentHeader\">Post a Comment</div>";
                     // 
-                    if (!cp.UserError.OK()) {
+                    if (cp?.UserError != null && !cp.UserError.OK()) {
                         result += "<div class=\"aoBlogCommentError\">" + cp.UserError.OK() + "</div>";
                     }
                     // 
@@ -78,8 +78,7 @@ namespace Contensive.Addons.Blog.Views {
                         int Auth = cp.Doc.GetInteger("auth");
                         if (Auth == 1 & !AllowPasswordEmail) {
                             Auth = 3;
-                        }
-                        else if (Auth == 2 & !AllowMemberJoin) {
+                        } else if (Auth == 2 & !AllowMemberJoin) {
                             Auth = 3;
                         }
                         cp.Doc.AddRefreshQueryString(constants.rnFormID, constants.FormBlogPostDetails.ToString());
@@ -142,8 +141,7 @@ namespace Contensive.Addons.Blog.Views {
                                 }
                         }
                         hint = 140;
-                    }
-                    else {
+                    } else {
                         hint = 150;
                         result += "<div>&nbsp;</div>";
                         result += "<div class=\"aoBlogCommentCopy\">Title</div>";
@@ -153,8 +151,7 @@ namespace Contensive.Addons.Blog.Views {
                             result += "<div>&nbsp;</div>";
                             result += "<div class=\"aoBlogCommentCopy\">Comment</div>";
                             result += "<div class=\"aoBlogCommentCopy\">" + cp.Html5.InputTextArea(constants.RequestNameCommentCopy, 500, cp.Doc.GetText(constants.RequestNameCommentCopy)) + "</div>";
-                        }
-                        else {
+                        } else {
                             hint = 170;
                             result += "<div class=\"aoBlogCommentCopy\">" + genericController.getField(cp, constants.RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(constants.RequestNameCommentTitle.ToString())) + "</div>";
                             result += "<div>&nbsp;</div>";
@@ -179,7 +176,7 @@ namespace Contensive.Addons.Blog.Views {
                 // edit link
                 // 
                 hint = 200;
-                if (app.user.isBlogEditor(cp, app.blog)) {
+                if (app?.user != null && app.user.isBlogEditor(cp, app.blog)) {
                     qs = cp.Doc.RefreshQueryString;
                     qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameBlogEntryID, app.blogEntry.id);
                     qs = cp.Utils.ModifyQueryString(qs, constants.rnFormID, constants.FormBlogEntryEditor);
@@ -216,8 +213,7 @@ namespace Contensive.Addons.Blog.Views {
                 result = genericController.addEditWrapper(cp, result, app.blogEntry.id, app.blogEntry.name, BlogPostModel.tableMetadata.contentName);
                 // 
                 return result;
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 cp.Site.ErrorReport(ex, "Hint [" + hint + "]");
                 throw;
             }
@@ -240,8 +236,7 @@ namespace Contensive.Addons.Blog.Views {
                     // Process out of order, go to main
                     // 
                     result = constants.FormBlogPostList;
-                }
-                else {
+                } else {
                     string Copy;
                     string formKey;
                     int CommentID;
@@ -250,8 +245,7 @@ namespace Contensive.Addons.Blog.Views {
                         // Cancel button, go to main
                         // 
                         result = constants.FormBlogPostList;
-                    }
-                    else if ((request.ButtonValue ?? "") == constants.FormButtonPostComment) {
+                    } else if ((request.ButtonValue ?? "") == constants.FormButtonPostComment) {
                         // todo re-enable recaptcha 20190123
                         if (blog.recaptcha) {
                             // 
@@ -276,8 +270,7 @@ namespace Contensive.Addons.Blog.Views {
                             if (BlogCommentModelList.Count != 0) {
                                 cp.UserError.Add("<p>This comment has already been accepted.</p>");
                                 RetryCommentPost = false;
-                            }
-                            else {
+                            } else {
                                 // Dim EntryID = cp.Doc.GetInteger(RequestNameBlogEntryID)
                                 // Dim BlogEntry As BlogEntryModel = DbBaseModel.create(Of BlogEntryModel)(cp, EntryID)
                                 var BlogComment = DbBaseModel.addDefault<BlogCommentModel>(cp);
@@ -298,8 +291,7 @@ namespace Contensive.Addons.Blog.Views {
                                     string EntryLink = blogEntry.RSSLink;
                                     if (Strings.InStr(1, EntryLink, "?") == 0) {
                                         EntryLink = EntryLink + "?";
-                                    }
-                                    else {
+                                    } else {
                                         EntryLink = EntryLink + "&";
                                     }
                                     EntryLink = EntryLink + "blogentryid=" + blogEntry.id;
@@ -336,8 +328,7 @@ namespace Contensive.Addons.Blog.Views {
                             }
                         }
                         result = constants.FormBlogPostDetails;
-                    }
-                    else if ((request.ButtonValue ?? "") == constants.FormButtonApplyCommentChanges) {
+                    } else if ((request.ButtonValue ?? "") == constants.FormButtonApplyCommentChanges) {
                         // 
                         // Post approval changes if the person is the owner
                         // 
@@ -359,8 +350,7 @@ namespace Contensive.Addons.Blog.Views {
                                                 // Delete comment
                                                 // 
                                                 cp.Content.Delete("Blog Comments", "(id=" + CommentID + ")and(BlogID=" + blog.id + ")");
-                                            }
-                                            else if (cp.Doc.GetBoolean("Approve" + Suffix) & !cp.Doc.GetBoolean("Approved" + Suffix)) {
+                                            } else if (cp.Doc.GetBoolean("Approve" + Suffix) & !cp.Doc.GetBoolean("Approved" + Suffix)) {
                                                 // 
                                                 // Approve Comment
                                                 // 
@@ -370,8 +360,7 @@ namespace Contensive.Addons.Blog.Views {
                                                     if (cp.CSNew().OK()) {
                                                         BlogComment.Approved = true;
                                                     }
-                                                }
-                                                else if (!cp.Doc.GetBoolean("Approve" + Suffix) & cp.Doc.GetBoolean("Approved" + Suffix)) {
+                                                } else if (!cp.Doc.GetBoolean("Approve" + Suffix) & cp.Doc.GetBoolean("Approved" + Suffix)) {
                                                     // 
                                                     // Unapprove comment
                                                     // 
