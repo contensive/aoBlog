@@ -1,15 +1,11 @@
 ﻿
 using Contensive.Models.Db;
 
-namespace Contensive.Addons.Blog.Models {
+namespace Contensive.Blog.Models {
     public class BlogEntryCTARuleModel : Contensive.Models.Db.DbBaseModel {
         // 
         // ====================================================================================================
         public static DbBaseTableMetadataModel tableMetadata { get; private set; } = new DbBaseTableMetadataModel("Blog Entry CTA Rules", "BlogEntryCTARules", "default", false);
-        // -- const
-        //public const string contentName = "Blog Entry CTA Rules";
-        //public const string contentTableName = "BlogEntryCTARules";
-        //private  const string contentDataSource = "default";
         // 
         // ====================================================================================================
         // -- instance properties

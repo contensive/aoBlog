@@ -1,10 +1,10 @@
 ﻿
 using System;
 using System.Linq;
-using Contensive.Addons.Blog.Models;
+using Contensive.Blog.Models;
 using Contensive.BaseClasses;
 
-namespace Contensive.Addons.Blog.Views {
+namespace Contensive.Blog.Views {
     // 
     public class BlogImageView {
         // 
@@ -15,13 +15,13 @@ namespace Contensive.Addons.Blog.Views {
             try {
                 // 
                 if (blogImage is not null) {
-                    var imageSizeList = blogImage.AltSizeList.Split(',').ToList();
+                    string altSizeList = blogImage.altSizeList;
                     Return_ImageDescription = blogImage.description;
                     Return_Imagename = blogImage.name;
-                    Return_ThumbnailFilename = cp.Image.GetBestFitWebP(blogImage.Filename, app.blog.ImageWidthMax, (int)Math.Round(app.blog.ImageWidthMax * 0.75d), imageSizeList);
-                    Return_ImageFilename = cp.Image.GetBestFitWebP(blogImage.Filename, app.blog.ThumbnailImageWidth, 0, imageSizeList);
-                    if ((string.Join(",", imageSizeList) ?? "") != (blogImage.AltSizeList ?? "")) {
-                        blogImage.AltSizeList = string.Join(",", imageSizeList);
+                    Return_ThumbnailFilename = cp.Image.ResizeAndCrop(blogImage.Filename, app.blog.imageWidthMax, (int)Math.Round(app.blog.imageWidthMax * 0.75d), ref altSizeList, out bool isNewSize);
+                    Return_ImageFilename = cp.Image.ResizeAndCrop(blogImage.Filename, app.blog.thumbnailImageWidth, 0, ref altSizeList, out bool isNewSize2);
+                    if (isNewSize2 || isNewSize) {
+                        blogImage.altSizeList = altSizeList;
                         blogImage.save(cp);
                     }
                 }

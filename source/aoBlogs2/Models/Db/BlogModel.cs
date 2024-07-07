@@ -1,25 +1,22 @@
-﻿using Contensive.Addons.Blog.Controllers;
+﻿using Contensive.Blog.Controllers;
 using Contensive.BaseClasses;
 using Contensive.DesignBlockBase.Models.Db;
 using Contensive.Models.Db;
 using System;
 
-namespace Contensive.Addons.Blog.Models {
+namespace Contensive.Blog.Models {
     public class BlogModel : SettingsBaseModel {
         // 
         // ====================================================================================================
         public static DbBaseTableMetadataModel tableMetadata { get; private set; } = new DbBaseTableMetadataModel("Blogs", "ccBlogs", "default", false);
         // -- const
-        //public const string contentName = "Blogs";
-        //public const string contentTableName = "ccBlogs";
-        //private  const string contentDataSource = "default";
         // 
         // ====================================================================================================
         // -- instance properties
-        public bool AllowAnonymous { get; set; }
+        public bool allowAnonymous { get; set; }
         public bool allowArchiveList { get; set; }
         public bool allowArticleCTA { get; set; }
-        public bool AllowCategories { get; set; }
+        public bool allowCategories { get; set; }
         public bool allowEmailSubscribe { get; set; }
         public bool allowFacebookLink { get; set; }
         public bool allowGooglePlusLink { get; set; }
@@ -28,22 +25,22 @@ namespace Contensive.Addons.Blog.Models {
         public bool allowTwitterLink { get; set; }
         // Public Property AuthoringGroupID As Integer
         public bool autoApproveComments { get; set; }
-        public string BriefFilename { get; set; }
-        public string Caption { get; set; }
-        public string Copy { get; set; }
+        public string briefFilename { get; set; }
+        public string caption { get; set; }
+        public string copy { get; set; }
         public bool emailComment { get; set; }
         public int emailSubscribeGroupId { get; set; }
         public string facebookLink { get; set; }
         public string followUsCaption { get; set; }
         public string googlePlusLink { get; set; }
-        public bool HideContributer { get; set; }
-        public int ImageWidthMax { get; set; }
-        public int OverviewLength { get; set; }
-        public int OwnerMemberID { get; set; }
+        public bool hideContributer { get; set; }
+        public int imageWidthMax { get; set; }
+        public int overviewLength { get; set; }
+        public int ownerMemberId { get; set; }
         public int postsToDisplay { get; set; }
         public bool recaptcha { get; set; }
-        public int RSSFeedID { get; set; }
-        public int ThumbnailImageWidth { get; set; }
+        public int rssFeedId { get; set; }
+        public int thumbnailImageWidth { get; set; }
         public string twitterLink { get; set; }
         /// <summary>
         /// Meta data for the landing page of the blog
@@ -58,6 +55,7 @@ namespace Contensive.Addons.Blog.Models {
         /// Create a new default blog, ready to use. Must be an administrator. If not, returns null
         /// </summary>
         /// <param name="cp"></param>
+        /// <param name="instanceGuid"></param>
         /// <returns></returns>
         public static BlogModel verifyBlog(CPBaseClass cp, string instanceGuid) {
             try {
@@ -69,32 +67,32 @@ namespace Contensive.Addons.Blog.Models {
 
                 Blog =  DbBaseModel.addDefault<BlogModel>(cp);
                 Blog.name = "Default Blog";
-                Blog.Caption = "The New Blog";
-                Blog.Copy = "<p>This is the description of your new blog. It always appears at the top of your list of blog posts. Edit or remove this description by editing the blog features.</p>";
-                Blog.OwnerMemberID = cp.User.Id;
+                Blog.caption = "The New Blog";
+                Blog.copy = "<p>This is the description of your new blog. It always appears at the top of your list of blog posts. Edit or remove this description by editing the blog features.</p>";
+                Blog.ownerMemberId = cp.User.Id;
                 // Blog.AuthoringGroupID = cp.Group.GetId("Site Managers")
-                Blog.AllowAnonymous = true;
+                Blog.allowAnonymous = true;
                 Blog.autoApproveComments = false;
-                Blog.AllowCategories = true;
+                Blog.allowCategories = true;
                 Blog.postsToDisplay = 5;
-                Blog.OverviewLength = 500;
-                Blog.ThumbnailImageWidth = 200;
-                Blog.ImageWidthMax = 400;
+                Blog.overviewLength = 500;
+                Blog.thumbnailImageWidth = 200;
+                Blog.imageWidthMax = 400;
                 Blog.allowArticleCTA = true;
                 Blog.ccguid = instanceGuid;
                 Blog.save(cp);
                 var rssFeed = RSSFeedModel.verifyFeed(cp, Blog);
-                Blog.RSSFeedID = rssFeed is not null ? rssFeed.id : 0;
+                Blog.rssFeedId = rssFeed is not null ? rssFeed.id : 0;
                 Blog.save(cp);
 
-                var blogEntry = DbBaseModel.addDefault<BlogPostModel>(cp);
+                var blogEntry = DbBaseModel.addDefault<BlogEntryModel>(cp);
                 if (blogEntry is not null) {
-                    blogEntry.blogID = Blog.id;
+                    blogEntry.blogId = Blog.id;
                     blogEntry.name = "Welcome to the New Blog!";
-                    blogEntry.RSSTitle = "";
+                    blogEntry.rssTitle = "";
                     blogEntry.copy = cp.WwwFiles.Read(@"blogs\DefaultPostCopy.txt");
                     // 
-                    LinkAliasController.addLinkAlias(cp, blogEntry.name, cp.Doc.PageId, blogEntry.id);
+                    LinkAliasController.addLinkAlias(cp, blogEntry.name, blogEntry.id);
 
                     // Dim qs As String = cp.Utils.ModifyQueryString("", RequestNameBlogEntryID, CStr(blogEntry.id))
                     // qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogPostDetails.ToString())
@@ -103,7 +101,7 @@ namespace Contensive.Addons.Blog.Models {
                     // If (LinkAlias.Count > 0) Then
                     // Dim EntryLink As String = LinkAlias.First().name
                     // End If
-                    blogEntry.RSSDescription = genericController.getBriefCopy(cp, blogEntry.copy, 150);
+                    blogEntry.rssDescription = _GenericController.getBriefCopy(cp, blogEntry.copy, 150);
                     blogEntry.save(cp);
                 }
                 // 

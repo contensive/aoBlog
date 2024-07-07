@@ -4,20 +4,16 @@ using Contensive.Models.Db;
 using System;
 using System.Collections.Generic;
 
-namespace Contensive.Addons.Blog.Models {
+namespace Contensive.Blog.Models {
     public class BlogImageModel : Contensive.Models.Db.DbBaseModel {        // <------ set set model Name and everywhere that matches this string
         // 
         // ====================================================================================================
         public static DbBaseTableMetadataModel tableMetadata { get; private set; } = new DbBaseTableMetadataModel("Blog Images", "BlogImages", "default", false);
-        // -- const
-        //public const string contentName = "Blog Images";      // <------ set content name
-        //public const string contentTableName = "BlogImages";   // <------ set to tablename for the primary content (used for cache names)
-        //private new const string contentDataSource = "default";             // <------ set to datasource if not default
         // 
         // ====================================================================================================
         // -- instance properties
         // instancePropertiesGoHere
-        public string AltSizeList { get; set; }
+        public string altSizeList { get; set; }
         public string description { get; set; }
         public string Filename { get; set; }
         public int height { get; set; }

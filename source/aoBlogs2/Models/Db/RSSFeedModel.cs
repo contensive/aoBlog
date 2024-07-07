@@ -3,15 +3,12 @@ using System;
 using Contensive.BaseClasses;
 using Contensive.Models.Db;
 
-namespace Contensive.Addons.Blog.Models {
+namespace Contensive.Blog.Models {
     public class RSSFeedModel : Contensive.Models.Db.DbBaseModel {
         // 
         // ====================================================================================================
         public static DbBaseTableMetadataModel tableMetadata { get; private set; } = new DbBaseTableMetadataModel("RSS Feeds", "ccRSSFeeds", "default", false);
         // -- const
-        //public const string contentName = "RSS Feeds";      // <------ set content name
-        //public const string contentTableName = "ccRSSFeeds";   // <------ set to tablename for the primary content (used for cache names)
-        //private  const string contentDataSource = "default";             // <------ set to datasource if not default
         // 
         // ====================================================================================================
         // -- instance properties
@@ -31,8 +28,8 @@ namespace Contensive.Addons.Blog.Models {
         internal static RSSFeedModel verifyFeed(CPBaseClass cp, BlogModel blog) {
             try {
                 RSSFeedModel rssFeed;
-                if (blog.RSSFeedID > 0) {
-                    rssFeed = create<RSSFeedModel>(cp, blog.RSSFeedID);
+                if (blog.rssFeedId > 0) {
+                    rssFeed = create<RSSFeedModel>(cp, blog.rssFeedId);
                     if (rssFeed is not null)
                         return rssFeed;
                 }
@@ -41,7 +38,7 @@ namespace Contensive.Addons.Blog.Models {
                 rssFeed.description = "";
                 rssFeed.link = "";
                 rssFeed.logoFilename = "";
-                rssFeed.name = "RSS Feed for Blog #" + blog.id + ", " + blog.Caption;
+                rssFeed.name = "RSS Feed for Blog #" + blog.id + ", " + blog.caption;
                 rssFeed.rssDateUpdated = DateTime.MinValue;
                 rssFeed.rssFilename = "RSS" + rssFeed.id + ".xml";
                 rssFeed.save(cp);

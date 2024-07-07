@@ -88,7 +88,7 @@ using Microsoft.VisualBasic;
 /* TODO ERROR: Skipped IfDirectiveTrivia
 #If _MYTYPE <> "Empty" Then
 */
-namespace Contensive.Addons.Blog.My {
+namespace Contensive.Blog.My {
 
     /* TODO ERROR: Skipped IfDirectiveTrivia
     #If _MYAPPLICATIONTYPE = "WindowsForms" OrElse _MYAPPLICATIONTYPE = "Windows" OrElse _MYAPPLICATIONTYPE = "Console" Then

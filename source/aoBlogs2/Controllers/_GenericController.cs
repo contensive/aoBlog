@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Contensive.Addons.Blog.Models;
-using Contensive.BaseClasses;
-using Contensive.Models.Db;
+﻿using Contensive.BaseClasses;
 using Microsoft.VisualBasic;
+using System;
+using System.Collections.Generic;
 
-namespace Contensive.Addons.Blog.Controllers {
-    public sealed class genericController {
-        private genericController() {
+namespace Contensive.Blog.Controllers {
+    public sealed class _GenericController {
+        private _GenericController() {
         }
         // 
         // ====================================================================================================

@@ -1,9 +1,10 @@
 ﻿
 using System;
-using Contensive.Addons.Blog.Models;
+using Contensive.Blog.Models;
 using Contensive.BaseClasses;
+using Contensive.Blog.Views;
 
-namespace Contensive.Addons.Blog.Views {
+namespace Contensive.Blog.Controllers {
     // 
     public class BlogBodyController {
         // 

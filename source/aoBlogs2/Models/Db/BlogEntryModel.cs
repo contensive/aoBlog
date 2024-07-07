@@ -2,23 +2,19 @@
 using Contensive.Models.Db;
 using System;
 
-namespace Contensive.Addons.Blog.Models {
-    public class BlogPostModel : Contensive.Models.Db.DbBaseModel {        // <------ set set model Name and everywhere that matches this string
-        // 
+namespace Contensive.Blog.Models {
+    public class BlogEntryModel : Contensive.Models.Db.DbBaseModel { 
+        //
         // ====================================================================================================
         public static DbBaseTableMetadataModel tableMetadata { get; private set; } = new DbBaseTableMetadataModel("Blog Entries", "ccBlogCopy", "default", false);
-        // -- const
-        //public const string contentName = "Blog Entries";      // <------ set content name
-        //public const string contentTableName = "ccBlogCopy";   // <------ set to tablename for the primary content (used for cache names)
-        //private new const string contentDataSource = "default";             // <------ set to datasource if not default
-        // 
+        // -- const 
         // ====================================================================================================
         // -- instance properties
         /// <summary>
         /// if true, comments appear on this article
         /// </summary>
         /// <returns></returns>
-        public bool AllowComments { get; set; } = false;
+        public bool allowComments { get; set; } = false;
         /// <summary>
         /// Determines how the primary image is displayed 1 = per stylesheet, 2 = right, 3 = left, 4 = hide
         /// </summary>
@@ -27,12 +23,12 @@ namespace Contensive.Addons.Blog.Models {
         /// The user who last published this article.
         /// </summary>
         /// <returns></returns>
-        public int AuthorMemberID { get; set; }
+        public int authorMemberId { get; set; }
         /// <summary>
         /// Use for categorization. Like Tags but restricted
         /// </summary>
         /// <returns></returns>
-        public int blogCategoryID { get; set; }
+        public int blogCategoryId { get; set; }
         /// <summary>
         /// The article text
         /// </summary>
@@ -47,7 +43,7 @@ namespace Contensive.Addons.Blog.Models {
         /// number of times this article page is viewed
         /// </summary>
         /// <returns></returns>
-        public int Viewings { get; set; }
+        public int viewings { get; set; }
         /// <summary>
         /// Meta data for the page
         /// </summary>
@@ -59,25 +55,24 @@ namespace Contensive.Addons.Blog.Models {
         /// RSS data for the RSS feed
         /// </summary>
         /// <returns></returns>
-        public DateTime RSSDateExpire { get; set; }
-        public DateTime RSSDatePublish { get; set; }
-        public string RSSDescription { get; set; }
-        public string RSSLink { get; set; }
-        public string RSSTitle { get; set; }
+        public DateTime rssDateExpire { get; set; }
+        public DateTime rssDatePublish { get; set; }
+        public string rssDescription { get; set; }
+        public string rssLink { get; set; }
+        public string rssTitle { get; set; }
         /// <summary>
         /// Add a video or audio file to the article. The RSS feed will create it as a podcast enclosure.
         /// </summary>
         /// <returns></returns>
-        public string PodcastMediaLink { get; set; }
-        public int PodcastSize { get; set; }
+        public string podcastMediaLink { get; set; }
+        public int podcastSize { get; set; }
         // 
-        public int blogID { get; set; }
+        public int blogId { get; set; }
         /// <summary>
         /// if provided, this is the public date displayed. Else, the dateAdded is used
         /// </summary>
         /// <returns></returns>
         public DateTime? datePublished { get; set; }
-        public string header { get; set; }
         public int blogpostpageid { get; set; }
     }
 }

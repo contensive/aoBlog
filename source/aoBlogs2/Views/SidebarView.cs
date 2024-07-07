@@ -1,12 +1,12 @@
 ﻿
 using Contensive.Models.Db;
 using System;
-using Contensive.Addons.Blog.Models;
-using Contensive.Addons.Blog.Models.View;
+using Contensive.Blog.Models;
+using Contensive.Blog.Models.View;
 using Contensive.BaseClasses;
 using Microsoft.VisualBasic;
 
-namespace Contensive.Addons.Blog.Views {
+namespace Contensive.Blog.Views {
     // 
     public class SidebarView {
         // 
@@ -175,7 +175,7 @@ namespace Contensive.Addons.Blog.Views {
                         }
                         // 
                         if (blog.allowRSSSubscribe) {
-                            var rssFeed = DbBaseModel.create<RSSFeedModel>(cp, blog.RSSFeedID);
+                            var rssFeed = DbBaseModel.create<RSSFeedModel>(cp, blog.rssFeedId);
                             // 
                             if (rssFeed is null || string.IsNullOrEmpty(rssFeed.rssFilename)) {
                                 adminSuggestions += cp.Html.li("This blog includes an RSS Feed, but no feed has been created. It his persists, please contact the site developer. Disable RSS feeds for this blog to hide this message.");

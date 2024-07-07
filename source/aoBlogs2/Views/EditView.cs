@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
-using Contensive.Addons.Blog.Controllers;
-using Contensive.Addons.Blog.Models;
+using Contensive.Blog.Controllers;
+using Contensive.Blog.Models;
 using Contensive.BaseClasses;
 using Microsoft.VisualBasic;
 using Contensive.Models.Db;
 
-namespace Contensive.Addons.Blog.Views {
+namespace Contensive.Blog.Views {
     // 
     public sealed class EditView {
         // 
@@ -43,26 +43,26 @@ namespace Contensive.Addons.Blog.Views {
                     // Edit an entry
                     blogEntry_id = app.blogEntry.id;
                     blogEntry_name = app.blogEntry.name;
-                    blongEntry_blogCategoryId = app.blogEntry.blogCategoryID;
+                    blongEntry_blogCategoryId = app.blogEntry.blogCategoryId;
                     blogEntry_copy = app.blogEntry.copy;
                     if (string.IsNullOrEmpty(blogEntry_copy)) {
                         blogEntry_copy = "<!-- cc --><p><br></p><!-- /cc -->";
                     }
                     blogEntry_tagList = app.blogEntry.tagList;
                 }
-                result.Append(genericController.getFormTableRow(cp, "<div style=\"padding-top:3px\">Title: </div>", cp.Html.InputText(constants.RequestNameBlogEntryName, blogEntry_name, 255, "form-control")));
-                result.Append(genericController.getFormTableRow(cp, "<div style=\"padding-top:108px\">Post: </div>", cp.Html.InputWysiwyg(constants.RequestNameBlogEntryCopy, blogEntry_copy, CPHtmlBaseClass.EditorUserScope.ContentManager)));
+                result.Append(_GenericController.getFormTableRow(cp, "<div style=\"padding-top:3px\">Title: </div>", cp.Html.InputText(constants.RequestNameBlogEntryName, blogEntry_name, 255, "form-control")));
+                result.Append(_GenericController.getFormTableRow(cp, "<div style=\"padding-top:108px\">Post: </div>", cp.Html.InputWysiwyg(constants.RequestNameBlogEntryCopy, blogEntry_copy, CPHtmlBaseClass.EditorUserScope.ContentManager)));
                 if (app.sitePropertyAllowTags) {
-                    result.Append(genericController.getFormTableRow(cp, "<div style=\"padding-top:3px\">Tag List: </div>", cp.Html.InputText(constants.RequestNameBlogEntryTagList, blogEntry_tagList, 255, "form-control")));
+                    result.Append(_GenericController.getFormTableRow(cp, "<div style=\"padding-top:3px\">Tag List: </div>", cp.Html.InputText(constants.RequestNameBlogEntryTagList, blogEntry_tagList, 255, "form-control")));
                 }
-                if (app.blog.AllowCategories) {
+                if (app.blog.allowCategories) {
                     string CategorySelect = cp.Html.SelectContent(constants.RequestNameBlogEntryCategoryID, blongEntry_blogCategoryId.ToString(), "Blog Categories");
                     if (Strings.InStr(1, CategorySelect, "<option value=\"\"></option></select>", Constants.vbTextCompare) != 0) {
                         // 
                         // Select is empty
                         CategorySelect = "<div>This blog has no categories defined</div>";
                     }
-                    result.Append(genericController.getFormTableRow(cp, "Category: ", CategorySelect));
+                    result.Append(_GenericController.getFormTableRow(cp, "Category: ", CategorySelect));
                 }
                 // 
                 // file upload form taken from Resource Library
@@ -149,17 +149,17 @@ namespace Contensive.Addons.Blog.Views {
                 imageForm = imageForm + cp.Html.Hidden("LibraryUploadCount", Ptr.ToString(), "LibraryUploadCount") + hiddenList.ToString();
 
                 // 
-                result.Append(genericController.getFormTableRow(cp, "Images: ", imageForm));
+                result.Append(_GenericController.getFormTableRow(cp, "Images: ", imageForm));
                 if (blogEntry_id != 0) {
-                    result.Append(genericController.getFormTableRow(cp, "", cp.Html.Button(constants.rnButton, constants.FormButtonPost) + "&nbsp;" + cp.Html.Button(constants.rnButton, constants.FormButtonCancel) + "&nbsp;" + cp.Html.Button(constants.rnButton, constants.FormButtonDelete)));
+                    result.Append(_GenericController.getFormTableRow(cp, "", cp.Html.Button(constants.rnButton, constants.FormButtonPost) + "&nbsp;" + cp.Html.Button(constants.rnButton, constants.FormButtonCancel) + "&nbsp;" + cp.Html.Button(constants.rnButton, constants.FormButtonDelete)));
                 }
                 else {
-                    result.Append(genericController.getFormTableRow(cp, "", cp.Html.Button(constants.rnButton, constants.FormButtonPost) + "&nbsp;" + cp.Html.Button(constants.rnButton, constants.FormButtonCancel)));
+                    result.Append(_GenericController.getFormTableRow(cp, "", cp.Html.Button(constants.rnButton, constants.FormButtonPost) + "&nbsp;" + cp.Html.Button(constants.rnButton, constants.FormButtonCancel)));
                 }
                 string qs = cp.Doc.RefreshQueryString;
                 qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameBlogEntryID, "", true);
                 qs = cp.Utils.ModifyQueryString(qs, constants.rnFormID, constants.FormBlogPostList.ToString());
-                result.Append(Constants.vbCrLf + genericController.getFormTableRow2(cp, "<div class=\"aoBlogFooterLink\"><a href=\"" + app.blogPageBaseLink + "\">" + constants.BackToRecentPostsMsg + "</a></div>"));
+                result.Append(Constants.vbCrLf + _GenericController.getFormTableRow2(cp, "<div class=\"aoBlogFooterLink\"><a href=\"" + app.blogPageBaseLink + "\">" + constants.BackToRecentPostsMsg + "</a></div>"));
                 // 
                 result.Append(cp.Html.Hidden(constants.RequestNameBlogEntryID, blogEntry_id.ToString()));
                 result.Append(cp.Html.Hidden(constants.RequestNameSourceFormID, constants.FormBlogEntryEditor.ToString()));
@@ -183,6 +183,7 @@ namespace Contensive.Addons.Blog.Views {
         /// Process a new blog entry or save the edit from an existing blog entry. If BlogEntry object is nothing, this is a new entry.
         /// </summary>
         /// <param name="cp"></param>
+        /// <param name="app"></param>
         /// <param name="request"></param>
         /// <returns></returns>
         public static int ProcessFormBlogEdit(CPBaseClass cp, ApplicationEnvironmentModel app, Models.View.RequestModel request) {
@@ -201,7 +202,7 @@ namespace Contensive.Addons.Blog.Views {
                     else if ((request.ButtonValue ?? "") == constants.FormButtonDelete) {
                         // 
                         // Delete
-                        DbBaseModel.delete<BlogPostModel>(cp, blogEntry.id);
+                        DbBaseModel.delete<BlogEntryModel>(cp, blogEntry.id);
                         RSSFeedModel.UpdateBlogFeed(cp);
                         blogEntry = null;
                         return constants.FormBlogPostList;
@@ -211,7 +212,7 @@ namespace Contensive.Addons.Blog.Views {
                         // Post
                         // 
                         if (blogEntry is null) {
-                            blogEntry = DbBaseModel.addDefault<BlogPostModel>(cp);
+                            blogEntry = DbBaseModel.addDefault<BlogEntryModel>(cp);
                             // 
                             // -- by default, the RSS feed should be checked for this new blog entry
                             var rule = RSSFeedBlogRuleModel.@add(cp);
@@ -222,13 +223,13 @@ namespace Contensive.Addons.Blog.Views {
 
                         blogEntry.name = request.BlogEntryName;
                         blogEntry.copy = request.BlogEntryCopy;
-                        blogEntry.blogID = blog.id;
+                        blogEntry.blogId = blog.id;
                         blogEntry.save(cp);
                         if (app.sitePropertyAllowTags) {                        // 
                             blogEntry.tagList = request.BlogEntryTagList;
                         }
-                        if (app.blog.AllowCategories) {
-                            blogEntry.blogCategoryID = request.BlogEntryCategoryId;
+                        if (app.blog.allowCategories) {
+                            blogEntry.blogCategoryId = request.BlogEntryCategoryId;
                         }
                         // Upload files
                         // 

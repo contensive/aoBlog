@@ -2,7 +2,7 @@
 using Contensive.BaseClasses;
 using System;
 
-namespace Contensive.Addons.Blog {
+namespace Contensive.Blog {
     public class LatestPostWidgetController {
         public static string limitString(CPBaseClass cp, string content, int maxLength) {
             try {

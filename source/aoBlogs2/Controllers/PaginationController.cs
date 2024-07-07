@@ -3,7 +3,7 @@ using System;
 using System.Text;
 using Contensive.BaseClasses;
 
-namespace Contensive.Addons.Blog.Controllers {
+namespace Contensive.Blog.Controllers {
     // 
     public class PaginationController {
         // 

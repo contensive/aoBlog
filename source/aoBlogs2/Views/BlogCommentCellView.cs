@@ -1,17 +1,17 @@
 ﻿using System;
-using Contensive.Addons.Blog.Models;
+using Contensive.Blog.Models;
 using Contensive.BaseClasses;
 using Contensive.Models.Db;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
 
-namespace Contensive.Addons.Blog.Views {
+namespace Contensive.Blog.Views {
     // 
     public sealed class BlogCommentCellView {
         // 
         // ====================================================================================
         // 
-        public static string getBlogCommentCell(CPBaseClass cp, BlogModel blog, BlogPostModel blogEntry, BlogCommentModel blogComment, Models.PersonModel user, bool IsSearchListing) {
+        public static string getBlogCommentCell(CPBaseClass cp, BlogModel blog, BlogEntryModel blogEntry, BlogCommentModel blogComment, Models.PersonModel user, bool IsSearchListing) {
             try {
                 string result = "";
                 // 
@@ -23,13 +23,13 @@ namespace Contensive.Addons.Blog.Views {
                     result += "<div class=\"aoBlogCommentDivider\">&nbsp;</div>";
                 }
                 result += "<div class=\"aoBlogCommentName\">" + cp.Utils.EncodeHTML(blogComment.name) + "</div>";
-                string Copy = blogComment.CopyText;
+                string Copy = blogComment.copyText;
                 Copy = cp.Utils.EncodeHTML(Copy);
                 Copy = Strings.Replace(Copy, Constants.vbCrLf, "<BR />");
                 result += "<div class=\"aoBlogCommentCopy\">" + Copy + "</div>";
                 string rowCopy = "";
                 if (true) {
-                    var author = DbBaseModel.create<Models.PersonModel>(cp, blogEntry.AuthorMemberID);
+                    var author = DbBaseModel.create<Models.PersonModel>(cp, blogEntry.authorMemberId);
                     if (author is not null && !string.IsNullOrEmpty(author.name)) {
                         rowCopy += "by " + cp.Utils.EncodeHTML(author.name);
                         if (blogComment.dateAdded != DateTime.MinValue) {
@@ -48,7 +48,7 @@ namespace Contensive.Addons.Blog.Views {
                     if (!string.IsNullOrEmpty(rowCopy)) {
                         rowCopy += " | ";
                     }
-                    rowCopy = rowCopy + cp.Html.Hidden("CommentID", blogComment.id.ToString()) + cp.Html.CheckBox("Approve", blogComment.Approved) + cp.Html.Hidden("Approved", blogComment.Approved.ToString()) + "&nbsp;Approved&nbsp;" + " | " + cp.Html.CheckBox("Delete", false) + "&nbsp;Delete" + "";
+                    rowCopy = rowCopy + cp.Html.Hidden("CommentID", blogComment.id.ToString()) + cp.Html.CheckBox("Approve", blogComment.approved) + cp.Html.Hidden("Approved", blogComment.approved.ToString()) + "&nbsp;Approved&nbsp;" + " | " + cp.Html.CheckBox("Delete", false) + "&nbsp;Delete" + "";
 
 
 
@@ -61,7 +61,7 @@ namespace Contensive.Addons.Blog.Views {
                     result += "<div class=\"aoBlogCommentByLine\">Posted " + rowCopy + "</div>";
                 }
                 // 
-                if (!blogComment.Approved & !user.isBlogEditor(cp, blog) & blogComment.AuthorMemberID == cp.User.Id) {
+                if (!blogComment.approved & !user.isBlogEditor(cp, blog) & blogComment.createdBy == cp.User.Id) {
                     result = "<div style=\"border:1px solid red;padding-top:10px;padding-bottom:10px;\"><span class=\"aoBlogCommentName\" style=\"color:red;\">Your comment pending approval</span><br />" + result + "</div>";
                 }
                 // 

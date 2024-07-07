@@ -1,10 +1,10 @@
 ﻿
+using Contensive.BaseClasses;
+using Contensive.Blog.Models;
 using System;
 using System.Text;
-using Contensive.Addons.Blog.Models;
-using Contensive.BaseClasses;
 
-namespace Contensive.Addons.Blog.Views {
+namespace Contensive.Blog.Views {
     // 
     public class BlogBodyView {
         // 
@@ -14,7 +14,7 @@ namespace Contensive.Addons.Blog.Views {
         /// </summary>
         /// <returns></returns>
         public static string getBlogBody(CPBaseClass cp, ApplicationEnvironmentModel app, Models.View.RequestModel legacyRequest, BlogBodyRequestModel blogBodyRequest) {
-            string result = "";
+            string result;
             try {
                 // 
                 // Process Input
@@ -23,7 +23,7 @@ namespace Contensive.Addons.Blog.Views {
                 if (!string.IsNullOrEmpty(legacyRequest.ButtonValue)) {
                     // 
                     // Process the source form into form if there was a button - else keep formid
-                    dstFormId = BlogBodyController.ProcessForm(cp, app, legacyRequest, ref RetryCommentPost);
+                    dstFormId = Controllers.BlogBodyController.ProcessForm(cp, app, legacyRequest, ref RetryCommentPost);
                 }
                 // 
                 // -- Get Next Form
@@ -44,15 +44,15 @@ namespace Contensive.Addons.Blog.Views {
             try {
                 switch (dstFormID) {
                     case constants.FormBlogPostDetails: {
-                            result.Append(ArticleView.getArticleView(cp, app, request, RetryCommentPost));
+                            result.Append(ArticleView.getArticleView(cp, app, RetryCommentPost));
                             break;
                         }
                     case constants.FormBlogArchiveDateList: {
-                            result.Append(ArchiveView.GetFormBlogArchiveDateList(cp, app, request));
+                            result.Append(ArchiveView.getFormBlogArchiveDateList(cp, app, request));
                             break;
                         }
                     case constants.FormBlogArchivedBlogs: {
-                            result.Append(ArchiveView.GetFormBlogArchivedBlogs(cp, app, request));
+                            result.Append(ArchiveView.getFormBlogArchivedBlogs(cp, app, request));
                             break;
                         }
                     case constants.FormBlogEntryEditor: {
@@ -69,7 +69,7 @@ namespace Contensive.Addons.Blog.Views {
                                 // 
                                 // Go to details page
                                 // 
-                                result.Append(ArticleView.getArticleView(cp, app, request, RetryCommentPost));
+                                result.Append(ArticleView.getArticleView(cp, app, RetryCommentPost));
                             }
                             else {
                                 // 

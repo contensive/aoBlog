@@ -1,19 +1,19 @@
 ﻿using Contensive.Models.Db;
 using System;
 using System.Linq;
-using Contensive.Addons.Blog.Controllers;
-using Contensive.Addons.Blog.Models;
+using Contensive.Blog.Controllers;
+using Contensive.Blog.Models;
 using Contensive.BaseClasses;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
 
-namespace Contensive.Addons.Blog.Views {
+namespace Contensive.Blog.Views {
     // 
     public class BlogEntryCellView {
         // 
         // ====================================================================================
         // 
-        public static string getBlogPostCell(CPBaseClass cp, ApplicationEnvironmentModel app, BlogPostModel blogPost, bool isArticleView, bool IsSearchListing, int Return_CommentCnt, string entryEditLink) {
+        public static string getBlogPostCell(CPBaseClass cp, ApplicationEnvironmentModel app, BlogEntryModel blogPost, bool isArticleView, bool IsSearchListing, int Return_CommentCnt, string entryEditLink) {
             int hint = 0;
             try {
                 string result = "";
@@ -24,14 +24,14 @@ namespace Contensive.Addons.Blog.Views {
                     throw new ApplicationException("BlogEntryCell called without valid BlogEntry");
                 // 
                 // -- add link alias for this page
-                LinkAliasController.addLinkAlias(cp, blogPost.name.Trim().Replace(" ", "-").Replace(":", "").ToLower(), cp.Doc.PageId, blogPost.id);
+                LinkAliasController.addLinkAlias(cp, blogPost.name.Trim().Replace(" ", "-").Replace(":", "").ToLower(), blogPost.id);
                 blogPost.blogpostpageid = cp.Doc.PageId;
                 blogPost.save(cp);
                 // Dim qs As String = cp.Utils.ModifyQueryString("", RequestNameBlogEntryID, CStr(blogPost.id))
                 // qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogPostDetails.ToString())
                 // Call cp.Site.AddLinkAlias(blogPost.name, cp.Doc.PageId, qs)
                 // 
-                string qs = LinkAliasController.getLinkAliasQueryString(cp, cp.Doc.PageId, blogPost.id);
+                string qs = LinkAliasController.getLinkAliasQueryString(cp, blogPost.id);
                 string entryLink = cp.Content.GetPageLink(cp.Doc.PageId, qs);
                 var blogImageList = BlogImageModel.createListFromBlogEntry(cp, blogPost.id);
                 hint = 20;
@@ -145,16 +145,16 @@ namespace Contensive.Addons.Blog.Views {
                             }
                         }
                     }
-                    result += "<p>" + genericController.getBriefCopy(cp, blogPost.copy, app.blog.OverviewLength) + "</p></div>";
+                    result += "<p>" + _GenericController.getBriefCopy(cp, blogPost.copy, app.blog.overviewLength) + "</p></div>";
                     result += "<div class=\"aoBlogEntryReadMore\"><a href=\"" + entryLink + "\">Read More</a></div>";
                 }
                 hint = 90;
                 // 
                 // Podcast link
                 // 
-                if (!string.IsNullOrEmpty(blogPost.PodcastMediaLink)) {
-                    cp.Doc.SetProperty("Media Link", blogPost.PodcastMediaLink);
-                    cp.Doc.SetProperty("Media Link", blogPost.PodcastSize.ToString());
+                if (!string.IsNullOrEmpty(blogPost.podcastMediaLink)) {
+                    cp.Doc.SetProperty("Media Link", blogPost.podcastMediaLink);
+                    cp.Doc.SetProperty("Media Link", blogPost.podcastSize.ToString());
                     cp.Doc.SetProperty("Hide Player", "True");
                     cp.Doc.SetProperty("Auto Start", "False");
                     // 
@@ -169,11 +169,11 @@ namespace Contensive.Addons.Blog.Views {
                 if (datePublished is null)
                     datePublished = blogPost.dateAdded;
                 // 
-                if (blogPost.AuthorMemberID == 0 & blogPost.createdBy > 0) {
-                    blogPost.AuthorMemberID = cp.Utils.EncodeInteger(blogPost.createdBy);
+                if (blogPost.authorMemberId == 0 & blogPost.createdBy > 0) {
+                    blogPost.authorMemberId = cp.Utils.EncodeInteger(blogPost.createdBy);
                     blogPost.save(cp);
                 }
-                var author = DbBaseModel.create<Models.PersonModel>(cp, blogPost.AuthorMemberID);
+                var author = DbBaseModel.create<Models.PersonModel>(cp, blogPost.authorMemberId);
                 if (author is not null) {
                     RowCopy += "By " + author.name;
                     if (datePublished.HasValue && datePublished.Value != DateTime.MinValue) {
@@ -184,7 +184,7 @@ namespace Contensive.Addons.Blog.Views {
                     RowCopy = Conversions.ToString((RowCopy + datePublished));
                 }
                 var visit = DbBaseModel.create<VisitModel>(cp, cp.Visit.Id);
-                if (blogPost.AllowComments & (visit is not null && cp.Visit.CookieSupport & !visit.bot)) {
+                if (blogPost.allowComments & (visit is not null && cp.Visit.CookieSupport & !visit.bot)) {
                     hint = 110;
                     // 
                     // Show comment count
@@ -221,7 +221,7 @@ namespace Contensive.Addons.Blog.Views {
                 }
                 string toolLine = "";
                 var CommentPtr = default(int);
-                if (blogPost.AllowComments & cp.Visit.CookieSupport & (visit is not null && !visit.bot)) {
+                if (blogPost.allowComments & cp.Visit.CookieSupport & (visit is not null && !visit.bot)) {
                     hint = 130;
                     // 
                     // --

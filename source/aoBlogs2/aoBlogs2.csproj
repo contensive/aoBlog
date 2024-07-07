@@ -109,26 +109,21 @@
     <Import Include="System.Diagnostics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Addons\OnInstall.cs" />
     <Compile Include="Models\Db\DbLatestPostsWidgetsModel.cs" />
     <Compile Include="My Project\MyNamespace.Static.1.Designer.cs" />
-    <Compile Include="Addons\BlogCategoriesClass.cs" />
     <Compile Include="constants.cs" />
     <Compile Include="Controllers\LatestPostWidgetController.cs" />
     <Compile Include="Controllers\LinkAliasController.cs" />
     <Compile Include="Models\Domain\ApplicationEnvironmentModel.cs" />
     <Compile Include="Controllers\PaginationController.cs" />
     <Compile Include="Controllers\MetadataController.cs" />
-    <Compile Include="Controllers\genericController.cs" />
-    <Compile Include="Models\Db\DbModel.cs" />
-    <Compile Include="Models\Db\EmailModel.cs" />
+    <Compile Include="Controllers\_GenericController.cs" />
     <Compile Include="Models\Db\GroupModel.cs" />
-    <Compile Include="Models\Db\GroupRuleModel.cs" />
-    <Compile Include="Models\Db\MemberRuleModel.cs" />
     <Compile Include="Models\Db\PersonModel.cs" />
     <Compile Include="Models\Db\BlogCategoryGroupRulesModel.cs" />
     <Compile Include="Models\Db\BlogModel.cs" />
-    <Compile Include="Models\Db\BlogPostModel.cs" />
-    <Compile Include="Models\Db\LinkAliasesModel.cs" />
+    <Compile Include="Models\Db\BlogEntryModel.cs" />
     <Compile Include="Models\Db\RSSFeedBlogRuleModel.cs" />
     <Compile Include="Models\Db\RSSFeedModel.cs" />
     <Compile Include="Models\Db\BlogCommentModel.cs" />
@@ -137,24 +132,23 @@
     <Compile Include="Models\Db\BlogImageModel.cs" />
     <Compile Include="Models\Db\BlogImageRuleModel.cs" />
     <Compile Include="Models\Domain\RequestModel.cs" />
-    <Compile Include="Models\Db\VisitModel.cs" />
     <Compile Include="Models\Db\BlogViewingLogModel.cs" />
     <Compile Include="Models\Db\BlogEntryCtaRules.cs" />
     <Compile Include="Models\Db\CallsToActionModel.cs" />
-    <Compile Include="View Models\LatestPostItemViewModel.cs" />
-    <Compile Include="View Models\LatestPostWidgetViewModel.cs" />
+    <Compile Include="Models\View\LatestPostWidgetViewModel_Item.cs" />
+    <Compile Include="Models\View\LatestPostWidgetViewModel.cs" />
     <Compile Include="Views\ArchiveView.cs" />
     <Compile Include="Views\BlogCommentCellView.cs" />
     <Compile Include="Views\BlogEntryCellView.cs" />
     <Compile Include="Views\BlogBodyView.cs" />
-    <Compile Include="Views\LatestPostWidget.cs" />
+    <Compile Include="Addons\LatestPostsWidget.cs" />
     <Compile Include="Views\SidebarView.cs" />
     <Compile Include="Views\BlogImageView.cs" />
     <Compile Include="Views\ListView.cs" />
     <Compile Include="Views\SearchView.cs" />
     <Compile Include="Views\ArticleView.cs" />
     <Compile Include="Views\EditView.cs" />
-    <Compile Include="Addons\BlogClass.cs" />
+    <Compile Include="Addons\BlogWidget.cs" />
     <Compile Include="Controllers\BlogBodyController.cs" />
     <Compile Include="My Project\AssemblyInfo.cs" />
     <Compile Include="My Project\Application.Designer.cs">
@@ -171,7 +165,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Addons\SubscribeEmailClass.cs" />
+    <Compile Include="Addons\SubscribeEmailRemote.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">
@@ -211,10 +205,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\LegacyVb6-ccCommonModule.txt" />
-    <Content Include="Resources\LegacyVb6-KmaCommonModule.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

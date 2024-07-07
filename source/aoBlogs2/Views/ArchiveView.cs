@@ -2,24 +2,23 @@
 using Contensive.Models.Db;
 using System;
 using System.Linq;
-using Contensive.Addons.Blog.Models;
+using Contensive.Blog.Models;
 using Contensive.BaseClasses;
 using Microsoft.VisualBasic;
 
-namespace Contensive.Addons.Blog.Views {
+namespace Contensive.Blog.Views {
     public class ArchiveView {
         // 
         // 
         // ====================================================================================
         // 
-        public static string GetFormBlogArchiveDateList(CPBaseClass cp, ApplicationEnvironmentModel app, Models.View.RequestModel request) {
+        public static string getFormBlogArchiveDateList(CPBaseClass cp, ApplicationEnvironmentModel app, Models.View.RequestModel request) {
             // 
             string result = "";
             try {
 
                 var blog = app.blog;
                 var blogEntry = app.blogEntry;
-                string OpenSQL = "";
                 string contentControlId = cp.Content.GetID(constants.cnBlogEntries).ToString();
                 // 
                 result = Constants.vbCrLf + cp.Content.GetCopy("Blogs Archives Header for " + blog.name, "<h1>" + blog.name + " Archives</h1>");
@@ -38,7 +37,7 @@ namespace Contensive.Addons.Blog.Views {
                         // one archive - just display it
                         ArchiveMonth = archiveDateList.First().Month;
                         ArchiveYear = archiveDateList.First().Year;
-                        result += GetFormBlogArchivedBlogs(cp, app, request);
+                        result += getFormBlogArchivedBlogs(cp, app, request);
                     } else {
                         // 
                         // Display List of archive
@@ -66,21 +65,16 @@ namespace Contensive.Addons.Blog.Views {
         // 
         // ====================================================================================
         // 
-        public static string GetFormBlogArchivedBlogs(CPBaseClass cp, ApplicationEnvironmentModel app, Models.View.RequestModel request) {
-            string GetFormBlogArchivedBlogsRet = default;
+        public static string getFormBlogArchivedBlogs(CPBaseClass cp, ApplicationEnvironmentModel app, Models.View.RequestModel request) {
+            string getFormBlogArchivedBlogsRet;
             // 
             string result = "";
             try {
                 var blog = app.blog;
-                int PageNumber;
-                // 
-                // If it is the current month, start at entry 6
-                // 
-                PageNumber = 1;
                 // 
                 // List Blog Entries
                 // 
-                var BlogEntryModelList = DbBaseModel.createList<BlogPostModel>(cp, "(Month(dateAdded) = " + request.ArchiveMonth + ")And(year(dateAdded)=" + request.ArchiveYear + ")And(BlogID=" + blog.id + ")", "dateAdded Desc");
+                var BlogEntryModelList = DbBaseModel.createList<BlogEntryModel>(cp, "(Month(dateAdded) = " + request.ArchiveMonth + ")And(year(dateAdded)=" + request.ArchiveYear + ")And(BlogID=" + blog.id + ")", "dateAdded Desc");
                 if (BlogEntryModelList.Count == 0) {
                     result = "<div Class=\"aoBlogProblem\">There are no blog archives For " + request.ArchiveMonth + "/" + request.ArchiveYear + "</div>";
                 } else {
@@ -89,7 +83,7 @@ namespace Contensive.Addons.Blog.Views {
                     var Return_CommentCnt = default(int);
                     foreach (var blogEntry in BlogEntryModelList) {
                         int EntryID = blogEntry.id;
-                        int AuthorMemberID = blogEntry.AuthorMemberID;
+                        int AuthorMemberID = blogEntry.authorMemberId;
                         if (AuthorMemberID == 0) {
                             AuthorMemberID = cp.Utils.EncodeInteger(blogEntry.createdBy);
                         }
@@ -99,13 +93,13 @@ namespace Contensive.Addons.Blog.Views {
                             entryEditLink = cp.Content.GetEditLink(EntryName, EntryID.ToString(), true, EntryName, true);
                         }
                         string EntryCopy = blogEntry.copy;
-                        bool allowComments = blogEntry.AllowComments;
+                        bool allowComments = blogEntry.allowComments;
                         string BlogTagList = blogEntry.tagList;
                         int primaryImagePositionId = blogEntry.primaryImagePositionId;
                         result += BlogEntryCellView.getBlogPostCell(cp, app, blogEntry, false, false, Return_CommentCnt, BlogTagList);
                     }
                     result += "<hr>";
-                    EntryPtr = EntryPtr + 1;
+                    EntryPtr++;
 
                 }
                 // 
@@ -122,7 +116,7 @@ namespace Contensive.Addons.Blog.Views {
                 result += cp.Html.Hidden(constants.RequestNameSourceFormID, constants.FormBlogArchivedBlogs.ToString());
                 result = cp.Html.Form(result);
                 // 
-                GetFormBlogArchivedBlogsRet = result;
+                getFormBlogArchivedBlogsRet = result;
             }
             // 
             catch (Exception ex) {

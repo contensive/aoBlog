@@ -4,15 +4,11 @@ using System.Collections.Generic;
 using Contensive.BaseClasses;
 using Contensive.Models.Db;
 
-namespace Contensive.Addons.Blog.Models {
+namespace Contensive.Blog.Models {
     public class RSSFeedBlogRuleModel : Contensive.Models.Db.DbBaseModel, ICloneable {        // <------ set set model Name and everywhere that matches this string
         // 
         // ====================================================================================================
         public static DbBaseTableMetadataModel tableMetadata { get; private set; } = new DbBaseTableMetadataModel("RSS Feed Blog Rules", "ccRSSFeedRules", "default", false);
-        // -- const
-        //public const string contentName = "RSS Feed Blog Rules";      // <------ set content name
-        //public const string contentTableName = "ccRSSFeedRules";   // <------ set to tablename for the primary content (used for cache names)
-        //private  const string contentDataSource = "default";             // <------ set to datasource if not default
         // 
         // ====================================================================================================
         // -- instance properties

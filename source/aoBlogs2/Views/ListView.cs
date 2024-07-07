@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Contensive.Addons.Blog.Controllers;
-using Contensive.Addons.Blog.Models;
+using Contensive.Blog.Controllers;
+using Contensive.Blog.Models;
 using Contensive.BaseClasses;
 using Contensive.Models.Db;
 using Microsoft.VisualBasic;
 
-namespace Contensive.Addons.Blog.Views {
+namespace Contensive.Blog.Views {
     // 
     public class ListView {
         // 
@@ -28,7 +28,7 @@ namespace Contensive.Addons.Blog.Views {
                     NoneMsg = "There are no articles available in the category " + blogCategory.name;
                 }
 
-                int recordCount = DbBaseModel.getCount<BlogPostModel>(cp, criteria);
+                int recordCount = DbBaseModel.getCount<BlogEntryModel>(cp, criteria);
                 int pageNumber = request.page;
                 if (pageNumber > recordCount)
                     pageNumber = recordCount;
@@ -37,11 +37,11 @@ namespace Contensive.Addons.Blog.Views {
                 int pageCount = (int)Math.Round(Math.Truncate(recordCount / (double)blog.postsToDisplay + 0.999d));
                 string paginationSuffix = ", " + "page " + pageNumber + " of " + pageCount + "";
                 // 
-                if (!string.IsNullOrEmpty(blog.Caption)) {
-                    result.Append(Constants.vbCrLf + "<h1 Class=\"aoBlogCaption\">" + blog.Caption + (pageNumber == 1 ? "" : paginationSuffix) + "</h1>");
+                if (!string.IsNullOrEmpty(blog.caption)) {
+                    result.Append(Constants.vbCrLf + "<h1 Class=\"aoBlogCaption\">" + blog.caption + (pageNumber == 1 ? "" : paginationSuffix) + "</h1>");
                 }
-                if (!string.IsNullOrEmpty(blog.Copy)) {
-                    result.Append(Constants.vbCrLf + "<div Class=\"aoBlogDescription\">" + blog.Copy + "</div>");
+                if (!string.IsNullOrEmpty(blog.copy)) {
+                    result.Append(Constants.vbCrLf + "<div Class=\"aoBlogDescription\">" + blog.copy + "</div>");
                 }
 
                 if (blogCategory is not null) {
@@ -49,7 +49,7 @@ namespace Contensive.Addons.Blog.Views {
                 }
                 // 
                 // Display the most recent entries
-                var postList = DbBaseModel.createList<BlogPostModel>(cp, criteria, "dateAdded Desc", blog.postsToDisplay, pageNumber);
+                var postList = DbBaseModel.createList<BlogEntryModel>(cp, criteria, "dateAdded Desc", blog.postsToDisplay, pageNumber);
                 var isBlogCategoryBlockedDict = new Dictionary<int, bool>();
                 int recordsOnThisPage = 0;
                 if (postList.Count.Equals(0)) {
@@ -59,26 +59,26 @@ namespace Contensive.Addons.Blog.Views {
                 else {
                     var blogCategoryList = DbBaseModel.createList<BlogCategoriesModel>(cp, "");
                     var Return_CommentCnt = default(int);
-                    foreach (BlogPostModel blogEntry in postList) {
+                    foreach (BlogEntryModel blogEntry in postList) {
                         if (recordsOnThisPage >= blog.postsToDisplay)
                             break;
                         bool IsBlocked = false;
-                        if (isBlogCategoryBlockedDict.ContainsKey(blogEntry.blogCategoryID)) {
-                            IsBlocked = isBlogCategoryBlockedDict[blogEntry.blogCategoryID];
+                        if (isBlogCategoryBlockedDict.ContainsKey(blogEntry.blogCategoryId)) {
+                            IsBlocked = isBlogCategoryBlockedDict[blogEntry.blogCategoryId];
                         }
                         else {
-                            var blogEntryCategory = DbBaseModel.create<BlogCategoriesModel>(cp, blogEntry.blogCategoryID);
+                            var blogEntryCategory = DbBaseModel.create<BlogCategoriesModel>(cp, blogEntry.blogCategoryId);
                             if (blogEntryCategory is not null) {
                                 if (blogEntryCategory.UserBlocking)
-                                    IsBlocked = !genericController.isGroupListMember(cp, Models.GroupModel.GetBlockingGroups(cp, blogEntryCategory.id));
-                                isBlogCategoryBlockedDict.Add(blogEntry.blogCategoryID, IsBlocked);
+                                    IsBlocked = !_GenericController.isGroupListMember(cp, Models.GroupModel.GetBlockingGroups(cp, blogEntryCategory.id));
+                                isBlogCategoryBlockedDict.Add(blogEntry.blogCategoryId, IsBlocked);
                             }
                         }
                         if (!IsBlocked) {
                             string blogArticleCell = BlogEntryCellView.getBlogPostCell(cp, app, blogEntry, false, true, Return_CommentCnt, "");
                             // 
                             // -- if editing enabled, add the link and wrapperwrapper
-                            blogArticleCell = genericController.addEditWrapper(cp, blogArticleCell, blogEntry.id, blogEntry.name, BlogPostModel.tableMetadata.contentName);
+                            blogArticleCell = _GenericController.addEditWrapper(cp, blogArticleCell, blogEntry.id, blogEntry.name, BlogEntryModel.tableMetadata.contentName);
 
                             result.Append(blogArticleCell);
                             result.Append("<hr>");
@@ -93,12 +93,12 @@ namespace Contensive.Addons.Blog.Views {
                 string qs;
                 // 
                 // Build Footers
-                if (cp.User.IsAdmin & blog.AllowCategories) {
+                if (cp.User.IsAdmin & blog.allowCategories) {
                     qs = "cid=" + cp.Content.GetID("Blog Categories") + "&af=4";
                     CategoryFooter = CategoryFooter + "<div Class=\"aoBlogFooterLink\"><a href=\"" + cp.Site.GetText("ADMINURL") + "?" + qs + "\">Add a New category</a></div>";
                 }
                 string ReturnFooter = "";
-                if (blog.AllowCategories) {
+                if (blog.allowCategories) {
                     qs = cp.Doc.RefreshQueryString;
                     qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameBlogCategoryIDSet, "0", true);
                     CategoryFooter = CategoryFooter + "<div class=\"aoBlogFooterLink\"><a href=\"" + app.blogPageBaseLink + "\">See Posts in All Categories</a></div>";
@@ -116,7 +116,7 @@ namespace Contensive.Addons.Blog.Views {
                                 var blogEntryCategory = DbBaseModel.create<BlogCategoriesModel>(cp, blogCategaory.id);
                                 if (blogEntryCategory is not null) {
                                     if (blogEntryCategory.UserBlocking)
-                                        IsBlocked = !genericController.isGroupListMember(cp, Models.GroupModel.GetBlockingGroups(cp, blogEntryCategory.id));
+                                        IsBlocked = !_GenericController.isGroupListMember(cp, Models.GroupModel.GetBlockingGroups(cp, blogEntryCategory.id));
                                     isBlogCategoryBlockedDict.Add(blogCategaory.id, IsBlocked);
                                 }
                             }

@@ -3,7 +3,7 @@ using Contensive.DesignBlockBase.Models.Db;
 using Contensive.Models.Db;
 using System;
 
-namespace Contensive.Addons.Blog.Models.Db {
+namespace Contensive.Blog.Models.Db {
     public class DbLatestPostsWidgetsModel : SettingsBaseModel {
         public static DbBaseTableMetadataModel tableMetadata { get; } = new DbBaseTableMetadataModel("Latest Posts Widgets", "LatestPostWidgets", "default", false);
         public string defaultpostimage { get; set; }

@@ -81,7 +81,7 @@
                         width: 60%;
                     }
                 }
-                section.post h3 {
+                section.post h2 {
                     margin-bottom: 30px;
                 }
                 section.post .txt-hghlt {
@@ -109,69 +109,39 @@
                 <div class="{{contentContainerClass}}">
                     <section class="post">
                         <div class="post-inr">
-                            <h3>Latest Post</h3>
+                            <h2>Latest Post</h2>
                             <div class="row">
                                 <div class="column col1">                  
-                                    <div class="editWrapper">
-                                        <div>{{{mainCell.LatestpostElementEditTag}}}</div>     
+                                    <div>{{{mainPost.editTag}}}</div>     
+                                    <div class="{{#isEditing}}ccEditWrapper{{/isEditing}}">
                                         <div class="d-md-flex d-lg-block">
-                                            <img src="{{mainCell.postImage}}" alt="{{alt}}" class="firstPostImg latestPostImgs">
+                                            <img src="{{mainPost.postImage}}" alt="image for post {{mainPost.headline}}"  title="{{mainPost.headline}}" class="firstPostImg latestPostImgs">
                                             <div>
-                                                <p class="txt-hghlt">{{mainCell.postDate}}</p>
-                                                <h4 class="hdr-conR">{{mainCell.header}}</h4>
-                                                <p class="artcl-txt">{{mainCell.description}}</p>
-                                                <a href="{{mainCell.continueURL}}" class="cont-link">Continue Reading  <span><i class="fa-solid fa-arrow-right"></i></span></a>
+                                                <p class="txt-hghlt">{{mainPost.postDate}}</p>
+                                                <h4 class="hdr-conR">{{mainPost.headline}}</h4>
+                                                <p class="artcl-txt">{{mainPost.description}}</p>
+                                                <a href="{{mainPost.continueURL}}" class="cont-link">Continue Reading  <span><i class="fa-solid fa-arrow-right"></i></span></a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="col-rgt">
-                                    <div>{{{secondCell.LatestpostElementEditTag}}}</div>
-                                    <div class="editWrapper">
-                                        {{#showCellTwo}}
+                                    {{#postList}}
+                                    <div>{{{editTag}}}</div>
+                                    <div class="{{#isEditing}}ccEditWrapper{{/isEditing}}">
                                         <div class="column col2">
-                                            <img src="{{secondCell.postImage}}"  alt="{{alt}}" class="latestPostImgs">
+                                            <img src="{{postImage}}"  alt="image for post {{headline}}" title="{{headline}}" class="latestPostImgs">
                                             <div>
-                                                <p class="txt-hghlt">{{secondCell.postDate}}</p>
-                                                <h4 class="hdr-conR">{{secondCell.header}}</h4>
-                                                <p class="artcl-txt">{{secondCell.description}}</p>
-                                                <a href="{{secondCell.continueURL}}" class="cont-link">Continue Reading  <span><i class="fa-solid fa-arrow-right"></i></span></a>
+                                                <p class="txt-hghlt">{{postDate}}</p>
+                                                <h4 class="hdr-conR">{{headline}}</h4>
+                                                <p class="artcl-txt">{{description}}</p>
+                                                {{#continueURL}}
+                                                <a href="{{continueURL}}" class="cont-link">Continue Reading  <span><i class="fa-solid fa-arrow-right"></i></span></a>
+                                                {{/continueURL}}
                                             </div>
                                         </div>
-                                        {{/showCellTwo}}
-
                                     </div>
-
-                                    <div>{{{thirdCell.LatestpostElementEditTag}}}</div>
-                                    <div class="editWrapper">
-                                        {{#showCellThree}}
-                                        <div class="column col3">
-                                            <img src="{{thirdCell.postImage}}"  alt="{{alt}}" class="latestPostImgs">
-                                            <div>
-                                                <p class="txt-hghlt">{{thirdCell.postDate}}</p>
-                                                <h4 class="hdr-conR">{{thirdCell.header}}</h4>
-                                                <p class="artcl-txt">{{thirdCell.description}}</p>
-                                                <a href="{{thirdCell.continueURL}}" class="cont-link">Continue Reading  <span><i class="fa-solid fa-arrow-right"></i></span></a>
-                                            </div>
-                                        </div>
-                                        {{/showCellThree}}
-                                    </div>
-
-                                    <div>{{{lastCell.LatestpostElementEditTag}}}</div>
-                                    <div class="editWrapper">
-                                        {{#showCellFour}}
-                                        <div class="column col4">
-                                            <img src="{{lastCell.postImage}}" alt="{{alt}}" class="latestPostImgs">
-                                            <div>
-                                                <p class="txt-hghlt">{{lastCell.postDate}}</p>
-                                                <h4 class="hdr-conR">{{lastCell.header}}</h4>
-                                                <p class="artcl-txt">{{lastCell.description}}</p>
-                                                <a href="{{lastCell.continueURL}}" class="cont-link">Continue Reading  <span><i class="fa-solid fa-arrow-right"></i></span></a>
-                                            </div>
-                                        </div>
-                                        {{/showCellFour}}
-                                    </div>
+                                    {{/postList}}
                                 </div>
                             </div>
                         </div>

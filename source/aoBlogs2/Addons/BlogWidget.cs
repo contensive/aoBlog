@@ -1,10 +1,10 @@
-﻿using System;
-using Contensive.Addons.Blog.Controllers;
-using Contensive.Addons.Blog.Models;
+﻿using Contensive.Blog.Models;
+using Contensive.Blog.Views;
 using Contensive.BaseClasses;
+using System;
 
-namespace Contensive.Addons.Blog.Views {
-    public class BlogClass : AddonBaseClass {
+namespace Contensive.Blog {
+    public class BlogWidget : AddonBaseClass {
         // 
         // =====================================================================================
         /// <summary>
@@ -17,7 +17,7 @@ namespace Contensive.Addons.Blog.Views {
                 // 
                 // -- requests model - todo the controller for each view should handle its own requests
                 var blogBodyRequest = new BlogBodyRequestModel(CP);
-                var legacyRequest = new Models.View.RequestModel(CP);
+                var legacyRequest = new Contensive.Blog.Models.View.RequestModel(CP);
                 // 
                 // -- get blog settings
                 var blog = BlogModel.verifyBlog(CP, blogBodyRequest.instanceGuid);

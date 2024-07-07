@@ -1,8 +1,8 @@
 ﻿using System;
 using Contensive.BaseClasses;
 
-namespace Contensive.Addons.Blog.Views {
-    public class SubscribeEmailClass : AddonBaseClass {
+namespace Contensive.Blog {
+    public class SubscribeEmailRemote : AddonBaseClass {
         // 
         // =====================================================================================
         // addon api

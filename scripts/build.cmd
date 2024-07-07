@@ -52,6 +52,19 @@ rem pause
 
 rem ==============================================================
 rem
+rem copy ui files to collection folder
+rem 
+ 
+copy "..\ui\*.html" "%collectionpath%\"
+copy "..\ui\*.css" "%collectionpath%\"
+copy "..\ui\*.js" "%collectionpath%\"
+copy "..\ui\*.jpg" "%collectionpath%\"
+copy "..\ui\*.png" "%collectionpath%\"
+
+rem pause
+
+rem ==============================================================
+rem
 rem create helpfiles.zip file for install in private/helpfiles/
 rem 
 rem make a \help folder in the addon Git folder and store the collections markup files there. 

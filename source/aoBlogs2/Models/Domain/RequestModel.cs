@@ -1,7 +1,7 @@
 ﻿using System;
 using Contensive.BaseClasses;
 
-namespace Contensive.Addons.Blog.Models.View {
+namespace Contensive.Blog.Models.View {
     public class RequestModel {
         // 
         // ====================================================================================================

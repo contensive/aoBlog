@@ -1,10 +1,10 @@
 ﻿
 using System.Linq;
-using Contensive.Addons.Blog.Controllers;
+using Contensive.Blog.Controllers;
 using Contensive.BaseClasses;
 using Contensive.Models.Db;
 
-namespace Contensive.Addons.Blog.Models {
+namespace Contensive.Blog.Models {
     public class ApplicationEnvironmentModel {
         // 
         public CPBaseClass cp { get; private set; }
@@ -16,9 +16,7 @@ namespace Contensive.Addons.Blog.Models {
         /// <returns></returns>
         public bool userIsEditing {
             get {
-                if (local_userIsEditing is null) {
-                    local_userIsEditing = cp.User.IsEditingAnything;
-                }
+                local_userIsEditing ??= cp.User.IsEditing();
                 return (bool)local_userIsEditing;
             }
         }
@@ -36,14 +34,14 @@ namespace Contensive.Addons.Blog.Models {
                 return local_blog;
             }
         }
-        private BlogModel local_blog = null;
+        private readonly BlogModel local_blog = null;
         // 
         // ====================================================================================================
         /// <summary>
         /// Current Blog Entry. Returns null if no valid entry
         /// </summary>
         /// <returns></returns>
-        public BlogPostModel blogEntry {
+        public BlogEntryModel blogEntry {
             get {
                 // 
                 // -- return if set
@@ -55,28 +53,26 @@ namespace Contensive.Addons.Blog.Models {
                     return null;
                 // 
                 // -- blogEntryId is valid, return blog entry
-                local_blogEntry = DbBaseModel.create<BlogPostModel>(cp, cp.Utils.EncodeInteger(local_blogEntryId));
+                local_blogEntry = DbBaseModel.create<BlogEntryModel>(cp, cp.Utils.EncodeInteger(local_blogEntryId));
                 if (local_blogEntry is not null)
                     return local_blogEntry;
                 // 
                 // -- if blogentryid is not 0, and blog is null, remove link alias that might have caused this
-                LinkAliasController.deleteLinkAlias(cp, cp.Doc.PageId, (int)local_blogEntryId);
+                LinkAliasController.deleteLinkAlias(cp, (int)local_blogEntryId);
                 return null;
             }
         }
         private readonly int? local_blogEntryId = default;
-        private BlogPostModel local_blogEntry = null;
+        private BlogEntryModel local_blogEntry = null;
         // 
         // ====================================================================================================
         /// <summary>
         /// The current user at the keyboard
         /// </summary>
         /// <returns></returns>
-        public Contensive.Addons.Blog.Models.PersonModel user {
+        public Contensive.Blog.Models.PersonModel user {
             get {
-                if (local_user is null) {
-                    local_user = PersonModel.create<PersonModel>(cp, cp.User.Id);
-                }
+                local_user ??= PersonModel.create<PersonModel>(cp, cp.User.Id);
                 return local_user;
             }
         }
@@ -107,13 +103,13 @@ namespace Contensive.Addons.Blog.Models {
                 if (local_RSSFeed is null) {
                     // 
                     // Get the Feed Args
-                    local_RSSFeed = DbBaseModel.create<RSSFeedModel>(cp, blog.RSSFeedID);
+                    local_RSSFeed = DbBaseModel.create<RSSFeedModel>(cp, blog.rssFeedId);
                     if (local_RSSFeed is null) {
                         local_RSSFeed = DbBaseModel.addDefault<RSSFeedModel>(cp);
-                        local_RSSFeed.name = blog.Caption;
+                        local_RSSFeed.name = blog.caption;
                         local_RSSFeed.description = "This is your First RssFeed";
                         local_RSSFeed.save(cp);
-                        blog.RSSFeedID = local_RSSFeed.id;
+                        blog.rssFeedId = local_RSSFeed.id;
                         blog.save(cp);
                     }
                 }
@@ -135,15 +131,15 @@ namespace Contensive.Addons.Blog.Models {
         private string local_blogPageBaseLink = null;
         // 
         // 
-        public BlogPostModel nextArticle {
+        public BlogEntryModel nextArticle {
             get {
                 if (nextArticle_local is not null)
                     return nextArticle_local;
-                var articleList = DbBaseModel.createList<BlogPostModel>(cp, "(blogID=" + blog.id + ")and(dateAdded<" + cp.Db.EncodeSQLDate(cp.Utils.EncodeDate(blogEntry.dateAdded)) + ")", "dateAdded desc", 1, 1);
+                var articleList = DbBaseModel.createList<BlogEntryModel>(cp, "(blogID=" + blog.id + ")and(dateAdded<" + cp.Db.EncodeSQLDate(cp.Utils.EncodeDate(blogEntry.dateAdded)) + ")", "dateAdded desc", 1, 1);
                 if (articleList.Count == 0) {
                     // 
                     // -- this may be the last article in the list, the next article should be the first to loop around
-                    articleList = DbBaseModel.createList<BlogPostModel>(cp, "(blogID=" + blog.id + ")", "dateAdded desc", 1, 1);
+                    articleList = DbBaseModel.createList<BlogEntryModel>(cp, "(blogID=" + blog.id + ")", "dateAdded desc", 1, 1);
                     if (articleList.Count == 0)
                         return null;
                 }
@@ -151,7 +147,7 @@ namespace Contensive.Addons.Blog.Models {
                 return nextArticle_local;
             }
         }
-        private BlogPostModel nextArticle_local = null;
+        private BlogEntryModel nextArticle_local = null;
         // 
         // 
         public string nextArticleLink {
@@ -159,7 +155,7 @@ namespace Contensive.Addons.Blog.Models {
                 if (nextArticle is null)
                     return null;
                 // 
-                string qs = LinkAliasController.getLinkAliasQueryString(cp, cp.Doc.PageId, nextArticle.id);
+                string qs = LinkAliasController.getLinkAliasQueryString(cp, nextArticle.id);
                 nextArticleLink_local = cp.Content.GetPageLink(cp.Doc.PageId, qs);
                 return nextArticleLink_local;
             }

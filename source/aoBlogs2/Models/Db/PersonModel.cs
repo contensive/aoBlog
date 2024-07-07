@@ -3,7 +3,7 @@
 
 
 
-namespace Contensive.Addons.Blog.Models {
+namespace Contensive.Blog.Models {
     public class PersonModel : Contensive.Models.Db.PersonModel {
         //        // 
         //        // ====================================================================================================
@@ -171,7 +171,7 @@ namespace Contensive.Addons.Blog.Models {
                 cp.Group.verifyGroup(constants.nameGroupBlogAuthors, constants.guidGroupBlogAuthors);
                 blogAuthorsGroupId = cp.Group.GetId(constants.nameGroupBlogAuthors);
             }
-            return cp.User.IsAuthenticated & (id.Equals(blog.OwnerMemberID) || admin || cp.User.IsInGroupList(blogAuthorsGroupId.ToString(), id));
+            return cp.User.IsAuthenticated & (id.Equals(blog.ownerMemberId) || admin || cp.User.IsInGroupList(blogAuthorsGroupId.ToString(), id));
         }
     }
 }

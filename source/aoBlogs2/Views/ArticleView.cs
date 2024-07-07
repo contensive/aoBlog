@@ -1,19 +1,19 @@
 ﻿using Contensive.Models.Db;
 using System;
-using Contensive.Addons.Blog.Controllers;
-using Contensive.Addons.Blog.Models;
+using Contensive.Blog.Controllers;
+using Contensive.Blog.Models;
 using Contensive.BaseClasses;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
 
-namespace Contensive.Addons.Blog.Views {
+namespace Contensive.Blog.Views {
     // 
     public class ArticleView {
         // 
         // ====================================================================================
         // 
-        public static string getArticleView(CPBaseClass cp, ApplicationEnvironmentModel app, Models.View.RequestModel request, bool RetryCommentPost) {
-            string getArticleViewRet = default;
+        public static string getArticleView(CPBaseClass cp, ApplicationEnvironmentModel app, bool RetryCommentPost) {
+            string getArticleViewRet ;
             int hint = 0;
             try {
                 if (app.blogEntry is null) {
@@ -23,7 +23,7 @@ namespace Contensive.Addons.Blog.Views {
                 }
                 // 
                 // -- count the viewing
-                cp.Db.ExecuteNonQuery("update " + BlogPostModel.tableMetadata.tableNameLower + " set viewings=" + (app.blogEntry.Viewings + 1));
+                cp.Db.ExecuteNonQuery("update " + BlogEntryModel.tableMetadata.tableNameLower + " set viewings=" + (app.blogEntry.viewings + 1));
                 hint = 10;
                 // 
                 string result = "";
@@ -62,7 +62,7 @@ namespace Contensive.Addons.Blog.Views {
                 // 
                 hint = 60;
                 string qs;
-                if (app.blogEntry.AllowComments & cp.Visit.CookieSupport & !visit.bot) {
+                if (app.blogEntry.allowComments & cp.Visit.CookieSupport & !visit.bot) {
                     hint = 70;
                     result += "<div class=\"aoBlogCommentHeader\">Post a Comment</div>";
                     // 
@@ -70,7 +70,7 @@ namespace Contensive.Addons.Blog.Views {
                         result += "<div class=\"aoBlogCommentError\">" + cp.UserError.OK() + "</div>";
                     }
                     // 
-                    if (!app.blog.AllowAnonymous & !cp.User.IsAuthenticated) {
+                    if (!app.blog.allowAnonymous & !cp.User.IsAuthenticated) {
                         hint = 80;
                         bool AllowPasswordEmail = cp.Site.GetBoolean("AllowPasswordEmail", false);
                         bool AllowMemberJoin = cp.Site.GetBoolean("AllowMemberJoin", false);
@@ -147,13 +147,13 @@ namespace Contensive.Addons.Blog.Views {
                         result += "<div class=\"aoBlogCommentCopy\">Title</div>";
                         if (RetryCommentPost) {
                             hint = 160;
-                            result += "<div class=\"aoBlogCommentCopy\">" + genericController.getField(cp, constants.RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(constants.RequestNameCommentTitle.ToString())) + "</div>";
+                            result += "<div class=\"aoBlogCommentCopy\">" + _GenericController.getField(cp, constants.RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(constants.RequestNameCommentTitle.ToString())) + "</div>";
                             result += "<div>&nbsp;</div>";
                             result += "<div class=\"aoBlogCommentCopy\">Comment</div>";
                             result += "<div class=\"aoBlogCommentCopy\">" + cp.Html5.InputTextArea(constants.RequestNameCommentCopy, 500, cp.Doc.GetText(constants.RequestNameCommentCopy)) + "</div>";
                         } else {
                             hint = 170;
-                            result += "<div class=\"aoBlogCommentCopy\">" + genericController.getField(cp, constants.RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(constants.RequestNameCommentTitle.ToString())) + "</div>";
+                            result += "<div class=\"aoBlogCommentCopy\">" + _GenericController.getField(cp, constants.RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(constants.RequestNameCommentTitle.ToString())) + "</div>";
                             result += "<div>&nbsp;</div>";
                             result += "<div class=\"aoBlogCommentCopy\">Comment</div>";
                             result += "<div class=\"aoBlogCommentCopy\">" + cp.Html5.InputTextArea(constants.RequestNameCommentCopy, 500, cp.Doc.GetText(constants.RequestNameCommentCopy)) + "</div>";
@@ -210,7 +210,7 @@ namespace Contensive.Addons.Blog.Views {
                 // 
                 // -- if editing enabled, add the link and wrapperwrapper
                 hint = 240;
-                result = genericController.addEditWrapper(cp, result, app.blogEntry.id, app.blogEntry.name, BlogPostModel.tableMetadata.contentName);
+                result = _GenericController.addEditWrapper(cp, result, app.blogEntry.id, app.blogEntry.name, BlogEntryModel.tableMetadata.contentName);
                 // 
                 return result;
             } catch (Exception ex) {
@@ -253,7 +253,6 @@ namespace Contensive.Addons.Blog.Views {
                             // 
                             string optionStr = "Challenge=" + cp.Doc.GetText("recaptcha_challenge_field");
                             optionStr = optionStr + "&Response=" + cp.Doc.GetText("recaptcha_response_field");
-                            int WrapperId = default;
                             string captchaResponse = cp.Addon.Execute(constants.reCaptchaProcessGuid);
                             if (!string.IsNullOrEmpty(captchaResponse)) {
                                 cp.UserError.Add("The verify text you entered did not match correctly. Please try again.");
@@ -274,13 +273,13 @@ namespace Contensive.Addons.Blog.Views {
                                 // Dim EntryID = cp.Doc.GetInteger(RequestNameBlogEntryID)
                                 // Dim BlogEntry As BlogEntryModel = DbBaseModel.create(Of BlogEntryModel)(cp, EntryID)
                                 var BlogComment = DbBaseModel.addDefault<BlogCommentModel>(cp);
-                                BlogComment.BlogID = blog.id;
+                                BlogComment.blogId = blog.id;
                                 BlogComment.active = true;
                                 BlogComment.name = cp.Doc.GetText(constants.RequestNameCommentTitle);
-                                BlogComment.CopyText = Copy;
-                                BlogComment.EntryID = blogEntry.id;
-                                BlogComment.Approved = user.isBlogEditor(cp, blog) | blog.autoApproveComments;
-                                BlogComment.FormKey = formKey;
+                                BlogComment.copyText = Copy;
+                                BlogComment.entryId = blogEntry.id;
+                                BlogComment.approved = user.isBlogEditor(cp, blog) | blog.autoApproveComments;
+                                BlogComment.formKey = formKey;
                                 BlogComment.save(cp);
                                 CommentID = BlogComment.id;
                                 RetryCommentPost = false;
@@ -288,27 +287,18 @@ namespace Contensive.Addons.Blog.Views {
                                 if (blog.emailComment) {
                                     // 
                                     // Send Comment Notification
-                                    string EntryLink = blogEntry.RSSLink;
+                                    string EntryLink = blogEntry.rssLink;
                                     if (Strings.InStr(1, EntryLink, "?") == 0) {
-                                        EntryLink = EntryLink + "?";
+                                        EntryLink += "?";
                                     } else {
-                                        EntryLink = EntryLink + "&";
+                                        EntryLink += "&";
                                     }
                                     EntryLink = EntryLink + "blogentryid=" + blogEntry.id;
                                     string EmailBody = "" + "The following blog comment was posted " + Conversions.ToString(DateTime.Now) + "To approve this comment, go to " + EntryLink + Constants.vbCrLf + "Blog '" + blog.name + "'" + "Post '" + blogEntry.name + "'" + "By " + cp.User.Name + Constants.vbCrLf + Constants.vbCrLf + cp.Utils.EncodeHTML(Copy) + Constants.vbCrLf;
-
-
-
-
-
-
-
-
                                     string EmailFromAddress = cp.Site.GetText("EmailFromAddress", "info@" + cp.Site.Domain);
-
-                                    if (blogEntry.AuthorMemberID != 0) {
-                                        cp.Email.sendUser(blogEntry.AuthorMemberID, EmailFromAddress, "Blog comment notification for [" + blog.name + "]", EmailBody, true, false);
-                                        cp.Email.sendUser(blogEntry.AuthorMemberID, EmailFromAddress, "Blog comment notification for [" + blog.name + "]", EmailBody, false, false);
+                                    if (blogEntry.authorMemberId != 0) {
+                                        cp.Email.sendUser(blogEntry.authorMemberId, EmailFromAddress, "Blog comment notification for [" + blog.name + "]", EmailBody, true, false);
+                                        cp.Email.sendUser(blogEntry.authorMemberId, EmailFromAddress, "Blog comment notification for [" + blog.name + "]", EmailBody, false, false);
                                     }
 
                                     // If blog.AuthoringGroupID <> 0 Then
@@ -358,7 +348,7 @@ namespace Contensive.Addons.Blog.Views {
                                                 if (BlogCommentModelList.Count > 0) {
                                                     var BlogComment = DbBaseModel.addDefault<BlogCommentModel>(cp);
                                                     if (cp.CSNew().OK()) {
-                                                        BlogComment.Approved = true;
+                                                        BlogComment.approved = true;
                                                     }
                                                 } else if (!cp.Doc.GetBoolean("Approve" + Suffix) & cp.Doc.GetBoolean("Approved" + Suffix)) {
                                                     // 
@@ -366,7 +356,7 @@ namespace Contensive.Addons.Blog.Views {
                                                     // 
                                                     var BlogComment = DbBaseModel.addDefault<BlogCommentModel>(cp);
                                                     if (BlogComment is not null) {
-                                                        BlogComment.Approved = false;
+                                                        BlogComment.approved = false;
                                                     }
                                                 }
                                             }

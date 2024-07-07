@@ -4,7 +4,7 @@ using Contensive.Models.Db;
 using System;
 using System.Collections.Generic;
 
-namespace Contensive.Addons.Blog.Models {
+namespace Contensive.Blog.Models {
     /// <summary>
     /// Blog copy is the root content for the ccBlogCopy table. 
     /// Blog Entries (posts) and Blog Comments (comments to posts) are both stored in Blog Copy
@@ -13,10 +13,6 @@ namespace Contensive.Addons.Blog.Models {
         // 
         // ====================================================================================================
         public static DbBaseTableMetadataModel tableMetadata { get; private set; } = new DbBaseTableMetadataModel("Blog Copy", "ccBlogCopy", "default", false);
-        // -- const
-        //public const string contentName = "Blog Copy";      // <------ set content name
-        //public const string contentTableName = "ccBlogCopy";   // <------ set to tablename for the primary content (used for cache names)
-        //private  const string contentDataSource = "default";             // <------ set to datasource if not default
         // 
         // ====================================================================================================
         // -- instance properties

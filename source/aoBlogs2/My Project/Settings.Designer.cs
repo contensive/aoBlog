@@ -12,7 +12,7 @@ using System.Diagnostics;
 using Microsoft.VisualBasic;
 
 
-namespace Contensive.Addons.Blog.My {
+namespace Contensive.Blog.My {
 
     [System.Runtime.CompilerServices.CompilerGenerated()]
     [System.CodeDom.Compiler.GeneratedCode("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.9.0.0")]
@@ -63,7 +63,7 @@ namespace Contensive.Addons.Blog.My {
     }
 }
 
-namespace Contensive.Addons.Blog.My {
+namespace Contensive.Blog.My {
 
     [HideModuleName()]
     [DebuggerNonUserCode()]
