@@ -41,29 +41,31 @@ namespace Contensive.Blog.Models {
         /// Current Blog Entry. Returns null if no valid entry
         /// </summary>
         /// <returns></returns>
-        public BlogEntryModel blogEntry {
+        public BlogEntryModel blogPost {
             get {
                 // 
                 // -- return if set
-                if (local_blogEntry is not null)
-                    return local_blogEntry;
+                if (_blogPost is not null)
+                    return _blogPost;
                 // 
                 // -- return null if blogentryid is not valid
-                if (local_blogEntryId is null || (local_blogEntryId.HasValue ? local_blogEntryId.Value == 0 : (bool?)null).GetValueOrDefault())
+                if (_blogPostId is null || (_blogPostId.HasValue ? _blogPostId.Value == 0 : (bool?)null).GetValueOrDefault())
                     return null;
                 // 
                 // -- blogEntryId is valid, return blog entry
-                local_blogEntry = DbBaseModel.create<BlogEntryModel>(cp, cp.Utils.EncodeInteger(local_blogEntryId));
-                if (local_blogEntry is not null)
-                    return local_blogEntry;
+                _blogPost = DbBaseModel.create<BlogEntryModel>(cp, cp.Utils.EncodeInteger(_blogPostId));
+                if (_blogPost is not null) {
+                    BlogEntryModel.verifyPost(cp, _blogPost);
+                    return _blogPost;
+                }
                 // 
                 // -- if blogentryid is not 0, and blog is null, remove link alias that might have caused this
-                LinkAliasController.deleteLinkAlias(cp, (int)local_blogEntryId);
+                LinkAliasController.deleteLinkAlias(cp, (int)_blogPostId);
                 return null;
             }
         }
-        private readonly int? local_blogEntryId = default;
-        private BlogEntryModel local_blogEntry = null;
+        private readonly int? _blogPostId = default;
+        private BlogEntryModel _blogPost = null;
         // 
         // ====================================================================================================
         /// <summary>
@@ -135,7 +137,7 @@ namespace Contensive.Blog.Models {
             get {
                 if (nextArticle_local is not null)
                     return nextArticle_local;
-                var articleList = DbBaseModel.createList<BlogEntryModel>(cp, "(blogID=" + blog.id + ")and(dateAdded<" + cp.Db.EncodeSQLDate(cp.Utils.EncodeDate(blogEntry.dateAdded)) + ")", "dateAdded desc", 1, 1);
+                var articleList = DbBaseModel.createList<BlogEntryModel>(cp, "(blogID=" + blog.id + ")and(dateAdded<" + cp.Db.EncodeSQLDate(cp.Utils.EncodeDate(blogPost.dateAdded)) + ")", "dateAdded desc", 1, 1);
                 if (articleList.Count == 0) {
                     // 
                     // -- this may be the last article in the list, the next article should be the first to loop around
@@ -179,7 +181,7 @@ namespace Contensive.Blog.Models {
             this.cp = cp;
             // 
             local_blog = blog;
-            local_blogEntryId = blogEntryId;
+            _blogPostId = blogEntryId;
         }
         // 
         // 

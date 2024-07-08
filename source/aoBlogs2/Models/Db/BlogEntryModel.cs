@@ -1,4 +1,5 @@
 ﻿
+using Contensive.BaseClasses;
 using Contensive.Models.Db;
 using System;
 
@@ -74,5 +75,17 @@ namespace Contensive.Blog.Models {
         /// <returns></returns>
         public DateTime? datePublished { get; set; }
         public int blogpostpageid { get; set; }
+        //
+        public static void verifyPost(CPBaseClass cp, BlogEntryModel post) {
+            if (post is null) { return; }
+            if (post.dateAdded == null) {
+                post.dateAdded = DateTime.Now;
+                post.save(cp);
+            }
+            if (post.datePublished == null) {
+                post.datePublished = post.dateAdded;
+                post.save(cp);
+            }
+        }
     }
 }

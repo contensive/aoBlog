@@ -4,6 +4,7 @@ using Contensive.Blog.Models.Db;
 using Contensive.DesignBlockBase.Models.View;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Security.Policy;
 
@@ -22,6 +23,7 @@ namespace Contensive.Blog.Models {
         /// in editing mode. enable edit tags and wrappers
         /// </summary>
         public bool isEditing { get; set; }
+        public bool hasPostList { get; set; }
         //
         //====================================================================================================
         /// <summary>
@@ -30,17 +32,20 @@ namespace Contensive.Blog.Models {
         /// <param name="cp"></param>
         /// <param name="settings"></param>
         /// <returns></returns>
-        public static LatestPostWidgetViewModel create(CPBaseClass cp, DbLatestPostsWidgetsModel settings) {
+        public static LatestPostWidgetViewModel create(CPBaseClass cp, LatestPostsWidgetModel settings) {
             int hint = 0;
 
             try {
                 var result = create<LatestPostWidgetViewModel>(cp, settings);
-                List<BlogEntryModel> latestPosts = BlogEntryModel.createList<BlogEntryModel>(cp, "", "COALESCE(datePublished,dateAdded) desc", 4, 1);
+                List<BlogEntryModel> latestPosts = BlogEntryModel.createList<BlogEntryModel>(cp, $"COALESCE(datePublished,dateAdded)<{cp.Db.EncodeSQLDate(DateTime.Now)}", "COALESCE(datePublished,dateAdded) desc", 4, 1);
                 if (latestPosts.Count > 0) {
+                    BlogEntryModel.verifyPost(cp, latestPosts[0]);
+                    result.hasPostList = true;
                     result.isEditing = cp.User.IsEditing();
                     result.mainPost = createCell(cp, settings, latestPosts.First());
                     result.postList = [];
                     foreach (var post in latestPosts.Skip(1)) {
+                        BlogEntryModel.verifyPost(cp, post);
                         result.postList.Add(createCell(cp, settings, post));
                     }
                 }
@@ -59,7 +64,7 @@ namespace Contensive.Blog.Models {
         /// <param name="settings"></param>
         /// <param name="post"></param>
 
-        private static LatestPostWidgetViewModel_Item createCell(CPBaseClass cp, DbLatestPostsWidgetsModel settings, BlogEntryModel post) {
+        private static LatestPostWidgetViewModel_Item createCell(CPBaseClass cp, LatestPostsWidgetModel settings, BlogEntryModel post) {
             string qs = $"blogentryid={post.id}&formid=300";
             string continueURL = cp.Content.GetLinkAliasByPageID(post.blogpostpageid, qs, "");
             continueURL = (continueURL == "/") ? "" : continueURL;

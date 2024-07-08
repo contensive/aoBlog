@@ -14,9 +14,8 @@
                 section.post .post-inr {
                 margin: auto;
                 max-width: 1900px;
-                margin-bottom: 82px;
+                /*margin-bottom: 82px;*/
                 }
-            
                 @media (min-width: 992px) {
                 section.post .post-inr .row {
                     display: flex;
@@ -110,6 +109,10 @@
                     <section class="post">
                         <div class="post-inr">
                             <h2>Latest Post</h2>
+                            {{^hasPostList}}
+                            <p>There are currently no posts available.</p>
+                            {{/hasPostList}}
+                            {{#hasPostList}}
                             <div class="row">
                                 <div class="column col1">                  
                                     <div>{{{mainPost.editTag}}}</div>     
@@ -144,6 +147,7 @@
                                     {{/postList}}
                                 </div>
                             </div>
+                            {{/hasPostList}}
                         </div>
                         <div class="d-flex justify-content-center">{{{latestpostAddTag}}}</div>
                     </section>

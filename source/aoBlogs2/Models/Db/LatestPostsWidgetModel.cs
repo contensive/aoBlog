@@ -4,16 +4,16 @@ using Contensive.Models.Db;
 using System;
 
 namespace Contensive.Blog.Models.Db {
-    public class DbLatestPostsWidgetsModel : SettingsBaseModel {
+    public class LatestPostsWidgetModel : SettingsBaseModel {
         public static DbBaseTableMetadataModel tableMetadata { get; } = new DbBaseTableMetadataModel("Latest Posts Widgets", "LatestPostWidgets", "default", false);
         public string defaultpostimage { get; set; }
-        public static new DbLatestPostsWidgetsModel createOrAddSettings(CPBaseClass cp, string settingsGuid, string recordNameSuffix) {
+        public static new LatestPostsWidgetModel createOrAddSettings(CPBaseClass cp, string settingsGuid, string recordNameSuffix) {
             try {
-                var result = create<DbLatestPostsWidgetsModel>(cp, settingsGuid);
+                var result = create<LatestPostsWidgetModel>(cp, settingsGuid);
                 if (result != null) { return result; }
                 // 
                 // -- create default content
-                result = addDefault<DbLatestPostsWidgetsModel>(cp);
+                result = addDefault<LatestPostsWidgetModel>(cp);
                 result.name = $"{tableMetadata.contentName} {result.id}, created {DateTime.Now}" + (string.IsNullOrEmpty(recordNameSuffix) ? "" : ", " + recordNameSuffix);
                 result.ccguid = settingsGuid;
                 result.save(cp);
@@ -25,7 +25,7 @@ namespace Contensive.Blog.Models.Db {
             }
             catch (Exception ex) {
                 cp.Site.ErrorReport("Error in DbLatestNewsWidgetsModel createOrAddSettings: " + ex);
-                return new DbLatestPostsWidgetsModel();
+                return new LatestPostsWidgetModel();
             }
         }
     }

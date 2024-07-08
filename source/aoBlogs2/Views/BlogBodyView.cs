@@ -65,7 +65,7 @@ namespace Contensive.Blog.Views {
                         }
 
                     default: {
-                            if (app.blogEntry is not null) {
+                            if (app.blogPost is not null) {
                                 // 
                                 // Go to details page
                                 // 

@@ -3,6 +3,7 @@ using Contensive.BaseClasses;
 using Contensive.DesignBlockBase.Models.Db;
 using Contensive.Models.Db;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Contensive.Blog.Models {
     public class BlogModel : SettingsBaseModel {
@@ -33,7 +34,6 @@ namespace Contensive.Blog.Models {
         public string facebookLink { get; set; }
         public string followUsCaption { get; set; }
         public string googlePlusLink { get; set; }
-        public bool hideContributer { get; set; }
         public int imageWidthMax { get; set; }
         public int overviewLength { get; set; }
         public int ownerMemberId { get; set; }
@@ -60,14 +60,16 @@ namespace Contensive.Blog.Models {
         public static BlogModel verifyBlog(CPBaseClass cp, string instanceGuid) {
             try {
                 var Blog = create<BlogModel>(cp, instanceGuid);
-                if (Blog is not null)
-                    return Blog;
-                if (!cp.User.IsAdmin)
-                    return null;
+                if (Blog is not null) { return Blog; }
+                if (!cp.User.IsAdmin) { 
+                    //
+                    // -- you can only create a new default blog if you're an admin
+                    return null; 
+                }
 
-                Blog =  DbBaseModel.addDefault<BlogModel>(cp);
-                Blog.name = "Default Blog";
-                Blog.caption = "The New Blog";
+                Blog = DbBaseModel.addDefault<BlogModel>(cp);
+                Blog.name = $"Blog {Blog.id} Name (please update), created {DateTime.Now} by {cp.User.Name} on page '{cp.Doc.PageId}, {cp.Doc.PageName}'";
+                Blog.caption = $"Blog {Blog.id} Caption (please update)";
                 Blog.copy = "<p>This is the description of your new blog. It always appears at the top of your list of blog posts. Edit or remove this description by editing the blog features.</p>";
                 Blog.ownerMemberId = cp.User.Id;
                 // Blog.AuthoringGroupID = cp.Group.GetId("Site Managers")
@@ -88,7 +90,7 @@ namespace Contensive.Blog.Models {
                 var blogEntry = DbBaseModel.addDefault<BlogEntryModel>(cp);
                 if (blogEntry is not null) {
                     blogEntry.blogId = Blog.id;
-                    blogEntry.name = "Welcome to the New Blog!";
+                    blogEntry.name = $"Blog Post (please update)";
                     blogEntry.rssTitle = "";
                     blogEntry.copy = cp.WwwFiles.Read(@"blogs\DefaultPostCopy.txt");
                     // 
@@ -131,8 +133,7 @@ namespace Contensive.Blog.Models {
                 RSSFeedModel.UpdateBlogFeed(cp);
                 // 
                 return Blog;
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 cp.Site.ErrorReport(ex);
                 throw new ApplicationException("Exception creating default blog");
             }

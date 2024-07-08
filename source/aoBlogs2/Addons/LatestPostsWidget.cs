@@ -10,7 +10,7 @@ namespace Contensive.Blog {
         public override object Execute(CPBaseClass cp) {
             try {
                 string widgetName = "Latest Posts Widget";
-                return DesignBlockController.renderWidget<DbLatestPostsWidgetsModel, Models.LatestPostWidgetViewModel>(cp,
+                return DesignBlockController.renderWidget<LatestPostsWidgetModel, Models.LatestPostWidgetViewModel>(cp,
                     widgetName: widgetName, 
                     layoutGuid: constants.layoutGuidLastestPosts, 
                     layoutName: constants.layoutNameLastestPosts, 

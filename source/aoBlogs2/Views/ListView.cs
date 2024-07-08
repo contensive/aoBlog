@@ -21,13 +21,17 @@ namespace Contensive.Blog.Views {
                 var rssFeed = app.rssFeed;
 
                 string NoneMsg = "There are no articles available";
-                string criteria = "(BlogID=" + blog.id + ")";
+                //
+                // -- if editing, you can see unpublished posts
+                string criteria = $"(blogId={blog.id})";
+                if (!cp.User.IsEditing()) {
+                    criteria += $"and(COALESCE(datePublished,dateAdded)<{cp.Db.EncodeSQLDate(DateTime.Now)})";
+                }
                 var blogCategory = request.categoryId.Equals(0) ? null : Contensive.Models.Db.DbBaseModel.create<BlogCategoriesModel>(cp, request.categoryId);
                 if (blogCategory is not null) {
                     criteria += "and(BlogCategoryID=" + request.categoryId + ")";
                     NoneMsg = "There are no articles available in the category " + blogCategory.name;
                 }
-
                 int recordCount = DbBaseModel.getCount<BlogEntryModel>(cp, criteria);
                 int pageNumber = request.page;
                 if (pageNumber > recordCount)
@@ -49,7 +53,7 @@ namespace Contensive.Blog.Views {
                 }
                 // 
                 // Display the most recent entries
-                var postList = DbBaseModel.createList<BlogEntryModel>(cp, criteria, "dateAdded Desc", blog.postsToDisplay, pageNumber);
+                var postList = DbBaseModel.createList<BlogEntryModel>(cp, criteria, "COALESCE(datePublished,dateAdded) desc", blog.postsToDisplay, pageNumber);
                 var isBlogCategoryBlockedDict = new Dictionary<int, bool>();
                 int recordsOnThisPage = 0;
                 if (postList.Count.Equals(0)) {
@@ -59,26 +63,27 @@ namespace Contensive.Blog.Views {
                 else {
                     var blogCategoryList = DbBaseModel.createList<BlogCategoriesModel>(cp, "");
                     var Return_CommentCnt = default(int);
-                    foreach (BlogEntryModel blogEntry in postList) {
+                    foreach (BlogEntryModel post in postList) {
+                        BlogEntryModel.verifyPost(cp, post);
                         if (recordsOnThisPage >= blog.postsToDisplay)
                             break;
                         bool IsBlocked = false;
-                        if (isBlogCategoryBlockedDict.ContainsKey(blogEntry.blogCategoryId)) {
-                            IsBlocked = isBlogCategoryBlockedDict[blogEntry.blogCategoryId];
+                        if (isBlogCategoryBlockedDict.ContainsKey(post.blogCategoryId)) {
+                            IsBlocked = isBlogCategoryBlockedDict[post.blogCategoryId];
                         }
                         else {
-                            var blogEntryCategory = DbBaseModel.create<BlogCategoriesModel>(cp, blogEntry.blogCategoryId);
+                            var blogEntryCategory = DbBaseModel.create<BlogCategoriesModel>(cp, post.blogCategoryId);
                             if (blogEntryCategory is not null) {
                                 if (blogEntryCategory.UserBlocking)
                                     IsBlocked = !_GenericController.isGroupListMember(cp, Models.GroupModel.GetBlockingGroups(cp, blogEntryCategory.id));
-                                isBlogCategoryBlockedDict.Add(blogEntry.blogCategoryId, IsBlocked);
+                                isBlogCategoryBlockedDict.Add(post.blogCategoryId, IsBlocked);
                             }
                         }
                         if (!IsBlocked) {
-                            string blogArticleCell = BlogEntryCellView.getBlogPostCell(cp, app, blogEntry, false, true, Return_CommentCnt, "");
+                            string blogArticleCell = BlogEntryCellView.getBlogPostCell(cp, app, post, false, true, Return_CommentCnt, "");
                             // 
                             // -- if editing enabled, add the link and wrapperwrapper
-                            blogArticleCell = _GenericController.addEditWrapper(cp, blogArticleCell, blogEntry.id, blogEntry.name, BlogEntryModel.tableMetadata.contentName);
+                            blogArticleCell = _GenericController.addEditWrapper(cp, blogArticleCell, post.id, post.name, BlogEntryModel.tableMetadata.contentName);
 
                             result.Append(blogArticleCell);
                             result.Append("<hr>");

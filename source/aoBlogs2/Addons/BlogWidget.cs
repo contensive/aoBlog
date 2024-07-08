@@ -17,12 +17,11 @@ namespace Contensive.Blog {
                 // 
                 // -- requests model - todo the controller for each view should handle its own requests
                 var blogBodyRequest = new BlogBodyRequestModel(CP);
-                var legacyRequest = new Contensive.Blog.Models.View.RequestModel(CP);
+                var request = new Contensive.Blog.Models.View.RequestModel(CP);
                 // 
                 // -- get blog settings
                 var blog = BlogModel.verifyBlog(CP, blogBodyRequest.instanceGuid);
-                if (blog is null)
-                    return "<!-- Could not find or create blog from instanceId [" + blogBodyRequest.instanceGuid + "] -->";
+                if (blog is null) { return "<!-- Could not find or create blog from instanceId [" + blogBodyRequest.instanceGuid + "] -->"; }
                 // 
                 // -- process view requests
                 switch (blogBodyRequest.srcViewId) {
@@ -45,10 +44,10 @@ namespace Contensive.Blog {
                 var app = new ApplicationEnvironmentModel(CP, blog, blogBodyRequest.entryId);
                 // 
                 // -- get legacy Blog Body -- the body is the area down the middle that includes the Blog View (Article View, List View, Edit View)
-                string legacyBlogBody = BlogBodyView.getBlogBody(CP, app, legacyRequest, blogBodyRequest);
+                string blogBody = BlogBodyView.getBlogBody(CP, app, request, blogBodyRequest);
                 // 
                 // -- sidebar wrapper
-                string blogSidebarHtml = SidebarView.getSidebarView(CP, app, legacyRequest, legacyBlogBody);
+                string blogSidebarHtml = SidebarView.getSidebarView(CP, app, request, blogBody);
                 // 
                 // -- if editing enabled, add the link and wrapperwrapper
                 return DesignBlockBase.Controllers.DesignBlockController.addDesignBlockEditWrapper(CP, blogSidebarHtml, blog, Models.BlogModel.tableMetadata.contentName);

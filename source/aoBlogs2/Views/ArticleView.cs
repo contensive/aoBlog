@@ -13,37 +13,37 @@ namespace Contensive.Blog.Views {
         // ====================================================================================
         // 
         public static string getArticleView(CPBaseClass cp, ApplicationEnvironmentModel app, bool RetryCommentPost) {
-            string getArticleViewRet ;
+            string getArticleViewRet;
             int hint = 0;
             try {
-                if (app.blogEntry is null) {
-                    // 
-                    // -- This article cannot be found
-                    return "<div class=\"aoBlogProblem\">Sorry, the blog post you selected is not currently available</div>";
-                }
-                // 
-                // -- count the viewing
-                cp.Db.ExecuteNonQuery("update " + BlogEntryModel.tableMetadata.tableNameLower + " set viewings=" + (app.blogEntry.viewings + 1));
-                hint = 10;
-                // 
                 string result = "";
                 // 
                 // setup form key
                 string formKey = cp.Utils.CreateGuid();
                 result += cp.Html.Hidden("FormKey", formKey);
                 result += "<div class=\"aoBlogHeaderLink\"><a href=\"" + app.blogPageBaseLink + "\">" + constants.BackToRecentPostsMsg + "</a></div>";
+                //
+                if (app.blogPost is null) {
+                    hint = 10;
+                    // 
+                    // -- This article cannot be found
+                    return result + "<div class=\"aoBlogProblem\">Sorry, the blog post you selected is not currently available</div>";
+                }
+                // 
+                // -- count the viewing
+                cp.Db.ExecuteNonQuery("update " + BlogEntryModel.tableMetadata.tableNameLower + " set viewings=" + (app.blogPost.viewings + 1));
                 hint = 20;
                 // 
-                string entryEditLink = app.userIsEditing ? cp.Content.GetEditLink(BlogModel.tableMetadata.contentName, app.blogEntry.id.ToString(), false, app.blogEntry.name, true) : "";
+                string entryEditLink = app.userIsEditing ? cp.Content.GetEditLink(BlogModel.tableMetadata.contentName, app.blogPost.id.ToString(), false, app.blogPost.name, true) : "";
                 // 
                 // Print the Blog Entry
                 var return_CommentCnt = default(int);
-                result += BlogEntryCellView.getBlogPostCell(cp, app, app.blogEntry, true, false, return_CommentCnt, entryEditLink);
+                result += BlogEntryCellView.getBlogPostCell(cp, app, app.blogPost, true, false, return_CommentCnt, entryEditLink);
                 // 
                 var visit = DbBaseModel.create<VisitModel>(cp, cp.Visit.Id);
                 if (app?.user != null && visit is not null) {
                     if (!visit.excludeFromAnalytics) {
-                        int blogEntryId = app.blogEntry is not null ? app.blogEntry.id : 0;
+                        int blogEntryId = app.blogPost is not null ? app.blogPost.id : 0;
                         var BlogViewingLog = DbBaseModel.addDefault<BlogViewingLogModel>(cp);
                         if (BlogViewingLog is not null) {
                             BlogViewingLog.name = cp.User.Name + ", post " + blogEntryId.ToString() + ", " + Conversions.ToString(DateTime.Now);
@@ -62,7 +62,7 @@ namespace Contensive.Blog.Views {
                 // 
                 hint = 60;
                 string qs;
-                if (app.blogEntry.allowComments & cp.Visit.CookieSupport & !visit.bot) {
+                if (app.blogPost.allowComments & cp.Visit.CookieSupport & !visit.bot) {
                     hint = 70;
                     result += "<div class=\"aoBlogCommentHeader\">Post a Comment</div>";
                     // 
@@ -82,7 +82,7 @@ namespace Contensive.Blog.Views {
                             Auth = 3;
                         }
                         cp.Doc.AddRefreshQueryString(constants.rnFormID, constants.FormBlogPostDetails.ToString());
-                        cp.Doc.AddRefreshQueryString(constants.RequestNameBlogEntryID, app.blogEntry.id.ToString());
+                        cp.Doc.AddRefreshQueryString(constants.RequestNameBlogEntryID, app.blogPost.id.ToString());
                         cp.Doc.AddRefreshQueryString("auth", "0");
                         qs = cp.Doc.RefreshQueryString;
                         string Copy;
@@ -178,7 +178,7 @@ namespace Contensive.Blog.Views {
                 hint = 200;
                 if (app?.user != null && app.user.isBlogEditor(cp, app.blog)) {
                     qs = cp.Doc.RefreshQueryString;
-                    qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameBlogEntryID, app.blogEntry.id);
+                    qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameBlogEntryID, app.blogPost.id);
                     qs = cp.Utils.ModifyQueryString(qs, constants.rnFormID, constants.FormBlogEntryEditor);
                     result += "<div class=\"aoBlogToolLink\"><a href=\"?" + qs + "\">Edit</a></div>";
                 }
@@ -196,7 +196,7 @@ namespace Contensive.Blog.Views {
                     result += "<div class=\"aoBlogFooterLink\"><a href=\"" + app.nextArticleLink + "\">" + constants.NextArticlePrefix + app.nextArticleLinkCaption + "</a></div>";
                 // 
                 result += Constants.vbCrLf + cp.Html5.Hidden(constants.RequestNameSourceFormID, constants.FormBlogPostDetails);
-                result += Constants.vbCrLf + cp.Html5.Hidden(constants.RequestNameBlogEntryID, app.blogEntry.id);
+                result += Constants.vbCrLf + cp.Html5.Hidden(constants.RequestNameBlogEntryID, app.blogPost.id);
                 result += Constants.vbCrLf + cp.Html5.Hidden("EntryCnt", 1);
                 getArticleViewRet = result;
                 result = cp.Html.Form(getArticleViewRet);
@@ -206,11 +206,11 @@ namespace Contensive.Blog.Views {
                 // 
                 // -- set metadata
                 hint = 230;
-                MetadataController.setMetadata(cp, app.blogEntry);
+                MetadataController.setMetadata(cp, app.blogPost);
                 // 
                 // -- if editing enabled, add the link and wrapperwrapper
                 hint = 240;
-                result = _GenericController.addEditWrapper(cp, result, app.blogEntry.id, app.blogEntry.name, BlogEntryModel.tableMetadata.contentName);
+                result = _GenericController.addEditWrapper(cp, result, app.blogPost.id, app.blogPost.name, BlogEntryModel.tableMetadata.contentName);
                 // 
                 return result;
             } catch (Exception ex) {
@@ -225,7 +225,7 @@ namespace Contensive.Blog.Views {
             var result = default(int);
             try {
                 var blog = app.blog;
-                var blogEntry = app.blogEntry;
+                var blogEntry = app.blogPost;
                 var user = app.user;
                 // 
                 result = request.SourceFormID;

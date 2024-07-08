@@ -25,7 +25,7 @@ namespace Contensive.Blog.Views {
                 string blogEntry_tagList = "";
                 string blogEntry_name = "";
                 int blongEntry_blogCategoryId = 0;
-                if (app.blogEntry is null) {
+                if (app.blogPost is null) {
                     // 
                     // -- Create a new blog post
                     result.Append("<h2>Create a new blog post</h2>");
@@ -41,14 +41,14 @@ namespace Contensive.Blog.Views {
                 else {
                     // 
                     // Edit an entry
-                    blogEntry_id = app.blogEntry.id;
-                    blogEntry_name = app.blogEntry.name;
-                    blongEntry_blogCategoryId = app.blogEntry.blogCategoryId;
-                    blogEntry_copy = app.blogEntry.copy;
+                    blogEntry_id = app.blogPost.id;
+                    blogEntry_name = app.blogPost.name;
+                    blongEntry_blogCategoryId = app.blogPost.blogCategoryId;
+                    blogEntry_copy = app.blogPost.copy;
                     if (string.IsNullOrEmpty(blogEntry_copy)) {
                         blogEntry_copy = "<!-- cc --><p><br></p><!-- /cc -->";
                     }
-                    blogEntry_tagList = app.blogEntry.tagList;
+                    blogEntry_tagList = app.blogPost.tagList;
                 }
                 result.Append(_GenericController.getFormTableRow(cp, "<div style=\"padding-top:3px\">Title: </div>", cp.Html.InputText(constants.RequestNameBlogEntryName, blogEntry_name, 255, "form-control")));
                 result.Append(_GenericController.getFormTableRow(cp, "<div style=\"padding-top:108px\">Post: </div>", cp.Html.InputWysiwyg(constants.RequestNameBlogEntryCopy, blogEntry_copy, CPHtmlBaseClass.EditorUserScope.ContentManager)));
@@ -190,7 +190,7 @@ namespace Contensive.Blog.Views {
             int ProcessFormBlogEditRet = default;
             try {
                 var blog = app.blog;
-                var blogEntry = app.blogEntry;
+                var post = app.blogPost;
                 if (!string.IsNullOrEmpty(cp.Visit.GetText(constants.SNBlogEntryName))) {
                     cp.Visit.GetText(constants.SNBlogEntryName, "");
                     if ((request.ButtonValue ?? "") == constants.FormButtonCancel) {
@@ -202,34 +202,34 @@ namespace Contensive.Blog.Views {
                     else if ((request.ButtonValue ?? "") == constants.FormButtonDelete) {
                         // 
                         // Delete
-                        DbBaseModel.delete<BlogEntryModel>(cp, blogEntry.id);
+                        DbBaseModel.delete<BlogEntryModel>(cp, post.id);
                         RSSFeedModel.UpdateBlogFeed(cp);
-                        blogEntry = null;
+                        post = null;
                         return constants.FormBlogPostList;
                     }
                     else if ((request.ButtonValue ?? "") == constants.FormButtonPost) {
                         // 
                         // Post
                         // 
-                        if (blogEntry is null) {
-                            blogEntry = DbBaseModel.addDefault<BlogEntryModel>(cp);
+                        if (post is null) {
+                            post = DbBaseModel.addDefault<BlogEntryModel>(cp);
                             // 
                             // -- by default, the RSS feed should be checked for this new blog entry
                             var rule = RSSFeedBlogRuleModel.@add(cp);
-                            rule.BlogPostID = blogEntry.id;
+                            rule.BlogPostID = post.id;
                             rule.RSSFeedID = app.rssFeed.id;
                             rule.save(cp);
                         }
 
-                        blogEntry.name = request.BlogEntryName;
-                        blogEntry.copy = request.BlogEntryCopy;
-                        blogEntry.blogId = blog.id;
-                        blogEntry.save(cp);
+                        post.name = request.BlogEntryName;
+                        post.copy = request.BlogEntryCopy;
+                        post.blogId = blog.id;
+                        post.save(cp);
                         if (app.sitePropertyAllowTags) {                        // 
-                            blogEntry.tagList = request.BlogEntryTagList;
+                            post.tagList = request.BlogEntryTagList;
                         }
                         if (app.blog.allowCategories) {
-                            blogEntry.blogCategoryId = request.BlogEntryCategoryId;
+                            post.blogCategoryId = request.BlogEntryCategoryId;
                         }
                         // Upload files
                         // 
@@ -288,7 +288,7 @@ namespace Contensive.Blog.Views {
                                     // 
                                     var ImageRule = DbBaseModel.addDefault<BlogImageRuleModel>(cp);
                                     if (ImageRule is not null) {
-                                        ImageRule.BlogEntryID = blogEntry.id;
+                                        ImageRule.BlogEntryID = post.id;
                                         ImageRule.BlogImageID = BlogImageID;
                                         ImageRule.save(cp);
                                     }

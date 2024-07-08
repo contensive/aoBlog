@@ -18,7 +18,7 @@ namespace Contensive.Blog.Views {
             try {
 
                 var blog = app.blog;
-                var blogEntry = app.blogEntry;
+                var blogEntry = app.blogPost;
                 string contentControlId = cp.Content.GetID(constants.cnBlogEntries).ToString();
                 // 
                 result = Constants.vbCrLf + cp.Content.GetCopy("Blogs Archives Header for " + blog.name, "<h1>" + blog.name + " Archives</h1>");
@@ -74,29 +74,29 @@ namespace Contensive.Blog.Views {
                 // 
                 // List Blog Entries
                 // 
-                var BlogEntryModelList = DbBaseModel.createList<BlogEntryModel>(cp, "(Month(dateAdded) = " + request.ArchiveMonth + ")And(year(dateAdded)=" + request.ArchiveYear + ")And(BlogID=" + blog.id + ")", "dateAdded Desc");
-                if (BlogEntryModelList.Count == 0) {
+                var postList = DbBaseModel.createList<BlogEntryModel>(cp, "(Month(dateAdded) = " + request.ArchiveMonth + ")And(year(dateAdded)=" + request.ArchiveYear + ")And(BlogID=" + blog.id + ")", "dateAdded Desc");
+                if (postList.Count == 0) {
                     result = "<div Class=\"aoBlogProblem\">There are no blog archives For " + request.ArchiveMonth + "/" + request.ArchiveYear + "</div>";
                 } else {
                     int EntryPtr = 0;
                     string entryEditLink = "";
                     var Return_CommentCnt = default(int);
-                    foreach (var blogEntry in BlogEntryModelList) {
-                        int EntryID = blogEntry.id;
-                        int AuthorMemberID = blogEntry.authorMemberId;
+                    foreach (var post in postList) {
+                        int EntryID = post.id;
+                        int AuthorMemberID = post.authorMemberId;
                         if (AuthorMemberID == 0) {
-                            AuthorMemberID = cp.Utils.EncodeInteger(blogEntry.createdBy);
+                            AuthorMemberID = cp.Utils.EncodeInteger(post.createdBy);
                         }
-                        var dateAdded = blogEntry.dateAdded;
-                        string EntryName = blogEntry.name;
+                        var dateAdded = post.dateAdded;
+                        string EntryName = post.name;
                         if (app.userIsEditing) {
                             entryEditLink = cp.Content.GetEditLink(EntryName, EntryID.ToString(), true, EntryName, true);
                         }
-                        string EntryCopy = blogEntry.copy;
-                        bool allowComments = blogEntry.allowComments;
-                        string BlogTagList = blogEntry.tagList;
-                        int primaryImagePositionId = blogEntry.primaryImagePositionId;
-                        result += BlogEntryCellView.getBlogPostCell(cp, app, blogEntry, false, false, Return_CommentCnt, BlogTagList);
+                        string EntryCopy = post.copy;
+                        bool allowComments = post.allowComments;
+                        string BlogTagList = post.tagList;
+                        int primaryImagePositionId = post.primaryImagePositionId;
+                        result += BlogEntryCellView.getBlogPostCell(cp, app, post, false, false, Return_CommentCnt, BlogTagList);
                     }
                     result += "<hr>";
                     EntryPtr++;
