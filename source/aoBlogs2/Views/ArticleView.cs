@@ -62,7 +62,7 @@ namespace Contensive.Blog.Views {
                 // 
                 hint = 60;
                 string qs;
-                if (app.blogPost.allowComments & cp.Visit.CookieSupport & !visit.bot) {
+                if (app?.blogPost != null && app.blogPost.allowComments && cp?.Visit !=null && cp.Visit.CookieSupport && !visit.bot) {
                     hint = 70;
                     result += "<div class=\"aoBlogCommentHeader\">Post a Comment</div>";
                     // 
@@ -70,15 +70,15 @@ namespace Contensive.Blog.Views {
                         result += "<div class=\"aoBlogCommentError\">" + cp.UserError.OK() + "</div>";
                     }
                     // 
-                    if (!app.blog.allowAnonymous & !cp.User.IsAuthenticated) {
+                    if (!app.blog.allowAnonymous && !cp.User.IsAuthenticated) {
                         hint = 80;
                         bool AllowPasswordEmail = cp.Site.GetBoolean("AllowPasswordEmail", false);
                         bool AllowMemberJoin = cp.Site.GetBoolean("AllowMemberJoin", false);
                         // 
                         int Auth = cp.Doc.GetInteger("auth");
-                        if (Auth == 1 & !AllowPasswordEmail) {
+                        if (Auth == 1 && !AllowPasswordEmail) {
                             Auth = 3;
-                        } else if (Auth == 2 & !AllowMemberJoin) {
+                        } else if (Auth == 2 && !AllowMemberJoin) {
                             Auth = 3;
                         }
                         cp.Doc.AddRefreshQueryString(constants.rnFormID, constants.FormBlogPostDetails.ToString());
@@ -191,9 +191,9 @@ namespace Contensive.Blog.Views {
                 // result &= "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>"
                 // 
                 // back to recent posts
-                result += "<div class=\"aoBlogFooterLink\"><a href=\"" + app.blogPageBaseLink + "\">" + constants.BackToRecentPostsMsg + "</a></div>";
-                if (!string.IsNullOrEmpty(app.nextArticleLink))
-                    result += "<div class=\"aoBlogFooterLink\"><a href=\"" + app.nextArticleLink + "\">" + constants.NextArticlePrefix + app.nextArticleLinkCaption + "</a></div>";
+                //result += "<div class=\"aoBlogFooterLink\"><a href=\"" + app.blogPageBaseLink + "\">" + constants.BackToRecentPostsMsg + "</a></div>";
+                //if (!string.IsNullOrEmpty(app.nextArticleLink))
+                //    result += "<div class=\"aoBlogFooterLink\"><a href=\"" + app.nextArticleLink + "\">" + constants.NextArticlePrefix + app.nextArticleLinkCaption + "</a></div>";
                 // 
                 result += Constants.vbCrLf + cp.Html5.Hidden(constants.RequestNameSourceFormID, constants.FormBlogPostDetails);
                 result += Constants.vbCrLf + cp.Html5.Hidden(constants.RequestNameBlogEntryID, app.blogPost.id);
@@ -340,7 +340,7 @@ namespace Contensive.Blog.Views {
                                                 // Delete comment
                                                 // 
                                                 cp.Content.Delete("Blog Comments", "(id=" + CommentID + ")and(BlogID=" + blog.id + ")");
-                                            } else if (cp.Doc.GetBoolean("Approve" + Suffix) & !cp.Doc.GetBoolean("Approved" + Suffix)) {
+                                            } else if (cp.Doc.GetBoolean("Approve" + Suffix) && !cp.Doc.GetBoolean("Approved" + Suffix)) {
                                                 // 
                                                 // Approve Comment
                                                 // 
@@ -350,7 +350,7 @@ namespace Contensive.Blog.Views {
                                                     if (cp.CSNew().OK()) {
                                                         BlogComment.approved = true;
                                                     }
-                                                } else if (!cp.Doc.GetBoolean("Approve" + Suffix) & cp.Doc.GetBoolean("Approved" + Suffix)) {
+                                                } else if (!cp.Doc.GetBoolean("Approve" + Suffix) && cp.Doc.GetBoolean("Approved" + Suffix)) {
                                                     // 
                                                     // Unapprove comment
                                                     // 

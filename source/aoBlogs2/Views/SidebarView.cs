@@ -224,10 +224,10 @@ namespace Contensive.Blog.Views {
                             sidebarCell.SetOuter(".blogSidebarCellInput", "");
                             sidebarCell.SetOuter(".blogSidebarCellButton", "");
                             qs = "cid=" + cp.Content.GetID("Calls To Action");
-                            // 
-                            if (cp.User.IsAdmin) {
-                                cellList += Constants.vbCrLf + Constants.vbTab + "<div class=\"aoBlogFooterLink\"><a href=\"" + cp.Site.GetText("adminUrl") + "?" + qs + "\">Add/Edit Site Call-To-Actions</a></div>";
-                            }
+                            //// 
+                            //if (cp.User.IsAdmin) {
+                            //    cellList += Constants.vbCrLf + Constants.vbTab + "<div class=\"aoBlogFooterLink\"><a href=\"" + cp.Site.GetText("adminUrl") + "?" + qs + "\">Add/Edit Site Call-To-Actions</a></div>";
+                            //}
                             sidebarCnt += 1;
                         }
                     }

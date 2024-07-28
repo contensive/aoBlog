@@ -2,6 +2,7 @@
 using Contensive.BaseClasses;
 using Contensive.Models.Db;
 using System;
+using System.Collections.Generic;
 
 namespace Contensive.Blog.Models {
     public class BlogEntryModel : Contensive.Models.Db.DbBaseModel { 
@@ -76,6 +77,8 @@ namespace Contensive.Blog.Models {
         public DateTime? datePublished { get; set; }
         public int blogpostpageid { get; set; }
         //
+        // ==================================================================================================== 
+        //
         public static void verifyPost(CPBaseClass cp, BlogEntryModel post) {
             if (post is null) { return; }
             if (post.dateAdded == null) {
@@ -86,6 +89,40 @@ namespace Contensive.Blog.Models {
                 post.datePublished = post.dateAdded;
                 post.save(cp);
             }
+        }
+        //
+        // ==================================================================================================== 
+        /// <summary>
+        /// Return a list of Archive Blog Copy
+        /// </summary>
+        /// <param name="cp"></param>
+        /// <param name="blogId">The id of the Blog Copy</param>
+        /// <returns></returns>
+        public static List<ArchiveDateModel> createArchiveListFromBlogCopy(CPBaseClass cp, int blogId) {
+            var result = new List<ArchiveDateModel>();
+            try {
+                // result = createList(cp, "(BlogID=" & blogId & ")", "year(dateAdded) desc, Month(dateAdded) desc")
+                string SQL = "SELECT DISTINCT month(dateAdded) as archiveMonth, year(dateAdded) as archiveYear" + " From ccBlogCopy" + " Where (ContentControlID = " + cp.Content.GetID(constants.cnBlogEntries) + ") And (Active <> 0)" + " AND (BlogID=" + blogId + ")" + " ORDER BY year(dateAdded) desc, month(dateAdded) desc ";
+
+
+
+                var cs = cp.CSNew();
+                if (cs.OpenSQL(SQL)) {
+                    do {
+                        var archiveDate = new ArchiveDateModel();
+                        archiveDate.Month = cs.GetInteger("archiveMonth");
+                        archiveDate.Year = cs.GetInteger("archiveYear");
+                        result.Add(archiveDate);
+                        cs.GoNext();
+                    }
+                    while (cs.OK());
+                }
+
+                cs.Close();
+            } catch (Exception ex) {
+                cp.Site.ErrorReport(ex);
+            }
+            return result;
         }
     }
 }

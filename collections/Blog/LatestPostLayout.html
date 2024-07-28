@@ -108,7 +108,6 @@
                 <div class="{{contentContainerClass}}">
                     <section class="post">
                         <div class="post-inr">
-                            <h2>Latest Post</h2>
                             {{^hasPostList}}
                             <p>There are currently no posts available.</p>
                             {{/hasPostList}}
@@ -123,7 +122,9 @@
                                                 <p class="txt-hghlt">{{mainPost.postDate}}</p>
                                                 <h4 class="hdr-conR">{{mainPost.headline}}</h4>
                                                 <p class="artcl-txt">{{mainPost.description}}</p>
+                                                {{#mainPost.continueURL}}
                                                 <a href="{{mainPost.continueURL}}" class="cont-link">Continue Reading  <span><i class="fa-solid fa-arrow-right"></i></span></a>
+                                                {{/mainPost.continueURL}}
                                             </div>
                                         </div>
                                     </div>

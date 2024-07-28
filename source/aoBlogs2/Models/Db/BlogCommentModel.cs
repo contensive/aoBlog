@@ -5,7 +5,7 @@ namespace Contensive.Blog.Models {
     public class BlogCommentModel : Contensive.Models.Db.DbBaseModel { 
         // 
         // ====================================================================================================
-        public static DbBaseTableMetadataModel tableMetadata { get; private set; } = new DbBaseTableMetadataModel("Blog Comments", "ccBlogCopy", "default", false);
+        public static DbBaseTableMetadataModel tableMetadata { get; private set; } = new DbBaseTableMetadataModel("Blog Comments", "ccBlogComments", "default", false);
         // 
         // ====================================================================================================
         // -- instance properties

@@ -111,6 +111,7 @@
   <ItemGroup>
     <Compile Include="Addons\OnInstall.cs" />
     <Compile Include="Models\Db\LatestPostsWidgetModel.cs" />
+    <Compile Include="Models\Domain\ArchiveDateModel.cs" />
     <Compile Include="My Project\MyNamespace.Static.1.Designer.cs" />
     <Compile Include="constants.cs" />
     <Compile Include="Controllers\LatestPostWidgetController.cs" />

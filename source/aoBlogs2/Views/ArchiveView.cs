@@ -23,7 +23,7 @@ namespace Contensive.Blog.Views {
                 // 
                 result = Constants.vbCrLf + cp.Content.GetCopy("Blogs Archives Header for " + blog.name, "<h1>" + blog.name + " Archives</h1>");
                 // 
-                var archiveDateList = BlogCopyModel.createArchiveListFromBlogCopy(cp, blog.id);
+                var archiveDateList = BlogEntryModel.createArchiveListFromBlogCopy(cp, blog.id);
                 if (archiveDateList.Count == 0) {
                     // 
                     // No archives, give them an error

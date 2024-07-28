@@ -271,7 +271,7 @@ namespace Contensive.Blog.Views {
                             // 
                             // non-owner - just approved comments plus your own comments
                             // 
-                            Criteria += "and((Approved<>0)or(AuthorMemberID=" + cp.User.Id + "))";
+                            Criteria += "and((Approved<>0)or(createdby=" + cp.User.Id + "))";
                         }
                         var BlogCommentModelList = DbBaseModel.createList<BlogCommentModel>(cp, Criteria, "dateAdded");
                         if (BlogCommentModelList.Count > 0) {
