@@ -2,6 +2,7 @@
 using Contensive.Blog.Controllers;
 using Contensive.Blog.Models.Db;
 using Contensive.DesignBlockBase.Models.View;
+using Contensive.Models.Db;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
@@ -82,6 +83,13 @@ namespace Contensive.Blog.Models {
                 if (postImage?.Filename != null) {
                     cell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.ResizeAndCrop(postImage.Filename, 550, 452);
                     return cell;
+                }
+                else {
+                    var blog = DbBaseModel.create<BlogModel>(cp, post.blogId);
+                    if (blog != null) {
+                        cell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.ResizeAndCrop(blog.defaultImageFilename.filename, 550, 452);
+                        return cell;
+                    }                    
                 }
             }
             if (string.IsNullOrEmpty(cell.postImage) && !string.IsNullOrEmpty(settings.defaultpostimage)) {

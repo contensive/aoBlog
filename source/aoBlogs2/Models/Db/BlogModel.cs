@@ -42,6 +42,7 @@ namespace Contensive.Blog.Models {
         public int rssFeedId { get; set; }
         public int thumbnailImageWidth { get; set; }
         public string twitterLink { get; set; }
+        public FieldTypeFile defaultImageFilename { get; set; }
         /// <summary>
         /// Meta data for the landing page of the blog
         /// </summary>
