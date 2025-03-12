@@ -164,7 +164,7 @@ namespace Contensive.Blog.Views {
                 // 
                 // Author Row
                 // 
-                string RowCopy = "";
+                string rowCopy = "";
                 var datePublished = blogPost.datePublished;
                 if (datePublished is null)
                     datePublished = blogPost.dateAdded;
@@ -175,13 +175,13 @@ namespace Contensive.Blog.Views {
                 }
                 var author = DbBaseModel.create<Models.PersonModel>(cp, blogPost.authorMemberId);
                 if (author is not null) {
-                    RowCopy += "By " + author.name;
+                    rowCopy += "By " + author.name;
                     if (datePublished.HasValue && datePublished.Value != DateTime.MinValue) {
-                        RowCopy += " | " + datePublished;
+                        rowCopy += $" | {cp.Utils.EncodeDate(datePublished).ToShortDateString()}";
                     }
                 }
                 else if (datePublished.HasValue && datePublished.Value != DateTime.MinValue) {
-                    RowCopy = Conversions.ToString((RowCopy + datePublished));
+                    rowCopy += $"{cp.Utils.EncodeDate(datePublished).ToShortDateString()}";
                 }
                 var visit = DbBaseModel.create<VisitModel>(cp, cp.Visit.Id);
                 if (blogPost.allowComments & (visit is not null && cp.Visit.CookieSupport & !visit.bot)) {
@@ -191,10 +191,10 @@ namespace Contensive.Blog.Views {
                     var BlogCommentModelList = DbBaseModel.createList<BlogCommentModel>(cp, "(Approved<>0)and(EntryID=" + blogPost.id + ")");
                     if (isArticleView) {
                         if (BlogCommentModelList.Count == 1) {
-                            RowCopy += " | 1 Comment";
+                            rowCopy += " | 1 Comment";
                         }
                         else if (BlogCommentModelList.Count > 1) {
-                            RowCopy += " | " + BlogCommentModelList.Count + " Comments&nbsp;(" + BlogCommentModelList.Count + ")";
+                            rowCopy += " | " + BlogCommentModelList.Count + " Comments&nbsp;(" + BlogCommentModelList.Count + ")";
                         }
                     }
                     else {
@@ -202,15 +202,15 @@ namespace Contensive.Blog.Views {
                         qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameBlogEntryID, blogPost.id.ToString());
                         qs = cp.Utils.ModifyQueryString(qs, constants.rnFormID, constants.FormBlogPostDetails.ToString());
                         if (BlogCommentModelList.Count == 0) {
-                            RowCopy += " | " + "<a href=\"" + entryLink + "\">Comment</a>";
+                            rowCopy += " | " + "<a href=\"" + entryLink + "\">Comment</a>";
                         }
                         else {
-                            RowCopy += " | " + "<a href=\"" + entryLink + "\">Comments</a>&nbsp;(" + BlogCommentModelList.Count + ")";
+                            rowCopy += " | " + "<a href=\"" + entryLink + "\">Comments</a>&nbsp;(" + BlogCommentModelList.Count + ")";
                         }
                     }
                 }
-                if (!string.IsNullOrEmpty(RowCopy)) {
-                    result += "<div class=\"aoBlogEntryByLine\">Posted " + RowCopy + "</div>";
+                if (!string.IsNullOrEmpty(rowCopy)) {
+                    result += "<div class=\"aoBlogEntryByLine\">Posted " + rowCopy + "</div>";
                 }
                 hint = 120;
                 // 

@@ -26,7 +26,7 @@ namespace Contensive.Blog.Views {
                 string Button = cp.Doc.GetText("button");
                 if ((Button ?? "") == constants.FormButtonSearch | !string.IsNullOrEmpty(QueryTag)) {
                     string pageTitle = "";
-                    string Subcaption = "";
+                    string subcaption = "";
                     var sqlCriteria = new StringBuilder("(blogid=" + blog.id + ")");
                     // 
                     // -- Keyword list
@@ -35,32 +35,31 @@ namespace Contensive.Blog.Views {
                         string[] KeyWordsArray = Strings.Split("," + request.KeywordList + ",", ",", Compare: Constants.vbTextCompare);
                         foreach (var keyword in KeyWordsArray) {
                             if (!string.IsNullOrWhiteSpace(keyword)) {
-                                pageTitle = (string.IsNullOrEmpty(pageTitle) ? "" : " and ") + cp.Utils.EncodeHTML(keyword);
-                                Subcaption += " or '<i>" + cp.Db.EncodeSQLText(keyword) + "</i>'";
-                                subCriteria.Append("or(Copy like " + cp.Db.EncodeSQLText("%" + keyword + "%") + ") or (name like " + cp.Db.EncodeSQLText("%" + keyword + "%") + ")");
+                                pageTitle = (string.IsNullOrEmpty(pageTitle) ? "" : " or ") + cp.Utils.EncodeHTML(keyword);
+                                subcaption = (string.IsNullOrEmpty(subcaption) ? "" : " or ") + "'<i>" + cp.Utils.EncodeHTML(keyword) + "</i>'";
+                                subCriteria.Append($"or(Copy like {cp.Db.EncodeSQLTextLike(keyword)})or(name like {cp.Db.EncodeSQLTextLike(keyword)})");
                             }
                         }
-                        if (!string.IsNullOrEmpty(Subcaption))
-                            Subcaption = " containing " + Subcaption.Substring(4);
+                        if (!string.IsNullOrEmpty(subcaption))
+                            subcaption = $" containing {subcaption}";
                         if (subCriteria.Length > 0)
                             sqlCriteria.Append("and(" + subCriteria.ToString().Substring(2) + ")");
                     }
                     if (!string.IsNullOrEmpty(QueryTag)) {
                         pageTitle = (string.IsNullOrEmpty(pageTitle) ? "" : " and ") + cp.Utils.EncodeHTML(QueryTag);
-                        Subcaption += " tagged with '<i>" + cp.Utils.EncodeHTML(QueryTag) + "</i>'";
+                        subcaption += " tagged with '<i>" + cp.Utils.EncodeHTML(QueryTag) + "</i>'";
                         QueryTag = cp.Db.EncodeSQLText(QueryTag);
                         QueryTag = "'%" + Strings.Mid(QueryTag, 2, Strings.Len(QueryTag) - 2) + "%'";
                         sqlCriteria.Append("and(taglist like " + QueryTag + ")");
                     }
-                    if (!string.IsNullOrEmpty(Subcaption)) {
-                        Subcaption = "Search for posts " + Subcaption;
+                    if (!string.IsNullOrEmpty(subcaption)) {
+                        subcaption = "Search for posts " + subcaption;
                     }
                     if (string.IsNullOrEmpty(pageTitle)) {
                         // 
                         // -- empty search page
                         pageTitle = "Article Search";
-                    }
-                    else {
+                    } else {
                         // 
                         // -- search results
                         pageTitle = "Articles about " + pageTitle;
@@ -72,21 +71,20 @@ namespace Contensive.Blog.Views {
                     // 
                     // Display the results
                     if (!cp.UserError.OK()) {
-                        Subcaption += cp.Html.ul(cp.UserError.GetList());
+                        subcaption += cp.Html.ul(cp.UserError.GetList());
                     }
-                    result.Append("<h4 class=\"aoBlogEntryCopy\">" + Subcaption + "</h4>");
+                    result.Append("<h4 class=\"aoBlogEntryCopy\">" + subcaption + "</h4>");
                     // 
                     var BlogEntryList = DbBaseModel.createList<BlogEntryModel>(cp, sqlCriteria.ToString());
                     if (BlogEntryList.Count == 0) {
                         result.Append("</br>" + "<div class=\"aoBlogProblem\">There were no matches to your search</div>");
-                    }
-                    else {
+                    } else {
                         result.Append("</br>" + "<hr>");
                         var Return_CommentCnt = default(int);
                         foreach (var blogEntry in BlogEntryList) {
                             int AuthorMemberID = blogEntry.authorMemberId;
                             if (AuthorMemberID == 0)
-                                AuthorMemberID = cp.Utils.EncodeInteger( blogEntry.createdBy);
+                                AuthorMemberID = cp.Utils.EncodeInteger(blogEntry.createdBy);
                             result.Append(BlogEntryCellView.getBlogPostCell(cp, app, blogEntry, false, true, Return_CommentCnt, ""));
                             result.Append("<hr>");
                         }
@@ -104,8 +102,7 @@ namespace Contensive.Blog.Views {
                 result.Append("<input type=\"hidden\" name=\"" + constants.RequestNameSourceFormID + "\" value=\"" + constants.FormBlogSearch.ToString() + "\">");
                 result.Append("<input type=\"hidden\" name=\"" + constants.rnFormID + "\" value=\"" + constants.FormBlogSearch.ToString() + "\">");
                 return cp.Html.Form(result.ToString());
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 cp.Site.ErrorReport(ex);
                 return string.Empty;
             }

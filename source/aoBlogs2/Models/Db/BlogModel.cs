@@ -4,6 +4,7 @@ using Contensive.DesignBlockBase.Models.Db;
 using Contensive.Models.Db;
 using System;
 using System.Runtime.CompilerServices;
+using System.Data;
 
 namespace Contensive.Blog.Models {
     public class BlogModel : SettingsBaseModel {
@@ -53,7 +54,14 @@ namespace Contensive.Blog.Models {
         // 
         // ====================================================================================================
         /// <summary>
-        /// Create a new default blog, ready to use. Must be an administrator. If not, returns null
+        /// Create a new default blog, ready to use.
+        /// admin user
+        ///     return blog if found
+        ///     if inactive blog found, return null. user should should a message that the blog is inactive
+        ///     if no blog found create a new blog
+        /// if not admin user
+        ///     return blog if found
+        ///     if no blog or inactive, return null
         /// </summary>
         /// <param name="cp"></param>
         /// <param name="instanceGuid"></param>
@@ -62,18 +70,25 @@ namespace Contensive.Blog.Models {
             try {
                 var Blog = create<BlogModel>(cp, instanceGuid);
                 if (Blog is not null) { return Blog; }
-                if (!cp.User.IsAdmin) { 
-                    //
-                    // -- you can only create a new default blog if you're an admin
-                    return null; 
+                //
+                // -- no blog or inactive blog
+                // -- if not admin, return null
+                if (!cp.User.IsAdmin) {  return null;  }
+                //
+                using (DataTable dt = cp.Db.ExecuteQuery($"select id from ccBlogs where (active=0)and(ccguid={cp.Db.EncodeSQLText(instanceGuid)})")) {
+                    if( dt.Rows.Count > 0 ) {
+                        //
+                        // -- admin user, inactive blog, return null
+                        return null;
+                    };
                 }
-
-                Blog = DbBaseModel.addDefault<BlogModel>(cp);
+                //
+                // -- admin user, missing blog, create default
+                Blog = addDefault<BlogModel>(cp);
                 Blog.name = $"Blog {Blog.id} Name (please update), created {DateTime.Now} by {cp.User.Name} on page '{cp.Doc.PageId}, {cp.Doc.PageName}'";
                 Blog.caption = $"Blog {Blog.id} Caption (please update)";
                 Blog.copy = "<p>This is the description of your new blog. It always appears at the top of your list of blog posts. Edit or remove this description by editing the blog features.</p>";
                 Blog.ownerMemberId = cp.User.Id;
-                // Blog.AuthoringGroupID = cp.Group.GetId("Site Managers")
                 Blog.allowAnonymous = true;
                 Blog.autoApproveComments = false;
                 Blog.allowCategories = true;

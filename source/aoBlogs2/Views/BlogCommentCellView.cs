@@ -28,17 +28,16 @@ namespace Contensive.Blog.Views {
                 Copy = Strings.Replace(Copy, Constants.vbCrLf, "<BR />");
                 result += "<div class=\"aoBlogCommentCopy\">" + Copy + "</div>";
                 string rowCopy = "";
-                if (true) {
-                    var author = DbBaseModel.create<Models.PersonModel>(cp, blogEntry.authorMemberId);
-                    if (author is not null && !string.IsNullOrEmpty(author.name)) {
-                        rowCopy += "by " + cp.Utils.EncodeHTML(author.name);
-                        if (blogComment.dateAdded != DateTime.MinValue) {
-                            rowCopy += " | " + Conversions.ToString(blogComment.dateAdded);
-                        }
+                //
+                // -- by line
+                var author = DbBaseModel.create<Models.PersonModel>(cp, blogEntry.authorMemberId);
+                if (author is not null && !string.IsNullOrEmpty(author.name)) {
+                    rowCopy += "by " + cp.Utils.EncodeHTML(author.name);
+                    if (blogComment.dateAdded != DateTime.MinValue) {
+                        rowCopy += $" | {cp.Utils.EncodeDate(blogComment.dateAdded).ToShortDateString()}";
                     }
-                    else if (blogComment.dateAdded != DateTime.MinValue) {
-                        rowCopy += Conversions.ToString(blogComment.dateAdded);
-                    }
+                } else if (blogComment.dateAdded != DateTime.MinValue) {
+                    rowCopy += $"{cp.Utils.EncodeDate(blogComment.dateAdded).ToShortDateString()}";
                 }
                 // 
                 if (user.isBlogEditor(cp, blog)) {
@@ -49,13 +48,6 @@ namespace Contensive.Blog.Views {
                         rowCopy += " | ";
                     }
                     rowCopy = rowCopy + cp.Html.Hidden("CommentID", blogComment.id.ToString()) + cp.Html.CheckBox("Approve", blogComment.approved) + cp.Html.Hidden("Approved", blogComment.approved.ToString()) + "&nbsp;Approved&nbsp;" + " | " + cp.Html.CheckBox("Delete", false) + "&nbsp;Delete" + "";
-
-
-
-
-
-
-
                 }
                 if (!string.IsNullOrEmpty(rowCopy)) {
                     result += "<div class=\"aoBlogCommentByLine\">Posted " + rowCopy + "</div>";
