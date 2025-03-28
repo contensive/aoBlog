@@ -48,9 +48,7 @@ namespace Contensive.Blog.Views {
                     if (!string.IsNullOrEmpty(QueryTag)) {
                         pageTitle = (string.IsNullOrEmpty(pageTitle) ? "" : " and ") + cp.Utils.EncodeHTML(QueryTag);
                         subcaption += " tagged with '<i>" + cp.Utils.EncodeHTML(QueryTag) + "</i>'";
-                        QueryTag = cp.Db.EncodeSQLText(QueryTag);
-                        QueryTag = "'%" + Strings.Mid(QueryTag, 2, Strings.Len(QueryTag) - 2) + "%'";
-                        sqlCriteria.Append("and(taglist like " + QueryTag + ")");
+                        sqlCriteria.Append($"and(tagList like {cp.Db.EncodeSQLTextLike(QueryTag)})");
                     }
                     if (!string.IsNullOrEmpty(subcaption)) {
                         subcaption = "Search for posts " + subcaption;
