@@ -628,7 +628,6 @@
 	<ImportCollection name="Social Media">{3B4362B9-5556-4890-B049-56B31B869C64}</ImportCollection>
 	<ImportCollection name="RSS">{06791870-0ef8-48cb-ac54-2327ff5a1c40}</ImportCollection>
 	<ImportCollection name="ReCaptcha V2">{B0330AE8-225D-429A-8985-B5F602E295E2}</ImportCollection>
-	<ImportCollection name="Design Blocks">{fd1685af-bc66-4649-a8f1-1b3c18d59d24}</ImportCollection>
 	<ImportCollection name="Open Graph Meta Tags">{E4FAFB02-D4B2-4336-8956-A1DE68291C3B}</ImportCollection>
 	<ImportCollection name="Twitter">{EADB8DAF-CC49-404E-AEDE-71AEE9C9BFEC}</ImportCollection>
 	<Resource name="defaultpostcopy.txt" type="www" path="blogs" />

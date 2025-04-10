@@ -177,11 +177,11 @@ namespace Contensive.Blog.Views {
                 if (author is not null) {
                     rowCopy += "By " + author.name;
                     if (datePublished.HasValue && datePublished.Value != DateTime.MinValue) {
-                        rowCopy += $" | {cp.Utils.EncodeDate(datePublished).ToShortDateString()}";
+                        rowCopy += $" | {cp.Utils.EncodeDate(datePublished):MMMM dd, yyyy}";
                     }
                 }
                 else if (datePublished.HasValue && datePublished.Value != DateTime.MinValue) {
-                    rowCopy += $"{cp.Utils.EncodeDate(datePublished).ToShortDateString()}";
+                    rowCopy += $"{cp.Utils.EncodeDate(datePublished):MMMM dd, yyyy}";
                 }
                 var visit = DbBaseModel.create<VisitModel>(cp, cp.Visit.Id);
                 if (blogPost.allowComments & (visit is not null && cp.Visit.CookieSupport & !visit.bot)) {
