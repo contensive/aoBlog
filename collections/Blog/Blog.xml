@@ -8,6 +8,13 @@
 			<Code><![CDATA[ ]]></Code>
 		</Scripting>
 	</Addon>
+
+	<Addon Name="Blog Views By Article Dashboard Widget" Guid="{97130EC9-E5D4-4B05-9641-85D5A307BB84}" Type="Add-on">
+		<DashboardWidget>Yes</DashboardWidget>
+		<DotNetClass><![CDATA[Contensive.Blog.DashWidgetBlogViewsByArticle]]></DotNetClass>
+		<BlockEditTools>Yes</BlockEditTools>
+	</Addon>	
+
 	<Addon name="Blog" guid="{7B7614BB-92E5-4D91-8A60-2058401B8524}" type="Add-on">
 		<Copy></Copy>
 		<CopyText></CopyText>
