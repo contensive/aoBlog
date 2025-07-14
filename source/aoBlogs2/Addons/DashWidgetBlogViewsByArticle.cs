@@ -26,21 +26,59 @@ namespace Contensive.Blog {
                 if (mode < 1 || mode > 3) { mode = 1; }
                 //
                 // -- get captions and values
-                string sql = $@"
-                    select top 10 
-                        count(v.id) as cnt,b.name as post
-                    from
-	                    BlogViewingLog v
-	                    left join ccBlogCopy b on b.id=v.blogentryid
-                    group by
-	                    b.name, b.id
-                    having
-	                    b.id is not null
-                    order by
-	                    count(v.id) desc
-                    ";
-                string[] dataLabels = new string[0];
-                double[] dataValues = new double[0];
+                string sql = "";
+                switch (mode) {
+                    case 2:
+                        //
+                        // Lowest 10
+                        sql = $@"
+                            select top 10 
+                                count(v.id) as cnt,b.name as post
+                            from
+	                            BlogViewingLog v
+	                            left join ccBlogCopy b on b.id=v.blogentryid
+                            group by
+	                            b.name, b.id
+                            having
+	                            b.id is not null
+                            order by count(v.id)
+                        ";
+                        break;
+                    case 3:
+                        //
+                        // Last 10
+                        sql = $@"
+                            select top 10 
+                                count(v.id) as cnt,b.name as post
+                            from
+                                BlogViewingLog v
+                                left join ccBlogCopy b on b.id=v.blogentryid
+                            group by
+                                b.name, b.id, b.datepublished
+                            having
+                                b.id is not null
+                            order by b.datepublished desc
+                        ";
+                        break;
+                    default: 
+                        //
+                        // Top 10
+                        sql = $@"
+                            select top 10 
+                                count(v.id) as cnt,b.name as post
+                            from
+	                            BlogViewingLog v
+	                            left join ccBlogCopy b on b.id=v.blogentryid
+                            group by
+	                            b.name, b.id
+                            having
+	                            b.id is not null
+                            order by count(v.id) desc
+                        ";
+                        break;
+                };
+                string[] dataLabels = [];
+                double[] dataValues = [];
                 int count = 0;
                 using (DataTable dt = cp.Db.ExecuteQuery(sql)) {
                     if (dt?.Rows != null) {
