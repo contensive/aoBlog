@@ -89,7 +89,7 @@ namespace Contensive.Blog {
                         // -- get data labels
                         for (int i = 0; i < count; i++) {
                             string name = dt.Rows[i]["post"].ToString();
-                            name = name.Length > 10 ? name.Substring(0, 10) + "..." : name;
+                            //name = name.Length > 10 ? name.Substring(0, 10) + "..." : name;
                             dataLabels[i] = cp.Utils.EncodeHTML(name);
                             dataValues[i] = Convert.ToDouble(dt.Rows[i]["cnt"]);
                         }

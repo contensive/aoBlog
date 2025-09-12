@@ -75,10 +75,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ContensiveDbModels, Version=20.0.0.0, Culture=neutral, PublicKeyToken=c014b235a9c6bb22, processorArchitecture=MSIL">
-      <HintPath>..\packages\Contensive.DbModels.25.7.18.3\lib\net472\ContensiveDbModels.dll</HintPath>
+      <HintPath>..\packages\Contensive.DbModels.25.7.28.2\lib\net472\ContensiveDbModels.dll</HintPath>
     </Reference>
     <Reference Include="CPBase, Version=4.1.2.0, Culture=neutral, PublicKeyToken=10b3c53389b845fb, processorArchitecture=MSIL">
-      <HintPath>..\packages\Contensive.CPBaseClass.25.7.18.3\lib\net472\CPBase.dll</HintPath>
+      <HintPath>..\packages\Contensive.CPBaseClass.25.7.28.2\lib\net472\CPBase.dll</HintPath>
     </Reference>
     <Reference Include="DesignBlockBase, Version=25.4.26.1, Culture=neutral, PublicKeyToken=81704b61c3d18a5b, processorArchitecture=MSIL">
       <HintPath>..\packages\Contensive.DesignBlockBase.25.4.26.1\lib\net472\DesignBlockBase.dll</HintPath>
