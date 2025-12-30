@@ -1,10 +1,11 @@
 ﻿
-using Contensive.Models.Db;
-using System;
-using System.Linq;
-using Contensive.Blog.Models;
 using Contensive.BaseClasses;
+using Contensive.Blog.Models;
+using Contensive.Models.Db;
 using Microsoft.VisualBasic;
+using System;
+using System.Globalization;
+using System.Linq;
 
 namespace Contensive.Blog.Views {
     public class ArchiveView {
@@ -68,13 +69,16 @@ namespace Contensive.Blog.Views {
         public static string getFormBlogArchivedBlogs(CPBaseClass cp, ApplicationEnvironmentModel app, Models.View.RequestModel request) {
             string getFormBlogArchivedBlogsRet;
             // 
+            // -- unique title for SEO
+            cp.Doc.AddTitle($"{app.blog.name} Archives {DateTimeFormatInfo.CurrentInfo.GetMonthName(request.ArchiveMonth)} {request.ArchiveYear}");
+            //
             string result = "";
             try {
                 var blog = app.blog;
                 // 
                 // List Blog Entries
                 // 
-                var postList = DbBaseModel.createList<BlogEntryModel>(cp, "(Month(dateAdded) = " + request.ArchiveMonth + ")And(year(dateAdded)=" + request.ArchiveYear + ")And(BlogID=" + blog.id + ")", "dateAdded Desc");
+                var postList = DbBaseModel.createList<BlogEntryModel>(cp, "(Month(COALESCE(datePublished, dateAdded)) = " + request.ArchiveMonth + ")And(year(COALESCE(datePublished, dateAdded))=" + request.ArchiveYear + ")And(BlogID=" + blog.id + ")", "COALESCE(datePublished, dateAdded) Desc");
                 if (postList.Count == 0) {
                     result = "<div Class=\"aoBlogProblem\">There are no blog archives For " + request.ArchiveMonth + "/" + request.ArchiveYear + "</div>";
                 } else {
