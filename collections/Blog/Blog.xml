@@ -533,7 +533,13 @@
 			<HelpDefault><![CDATA[When checked, the sidebar will include a link to subscribe by email to this blog.]]></HelpDefault>
 		</Field>
 		<Field Name="allowarticlecta" active="True" AdminOnly="False" Authorable="True" Caption="Include Call-To-Action for Posts" DeveloperOnly="False" EditSortPriority="1010" FieldType="Boolean" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="0" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="Sidebar" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
-			<HelpDefault><![CDATA[When checked, the post can include a Call To Action section of the sidebar.]]></HelpDefault>
+			<HelpDefault><![CDATA[
+				When checked, posts in this blog can include a Call To Action section of the sidebar.
+				To create a call-to-action, first go to "Call to Action Widgets" and create a widget. The widget can be dropped on any page, or included in any blog post.
+				A call-to-action creates a box in the right sidebar of the blog with a headline, description and call-to-action button. 
+				When you create a call-to-action it can be used in one or more blog posts.
+				Call to actions are prefered over links in the blog copy if the link is not permanent.
+				 ]]></HelpDefault>
 		</Field>
 		<Field Name="allowrsssubscribe" active="True" AdminOnly="False" Authorable="True" Caption="Allow RSS Feed Subscribe" DeveloperOnly="False" EditSortPriority="1050" FieldType="Boolean" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="0" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="Sidebar" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[When checked, the sidebar will include a link to subscribe by RSS to this blog.]]></HelpDefault>

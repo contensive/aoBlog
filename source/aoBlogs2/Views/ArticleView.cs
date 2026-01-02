@@ -307,7 +307,7 @@ namespace Contensive.Blog.Views {
                                     // Call cp.Email.sendUser(MemberRule.MemberID.ToString(), EmailFromAddress, "Blog comment on " & blog.name, EmailBody, False, False)
                                     // Next
                                     // End If
-                                    int blogAuthorsGroupId = cp.Group.GetId("Blog Authors");
+                                    int blogAuthorsGroupId = cp.Group.GetId(constants.nameGroupBlogAuthors);
                                     if (blogAuthorsGroupId != 0) {
                                         var MemberRuleList = DbBaseModel.createList<MemberRuleModel>(cp, "GroupId=" + blogAuthorsGroupId);
                                         foreach (var MemberRule in MemberRuleList)

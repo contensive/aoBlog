@@ -103,8 +103,11 @@
 }
 .blogWrapper .aoBlogEntryByLine
 {
-	clear:both;
-	color:#9C9C9C
+    clear: both;
+    color: #9C9C9C;
+    /* margin-bottom: 3rem;
+    border-bottom: 1px solid grey;
+    padding-bottom: .5rem; */
 }
 .blogWrapper .aoBlogCommentHeader
 {

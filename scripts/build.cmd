@@ -22,7 +22,7 @@ set deploymentFolderRoot=C:\deployments\aoBlog\Dev\
 
 rem prompt user if appName is correct
 @echo Build project and install on site: %appName%
-pause
+
 
 set year=%date:~12,4%
 set month=%date:~4,2%

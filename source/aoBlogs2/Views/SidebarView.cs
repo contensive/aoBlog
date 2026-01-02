@@ -149,15 +149,6 @@ namespace Contensive.Blog.Views {
                             // 
                             // Archive List
                             string sideBar_ArchiveList = "";
-                            // 
-                            // create the article list now - if only the current month, turn if off before setting allowListSidebar
-                            // '
-                            // Dim blogListQs As String = cp.Doc.RefreshQueryString()
-                            // blogListQs = cp.Utils.ModifyQueryString(blogListQs, RequestNameSourceFormID, "")
-                            // blogListQs = cp.Utils.ModifyQueryString(blogListQs, RequestNameFormID, "")
-                            // blogListQs = cp.Utils.ModifyQueryString(blogListQs, RequestNameBlogCategoryID, "")
-                            // blogListQs = cp.Utils.ModifyQueryString(blogListQs, RequestNameBlogEntryID, "")
-                            string blogListLink = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, app.blogBaseLink, "?" + app.blogBaseLink);
                             sideBar_ArchiveList = GetSidebarArchiveList(cp, app);
                             if (string.IsNullOrEmpty(sideBar_ArchiveList)) {
                                 blog.allowArchiveList = false;
@@ -266,7 +257,18 @@ namespace Contensive.Blog.Views {
                 string NameOfMonth;
                 string SQL;
                 // 
-                SQL = "SELECT distinct Month(dateAdded) as ArchiveMonth, year(dateAdded) as ArchiveYear " + " From ccBlogCopy" + " Where (ContentControlID = " + cp.Content.GetID(constants.cnBlogEntries) + ") And (Active <> 0)" + " AND (BlogID=" + app.blog.id + ")" + " ORDER BY year(dateAdded) desc, Month(dateAdded) desc";
+                SQL = @$"
+                SELECT distinct 
+                    Month(COALESCE(datePublished,dateAdded)) as ArchiveMonth, year(COALESCE(datePublished,dateAdded)) as ArchiveYear
+                From 
+                    ccBlogCopy
+                Where 
+                    (ContentControlID = {cp.Content.GetID(constants.cnBlogEntries)}) 
+                    And (Active <> 0)
+                    AND (BlogID={app.blog.id})
+                ORDER BY 
+                    year(COALESCE(datePublished,dateAdded)) desc, Month(COALESCE(datePublished,dateAdded)) desc
+                ";
 
 
 

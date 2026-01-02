@@ -166,7 +166,7 @@ namespace Contensive.Blog.Models {
         /// <param name="blog"></param>
         /// <returns></returns>
         public bool isBlogEditor(Contensive.BaseClasses.CPBaseClass cp, BlogModel blog) {
-            int blogAuthorsGroupId = cp.Group.GetId("Blog Authors");
+            int blogAuthorsGroupId = cp.Group.GetId(constants.nameGroupBlogAuthors);
             if (blogAuthorsGroupId == 0) {
                 cp.Group.verifyGroup(constants.nameGroupBlogAuthors, constants.guidGroupBlogAuthors);
                 blogAuthorsGroupId = cp.Group.GetId(constants.nameGroupBlogAuthors);

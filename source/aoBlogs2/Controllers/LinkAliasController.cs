@@ -31,8 +31,7 @@ namespace Contensive.Blog.Controllers {
                         string[] nameValues = Strings.Split(pageQs[1], "&");
                         int cnt = Information.UBound(nameValues) + 1;
                         if (Information.UBound(nameValues) < 0) {
-                        }
-                        else {
+                        } else {
                             string qs = "";
                             int Ptr;
                             //var pageId = default(int);
@@ -81,8 +80,7 @@ namespace Contensive.Blog.Controllers {
                         string[] nameValues = Strings.Split(pageQs[1], "&");
                         int cnt = Information.UBound(nameValues) + 1;
                         if (Information.UBound(nameValues) < 0) {
-                        }
-                        else {
+                        } else {
                             string qs = "";
                             int Ptr;
                             var pageId = default(int);
@@ -123,9 +121,12 @@ namespace Contensive.Blog.Controllers {
         /// <param name="cp"></param>
         /// <param name="blogPostname"></param>
         /// <param name="blogEntryId"></param>
-        public static void addLinkAlias(CPBaseClass cp, string blogPostname, int blogEntryId) {
-            string qs = getLinkAliasQueryString(cp,  blogEntryId);
+        public static void addLinkAlias(CPBaseClass cp, string blogPostname, int blogEntryId, string src) {
+            string qs = getLinkAliasQueryString(cp, blogEntryId);
             cp.Site.AddLinkAlias(blogPostname, cp.Doc.PageId, qs);
+            //
+            cp.Site.ErrorReport($"blog.LinkAliasController.addLinkAlias, src [{src}], blogPostname [{blogPostname}], blogEntryId[{blogEntryId}], cp.Doc.PageId[{cp.Doc.PageId}], qs[{qs}]");
+            //
         }
         // 
         /// <summary>
@@ -144,7 +145,7 @@ namespace Contensive.Blog.Controllers {
         /// </summary>
         /// <param name="cp"></param>
         /// <param name="blogEntryId"></param>
-        public static void deleteLinkAlias(CPBaseClass cp,  int blogEntryId) {
+        public static void deleteLinkAlias(CPBaseClass cp, int blogEntryId) {
             string linkAliasQS = getLinkAliasQueryString(cp, blogEntryId);
             foreach (var linkAlias in DbBaseModel.createList<LinkAliasModel>(cp, "(QueryStringSuffix=" + cp.Db.EncodeSQLText(linkAliasQS) + ")"))
                 DbBaseModel.delete<LinkAliasModel>(cp, linkAlias.id);

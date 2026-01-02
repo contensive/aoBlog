@@ -109,18 +109,10 @@ namespace Contensive.Blog.Models {
                     blogEntry.name = $"Blog Post (please update)";
                     blogEntry.rssTitle = "";
                     blogEntry.copy = cp.WwwFiles.Read(@"blogs\DefaultPostCopy.txt");
-                    // 
-                    LinkAliasController.addLinkAlias(cp, blogEntry.name, blogEntry.id);
-
-                    // Dim qs As String = cp.Utils.ModifyQueryString("", RequestNameBlogEntryID, CStr(blogEntry.id))
-                    // qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogPostDetails.ToString())
-                    // Call cp.Site.AddLinkAlias(Blog.Caption, cp.Doc.PageId, qs)
-                    // Dim LinkAlias As List(Of LinkAliasModel) = DbBaseModel.createList(Of LinkAliasModel)(cp, "(pageid=" & cp.Doc.PageId & ")and(QueryStringSuffix=" & cp.Db.EncodeSQLText(qs) & ")")
-                    // If (LinkAlias.Count > 0) Then
-                    // Dim EntryLink As String = LinkAlias.First().name
-                    // End If
                     blogEntry.rssDescription = _GenericController.getBriefCopy(cp, blogEntry.copy, 150);
                     blogEntry.save(cp);
+                    // 
+                    LinkAliasController.addLinkAlias(cp, blogEntry.name, blogEntry.id, $"verifyBlog()");
                 }
                 // 
                 // Add this new default post to the new feed

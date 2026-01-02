@@ -23,13 +23,10 @@ namespace Contensive.Blog.Views {
                 if (blogPost is null)
                     throw new ApplicationException("BlogEntryCell called without valid BlogEntry");
                 // 
-                // -- add link alias for this page
-                LinkAliasController.addLinkAlias(cp, blogPost.name.Trim().Replace(" ", "-").Replace(":", "").ToLower(), blogPost.id);
+                // -- verify link alias for this page
+                LinkAliasController.addLinkAlias(cp, blogPost.name, blogPost.id, $"getBlogPostCell()");
                 blogPost.blogpostpageid = cp.Doc.PageId;
                 blogPost.save(cp);
-                // Dim qs As String = cp.Utils.ModifyQueryString("", RequestNameBlogEntryID, CStr(blogPost.id))
-                // qs = cp.Utils.ModifyQueryString(qs, rnFormID, FormBlogPostDetails.ToString())
-                // Call cp.Site.AddLinkAlias(blogPost.name, cp.Doc.PageId, qs)
                 // 
                 string qs = LinkAliasController.getLinkAliasQueryString(cp, blogPost.id);
                 string entryLink = cp.Content.GetPageLink(cp.Doc.PageId, qs);
