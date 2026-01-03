@@ -37,6 +37,9 @@ namespace Contensive.Blog {
                 CP.Db.ExecuteNonQuery($"delete from ccfields where contentid={contentId} and name='articleprimaryimagepositionid'");
                 CP.Db.ExecuteNonQuery($"delete from ccfields where contentid={contentId} and name='imagedisplaytypeid'");
                 //
+                contentId = CP.Content.GetID("blog entries");
+                CP.Db.ExecuteNonQuery($"delete from ccfields where contentid={contentId} and name='anonymous'");
+                //
                 // -- reset layouts
                 CP.Db.ExecuteNonQuery($"delete from cclayouts where ccguid={CP.Db.EncodeSQLText(constants.layoutGuidLastestPosts)}");
                 return "";

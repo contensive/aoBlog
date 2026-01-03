@@ -68,9 +68,6 @@ namespace Contensive.Blog.Views {
         // 
         public static string getFormBlogArchivedBlogs(CPBaseClass cp, ApplicationEnvironmentModel app, Models.View.RequestModel request) {
             string getFormBlogArchivedBlogsRet;
-            // 
-            // -- unique title for SEO
-            cp.Doc.AddTitle($"{app.blog.name} Archives {DateTimeFormatInfo.CurrentInfo.GetMonthName(request.ArchiveMonth)} {request.ArchiveYear}");
             //
             string result = "";
             try {
@@ -80,8 +77,23 @@ namespace Contensive.Blog.Views {
                 // 
                 var postList = DbBaseModel.createList<BlogEntryModel>(cp, "(Month(COALESCE(datePublished, dateAdded)) = " + request.ArchiveMonth + ")And(year(COALESCE(datePublished, dateAdded))=" + request.ArchiveYear + ")And(BlogID=" + blog.id + ")", "COALESCE(datePublished, dateAdded) Desc");
                 if (postList.Count == 0) {
-                    result = "<div Class=\"aoBlogProblem\">There are no blog archives For " + request.ArchiveMonth + "/" + request.ArchiveYear + "</div>";
+                    // 
+                    // -- no results
+                    string title = $"{app.blog.name} Archives {DateTimeFormatInfo.CurrentInfo.GetMonthName(request.ArchiveMonth)} {request.ArchiveYear}";
+                    cp.Doc.AddTitle(title);
+                    result += $"<h1>{title}</h1>";
+                    result += $"<div class=\"aoBlogProblem\">There are no blog archives For {request.ArchiveMonth}/{request.ArchiveYear}</div>";
+                } else if (postList.Count == 1) {
+                    //
+                    // -- show 1 resulting article
+                    var app2 = new ApplicationEnvironmentModel(cp, blog, postList[0].id);
+                    result = ArticleView.getArticleView(cp, app2, false);
                 } else {
+                    // 
+                    // -- list of articles
+                    string title = $"{app.blog.name} Archives {DateTimeFormatInfo.CurrentInfo.GetMonthName(request.ArchiveMonth)} {request.ArchiveYear}";
+                    cp.Doc.AddTitle(title);
+                    result += $"<h1>{title}</h1>";
                     int EntryPtr = 0;
                     string entryEditLink = "";
                     var Return_CommentCnt = default(int);
@@ -101,8 +113,8 @@ namespace Contensive.Blog.Views {
                         string BlogTagList = post.tagList;
                         int primaryImagePositionId = post.primaryImagePositionId;
                         result += BlogEntryCellView.getBlogPostCell(cp, app, post, false, false, Return_CommentCnt, BlogTagList);
+                        result += "<hr>";
                     }
-                    result += "<hr>";
                     EntryPtr++;
 
                 }

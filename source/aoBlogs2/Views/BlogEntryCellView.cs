@@ -38,7 +38,7 @@ namespace Contensive.Blog.Views {
                     // 
                     // -- article view
                     result += "<h1 class=\"aoBlogEntryName\">" + blogPost.name + "</h1>";
-                    result += "<div class=\"aoBlogEntryLikeLine\">" + cp.Addon.Execute(constants.facebookLikeAddonGuid) + "</div>";
+                    //result += "<div class=\"aoBlogEntryLikeLine\">" + cp.Addon.Execute(constants.facebookLikeAddonGuid) + "</div>";
                     result += "<div class=\"aoBlogEntryCopy\">";
                     if (blogImageList.Count > 0) {
                         hint = 40;

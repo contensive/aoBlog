@@ -25,7 +25,7 @@ namespace Contensive.Blog {
         public const string guidDefaultCallToAction = "{3ab72599-bfec-4f8c-9801-a21fd7b6a084}";
         public const string BlogListLayout = "{58788483-D050-4464-9261-627278A57B35}";
         public const string LegacyBlogAddon = "{656E95EA-2799-45CD-9712-D4CEDF0E2D02}";
-        public const string facebookLikeAddonGuid = "{17919A35-06B3-4F32-9607-4DB3228A15DF}";
+        //public const string facebookLikeAddonGuid = "{17919A35-06B3-4F32-9607-4DB3228A15DF}";
         public const string reCaptchaWorkingGuid = "{500A1F57-86A2-4D47-B747-4EF4D30A83E2}";
         // 
         // -- images

@@ -170,18 +170,18 @@ namespace Contensive.Blog.Views {
                     }
                 }
                 hint = 190;
-                // 
-                result += "<div class=\"aoBlogCommentDivider\">&nbsp;</div>";
-                // 
-                // edit link
-                // 
-                hint = 200;
-                if (app?.user != null && app.user.isBlogEditor(cp, app.blog)) {
-                    qs = cp.Doc.RefreshQueryString;
-                    qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameBlogEntryID, app.blogPost.id);
-                    qs = cp.Utils.ModifyQueryString(qs, constants.rnFormID, constants.FormBlogEntryEditor);
-                    result += "<div class=\"aoBlogToolLink\"><a href=\"?" + qs + "\">Edit</a></div>";
-                }
+                //// 
+                //result += "<div class=\"aoBlogCommentDivider\">&nbsp;</div>";
+                //// 
+                //// edit link
+                //// 
+                //hint = 200;
+                //if (app?.user != null && app.user.isBlogEditor(cp, app.blog)) {
+                //    qs = cp.Doc.RefreshQueryString;
+                //    qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameBlogEntryID, app.blogPost.id);
+                //    qs = cp.Utils.ModifyQueryString(qs, constants.rnFormID, constants.FormBlogEntryEditor);
+                //    result += "<div class=\"aoBlogToolLink\"><a href=\"?" + qs + "\">Edit</a></div>";
+                //}
                 // 
                 // Search
                 // 

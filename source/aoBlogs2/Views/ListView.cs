@@ -94,72 +94,77 @@ namespace Contensive.Blog.Views {
                 // 
                 // -- pagination
                 result.Append(PaginationController.getRecordPagination(cp, blog.postsToDisplay, pageNumber, recordsOnThisPage, recordCount));
-                string CategoryFooter = "";
-                string qs;
-                // 
-                // Build Footers
-                if (cp.User.IsAdmin & blog.allowCategories) {
-                    qs = "cid=" + cp.Content.GetID("Blog Categories") + "&af=4";
-                    CategoryFooter = CategoryFooter + "<div Class=\"aoBlogFooterLink\"><a href=\"" + cp.Site.GetText("ADMINURL") + "?" + qs + "\">Add a New category</a></div>";
-                }
-                string ReturnFooter = "";
-                if (blog.allowCategories) {
-                    qs = cp.Doc.RefreshQueryString;
-                    qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameBlogCategoryIDSet, "0", true);
-                    CategoryFooter = CategoryFooter + "<div class=\"aoBlogFooterLink\"><a href=\"" + app.blogPageBaseLink + "\">See Posts in All Categories</a></div>";
-                    // 
-                    // select a category
-                    qs = cp.Doc.RefreshQueryString;
-                    var BlogCategoryList = DbBaseModel.createList<BlogCategoriesModel>(cp, "");
-                    if (BlogCategoryList.Count > 0) {
-                        foreach (var blogCategaory in BlogCategoryList) {
-                            bool IsBlocked = false;
-                            if (isBlogCategoryBlockedDict.ContainsKey(blogCategaory.id)) {
-                                IsBlocked = isBlogCategoryBlockedDict[blogCategaory.id];
-                            }
-                            else {
-                                var blogEntryCategory = DbBaseModel.create<BlogCategoriesModel>(cp, blogCategaory.id);
-                                if (blogEntryCategory is not null) {
-                                    if (blogEntryCategory.UserBlocking)
-                                        IsBlocked = !_GenericController.isGroupListMember(cp, Models.GroupModel.GetBlockingGroups(cp, blogEntryCategory.id));
-                                    isBlogCategoryBlockedDict.Add(blogCategaory.id, IsBlocked);
-                                }
-                            }
-                            if (!IsBlocked) {
-                                string categoryLink = cp.Utils.ModifyQueryString(qs, constants.RequestNameBlogCategoryIDSet, blogCategaory.id.ToString(), true);
-                                CategoryFooter = CategoryFooter + "<div class=\"aoBlogFooterLink\"><a href=\"?" + categoryLink + "\"> See Posts in All Category " + blogCategaory.name + "</a></div>";
-                            }
-                        }
-                    }
-                }
+                //string CategoryFooter = "";
+                //string qs;
+                //// 
+                //// Build Footers
+                //if (cp.User.IsAdmin & blog.allowCategories) {
+                //    qs = "cid=" + cp.Content.GetID("Blog Categories") + "&af=4";
+                //    CategoryFooter = CategoryFooter + "<div Class=\"aoBlogFooterLink\"><a href=\"" + cp.Site.GetText("ADMINURL") + "?" + qs + "\">Add a New category</a></div>";
+                //}
+                //string ReturnFooter = "";
+                //if (blog.allowCategories) {
+                //    qs = cp.Doc.RefreshQueryString;
+                //    qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameBlogCategoryIDSet, "0", true);
+                //    CategoryFooter = CategoryFooter + "<div class=\"aoBlogFooterLink\"><a href=\"" + app.blogPageBaseLink + "\">See Posts in All Categories</a></div>";
+                //    // 
+                //    // select a category
+                //    qs = cp.Doc.RefreshQueryString;
+                //    var BlogCategoryList = DbBaseModel.createList<BlogCategoriesModel>(cp, "");
+                //    if (BlogCategoryList.Count > 0) {
+                //        foreach (var blogCategaory in BlogCategoryList) {
+                //            bool IsBlocked = false;
+                //            if (isBlogCategoryBlockedDict.ContainsKey(blogCategaory.id)) {
+                //                IsBlocked = isBlogCategoryBlockedDict[blogCategaory.id];
+                //            }
+                //            else {
+                //                var blogEntryCategory = DbBaseModel.create<BlogCategoriesModel>(cp, blogCategaory.id);
+                //                if (blogEntryCategory is not null) {
+                //                    if (blogEntryCategory.UserBlocking)
+                //                        IsBlocked = !_GenericController.isGroupListMember(cp, Models.GroupModel.GetBlockingGroups(cp, blogEntryCategory.id));
+                //                    isBlogCategoryBlockedDict.Add(blogCategaory.id, IsBlocked);
+                //                }
+                //            }
+                //            if (!IsBlocked) {
+                //                string categoryLink = cp.Utils.ModifyQueryString(qs, constants.RequestNameBlogCategoryIDSet, blogCategaory.id.ToString(), true);
+                //                CategoryFooter = CategoryFooter + "<div class=\"aoBlogFooterLink\"><a href=\"?" + categoryLink + "\"> See Posts in All Category " + blogCategaory.name + "</a></div>";
+                //            }
+                //        }
+                //    }
+                //}
                 // 
                 // Footer
                 result.Append("<div>&nbsp;</div>");
                 if (user.isBlogEditor(cp, blog)) {
-                    // 
-                    // Create a new entry if this is the Blog Owner
-                    // 
-                    qs = cp.Doc.RefreshQueryString;
-                    qs = cp.Utils.ModifyQueryString(qs, constants.rnFormID, constants.FormBlogEntryEditor.ToString(), true);
-                    result.Append("<div class=\"aoBlogFooterLink\"><a href=\"?" + qs + "\">Create New Blog Post</a></div>");
-                    // 
-                    // Create a link to edit the blog record
-                    // 
-                    qs = "cid=" + cp.Content.GetID("Blogs") + "&af=4&id=" + blog.id;
-                    result.Append("<div class=\"aoBlogFooterLink\"><a href=\"" + cp.Site.GetText("adminUrl") + "?" + qs + "\">Blog Settings</a></div>");
-                    // 
-                    // Create a link to edit the rss record
-                    // 
-                    if (rssFeed.id == 0) {
-                    }
 
-                    else {
-                        qs = "cid=" + cp.Content.GetID("RSS Feeds") + "&af=4&id=" + rssFeed.id;
-                        result.Append("<div class=\"aoBlogFooterLink\"><a href=\"" + cp.Site.GetText("adminUrl") + "?" + qs + "\">Edit RSS Features</a></div>");
-                    }
+                    result.Append(cp.Content.GetAddLink(BlogEntryModel.tableMetadata.contentName, $"blogId={app.blog.id}", false, app.userIsEditing, false));
+
+
+
+                    //// 
+                    //// Create a new entry if this is the Blog Owner
+                    //// 
+                    //qs = cp.Doc.RefreshQueryString;
+                    //qs = cp.Utils.ModifyQueryString(qs, constants.rnFormID, constants.FormBlogEntryEditor.ToString(), true);
+                    //result.Append("<div class=\"aoBlogFooterLink\"><a href=\"?" + qs + "\">Create New Blog Post</a></div>");
+                    //// 
+                    //// Create a link to edit the blog record
+                    //// 
+                    //qs = "cid=" + cp.Content.GetID("Blogs") + "&af=4&id=" + blog.id;
+                    //result.Append("<div class=\"aoBlogFooterLink\"><a href=\"" + cp.Site.GetText("adminUrl") + "?" + qs + "\">Blog Settings</a></div>");
+                    //// 
+                    //// Create a link to edit the rss record
+                    //// 
+                    //if (rssFeed.id == 0) {
+                    //}
+
+                    //else {
+                    //    qs = "cid=" + cp.Content.GetID("RSS Feeds") + "&af=4&id=" + rssFeed.id;
+                    //    result.Append("<div class=\"aoBlogFooterLink\"><a href=\"" + cp.Site.GetText("adminUrl") + "?" + qs + "\">Edit RSS Features</a></div>");
+                    //}
                 }
-                result.Append(ReturnFooter);
-                result.Append(CategoryFooter);
+                //result.Append(ReturnFooter);
+                //result.Append(CategoryFooter);
                 // '
                 // ' Search
                 // '

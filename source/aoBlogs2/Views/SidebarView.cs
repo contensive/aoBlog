@@ -177,7 +177,7 @@ namespace Contensive.Blog.Views {
                                 sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By RSS");
                                 sidebarCell.SetOuter(".blogSidebarCellCopy", "");
                                 // http://aoblog/aoblog/files/rssfeeds/RSSFeed8.xml
-                                sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=\"http://" + cp.Site.DomainPrimary + cp.Http.CdnFilePathPrefix + rssFeed.rssFilename + "\"><img id=\"blogSidebarRSSLogo\" src=\"/blogs/rss.png\" width=\"25\" height=\"25\">" + blog.name + " Feed" + "</a>");
+                                sidebarCell.SetInner(".blogSidebarCellInputCaption", "<a href=\"https://" + cp.Site.DomainPrimary + cp.Http.CdnFilePathPrefix + rssFeed.rssFilename + "\"><img id=\"blogSidebarRSSLogo\" src=\"/blogs/rss.png\" width=\"25\" height=\"25\">" + blog.name + " Feed" + "</a>");
                                 sidebarCell.SetOuter(".blogSidebarCellInput", "");
                                 sidebarCell.SetOuter(".blogSidebarCellButton", "");
                                 cellList += Constants.vbCrLf + Constants.vbTab + "<div id=\"blogSidebarRSSCell\">" + sidebarCell.GetHtml() + "</div>";
