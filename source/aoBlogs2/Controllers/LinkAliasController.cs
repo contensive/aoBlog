@@ -124,9 +124,6 @@ namespace Contensive.Blog.Controllers {
         public static void addLinkAlias(CPBaseClass cp, string blogPostname, int blogEntryId, string src) {
             string qs = getLinkAliasQueryString(cp, blogEntryId);
             cp.Site.AddLinkAlias(blogPostname, cp.Doc.PageId, qs);
-            //
-            cp.Site.ErrorReport($"blog.LinkAliasController.addLinkAlias, src [{src}], blogPostname [{blogPostname}], blogEntryId[{blogEntryId}], cp.Doc.PageId[{cp.Doc.PageId}], qs[{qs}]");
-            //
         }
         // 
         /// <summary>

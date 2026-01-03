@@ -83,11 +83,13 @@ namespace Contensive.Blog.Views {
                     cp.Doc.AddTitle(title);
                     result += $"<h1>{title}</h1>";
                     result += $"<div class=\"aoBlogProblem\">There are no blog archives For {request.ArchiveMonth}/{request.ArchiveYear}</div>";
-                } else if (postList.Count == 1) {
                     //
-                    // -- show 1 resulting article
-                    var app2 = new ApplicationEnvironmentModel(cp, blog, postList[0].id);
-                    result = ArticleView.getArticleView(cp, app2, false);
+                    // -- no, this creates 2 pages with same title
+                    //} else if (postList.Count == 1) {
+                    //    //
+                    //    // -- show 1 resulting article
+                    //    var app2 = new ApplicationEnvironmentModel(cp, blog, postList[0].id);
+                    //    result = ArticleView.getArticleView(cp, app2, false);
                 } else {
                     // 
                     // -- list of articles
