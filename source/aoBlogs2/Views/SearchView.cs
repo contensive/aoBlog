@@ -65,7 +65,7 @@ namespace Contensive.Blog.Views {
                     }
                     // 
                     // -- add title and meta description to make this search page unique
-                    cp.Doc.AddTitle(pageTitle);
+                    MetadataController.addTitle( cp, pageTitle);
                     cp.Doc.AddMetaDescription(pageTitle);
                     // 
                     // Display the results
@@ -76,15 +76,15 @@ namespace Contensive.Blog.Views {
                     // 
                     var BlogEntryList = DbBaseModel.createList<BlogEntryModel>(cp, sqlCriteria.ToString());
                     if (BlogEntryList.Count == 0) {
-                        result.Append("</br>" + "<div class=\"aoBlogProblem\">There were no matches to your search</div>");
+                        result.Append("</br><div class=\"aoBlogProblem\">There were no matches to your search</div>");
                     } else {
-                        result.Append("</br>" + "<hr>");
+                        result.Append("</br><hr>");
                         var Return_CommentCnt = default(int);
                         foreach (var blogEntry in BlogEntryList) {
                             int AuthorMemberID = blogEntry.authorMemberId;
                             if (AuthorMemberID == 0)
                                 AuthorMemberID = cp.Utils.EncodeInteger(blogEntry.createdBy);
-                            List<BlogImageModel> blogImageList = BlogImageModel.createListFromBlogEntry(cp, blogEntry.id);
+                            List<BlogImageModel> blogImageList = ImageController.createBlogImageList(cp, blogEntry);
                             result.Append(BlogEntryCellView.getBlogPostCell(cp, app, blogEntry, blogImageList, false, true, Return_CommentCnt, ""));
                             result.Append("<hr>");
                         }
@@ -92,13 +92,7 @@ namespace Contensive.Blog.Views {
                     result = new StringBuilder(cp.Html.div(result.ToString(), "", "aoBlogSearchResultsCon"));
                 }
                 // 
-                result.Append("" + "<div  class=\"aoBlogSearchFormCon\">" + "<table width=100% border=0 cellspacing=0 cellpadding=5 class=\"aoBlogSearchTable\">" + _GenericController.getFormTableRow(cp, "Keyword(s):", _GenericController.getField(cp, constants.RequestNameKeywordList, 1, 10, 30, cp.Doc.GetText(constants.RequestNameKeywordList))) + _GenericController.getFormTableRow(cp, "", cp.Html.Button(constants.rnButton, constants.FormButtonSearch)) + _GenericController.getFormTableRow2(cp, "<div class=\"aoBlogFooterLink\"><a href=\"" + app.blogPageBaseLink + "\">" + constants.BackToRecentPostsMsg + "</a></div>") + "</table>" + "</div>");
-
-
-
-
-
-
+                result.Append("<div  class=\"aoBlogSearchFormCon\"><table width=100% border=0 cellspacing=0 cellpadding=5 class=\"aoBlogSearchTable\">" + _GenericController.getFormTableRow(cp, "Keyword(s):", _GenericController.getField(cp, constants.RequestNameKeywordList, 1, 10, 30, cp.Doc.GetText(constants.RequestNameKeywordList))) + _GenericController.getFormTableRow(cp, "", cp.Html.Button(constants.rnButton, constants.FormButtonSearch)) + _GenericController.getFormTableRow2(cp, "<div class=\"aoBlogFooterLink\"><a href=\"" + app.blogPageBaseLink + "\">" + constants.BackToRecentPostsMsg + "</a></div>") + "</table></div>");
                 result.Append("<input type=\"hidden\" name=\"" + constants.RequestNameSourceFormID + "\" value=\"" + constants.FormBlogSearch.ToString() + "\">");
                 result.Append("<input type=\"hidden\" name=\"" + constants.rnFormID + "\" value=\"" + constants.FormBlogSearch.ToString() + "\">");
                 return cp.Html.Form(result.ToString());

@@ -84,7 +84,7 @@ namespace Contensive.Blog.Views {
                             string Link = app.blogBaseLink + "?" + constants.rnFormID + "=" + constants.FormBlogSearch + "&" + constants.rnQueryTag + "=" + cp.Utils.EncodeHTML(tag);
                             clickableLinkList += ", <a href=\"" + Link + "\">" + tag + "</a>";
                         }
-                        TagListRow = "" + "<div class=\"aoBlogTagListSection\">" + "<div class=\"aoBlogTagListHeader\">Tags</div>" + "<div class=\"aoBlogTagList\">" + Strings.Mid(clickableLinkList, 3) + "</div>" + "</div>";
+                        TagListRow = "<div class=\"aoBlogTagListSection\"><div class=\"aoBlogTagListHeader\">Tags</div><div class=\"aoBlogTagList\">" + Strings.Mid(clickableLinkList, 3) + "</div></div>";
 
 
 
@@ -197,10 +197,10 @@ namespace Contensive.Blog.Views {
                         qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameBlogEntryID, blogPost.id.ToString());
                         qs = cp.Utils.ModifyQueryString(qs, constants.rnFormID, constants.FormBlogPostDetails.ToString());
                         if (BlogCommentModelList.Count == 0) {
-                            rowCopy += " | " + "<a href=\"" + entryLink + "\">Comment</a>";
+                            rowCopy += " | <a href=\"" + entryLink + "\">Comment</a>";
                         }
                         else {
-                            rowCopy += " | " + "<a href=\"" + entryLink + "\">Comments</a>&nbsp;(" + BlogCommentModelList.Count + ")";
+                            rowCopy += " | <a href=\"" + entryLink + "\">Comments</a>&nbsp;(" + BlogCommentModelList.Count + ")";
                         }
                     }
                 }

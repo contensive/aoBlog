@@ -20,13 +20,12 @@ namespace Contensive.Blog.Views {
                     Return_Imagename = blogImage.name;
                     Return_ThumbnailFilename = cp.Image.ResizeAndCrop(blogImage.Filename, app.blog.imageWidthMax, (int)Math.Round(app.blog.imageWidthMax * 0.75d), ref altSizeList, out bool isNewSize);
                     Return_ImageFilename = cp.Image.ResizeAndCrop(blogImage.Filename, app.blog.thumbnailImageWidth, 0, ref altSizeList, out bool isNewSize2);
-                    if (isNewSize2 || isNewSize) {
+                    if (blogImage.id > 0 && (isNewSize2 || isNewSize)) {
                         blogImage.altSizeList = altSizeList;
                         blogImage.save(cp);
                     }
                 }
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 cp.Site.ErrorReport(ex);
             }
             return results;

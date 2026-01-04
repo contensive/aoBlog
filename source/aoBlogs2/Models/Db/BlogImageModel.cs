@@ -27,40 +27,5 @@ namespace Contensive.Blog.Models {
         public string getUploadPath(string fieldName) {
             return tableMetadata.tableNameLower + "/" + fieldName.ToLower() + "/" + id.ToString().PadLeft(12, '0') + "/";
         }
-        // 
-        /// <summary>
-        /// Return a list of blog entry images for the blog entry
-        /// </summary>
-        /// <param name="cp"></param>
-        /// <param name="entryId">The id of the blog entry</param>
-        /// <returns></returns>
-        public static List<BlogImageModel> createListFromBlogEntry(CPBaseClass cp, int entryId) {
-            var result = new List<BlogImageModel>();
-            try {
-                string sql = $@"
-                    select distinct
-                        i.*
-                    from
-	                    BlogImages i
-	                    left join BlogImageRules r on r.blogimageid=i.id
-                    where
-	                    i.blogentryid={entryId}
-	                    or (r.blogentryid={entryId})
-                    order by
-                        i.sortOrder, i.id
-                    ";
-                // create a list of blogimagemodel records for all images referenced directly and indirectly by the blog image rules
-                using (DataTable dt = cp.Db.ExecuteQuery(sql.Replace("{entryId}", entryId.ToString()))) {
-                    foreach (DataRow dr in dt.Rows) {
-                        var blogimage = new BlogImageModel();
-                        blogimage.load<BlogImageModel>(cp, dr);
-                        result.Add(blogimage);
-                    }
-                }
-            } catch (Exception ex) {
-                cp.Site.ErrorReport(ex);
-            }
-            return result;
-        }
     }
 }

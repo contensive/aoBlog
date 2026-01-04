@@ -1,5 +1,6 @@
 ﻿
 using Contensive.BaseClasses;
+using Contensive.Blog.Controllers;
 using Contensive.Blog.Models;
 using Contensive.Models.Db;
 using Microsoft.VisualBasic;
@@ -81,7 +82,7 @@ namespace Contensive.Blog.Views {
                     // 
                     // -- no results
                     string title = $"{app.blog.name} Archives {DateTimeFormatInfo.CurrentInfo.GetMonthName(request.ArchiveMonth)} {request.ArchiveYear}";
-                    cp.Doc.AddTitle(title);
+                    MetadataController.addTitle( cp, title);
                     result += $"<h1>{title}</h1>";
                     result += $"<div class=\"aoBlogProblem\">There are no blog archives For {request.ArchiveMonth}/{request.ArchiveYear}</div>";
                     //
@@ -95,7 +96,7 @@ namespace Contensive.Blog.Views {
                     // 
                     // -- list of articles
                     string title = $"{app.blog.name} Archives {DateTimeFormatInfo.CurrentInfo.GetMonthName(request.ArchiveMonth)} {request.ArchiveYear}";
-                    cp.Doc.AddTitle(title);
+                    MetadataController.addTitle( cp, title);
                     result += $"<h1>{title}</h1>";
                     int EntryPtr = 0;
                     string entryEditLink = "";
@@ -115,7 +116,7 @@ namespace Contensive.Blog.Views {
                         bool allowComments = blogPost.allowComments;
                         string BlogTagList = blogPost.tagList;
                         int primaryImagePositionId = blogPost.primaryImagePositionId;
-                        List<BlogImageModel> blogImageList = BlogImageModel.createListFromBlogEntry(cp, blogPost.id);
+                        List<BlogImageModel> blogImageList = ImageController.createBlogImageList(cp, blogPost);
                         result += BlogEntryCellView.getBlogPostCell(cp, app, blogPost, blogImageList, false, false, Return_CommentCnt, BlogTagList);
                         result += "<hr>";
                     }

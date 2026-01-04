@@ -1,5 +1,4 @@
-﻿
-using System.Linq;
+﻿using System.Linq;
 using Contensive.Blog.Models;
 using Contensive.BaseClasses;
 using Microsoft.VisualBasic;
@@ -8,6 +7,24 @@ using System.Collections.Generic;
 namespace Contensive.Blog.Controllers {
     public sealed class MetadataController {
         private MetadataController() {
+        }
+        //
+        //=====================================================================================================
+        //
+        public static void addTitle(CPBaseClass cp, string title) {
+            if (string.IsNullOrEmpty(title)) { return; }
+            //
+            string processedTitle = title;
+            if ( processedTitle.Length > 60) {
+                int truncatePosition = processedTitle.LastIndexOf(" ", 60);
+                if (truncatePosition > 0) {
+                    processedTitle = processedTitle.Substring(0, truncatePosition) + "...";
+                } else {
+                    // No space found before position 60, truncate at 60
+                    processedTitle = processedTitle.Substring(0, 60) + "...";
+                }
+            }
+            cp.Doc.AddTitle(processedTitle);
         }
         // 
         // ====================================================================================================
@@ -27,7 +44,7 @@ namespace Contensive.Blog.Controllers {
             }
             // 
             // -- set article meta data
-            cp.Doc.AddTitle(!string.IsNullOrEmpty(blogEntry.metaTitle) ? blogEntry.metaTitle : blogEntry.name);
+            MetadataController.addTitle(cp, !string.IsNullOrEmpty(blogEntry.metaTitle) ? blogEntry.metaTitle : blogEntry.name);
             cp.Doc.AddMetaDescription(!string.IsNullOrEmpty(blogEntry.metaDescription) ? blogEntry.metaDescription : blogEntry.name);
             cp.Doc.AddMetaKeywordList((blogEntry.metaKeywordList + "," + blogEntry.tagList).Replace(Constants.vbCrLf, ",").Replace(Constants.vbCr, ",").Replace(Constants.vbLf, ",").Replace(",,", ","));
             // 
@@ -38,8 +55,7 @@ namespace Contensive.Blog.Controllers {
             if (blogImageList.Count > 0) {
                 if (cp.Request.Secure) {
                     cp.Doc.SetProperty("Open Graph Image", "https://" + cp.Site.Domain + cp.Http.CdnFilePathPrefix + blogImageList.First().Filename);
-                }
-                else {
+                } else {
                     cp.Doc.SetProperty("Open Graph Image", "http://" + cp.Site.Domain + cp.Http.CdnFilePathPrefix + blogImageList.First().Filename);
                 }
             }

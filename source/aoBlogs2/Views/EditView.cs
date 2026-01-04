@@ -66,10 +66,10 @@ namespace Contensive.Blog.Views {
                 }
                 // 
                 // file upload form taken from Resource Library
-                string imageForm = "" + "<TABLE id=\"UploadInsert\" border=\"0\" cellpadding=\"0\" cellspacing=\"1\" width=\"100%\" class=\"aoBlogImageTable\">" + "<tr>" + "";
+                string imageForm = "<TABLE id=\"UploadInsert\" border=\"0\" cellpadding=\"0\" cellspacing=\"1\" width=\"100%\" class=\"aoBlogImageTable\"><tr>";
 
 
-                var BlogImageModelList = BlogImageModel.createListFromBlogEntry(cp, blogEntry_id);
+                var BlogImageModelList = app.blogPost is null ? [] : ImageController.createBlogImageList(cp, app.blogPost);
                 int Ptr = 1;
                 var hiddenList = new StringBuilder();
                 if (BlogImageModelList.Count > 0) {
@@ -80,7 +80,7 @@ namespace Contensive.Blog.Views {
                     string imageName = BlogImage.name;
                     hiddenList.Append("<input type=\"hidden\" name=\"" + constants.rnBlogImageID + "." + Ptr + "\" value=\"" + BlogImage.id + "\">");
                     if (Ptr != 1) {
-                        imageForm = imageForm + "<tr>" + "<td><HR></td>" + "</tr>" + "";
+                        imageForm = imageForm + "<tr><td><HR></td></tr>";
 
 
 
@@ -88,7 +88,7 @@ namespace Contensive.Blog.Views {
                     // 
                     // -- image
                     // 
-                    imageForm = imageForm + "<tr>" + "<td><input type=\"checkbox\" name=\"" + constants.rnBlogImageDelete + "." + Ptr + "\">&nbsp;Delete</td>" + "</tr>" + "<tr>" + "<td align=\"left\" class=\"ccAdminSmall\"><img class=\"aoBlogEditImagePreview\" alt=\"" + imageName + "\" title=\"" + imageName + "\" src=\"" + cp.Http.CdnFilePathPrefix + imageFilename + "\"></td>" + "</tr>" + "";
+                    imageForm = imageForm + "<tr><td><input type=\"checkbox\" name=\"" + constants.rnBlogImageDelete + "." + Ptr + "\">&nbsp;Delete</td></tr><tr><td align=\"left\" class=\"ccAdminSmall\"><img class=\"aoBlogEditImagePreview\" alt=\"" + imageName + "\" title=\"" + imageName + "\" src=\"" + cp.Http.CdnFilePathPrefix + imageFilename + "\"></td></tr>";
 
 
 
@@ -98,7 +98,7 @@ namespace Contensive.Blog.Views {
                     // 
                     // -- name
                     // 
-                    imageForm = imageForm + "<tr>" + "<td>Image Alt Text<br><INPUT TYPE=\"Text\" NAME=\"" + constants.rnBlogImageName + "." + Ptr + "\" SIZE=\"25\" value=\"" + cp.Utils.EncodeHTML(imageName) + "\"></td>" + "</tr>" + "";
+                    imageForm = imageForm + "<tr><td>Image Alt Text<br><INPUT TYPE=\"Text\" NAME=\"" + constants.rnBlogImageName + "." + Ptr + "\" SIZE=\"25\" value=\"" + cp.Utils.EncodeHTML(imageName) + "\"></td></tr>";
 
 
 
@@ -115,7 +115,7 @@ namespace Contensive.Blog.Views {
                 // 
                 // -- Next
                 // 
-                imageForm = imageForm + "<TR style=\"padding-bottom:10px; padding-bottom:10px;\">" + "<td><HR></td>" + "</tr>" + "";
+                imageForm = imageForm + "<TR style=\"padding-bottom:10px; padding-bottom:10px;\"><td><HR></td></tr>";
 
 
 
@@ -123,27 +123,27 @@ namespace Contensive.Blog.Views {
                 // -- image
                 // 
                 if (Ptr == 1) {
-                    imageForm = imageForm + "<tr>" + "<td align=\"left\">Image<br><INPUT TYPE=\"file\" name=\"LibraryUpload." + Ptr + "\"></td>" + "</tr>" + "";
+                    imageForm = imageForm + "<tr><td align=\"left\">Image<br><INPUT TYPE=\"file\" name=\"LibraryUpload." + Ptr + "\"></td></tr>";
 
 
 
                     // 
                     // -- image name
                     // 
-                    imageForm = imageForm + "<tr>" + "<td align=\"left\">Name<br><INPUT TYPE=\"Text\" NAME=\"" + constants.rnBlogImageName + "." + Ptr + "\" SIZE=\"25\"></td>" + "</tr>" + "";
+                    imageForm = imageForm + "<tr><td align=\"left\">Name<br><INPUT TYPE=\"Text\" NAME=\"" + constants.rnBlogImageName + "." + Ptr + "\" SIZE=\"25\"></td></tr>";
 
 
 
                     // 
                     // -- image description
                     // 
-                    imageForm = imageForm + "<tr>" + "<td align=\"left\">Description<br><TEXTAREA NAME=\"" + constants.rnBlogImageDescription + "." + Ptr + "\" ROWS=\"5\" COLS=\"50\"></TEXTAREA></td>" + "</tr>" + "";
+                    imageForm = imageForm + "<tr><td align=\"left\">Description<br><TEXTAREA NAME=\"" + constants.rnBlogImageDescription + "." + Ptr + "\" ROWS=\"5\" COLS=\"50\"></TEXTAREA></td></tr>";
 
 
 
                 }
                 // 
-                imageForm = imageForm + "</Table>" + "";
+                imageForm = imageForm + "</Table>";
 
                 // 
                 imageForm = imageForm + cp.Html.Hidden("LibraryUploadCount", Ptr.ToString(), "LibraryUploadCount") + hiddenList.ToString();

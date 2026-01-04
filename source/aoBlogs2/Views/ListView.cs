@@ -39,7 +39,7 @@ namespace Contensive.Blog.Views {
                 if (pageNumber < 1)
                     pageNumber = 1;
                 int pageCount = (int)Math.Round(Math.Truncate(recordCount / (double)blog.postsToDisplay + 0.999d));
-                string paginationSuffix = ", " + "page " + pageNumber + " of " + pageCount + "";
+                string paginationSuffix = ", page " + pageNumber + " of " + pageCount + "";
                 // 
                 if (!string.IsNullOrEmpty(blog.caption)) {
                     result.Append(Constants.vbCrLf + "<h1 Class=\"aoBlogCaption\">" + blog.caption + (pageNumber == 1 ? "" : paginationSuffix) + "</h1>");
@@ -80,7 +80,7 @@ namespace Contensive.Blog.Views {
                             }
                         }
                         if (!IsBlocked) {
-                            List<BlogImageModel> blogImageList = BlogImageModel.createListFromBlogEntry(cp, post.id);
+                            List<BlogImageModel> blogImageList = ImageController.createBlogImageList(cp, post);
                             string blogArticleCell = BlogEntryCellView.getBlogPostCell(cp, app, post, blogImageList, false, true, Return_CommentCnt, "");
                             // 
                             // -- if editing enabled, add the link and wrapperwrapper
@@ -177,7 +177,7 @@ namespace Contensive.Blog.Views {
                 // 
                 string FeedFooter = "";
                 if (!string.IsNullOrEmpty(rssFeed.rssFilename)) {
-                    FeedFooter = "RSS: " + "<a href=\"" + cp.Http.CdnFilePathPrefix + rssFeed.rssFilename + "\">" + rssFeed.name + "</a>" + "&nbsp;" + FeedFooter + constants.iconRSS_16x16 + "";
+                    FeedFooter = "RSS: <a href=\"" + cp.Http.CdnFilePathPrefix + rssFeed.rssFilename + "\">" + rssFeed.name + "</a>&nbsp;" + FeedFooter + constants.iconRSS_16x16 + "";
 
 
 
@@ -190,12 +190,12 @@ namespace Contensive.Blog.Views {
                 if (pageNumber > 1) {
                     // 
                     // -- set the page title if it is page 2 or more 
-                    cp.Doc.AddTitle(blog.metaTitle + paginationSuffix);
+                    MetadataController.addTitle( cp, blog.metaTitle + paginationSuffix);
                     cp.Doc.AddMetaDescription(blog.metaDescription + paginationSuffix);
                 }
                 else {
                     cp.Doc.AddMetaDescription(blog.metaDescription);
-                    cp.Doc.AddTitle(blog.metaTitle);
+                    MetadataController.addTitle( cp, blog.metaTitle);
                 }
                 cp.Doc.AddMetaKeywordList(blog.metaKeywordList);
             }

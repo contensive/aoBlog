@@ -39,7 +39,7 @@ namespace Contensive.Blog.Views {
                 // 
                 // Print the Blog Entry
                 var return_CommentCnt = default(int);
-                List<BlogImageModel> blogImageList = BlogImageModel.createListFromBlogEntry(cp, app.blogPost.id);
+                List<BlogImageModel> blogImageList = ImageController.createBlogImageList(cp, app.blogPost);
                 result += BlogEntryCellView.getBlogPostCell(cp, app, app.blogPost, blogImageList, true, false, return_CommentCnt, entryEditLink);
                 // 
                 var visit = DbBaseModel.create<VisitModel>(cp, cp.Visit.Id);
@@ -102,7 +102,7 @@ namespace Contensive.Blog.Views {
                                         qs = cp.Utils.ModifyQueryString(qs, "auth", "2");
                                         Copy = Copy + " <a href=\"?" + qs + "\"> Join?</a>";
                                     }
-                                    result = result + "<div class=\"aoBlogLoginBox\">" + Constants.vbCrLf + Constants.vbTab + "<div class=\"aoBlogCommentCopy\">" + Copy + "</div>" + Constants.vbCrLf + Constants.vbTab + "<div class=\"aoBlogCommentCopy\">" + "send password form removed" + "</div>" + "</div>";
+                                    result = result + "<div class=\"aoBlogLoginBox\">" + Constants.vbCrLf + Constants.vbTab + "<div class=\"aoBlogCommentCopy\">" + Copy + "</div>" + Constants.vbCrLf + Constants.vbTab + "<div class=\"aoBlogCommentCopy\">send password form removed</div></div>";
 
 
 
@@ -120,7 +120,7 @@ namespace Contensive.Blog.Views {
                                         qs = cp.Utils.ModifyQueryString(qs, "auth", "1");
                                         Copy = Copy + " <a href=\"?" + qs + "\"> Forget your username or password?</a>";
                                     }
-                                    result = result + "<div class=\"aoBlogLoginBox\">" + "<div class=\"aoBlogCommentCopy\">" + Copy + "</div>" + "<div class=\"aoBlogCommentCopy\">" + "Send join form removed" + "</div>" + "</div>";
+                                    result = result + "<div class=\"aoBlogLoginBox\"><div class=\"aoBlogCommentCopy\">" + Copy + "</div><div class=\"aoBlogCommentCopy\">Send join form removed</div></div>";
 
 
 
@@ -137,7 +137,7 @@ namespace Contensive.Blog.Views {
                                         qs = cp.Utils.ModifyQueryString(qs, "auth", "2");
                                         Copy = Copy + "<div class=\"aoBlogRegisterLink\"><a href=\"?" + qs + "\">Need to Register?</a></div>";
                                     }
-                                    result = result + "<div class=\"aoBlogCommentCopy\">" + Copy + "</div>" + "</div>";
+                                    result = result + "<div class=\"aoBlogCommentCopy\">" + Copy + "</div></div>";
 
                                     break;
                                 }
@@ -296,7 +296,7 @@ namespace Contensive.Blog.Views {
                                         EntryLink += "&";
                                     }
                                     EntryLink = EntryLink + "blogentryid=" + blogEntry.id;
-                                    string EmailBody = "" + "The following blog comment was posted " + Conversions.ToString(DateTime.Now) + "To approve this comment, go to " + EntryLink + Constants.vbCrLf + "Blog '" + blog.name + "'" + "Post '" + blogEntry.name + "'" + "By " + cp.User.Name + Constants.vbCrLf + Constants.vbCrLf + cp.Utils.EncodeHTML(Copy) + Constants.vbCrLf;
+                                    string EmailBody = "The following blog comment was posted " + Conversions.ToString(DateTime.Now) + "To approve this comment, go to " + EntryLink + Constants.vbCrLf + "Blog '" + blog.name + "'Post '" + blogEntry.name + "'By " + cp.User.Name + Constants.vbCrLf + Constants.vbCrLf + cp.Utils.EncodeHTML(Copy) + Constants.vbCrLf;
                                     string EmailFromAddress = cp.Site.GetText("EmailFromAddress", "info@" + cp.Site.Domain);
                                     if (blogEntry.authorMemberId != 0) {
                                         cp.Email.sendUser(blogEntry.authorMemberId, EmailFromAddress, "Blog comment notification for [" + blog.name + "]", EmailBody, true, false);

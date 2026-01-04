@@ -77,6 +77,15 @@ namespace Contensive.Blog.Models {
         public DateTime? datePublished { get; set; }
         public int blogpostpageid { get; set; }
         //
+        /// <summary>
+        /// if present, this is the primary image, the first in the image list
+        /// The primary image is used for display at the top of the article and for social media sharing
+        /// </summary>
+        public string primaryImage { get; set; }
+        public string primaryImageAltSizeList { get; set; }
+        public string primaryImageDescription { get; set; }
+        //public int primaryImageHeight { get; set; }
+        //public int primaryImageWidth { get; set; }
         // ==================================================================================================== 
         //
         public static void verifyPost(CPBaseClass cp, BlogEntryModel post) {
@@ -102,7 +111,7 @@ namespace Contensive.Blog.Models {
             var result = new List<ArchiveDateModel>();
             try {
                 // result = createList(cp, "(BlogID=" & blogId & ")", "year(dateAdded) desc, Month(dateAdded) desc")
-                string SQL = "SELECT DISTINCT month(dateAdded) as archiveMonth, year(dateAdded) as archiveYear" + " From ccBlogCopy" + " Where (ContentControlID = " + cp.Content.GetID(constants.cnBlogEntries) + ") And (Active <> 0)" + " AND (BlogID=" + blogId + ")" + " ORDER BY year(dateAdded) desc, month(dateAdded) desc ";
+                string SQL = "SELECT DISTINCT month(dateAdded) as archiveMonth, year(dateAdded) as archiveYear From ccBlogCopy Where (ContentControlID = " + cp.Content.GetID(constants.cnBlogEntries) + ") And (Active <> 0) AND (BlogID=" + blogId + ") ORDER BY year(dateAdded) desc, month(dateAdded) desc ";
 
 
 
