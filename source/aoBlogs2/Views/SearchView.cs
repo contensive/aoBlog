@@ -1,10 +1,11 @@
-﻿using System;
-using System.Text;
+﻿using Contensive.BaseClasses;
 using Contensive.Blog.Controllers;
 using Contensive.Blog.Models;
-using Contensive.BaseClasses;
-using Microsoft.VisualBasic;
 using Contensive.Models.Db;
+using Microsoft.VisualBasic;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Contensive.Blog.Views {
     // 
@@ -83,7 +84,8 @@ namespace Contensive.Blog.Views {
                             int AuthorMemberID = blogEntry.authorMemberId;
                             if (AuthorMemberID == 0)
                                 AuthorMemberID = cp.Utils.EncodeInteger(blogEntry.createdBy);
-                            result.Append(BlogEntryCellView.getBlogPostCell(cp, app, blogEntry, false, true, Return_CommentCnt, ""));
+                            List<BlogImageModel> blogImageList = BlogImageModel.createListFromBlogEntry(cp, blogEntry.id);
+                            result.Append(BlogEntryCellView.getBlogPostCell(cp, app, blogEntry, blogImageList, false, true, Return_CommentCnt, ""));
                             result.Append("<hr>");
                         }
                     }

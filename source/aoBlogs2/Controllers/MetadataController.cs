@@ -3,6 +3,7 @@ using System.Linq;
 using Contensive.Blog.Models;
 using Contensive.BaseClasses;
 using Microsoft.VisualBasic;
+using System.Collections.Generic;
 
 namespace Contensive.Blog.Controllers {
     public sealed class MetadataController {
@@ -10,11 +11,10 @@ namespace Contensive.Blog.Controllers {
         }
         // 
         // ====================================================================================================
-        public static void setMetadata(CPBaseClass cp, BlogEntryModel blogEntry) {
+        public static void setMetadata(CPBaseClass cp, BlogEntryModel blogEntry, List<BlogImageModel> blogImageList) {
             // 
             cp.Utils.AppendLog("Blog.setMetadata, blogEntry.id [" + blogEntry.id + "], set Open Graph Title = blogEntry.name [" + blogEntry.name + "]");
             // 
-            var blogImageList = BlogImageModel.createListFromBlogEntry(cp, blogEntry.id);
             string blogEntryBrief = blogEntry.rssDescription;
             if (string.IsNullOrEmpty(blogEntryBrief)) {
                 blogEntryBrief = cp.Utils.ConvertHTML2Text(blogEntry.copy);

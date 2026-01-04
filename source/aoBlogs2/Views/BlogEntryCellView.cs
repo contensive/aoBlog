@@ -1,11 +1,11 @@
-﻿using Contensive.Models.Db;
-using System;
-using System.Linq;
+﻿using Contensive.BaseClasses;
 using Contensive.Blog.Controllers;
 using Contensive.Blog.Models;
-using Contensive.BaseClasses;
+using Contensive.Models.Db;
 using Microsoft.VisualBasic;
-using Microsoft.VisualBasic.CompilerServices;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Contensive.Blog.Views {
     // 
@@ -13,7 +13,7 @@ namespace Contensive.Blog.Views {
         // 
         // ====================================================================================
         // 
-        public static string getBlogPostCell(CPBaseClass cp, ApplicationEnvironmentModel app, BlogEntryModel blogPost, bool isArticleView, bool IsSearchListing, int Return_CommentCnt, string entryEditLink) {
+        public static string getBlogPostCell(CPBaseClass cp, ApplicationEnvironmentModel app, BlogEntryModel blogPost, List<BlogImageModel> blogImageList, bool isArticleView, bool IsSearchListing, int Return_CommentCnt, string entryEditLink) {
             int hint = 0;
             try {
                 string result = "";
@@ -30,7 +30,6 @@ namespace Contensive.Blog.Views {
                 // 
                 string qs = LinkAliasController.getLinkAliasQueryString(cp, blogPost.id);
                 string entryLink = cp.Content.GetPageLink(cp.Doc.PageId, qs);
-                var blogImageList = BlogImageModel.createListFromBlogEntry(cp, blogPost.id);
                 hint = 20;
                 string TagListRow = "";
                 if (isArticleView) {
@@ -38,7 +37,6 @@ namespace Contensive.Blog.Views {
                     // 
                     // -- article view
                     result += "<h1 class=\"aoBlogEntryName\">" + blogPost.name + "</h1>";
-                    //result += "<div class=\"aoBlogEntryLikeLine\">" + cp.Addon.Execute(constants.facebookLikeAddonGuid) + "</div>";
                     result += "<div class=\"aoBlogEntryCopy\">";
                     if (blogImageList.Count > 0) {
                         hint = 40;

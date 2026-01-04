@@ -3,6 +3,7 @@ using Contensive.BaseClasses;
 using Contensive.Models.Db;
 using System;
 using System.Collections.Generic;
+using System.Data;
 
 namespace Contensive.Blog.Models {
     public class BlogImageModel : Contensive.Models.Db.DbBaseModel {        // <------ set set model Name and everywhere that matches this string
@@ -26,8 +27,6 @@ namespace Contensive.Blog.Models {
         public string getUploadPath(string fieldName) {
             return tableMetadata.tableNameLower + "/" + fieldName.ToLower() + "/" + id.ToString().PadLeft(12, '0') + "/";
         }
-
-
         // 
         /// <summary>
         /// Return a list of blog entry images for the blog entry
@@ -38,19 +37,30 @@ namespace Contensive.Blog.Models {
         public static List<BlogImageModel> createListFromBlogEntry(CPBaseClass cp, int entryId) {
             var result = new List<BlogImageModel>();
             try {
-                foreach (var Rule in createList<BlogImageRuleModel>(cp, "(BlogEntryID=" + entryId + ")")) {
-                    var blogimage = create<BlogImageModel>(cp, Rule.BlogImageID);
-                    if (blogimage is not null) {
-                        result.Add(create<BlogImageModel>(cp, Rule.BlogImageID));
+                string sql = $@"
+                    select distinct
+                        i.*
+                    from
+	                    BlogImages i
+	                    left join BlogImageRules r on r.blogimageid=i.id
+                    where
+	                    i.blogentryid={entryId}
+	                    or (r.blogentryid={entryId})
+                    order by
+                        i.sortOrder, i.id
+                    ";
+                // create a list of blogimagemodel records for all images referenced directly and indirectly by the blog image rules
+                using (DataTable dt = cp.Db.ExecuteQuery(sql.Replace("{entryId}", entryId.ToString()))) {
+                    foreach (DataRow dr in dt.Rows) {
+                        var blogimage = new BlogImageModel();
+                        blogimage.load<BlogImageModel>(cp, dr);
+                        result.Add(blogimage);
                     }
                 }
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 cp.Site.ErrorReport(ex);
             }
             return result;
         }
-
-
     }
 }

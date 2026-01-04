@@ -1,10 +1,11 @@
-﻿using Contensive.Models.Db;
-using System;
+﻿using Contensive.BaseClasses;
 using Contensive.Blog.Controllers;
 using Contensive.Blog.Models;
-using Contensive.BaseClasses;
+using Contensive.Models.Db;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
+using System;
+using System.Collections.Generic;
 
 namespace Contensive.Blog.Views {
     // 
@@ -38,7 +39,8 @@ namespace Contensive.Blog.Views {
                 // 
                 // Print the Blog Entry
                 var return_CommentCnt = default(int);
-                result += BlogEntryCellView.getBlogPostCell(cp, app, app.blogPost, true, false, return_CommentCnt, entryEditLink);
+                List<BlogImageModel> blogImageList = BlogImageModel.createListFromBlogEntry(cp, app.blogPost.id);
+                result += BlogEntryCellView.getBlogPostCell(cp, app, app.blogPost, blogImageList, true, false, return_CommentCnt, entryEditLink);
                 // 
                 var visit = DbBaseModel.create<VisitModel>(cp, cp.Visit.Id);
                 if (app?.user != null && visit is not null) {
@@ -206,7 +208,7 @@ namespace Contensive.Blog.Views {
                 // 
                 // -- set metadata
                 hint = 230;
-                MetadataController.setMetadata(cp, app.blogPost);
+                MetadataController.setMetadata(cp, app.blogPost, blogImageList);
                 // 
                 // -- if editing enabled, add the link and wrapperwrapper
                 hint = 240;

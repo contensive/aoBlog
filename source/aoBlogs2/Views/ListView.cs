@@ -80,7 +80,8 @@ namespace Contensive.Blog.Views {
                             }
                         }
                         if (!IsBlocked) {
-                            string blogArticleCell = BlogEntryCellView.getBlogPostCell(cp, app, post, false, true, Return_CommentCnt, "");
+                            List<BlogImageModel> blogImageList = BlogImageModel.createListFromBlogEntry(cp, post.id);
+                            string blogArticleCell = BlogEntryCellView.getBlogPostCell(cp, app, post, blogImageList, false, true, Return_CommentCnt, "");
                             // 
                             // -- if editing enabled, add the link and wrapperwrapper
                             blogArticleCell = _GenericController.addEditWrapper(cp, blogArticleCell, post.id, post.name, BlogEntryModel.tableMetadata.contentName);

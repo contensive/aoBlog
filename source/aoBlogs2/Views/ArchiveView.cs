@@ -4,6 +4,7 @@ using Contensive.Blog.Models;
 using Contensive.Models.Db;
 using Microsoft.VisualBasic;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
@@ -99,22 +100,23 @@ namespace Contensive.Blog.Views {
                     int EntryPtr = 0;
                     string entryEditLink = "";
                     var Return_CommentCnt = default(int);
-                    foreach (var post in postList) {
-                        int EntryID = post.id;
-                        int AuthorMemberID = post.authorMemberId;
+                    foreach (var blogPost in postList) {
+                        int EntryID = blogPost.id;
+                        int AuthorMemberID = blogPost.authorMemberId;
                         if (AuthorMemberID == 0) {
-                            AuthorMemberID = cp.Utils.EncodeInteger(post.createdBy);
+                            AuthorMemberID = cp.Utils.EncodeInteger(blogPost.createdBy);
                         }
-                        var dateAdded = post.dateAdded;
-                        string EntryName = post.name;
+                        var dateAdded = blogPost.dateAdded;
+                        string EntryName = blogPost.name;
                         if (app.userIsEditing) {
                             entryEditLink = cp.Content.GetEditLink(EntryName, EntryID.ToString(), true, EntryName, true);
                         }
-                        string EntryCopy = post.copy;
-                        bool allowComments = post.allowComments;
-                        string BlogTagList = post.tagList;
-                        int primaryImagePositionId = post.primaryImagePositionId;
-                        result += BlogEntryCellView.getBlogPostCell(cp, app, post, false, false, Return_CommentCnt, BlogTagList);
+                        string EntryCopy = blogPost.copy;
+                        bool allowComments = blogPost.allowComments;
+                        string BlogTagList = blogPost.tagList;
+                        int primaryImagePositionId = blogPost.primaryImagePositionId;
+                        List<BlogImageModel> blogImageList = BlogImageModel.createListFromBlogEntry(cp, blogPost.id);
+                        result += BlogEntryCellView.getBlogPostCell(cp, app, blogPost, blogImageList, false, false, Return_CommentCnt, BlogTagList);
                         result += "<hr>";
                     }
                     EntryPtr++;
