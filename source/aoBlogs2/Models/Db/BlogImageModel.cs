@@ -18,6 +18,10 @@ namespace Contensive.Blog.Models {
         public string Filename { get; set; }
         public int height { get; set; }
         public int width { get; set; }
+        /// <summary>
+        /// for images attached directly to the post. blank for images shared across posts
+        /// </summary>
+        public int blogEntryId { get; set; }
 
         public string getUploadPath(string fieldName) {
             return tableMetadata.tableNameLower + "/" + fieldName.ToLower() + "/" + id.ToString().PadLeft(12, '0') + "/";
