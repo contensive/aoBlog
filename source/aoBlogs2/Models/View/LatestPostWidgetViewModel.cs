@@ -76,31 +76,21 @@ namespace Contensive.Blog.Models {
                 headline = post.name,
                 editTag = cp.Content.GetEditLink("Blog Entries", post.id, "Edit Latest Post")
             };
-
-            List<BlogImageRuleModel> imageRules = BlogImageRuleModel.createList<BlogImageRuleModel>(cp, "blogentryid = " + post.id, "sortorder asc");
-            if (imageRules.Count > 0 && imageRules.First().BlogImageID > 0) {
-                BlogImageModel postImage = BlogImageModel.create<BlogImageModel>(cp, imageRules.First().BlogImageID);
-                if (postImage?.Filename != null) {
-                    cell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.ResizeAndCrop(postImage.Filename, 550, 452);
-                    return cell;
-                }
-                else {
-                    var blog = DbBaseModel.create<BlogModel>(cp, post.blogId);
-                    if (blog != null) {
-                        cell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.ResizeAndCrop(blog.defaultImageFilename.filename, 550, 452);
-                        return cell;
-                    }                    
-                }
+            var postImageList = ImageController.getPostImageList(cp, post);
+            if(postImageList.Count > 0) {
+                cell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.ResizeAndCrop(postImageList[0].Filename, 550, 452);
+                return cell;
             }
-            if (string.IsNullOrEmpty(cell.postImage) && !string.IsNullOrEmpty(settings.defaultpostimage)) {
-                //there is no image rule so use the default image from the widget
+            var blog = DbBaseModel.create<BlogModel>(cp, post.blogId);
+            if (blog != null) {
+                cell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.ResizeAndCrop(blog.defaultImageFilename.filename, 550, 452);
+                return cell;
+            }
+            if (  !string.IsNullOrEmpty(settings.defaultpostimage)) {
                 cell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.ResizeAndCrop(settings.defaultpostimage, 550, 452);
                 return cell;
             }
-            if (string.IsNullOrEmpty(cell.postImage)) {
-                //there is no image rule so use the default image from the widget
-                cell.postImage = cp.Http.CdnFilePathPrefix + constants.defaultImageUrl;
-            }
+            cell.postImage = cp.Http.CdnFilePathPrefix + constants.defaultImageUrl;
             return cell;
         }
     }

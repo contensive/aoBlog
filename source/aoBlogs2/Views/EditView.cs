@@ -69,7 +69,7 @@ namespace Contensive.Blog.Views {
                 string imageForm = "<TABLE id=\"UploadInsert\" border=\"0\" cellpadding=\"0\" cellspacing=\"1\" width=\"100%\" class=\"aoBlogImageTable\"><tr>";
 
 
-                var BlogImageModelList = app.blogPost is null ? [] : ImageController.createBlogImageList(cp, app.blogPost);
+                var BlogImageModelList = app.blogPost is null ? [] : ImageController.getPostImageList(cp, app.blogPost);
                 int Ptr = 1;
                 var hiddenList = new StringBuilder();
                 if (BlogImageModelList.Count > 0) {

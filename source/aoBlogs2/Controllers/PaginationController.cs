@@ -22,7 +22,7 @@ namespace Contensive.Blog.Controllers {
                 var result = new StringBuilder();
                 string basePageUrl = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, "", "");
                 if (pageNumberCurrent > 1)
-                    result.Append("<li class=\"page-item\"><a class=\"page-link\" href=\"" + getPageUrl(basePageUrl, pageNumberCurrent - 1) + "\">Previous</a></li>");
+                    result.Append("<li class=\"page-item\"><a class=\"page-link\" href=\"" + getPageUrl(cp, basePageUrl, pageNumberCurrent - 1) + "\">Previous</a></li>");
                 int recordTop = (pageNumberCurrent - 1) * recordsPerPage;
                 int pageCount = (int)Math.Round(Math.Truncate(recordCount / (double)recordsPerPage + 0.999d));
                 int pageFirst = pageNumberCurrent - 3;
@@ -33,10 +33,10 @@ namespace Contensive.Blog.Controllers {
                     pageLast = pageCount;
                 if (pageCount > 1) {
                     for (int pageNumber = pageFirst, loopTo = pageLast; pageNumber <= loopTo; pageNumber++)
-                        result.Append("<li class=\"page-item\"><a class=\"page-link\" href=\"" + getPageUrl(basePageUrl, pageNumber) + "\">" + pageNumber + "</a></li>");
+                        result.Append("<li class=\"page-item\"><a class=\"page-link\" href=\"" + getPageUrl(cp, basePageUrl, pageNumber) + "\">" + pageNumber + "</a></li>");
                 }
                 if (pageCount > pageNumberCurrent) {
-                    result.Append("<li class=\"page-item\"><a class=\"page-link\" href=\"" + getPageUrl(basePageUrl, pageNumberCurrent + 1) + "\">Next</a></li>");
+                    result.Append("<li class=\"page-item\"><a class=\"page-link\" href=\"" + getPageUrl(cp, basePageUrl, pageNumberCurrent + 1) + "\">Next</a></li>");
                 }
                 // 
                 return "<nav><ul class=\"pagination\">" + result.ToString() + "</ul></nav>";
@@ -47,13 +47,14 @@ namespace Contensive.Blog.Controllers {
             }
         }
         // 
-        public static string getPageUrl(string basePageUrl, int pageNumber) {
+        public static string getPageUrl(CPBaseClass cp, string basePageUrl, int pageNumber) {
             if (pageNumber < 2) {
                 return basePageUrl;
             }
-            else {
-                return basePageUrl + "?page=" + pageNumber;
-            }
+            string alias = $"{basePageUrl}/page/{pageNumber}";
+            string qs = $"page={pageNumber}";
+            cp.Site.AddLinkAlias(alias, cp.Doc.PageId, qs);
+            return cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, qs, alias);
         }
     }
 }

@@ -80,7 +80,7 @@ namespace Contensive.Blog.Views {
                             }
                         }
                         if (!IsBlocked) {
-                            List<BlogImageModel> blogImageList = ImageController.createBlogImageList(cp, post);
+                            List<BlogImageModel> blogImageList = ImageController.getPostImageList(cp, post);
                             string blogArticleCell = BlogEntryCellView.getBlogPostCell(cp, app, post, blogImageList, false, true, Return_CommentCnt, "");
                             // 
                             // -- if editing enabled, add the link and wrapperwrapper
@@ -187,15 +187,18 @@ namespace Contensive.Blog.Views {
                 result.Append(cp.Html.Hidden(constants.RequestNameSourceFormID, constants.FormBlogPostList.ToString()));
                 // 
                 // -- meta data
+                // -- page will already have a page title if the page title is set, just add the blog meta title if it exists
+                string baseMetaTitle = MetadataController.getBlogMetaTitle(app, blog);
+                //string baseMetaTitle = !string.IsNullOrEmpty(blog.metaTitle) ? blog.metaTitle : !string.IsNullOrEmpty(app.page.pageTitle) ? app.page.pageTitle : app.page.name;
                 if (pageNumber > 1) {
                     // 
                     // -- set the page title if it is page 2 or more 
-                    MetadataController.addTitle( cp, blog.metaTitle + paginationSuffix);
-                    cp.Doc.AddMetaDescription(blog.metaDescription + paginationSuffix);
+                    MetadataController.addTitle(cp, baseMetaTitle + paginationSuffix);
+                    cp.Doc.AddMetaDescription( MetadataController.getBlogMetaDescription(app, blog) + paginationSuffix);
                 }
                 else {
-                    cp.Doc.AddMetaDescription(blog.metaDescription);
-                    MetadataController.addTitle( cp, blog.metaTitle);
+                    MetadataController.addTitle(cp, baseMetaTitle);
+                    cp.Doc.AddMetaDescription(MetadataController.getBlogMetaDescription(app, blog));
                 }
                 cp.Doc.AddMetaKeywordList(blog.metaKeywordList);
             }

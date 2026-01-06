@@ -5,6 +5,7 @@ using Contensive.Blog.Models;
 using Contensive.Blog.Models.View;
 using Contensive.BaseClasses;
 using Microsoft.VisualBasic;
+using Contensive.Blog.Controllers;
 
 namespace Contensive.Blog.Views {
     // 
@@ -45,8 +46,7 @@ namespace Contensive.Blog.Views {
                                     sidebarCell.SetOuter(".blogSidebarCellInputCaption", "");
                                     if (string.IsNullOrEmpty(cta.name) | string.IsNullOrEmpty(cta.link)) {
                                         sidebarCell.SetOuter(".blogSidebarCellButton", "");
-                                    }
-                                    else {
+                                    } else {
                                         sidebarCell.SetInner(".blogSidebarCellButton", "<a target=\"_blank\" href=\"" + cta.link + "\">" + cta.name + "</a>");
                                     }
                                     cellList += Constants.vbCrLf + Constants.vbTab + sidebarCell.GetHtml();
@@ -70,9 +70,7 @@ namespace Contensive.Blog.Views {
                                 sidebarCell.SetInner(".blogSidebarCellInputCaption", "You are subscribed to this blog.");
                                 sidebarCell.SetOuter(".blogSidebarCellInput", "");
                                 sidebarCell.SetOuter(".blogSidebarCellButton", "");
-                            }
-
-                            else {
+                            } else {
                                 sidebarCell.SetInner(".blogSidebarCellInputCaption", "Email*");
                                 sidebarCell.SetInner(".blogSidebarCellInput", "<input type=\"text\" id=\"blogSubscribeEmail\" name=\"email\" value=\"" + cp.User.Email + "\">");
                                 sidebarCell.SetInner(".blogSidebarCellButton a", "Subscribe");
@@ -89,24 +87,21 @@ namespace Contensive.Blog.Views {
                             string sidebarHtml = "";
                             if (blog.allowFacebookLink & !string.IsNullOrEmpty(blog.facebookLink)) {
                                 sidebarHtml += "<a href=\"" + blog.facebookLink + "\" target=\"_blank\"><img Class=\"blogSidebarSocialLogo\" src=\"/blogs/facebook.jpg\" width=\"32\" height=\"32\"></a>";
-                            }
-                            else if (blog.allowFacebookLink) {
+                            } else if (blog.allowFacebookLink) {
                                 if (cp.User.IsAdmin) {
                                     sidebarHtml += "<div Class=\"blogAdminWarning\"><h2>Administrator</h2><p>Add a facebook link For this blog, Or disable the Allow Facebook Sidebar checkbox.</p></div>";
                                 }
                             }
                             if (blog.allowTwitterLink & !string.IsNullOrEmpty(blog.twitterLink)) {
                                 sidebarHtml += "<a href=\"" + blog.twitterLink + "\" target=\"_blank\"><img Class=\"blogSidebarSocialLogo\" src=\"/blogs/twitter.jpg\" width=\"32\" height=\"32\"></a>";
-                            }
-                            else if (blog.allowTwitterLink) {
+                            } else if (blog.allowTwitterLink) {
                                 if (cp.User.IsAdmin) {
                                     sidebarHtml += "<div Class=\"blogAdminWarning\"><h2>Administrator</h2><p>Add a twitter link For this blog, Or disable the Allow Twitter Sidebar checkbox.</p></div>";
                                 }
                             }
                             if (blog.allowTwitterLink & !string.IsNullOrEmpty(blog.googlePlusLink)) {
                                 sidebarHtml += "<a href=\"" + blog.googlePlusLink + "\" target=\"_blank\"><img Class=\"blogSidebarSocialLogo\" src=\"/blogs/GooglePlus.jpg\" width=\"32\" height=\"32\"></a>";
-                            }
-                            else if (blog.allowGooglePlusLink) {
+                            } else if (blog.allowGooglePlusLink) {
                                 if (cp.User.IsAdmin) {
                                     sidebarHtml += "<div Class=\"blogAdminWarning\"><h2>Administrator</h2><p>Add a GooglePlus link For this blog, Or disable the Allow Google Plus Sidebar checkbox.</p></div>";
                                 }
@@ -152,8 +147,7 @@ namespace Contensive.Blog.Views {
                             sideBar_ArchiveList = GetSidebarArchiveList(cp, app);
                             if (string.IsNullOrEmpty(sideBar_ArchiveList)) {
                                 blog.allowArchiveList = false;
-                            }
-                            else {
+                            } else {
                                 sidebarCell.Load(cellTemplate);
                                 sidebarCell.SetInner(".blogSidebarCellHeadline", "Archives");
                                 sidebarCell.SetInner(".blogSidebarCellCopy", sideBar_ArchiveList);
@@ -170,8 +164,7 @@ namespace Contensive.Blog.Views {
                             // 
                             if (rssFeed is null || string.IsNullOrEmpty(rssFeed.rssFilename)) {
                                 adminSuggestions += cp.Html.li("This blog includes an RSS Feed, but no feed has been created. It his persists, please contact the site developer. Disable RSS feeds for this blog to hide this message.");
-                            }
-                            else {
+                            } else {
                                 // 
                                 sidebarCell.Load(cellTemplate);
                                 sidebarCell.SetInner(".blogSidebarCellHeadline", "Subscribe By RSS");
@@ -188,9 +181,7 @@ namespace Contensive.Blog.Views {
                         if (isArticleView) {
                             var emtyblogEntryCtaRuleList = DbBaseModel.createList<BlogEntryCTARuleModel>(cp, "blogEntryid=" + request.blogEntryId);
                             if (emtyblogEntryCtaRuleList.Count > 0) {
-                            }
-
-                            else {
+                            } else {
                                 sidebarCell.Load(cellTemplate);
                                 sidebarCell.SetInner(".blogSidebarCellHeadline", "");
                                 sidebarCell.SetInner(".blogSidebarCellCopy", "");
@@ -239,8 +230,7 @@ namespace Contensive.Blog.Views {
                     }
                     return resultHtml;
                 }
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 cp.Site.ErrorReport(ex);
                 throw;
             }
@@ -252,36 +242,35 @@ namespace Contensive.Blog.Views {
             string returnHtml = "";
             try {
                 var cs = cp.CSNew();
-                int ArchiveMonth;
-                int ArchiveYear;
-                string NameOfMonth;
+                int archiveMonth;
+                int archiveYear;
+                string nameOfMonth;
                 string SQL;
                 // 
                 SQL = @$"
-                SELECT distinct 
-                    Month(COALESCE(datePublished,dateAdded)) as ArchiveMonth, year(COALESCE(datePublished,dateAdded)) as ArchiveYear
-                From 
-                    ccBlogCopy
-                Where 
-                    (ContentControlID = {cp.Content.GetID(constants.cnBlogEntries)}) 
-                    And (Active <> 0)
-                    AND (BlogID={app.blog.id})
-                ORDER BY 
-                    year(COALESCE(datePublished,dateAdded)) desc, Month(COALESCE(datePublished,dateAdded)) desc
-                ";
-
-
-
+                    SELECT distinct 
+                        Month(COALESCE(datePublished,dateAdded)) as ArchiveMonth, year(COALESCE(datePublished,dateAdded)) as ArchiveYear
+                    From 
+                        ccBlogCopy
+                    Where 
+                        (ContentControlID = {cp.Content.GetID(constants.cnBlogEntries)}) 
+                        And (Active <> 0)
+                        AND (BlogID={app.blog.id})
+                    ORDER BY 
+                        year(COALESCE(datePublished,dateAdded)) desc, Month(COALESCE(datePublished,dateAdded)) desc
+                    ";
                 if (cs.OpenSQL(SQL)) {
-                    //qs = app.blogBaseLink;
+                    string blogPageUrl = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, "", app.blog.name);
                     string qs = cp.Utils.ModifyQueryString("", constants.rnFormID, constants.FormBlogArchivedBlogs.ToString());
                     while (cs.OK()) {
-                        ArchiveMonth = cs.GetInteger("ArchiveMonth");
-                        ArchiveYear = cs.GetInteger("ArchiveYear");
-                        NameOfMonth = DateAndTime.MonthName(ArchiveMonth);
-                        qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameArchiveMonth, ArchiveMonth.ToString());
-                        qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameArchiveYear, ArchiveYear.ToString());
-                        returnHtml = returnHtml + Constants.vbCrLf + Constants.vbTab + Constants.vbTab + "<li class=\"aoBlogArchiveLink\"><a href=\"" + app.blogBaseLink + "?" + qs + "\">" + NameOfMonth + "&nbsp;" + ArchiveYear + "</a></li>";
+                        archiveMonth = cs.GetInteger("ArchiveMonth");
+                        archiveYear = cs.GetInteger("ArchiveYear");
+                        nameOfMonth = DateAndTime.MonthName(archiveMonth);
+                        qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameArchiveMonth, archiveMonth.ToString());
+                        qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameArchiveYear, archiveYear.ToString());
+                        cp.Site.AddLinkAlias($"{blogPageUrl}/archive/{archiveYear}/{archiveMonth}", cp.Doc.PageId, qs);
+                        string archiveUrl = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, qs, $"{blogPageUrl}/archives/{archiveYear}/{archiveMonth}");
+                        returnHtml += $"<li class=\"aoBlogArchiveLink\"><a href=\"{archiveUrl}\">{nameOfMonth}&nbsp;{archiveYear}</a></li>";
                         cs.GoNext();
                     }
                 }

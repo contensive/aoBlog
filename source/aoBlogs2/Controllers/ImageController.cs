@@ -17,7 +17,7 @@ namespace Contensive.Blog.Controllers {
         /// <param name="cp"></param>
         /// <param name="blogEntry"></param>
         /// <returns></returns>
-        public static List<BlogImageModel> createBlogImageList(CPBaseClass cp, BlogEntryModel blogEntry) {
+        public static List<BlogImageModel> getPostImageList(CPBaseClass cp, BlogEntryModel blogEntry) {
             var result = new List<BlogImageModel>();
             try {
                 if (!string.IsNullOrEmpty(blogEntry.primaryImage)) {

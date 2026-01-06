@@ -1,5 +1,13 @@
 
 /*
+force blog nav background
+*/
+.blogWrapper .page-link {
+    color: #0d6efd !important;
+}
+
+
+/*
 * warnings
 */
 .blogWrapper div.blogAdminWarning

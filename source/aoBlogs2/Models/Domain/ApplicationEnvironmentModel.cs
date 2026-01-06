@@ -8,6 +8,16 @@ namespace Contensive.Blog.Models {
     public class ApplicationEnvironmentModel {
         // 
         public CPBaseClass cp { get; private set; }
+        //
+        //====================================================================================================
+        //
+        public PageContentModel page {
+            get {
+                local_page ??= PageContentModel.create<PageContentModel>(cp, cp.Doc.PageId);
+                return local_page;
+            }
+        }
+        private PageContentModel local_page = null;
         // 
         // ====================================================================================================
         /// <summary>
