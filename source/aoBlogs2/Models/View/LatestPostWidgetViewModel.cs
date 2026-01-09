@@ -76,17 +76,19 @@ namespace Contensive.Blog.Models {
                 headline = post.name,
                 editTag = cp.Content.GetEditLink("Blog Entries", post.id, "Edit Latest Post")
             };
-            var postImageList = ImageController.getPostImageList(cp, post);
-            if(postImageList.Count > 0) {
+            var postImageList = BlogImageModel.getPostImageList(cp, post);
+            if (postImageList.Count > 0) {
                 cell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.ResizeAndCrop(postImageList[0].Filename, 550, 452);
                 return cell;
             }
             var blog = DbBaseModel.create<BlogModel>(cp, post.blogId);
             if (blog != null) {
-                cell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.ResizeAndCrop(blog.defaultImageFilename.filename, 550, 452);
-                return cell;
+                if (!string.IsNullOrEmpty(blog.defaultImageFilename.filename)) {
+                    cell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.ResizeAndCrop(blog.defaultImageFilename.filename, 550, 452);
+                    return cell;
+                }
             }
-            if (  !string.IsNullOrEmpty(settings.defaultpostimage)) {
+            if (!string.IsNullOrEmpty(settings.defaultpostimage)) {
                 cell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.ResizeAndCrop(settings.defaultpostimage, 550, 452);
                 return cell;
             }

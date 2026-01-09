@@ -28,22 +28,58 @@ namespace Contensive.Blog.Controllers {
         /// <returns></returns>
         public static string getBlogMetaTitle(ApplicationEnvironmentModel app, BlogModel blog) {
             CPBaseClass cp = app.cp;
-            string processedTitle = blog?.metaTitle ?? string.Empty;
-            if(string.IsNullOrWhiteSpace(processedTitle)) {
+            string result = blog?.metaTitle ?? string.Empty;
+            if(string.IsNullOrWhiteSpace(result)) {
                 //
                 // -- try page's meta title
-                processedTitle += " " + blog.name;
+                result += " " + blog.name;
             }
-            if (processedTitle.Length > 60) {
-                int truncatePosition = processedTitle.LastIndexOf(" ", 60);
-                if (truncatePosition > 0) {
-                    processedTitle = processedTitle.Substring(0, truncatePosition) + "...";
-                } else {
-                    // No space found before position 60, truncate at 60
-                    processedTitle = processedTitle.Substring(0, 60) + "...";
-                }
+            result = result.Replace(Constants.vbCrLf, " ").Replace(Constants.vbCr, " ").Replace(Constants.vbLf, " ").Trim();
+            //if (result.Length > 60) {
+            //    int truncatePosition = result.LastIndexOf(" ", 60);
+            //    if (truncatePosition > 0) {
+            //        result = result.Substring(0, truncatePosition) + "...";
+            //    } else {
+            //        // No space found before position 60, truncate at 60
+            //        result = result.Substring(0, 60) + "...";
+            //    }
+            //}
+            return result;
+        }
+        //
+        //=====================================================================================================
+        /// <summary>
+        /// geneate a meta title from 50 to 60 characters
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="blog"></param>
+        /// <param name="blogEntry"></param>
+        /// <param name="cp"></param>
+        /// <returns></returns>
+        public static string getEntryMetaTitle(ApplicationEnvironmentModel app, BlogModel blog, BlogEntryModel blogEntry) {
+            CPBaseClass cp = app.cp;
+            string result = blogEntry?.metaTitle;
+            if(string.IsNullOrWhiteSpace(result)) {
+                //
+                // -- try page's meta title
+                result = blogEntry?.name;
             }
-            return processedTitle;
+            if (string.IsNullOrWhiteSpace(result)) {
+                //
+                // -- try blog name
+                result = blog.name;
+            }
+            result = result.Replace(Constants.vbCrLf, " ").Replace(Constants.vbCr, " ").Replace(Constants.vbLf, " ").Trim();
+            //if (result.Length > 60) {
+            //    int truncatePosition = result.LastIndexOf(" ", 60);
+            //    if (truncatePosition > 0) {
+            //        result = result.Substring(0, truncatePosition) + "...";
+            //    } else {
+            //        // No space found before position 60, truncate at 60
+            //        result = result.Substring(0, 60) + "...";
+            //    }
+            //}
+            return result;
         }
         //
         //=====================================================================================================
@@ -62,16 +98,17 @@ namespace Contensive.Blog.Controllers {
             if (string.IsNullOrWhiteSpace(result) ) {
                 //
                 // -- try page's meta description
-                result += " " + app.page.metaDescription;
+                result = app.page.metaDescription;
             }
-            if (result.Length > 160) {
-                //
-                // trim to 160 characters
-                int ptr = result.LastIndexOf(" ", 160);
-                if (ptr < 0)
-                    ptr = 160;
-                result = result.Substring(0, ptr - 1) + "...";
-            }
+            result = result.Replace(Constants.vbCrLf, " ").Replace(Constants.vbCr, " ").Replace(Constants.vbLf, " ").Trim();
+            //if (result.Length > 160) {
+            //    //
+            //    // trim to 160 characters
+            //    int ptr = result.LastIndexOf(" ", 160);
+            //    if (ptr < 0)
+            //        ptr = 160;
+            //    result = result.Substring(0, ptr) + "...";
+            //}
             return result;
         }
         //
@@ -86,29 +123,30 @@ namespace Contensive.Blog.Controllers {
             //
             // -- entry meta description
             string result = blogEntry.metaDescription ?? "";
-            if (result.Length < 120) {
+            if (string.IsNullOrEmpty(result)) {
                 //
                 // -- try rss description
-                result += " " + blogEntry.rssDescription;
+                result = blogEntry.rssDescription;
             }
-            if (result.Length < 120) {
+            if (string.IsNullOrEmpty(result)) {
                 //
                 // -- try blog copy
-                result += " " + cp.Utils.ConvertHTML2Text(blogEntry.copy);
+                result = cp.Utils.ConvertHTML2Text(blogEntry.copy);
             }
-            if (result.Length > 160) {
-                //
-                // trim to 160 characters
-                int ptr = result.LastIndexOf(" ", 160);
-                if (ptr < 0)
-                    ptr = 160;
-                result = result.Substring(0, ptr - 1) + "...";
-            }
+            result = result.Replace(Constants.vbCrLf, " ").Replace(Constants.vbCr, " ").Replace(Constants.vbLf, " ").Trim();
+            //if (result.Length > 160) {
+            //    //
+            //    // trim to 160 characters
+            //    int ptr = result.LastIndexOf(" ", 160);
+            //    if (ptr < 0)
+            //        ptr = 160;
+            //    result = result.Substring(0, ptr - 1) + "...";
+            //}
             return result;
         }
         // 
         // ====================================================================================================
-        public static void setMetadata( ApplicationEnvironmentModel app, BlogModel blog,  BlogEntryModel blogEntry, List<BlogImageModel> blogImageList) {
+        public static void setEntryMetadata( ApplicationEnvironmentModel app, BlogModel blog,  BlogEntryModel blogEntry, List<BlogImageModel> blogImageList) {
             CPBaseClass cp = app.cp;
             // 
             cp.Utils.AppendLog("Blog.setMetadata, blogEntry.id [" + blogEntry.id + "], set Open Graph Title = blogEntry.name [" + blogEntry.name + "]");
@@ -125,7 +163,7 @@ namespace Contensive.Blog.Controllers {
             }
             // 
             // -- set article meta data
-            MetadataController.addTitle(cp, MetadataController.getBlogMetaTitle(app, blog));
+            MetadataController.addTitle(cp, MetadataController.getEntryMetaTitle(app, blog, blogEntry));
             cp.Doc.AddMetaDescription(MetadataController.getEntryMetaDescription(cp, blogEntry));
             cp.Doc.AddMetaKeywordList((blogEntry.metaKeywordList + "," + blogEntry.tagList).Replace(Constants.vbCrLf, ",").Replace(Constants.vbCr, ",").Replace(Constants.vbLf, ",").Replace(",,", ","));
             // 

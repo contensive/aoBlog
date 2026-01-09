@@ -77,20 +77,19 @@ namespace Contensive.Blog.Views {
                 // 
                 // List Blog Entries
                 // 
+                cp.Doc.AddMetaDescription($"Archives {DateTimeFormatInfo.CurrentInfo.GetMonthName(request.ArchiveMonth)} {request.ArchiveYear}, {MetadataController.getBlogMetaDescription(app, blog)}");
+                string title = $"Archives {DateTimeFormatInfo.CurrentInfo.GetMonthName(request.ArchiveMonth)} {request.ArchiveYear}, {MetadataController.getBlogMetaTitle(app, blog)} ";
+                MetadataController.addTitle(cp, title);
+                //
+                result += $"<h1>{title}</h1>";
                 var postList = DbBaseModel.createList<BlogEntryModel>(cp, "(Month(COALESCE(datePublished, dateAdded)) = " + request.ArchiveMonth + ")And(year(COALESCE(datePublished, dateAdded))=" + request.ArchiveYear + ")And(BlogID=" + blog.id + ")", "COALESCE(datePublished, dateAdded) Desc");
                 if (postList.Count == 0) {
                     // 
                     // -- no results
-                    string title = $"{MetadataController.getBlogMetaTitle(app, blog)} Archives {DateTimeFormatInfo.CurrentInfo.GetMonthName(request.ArchiveMonth)} {request.ArchiveYear}";
-                    MetadataController.addTitle( cp, title);
-                    result += $"<h1>{title}</h1>";
                     result += $"<div class=\"aoBlogProblem\">There are no blog archives For {request.ArchiveMonth}/{request.ArchiveYear}</div>";
                 } else {
                     // 
                     // -- list of articles
-                    string title = $"{MetadataController.getBlogMetaTitle(app, blog)} Archives {DateTimeFormatInfo.CurrentInfo.GetMonthName(request.ArchiveMonth)} {request.ArchiveYear}";
-                    MetadataController.addTitle( cp, title);
-                    result += $"<h1>{title}</h1>";
                     int EntryPtr = 0;
                     string entryEditLink = "";
                     var Return_CommentCnt = default(int);
@@ -109,7 +108,7 @@ namespace Contensive.Blog.Views {
                         bool allowComments = blogPost.allowComments;
                         string BlogTagList = blogPost.tagList;
                         int primaryImagePositionId = blogPost.primaryImagePositionId;
-                        List<BlogImageModel> blogImageList = ImageController.getPostImageList(cp, blogPost);
+                        List<BlogImageModel> blogImageList = BlogImageModel.getPostImageList(cp, blogPost);
                         result += BlogEntryCellView.getBlogPostCell(cp, app, blogPost, blogImageList, false, false, Return_CommentCnt, entryEditLink);
                         result += "<hr>";
                     }

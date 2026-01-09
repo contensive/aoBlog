@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Contensive.BaseClasses;
 using Contensive.Blog.Controllers;
 using Contensive.Blog.Models;
-using Contensive.BaseClasses;
 using Contensive.Models.Db;
 using Microsoft.VisualBasic;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
 
 namespace Contensive.Blog.Views {
     // 
@@ -39,10 +40,10 @@ namespace Contensive.Blog.Views {
                 if (pageNumber < 1)
                     pageNumber = 1;
                 int pageCount = (int)Math.Round(Math.Truncate(recordCount / (double)blog.postsToDisplay + 0.999d));
-                string paginationSuffix = ", page " + pageNumber + " of " + pageCount + "";
+                string pageOneOfTenMsg = "Page " + pageNumber + " of " + pageCount + "";
                 // 
                 if (!string.IsNullOrEmpty(blog.caption)) {
-                    result.Append(Constants.vbCrLf + "<h1 Class=\"aoBlogCaption\">" + blog.caption + (pageNumber == 1 ? "" : paginationSuffix) + "</h1>");
+                    result.Append(Constants.vbCrLf + "<h1 Class=\"aoBlogCaption\">" + blog.caption + (pageNumber == 1 ? "" : ", " + pageOneOfTenMsg) + "</h1>");
                 }
                 if (!string.IsNullOrEmpty(blog.copy)) {
                     result.Append(Constants.vbCrLf + "<div Class=\"aoBlogDescription\">" + blog.copy + "</div>");
@@ -80,7 +81,7 @@ namespace Contensive.Blog.Views {
                             }
                         }
                         if (!IsBlocked) {
-                            List<BlogImageModel> blogImageList = ImageController.getPostImageList(cp, post);
+                            List<BlogImageModel> blogImageList = BlogImageModel.getPostImageList(cp, post);
                             string blogArticleCell = BlogEntryCellView.getBlogPostCell(cp, app, post, blogImageList, false, true, Return_CommentCnt, "");
                             // 
                             // -- if editing enabled, add the link and wrapperwrapper
@@ -188,16 +189,14 @@ namespace Contensive.Blog.Views {
                 // 
                 // -- meta data
                 // -- page will already have a page title if the page title is set, just add the blog meta title if it exists
-                string baseMetaTitle = MetadataController.getBlogMetaTitle(app, blog);
-                //string baseMetaTitle = !string.IsNullOrEmpty(blog.metaTitle) ? blog.metaTitle : !string.IsNullOrEmpty(app.page.pageTitle) ? app.page.pageTitle : app.page.name;
                 if (pageNumber > 1) {
                     // 
                     // -- set the page title if it is page 2 or more 
-                    MetadataController.addTitle(cp, baseMetaTitle + paginationSuffix);
-                    cp.Doc.AddMetaDescription( MetadataController.getBlogMetaDescription(app, blog) + paginationSuffix);
+                    MetadataController.addTitle(cp, $"{pageOneOfTenMsg}, {MetadataController.getBlogMetaTitle(app, blog)}");
+                    cp.Doc.AddMetaDescription($"{pageOneOfTenMsg}, {MetadataController.getBlogMetaDescription(app, blog)}");
                 }
                 else {
-                    MetadataController.addTitle(cp, baseMetaTitle);
+                    MetadataController.addTitle(cp, MetadataController.getBlogMetaTitle(app, blog));
                     cp.Doc.AddMetaDescription(MetadataController.getBlogMetaDescription(app, blog));
                 }
                 cp.Doc.AddMetaKeywordList(blog.metaKeywordList);

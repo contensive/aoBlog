@@ -39,7 +39,7 @@ namespace Contensive.Blog.Views {
                 // 
                 // Print the Blog Entry
                 var return_CommentCnt = default(int);
-                List<BlogImageModel> blogImageList = ImageController.getPostImageList(cp, app.blogPost);
+                List<BlogImageModel> blogImageList = BlogImageModel.getPostImageList(cp, app.blogPost);
                 result += BlogEntryCellView.getBlogPostCell(cp, app, app.blogPost, blogImageList, true, false, return_CommentCnt, entryEditLink);
                 // 
                 var visit = DbBaseModel.create<VisitModel>(cp, cp.Visit.Id);
@@ -208,7 +208,7 @@ namespace Contensive.Blog.Views {
                 // 
                 // -- set metadata
                 hint = 230;
-                MetadataController.setMetadata(app, app.blog, app.blogPost, blogImageList);
+                MetadataController.setEntryMetadata(app, app.blog, app.blogPost, blogImageList);
                 // 
                 // -- if editing enabled, add the link and wrapper
                 hint = 240;

@@ -69,7 +69,7 @@ namespace Contensive.Blog.Views {
                 string imageForm = "<TABLE id=\"UploadInsert\" border=\"0\" cellpadding=\"0\" cellspacing=\"1\" width=\"100%\" class=\"aoBlogImageTable\"><tr>";
 
 
-                var BlogImageModelList = app.blogPost is null ? [] : ImageController.getPostImageList(cp, app.blogPost);
+                var BlogImageModelList = app.blogPost is null ? [] : BlogImageModel.getPostImageList(cp, app.blogPost);
                 int Ptr = 1;
                 var hiddenList = new StringBuilder();
                 if (BlogImageModelList.Count > 0) {
@@ -88,7 +88,7 @@ namespace Contensive.Blog.Views {
                     // 
                     // -- image
                     // 
-                    imageForm = imageForm + "<tr><td><input type=\"checkbox\" name=\"" + constants.rnBlogImageDelete + "." + Ptr + "\">&nbsp;Delete</td></tr><tr><td align=\"left\" class=\"ccAdminSmall\"><img class=\"aoBlogEditImagePreview\" alt=\"" + imageName + "\" title=\"" + imageName + "\" src=\"" + cp.Http.CdnFilePathPrefix + imageFilename + "\"></td></tr>";
+                    imageForm = imageForm + "<tr><td><input type=\"checkbox\" name=\"" + constants.rnBlogImageDelete + "." + Ptr + "\">&nbsp;Delete</td></tr><tr><td align=\"left\" class=\"ccAdminSmall\"><img class=\"aoBlogEditImagePreview\" alt=\"" + imageName + "\" title=\"" + imageName + "\" src=\"" + cp.Http.CdnFilePathPrefix + cp.Utils.EncodeUrl(imageFilename) + "\"></td></tr>";
 
 
 

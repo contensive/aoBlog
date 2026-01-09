@@ -49,13 +49,13 @@ namespace Contensive.Blog.Views {
                             case 2: {
                                     // 
                                     // align right
-                                    result += "<img alt=\"" + imageName + "\" title=\"" + imageName + "\" class=\"aoBlogEntryThumbnailRight\" src=\"" + cp.Http.CdnFilePathPrefix + ThumbnailFilename + "\" style=\"width:40%;\">";
+                                    result += "<img alt=\"" + imageName + "\" title=\"" + imageName + "\" class=\"aoBlogEntryThumbnailRight\" src=\"" + cp.Http.CdnFilePathPrefix + cp.Utils.EncodeUrl(ThumbnailFilename) + "\" style=\"width:40%;\">";
                                     break;
                                 }
                             case 3: {
                                     // 
                                     // align left
-                                    result += "<img alt=\"" + imageName + "\" title=\"" + imageName + "\" class=\"aoBlogEntryThumbnailLeft\" src=\"" + cp.Http.CdnFilePathPrefix + ThumbnailFilename + "\" style=\"width:40%;\">";
+                                    result += "<img alt=\"" + imageName + "\" title=\"" + imageName + "\" class=\"aoBlogEntryThumbnailLeft\" src=\"" + cp.Http.CdnFilePathPrefix + cp.Utils.EncodeUrl(ThumbnailFilename) + "\" style=\"width:40%;\">";
                                     break;
                                 }
                             // 
@@ -67,7 +67,7 @@ namespace Contensive.Blog.Views {
                             default: {
                                     // 
                                     // 1 and none align per stylesheet
-                                    result += "<img alt=\"" + imageName + "\" title=\"" + imageName + "\" class=\"aoBlogEntryThumbnail\" src=\"" + cp.Http.CdnFilePathPrefix + ThumbnailFilename + "\" style=\"width:40%;\">";
+                                    result += "<img alt=\"" + imageName + "\" title=\"" + imageName + "\" class=\"aoBlogEntryThumbnail\" src=\"" + cp.Http.CdnFilePathPrefix + cp.Utils.EncodeUrl(ThumbnailFilename) + "\" style=\"width:40%;\">";
                                     break;
                                 }
                         }
@@ -109,16 +109,14 @@ namespace Contensive.Blog.Views {
                                         // 
                                         // align right
                                         // 
-                                        // result &=  "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailRight"" src=""" & cp.Http.CdnFilePathPrefix & ThumbnailFilename & """ style=""width:" & blog.ThumbnailImageWidth & "px;""></a>"
-                                        result += "<a href=\"" + entryLink + "\"><img alt=\"" + imageName + "\" title=\"" + imageName + "\" class=\"aoBlogEntryThumbnailRight\" src=\"" + cp.Http.CdnFilePathPrefix + ThumbnailFilename + "\" style=\"width:25%;\"></a>";
+                                        result += "<a href=\"" + entryLink + "\"><img alt=\"" + imageName + "\" title=\"" + imageName + "\" class=\"aoBlogEntryThumbnailRight\" src=\"" + cp.Http.CdnFilePathPrefix + cp.Utils.EncodeUrl(ThumbnailFilename) + "\" style=\"width:25%;\"></a>";
                                         break;
                                     }
                                 case 3: {
                                         // 
                                         // align left
                                         // 
-                                        // result &=  "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnailLeft"" src=""" & cp.Http.CdnFilePathPrefix & ThumbnailFilename & """ style=""width:" & blog.ThumbnailImageWidth & "px;""></a>"
-                                        result += "<a href=\"" + entryLink + "\"><img alt=\"" + imageName + "\" title=\"" + imageName + "\" class=\"aoBlogEntryThumbnailLeft\" src=\"" + cp.Http.CdnFilePathPrefix + ThumbnailFilename + "\" style=\"width:25%;\"></a>";
+                                        result += "<a href=\"" + entryLink + "\"><img alt=\"" + imageName + "\" title=\"" + imageName + "\" class=\"aoBlogEntryThumbnailLeft\" src=\"" + cp.Http.CdnFilePathPrefix + cp.Utils.EncodeUrl(ThumbnailFilename) + "\" style=\"width:25%;\"></a>";
                                         break;
                                     }
                                 // 
@@ -132,8 +130,7 @@ namespace Contensive.Blog.Views {
                                         // 
                                         // 1 and none align per stylesheet
                                         // 
-                                        // result &=  "<a href=""" & EntryLink & """><img alt=""" & imageName & """ title=""" & imageName & """ class=""aoBlogEntryThumbnail"" src=""" & cp.Http.CdnFilePathPrefix & ThumbnailFilename & """ style=""width:" & blog.ThumbnailImageWidth & "px;""></a>"
-                                        result += "<a href=\"" + entryLink + "\"><img alt=\"" + imageName + "\" title=\"" + imageName + "\" class=\"aoBlogEntryThumbnail\" src=\"" + cp.Http.CdnFilePathPrefix + ThumbnailFilename + "\" style=\"width:25%;\"></a>";
+                                        result += "<a href=\"" + entryLink + "\"><img alt=\"" + imageName + "\" title=\"" + imageName + "\" class=\"aoBlogEntryThumbnail\" src=\"" + cp.Http.CdnFilePathPrefix + cp.Utils.EncodeUrl(ThumbnailFilename) + "\" style=\"width:25%;\"></a>";
                                         break;
                                     }
 

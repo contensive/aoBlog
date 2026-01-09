@@ -129,11 +129,11 @@ namespace Contensive.Blog.Models {
                 // 
                 var callToAction = create<CallsToActionModel>(cp, constants.guidDefaultCallToAction);
                 if (callToAction is null) {
-                    callToAction = DbBaseModel.addDefault<CallsToActionModel>(cp);
-                    callToAction.name = "Find Out More";
-                    callToAction.link = "http://www.MemberBoss.com";
-                    callToAction.headline = " Manage Your Membership Community";
-                    callToAction.brief = "<p>The best all-in-one-place solution to build and manage your membership community.</p>";
+                    callToAction = addDefault<CallsToActionModel>(cp);
+                    callToAction.name = "Sample Call To Action Widget";
+                    callToAction.link = "http://www.Contensive.com";
+                    callToAction.headline = "Manage Your Web Presence";
+                    callToAction.brief = "<p>The best all-in-one-place solution to build and manage your online web presence membership community.</p>";
                     callToAction.ccguid = constants.guidDefaultCallToAction;
                     callToAction.save(cp);
                 }
