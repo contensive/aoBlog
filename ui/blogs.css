@@ -5,8 +5,10 @@ force blog nav background
 .blogWrapper .page-link {
     color: #0d6efd !important;
 }
-
-
+.blogWrapper .active>.page-link, 
+.blogWrapper  .page-link.active {
+    color: white !important;
+}
 /*
 * warnings
 */

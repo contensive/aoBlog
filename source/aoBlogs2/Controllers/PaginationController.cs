@@ -32,16 +32,18 @@ namespace Contensive.Blog.Controllers {
                 if (pageLast > pageCount)
                     pageLast = pageCount;
                 if (pageCount > 1) {
-                    for (int pageNumber = pageFirst, loopTo = pageLast; pageNumber <= loopTo; pageNumber++)
-                        result.Append("<li class=\"page-item\"><a class=\"page-link\" href=\"" + getPageUrl(cp, basePageUrl, pageNumber) + "\">" + pageNumber + "</a></li>");
+                    for (int pageNumber = pageFirst, loopTo = pageLast; pageNumber <= loopTo; pageNumber++) {
+                        var pageUrl = getPageUrl(cp, basePageUrl, pageNumber);
+                        var htmlClass = (pageUrl==cp.Request.PathPage) ? "page-item active" : "page-item";
+                        result.Append($"<li class=\"{htmlClass}\"><a class=\"page-link\" href=\"{pageUrl}\">{pageNumber}</a></li>");
+                    }
                 }
                 if (pageCount > pageNumberCurrent) {
-                    result.Append("<li class=\"page-item\"><a class=\"page-link\" href=\"" + getPageUrl(cp, basePageUrl, pageNumberCurrent + 1) + "\">Next</a></li>");
+                    result.Append($"<li class=\"page-item\"><a class=\"page-link\" href=\"{getPageUrl(cp, basePageUrl, pageNumberCurrent + 1)}\">Next</a></li>");
                 }
                 // 
-                return "<nav><ul class=\"pagination\">" + result.ToString() + "</ul></nav>";
-            }
-            catch (Exception ex) {
+                return $"<nav><ul class=\"pagination\">{result}</ul></nav>";
+            } catch (Exception ex) {
                 cp.Site.ErrorReport(ex);
                 throw;
             }

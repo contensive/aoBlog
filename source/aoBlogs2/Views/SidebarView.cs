@@ -6,6 +6,7 @@ using Contensive.Blog.Models.View;
 using Contensive.BaseClasses;
 using Microsoft.VisualBasic;
 using Contensive.Blog.Controllers;
+using System.Text;
 
 namespace Contensive.Blog.Views {
     // 
@@ -144,7 +145,7 @@ namespace Contensive.Blog.Views {
                             // 
                             // Archive List
                             string sideBar_ArchiveList = "";
-                            sideBar_ArchiveList = GetSidebarArchiveList(cp, app);
+                            sideBar_ArchiveList = getSidebarArchiveList(cp, app);
                             if (string.IsNullOrEmpty(sideBar_ArchiveList)) {
                                 blog.allowArchiveList = false;
                             } else {
@@ -238,16 +239,11 @@ namespace Contensive.Blog.Views {
         // 
         // ====================================================================================
         // 
-        public static string GetSidebarArchiveList(CPBaseClass cp, ApplicationEnvironmentModel app) {
-            string returnHtml = "";
+        public static string getSidebarArchiveList(CPBaseClass cp, ApplicationEnvironmentModel app) {
+            StringBuilder returnHtml = new();
             try {
-                var cs = cp.CSNew();
-                int archiveMonth;
-                int archiveYear;
-                string nameOfMonth;
-                string SQL;
                 // 
-                SQL = @$"
+                string SQL = @$"
                     SELECT distinct 
                         Month(COALESCE(datePublished,dateAdded)) as ArchiveMonth, year(COALESCE(datePublished,dateAdded)) as ArchiveYear
                     From 
@@ -259,34 +255,34 @@ namespace Contensive.Blog.Views {
                     ORDER BY 
                         year(COALESCE(datePublished,dateAdded)) desc, Month(COALESCE(datePublished,dateAdded)) desc
                     ";
-                if (cs.OpenSQL(SQL)) {
-                    string blogPageUrl = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, "", app.blog.name);
-                    string qs = cp.Utils.ModifyQueryString("", constants.rnFormID, constants.FormBlogArchivedBlogs.ToString());
-                    while (cs.OK()) {
-                        archiveMonth = cs.GetInteger("ArchiveMonth");
-                        archiveYear = cs.GetInteger("ArchiveYear");
-                        nameOfMonth = DateAndTime.MonthName(archiveMonth);
-                        qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameArchiveMonth, archiveMonth.ToString());
-                        qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameArchiveYear, archiveYear.ToString());
-                        cp.Site.AddLinkAlias($"{blogPageUrl}/archive/{archiveYear}/{archiveMonth}", cp.Doc.PageId, qs);
-                        string archiveUrl = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, qs, $"{blogPageUrl}/archives/{archiveYear}/{archiveMonth}");
-                        returnHtml += $"<li class=\"aoBlogArchiveLink\"><a href=\"{archiveUrl}\">{nameOfMonth}&nbsp;{archiveYear}</a></li>";
-                        cs.GoNext();
+                using (CPCSBaseClass cs = cp.CSNew()) {
+                    if (cs.OpenSQL(SQL)) {
+                        string blogPageUrl = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, "", app.blog.name);
+                        string qsBase = cp.Utils.ModifyQueryString("", constants.rnFormID, constants.FormBlogArchivedBlogs.ToString());
+                        while (cs.OK()) {
+                            int archiveMonth = cs.GetInteger("ArchiveMonth");
+                            string archiveMonthName = DateAndTime.MonthName(archiveMonth < 1 ? 1 : archiveMonth > 12 ? 12 : archiveMonth);
+                            int archiveYear = cs.GetInteger("ArchiveYear");
+                            string linkAlias = $"{blogPageUrl}-archives-{archiveMonthName}-{archiveYear}";
+                            string qs = cp.Utils.ModifyQueryString(qsBase, constants.RequestNameArchiveMonth, archiveMonth.ToString());
+                            qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameArchiveYear, archiveYear.ToString());
+                            cp.Site.AddLinkAlias(linkAlias, cp.Doc.PageId, qs);
+                            string archiveUrl = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, qs, linkAlias);
+                            returnHtml.Append($"<li class=\"aoBlogArchiveLink\"><a href=\"{archiveUrl}\">{archiveMonthName}&nbsp;{archiveYear}</a></li>");
+                            cs.GoNext();
+                        }
                     }
+                    cs.Close();
                 }
-                cs.Close();
-                if (!string.IsNullOrEmpty(returnHtml)) {
-                    returnHtml = "" + Constants.vbCrLf + Constants.vbTab + "<ul class=\"aoBlogArchiveLinkList\">" + returnHtml + Constants.vbCrLf + Constants.vbTab + "</ul>";
-
-
+                string result = returnHtml.ToString();
+                if (!string.IsNullOrEmpty(result)) {
+                    return @$"<ul class=""aoBlogArchiveLinkList"">{result}</ul>";
                 }
-            }
-            // 
-            catch (Exception ex) {
+                return "";
+            } catch (Exception ex) {
                 cp.Site.ErrorReport(ex);
+                return "";
             }
-            return returnHtml;
         }
-        // 
     }
 }
