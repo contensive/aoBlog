@@ -87,6 +87,10 @@ namespace Contensive.Blog.Views {
                     // 
                     // -- no results
                     result += $"<div class=\"aoBlogProblem\">There are no blog archives For {request.ArchiveMonth}/{request.ArchiveYear}</div>";
+                    //
+                    // -- in this case, there may have been a link alias that led here, remove it
+                    string linkAliasQs = $"FormID=600&ArchiveMonth={request.ArchiveMonth}&ArchiveYear={request.ArchiveYear}";
+                    DbBaseModel.deleteRows<LinkAliasModel>(cp, $"(pageid={cp.Doc.PageId}) and (queryStringSuffix={cp.Db.EncodeSQLText(linkAliasQs)})");
                 } else {
                     // 
                     // -- list of articles
