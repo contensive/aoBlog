@@ -7,6 +7,28 @@ namespace Contensive.Blog.Controllers {
     public sealed class _GenericController {
         private _GenericController() {
         }
+        //
+        //========================================================================
+        /// <summary>
+        /// added to cp.utils 260124
+        /// Encode a url to be used in an href or src tag.
+        /// Preserve the protocol if present, encode between slashes and querystring
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static string encodeURLForHrefSrc(string url) {
+            if (string.IsNullOrWhiteSpace(url)) { return url; }
+            // Check for protocol
+            string[] protocols = { "https://", "http://" };
+            foreach (var protocol in protocols) {
+                if (url.StartsWith(protocol, StringComparison.OrdinalIgnoreCase)) {
+                    string withoutProtocol = url.Substring(protocol.Length);
+                    return protocol + Uri.EscapeUriString(withoutProtocol);
+                }
+            }
+            // No protocol - relative URL
+            return Uri.EscapeUriString(url);
+        }
         // 
         // ====================================================================================================
         /// <summary>

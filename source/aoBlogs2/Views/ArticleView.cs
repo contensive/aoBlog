@@ -14,6 +14,9 @@ namespace Contensive.Blog.Views {
         // ====================================================================================
         // 
         public static string getArticleView(CPBaseClass cp, ApplicationEnvironmentModel app, bool RetryCommentPost) {
+            //
+            cp.Log.Debug($"getArticleView, entry");
+            //
             string getArticleViewRet;
             int hint = 0;
             try {
@@ -207,13 +210,18 @@ namespace Contensive.Blog.Views {
                 cp.Visit.SetProperty(constants.SNBlogCommentName, cp.Utils.GetRandomInteger().ToString());
                 // 
                 // -- set metadata
+                //
+                cp.Log.Debug($"getArticleView, call setEntryMetadata");
+                //
                 hint = 230;
                 MetadataController.setEntryMetadata(app, app.blog, app.blogPost, blogImageList);
                 // 
                 // -- if editing enabled, add the link and wrapper
                 hint = 240;
                 result = _GenericController.addEditWrapper(cp, result, app.blogPost.id, app.blogPost.name, BlogEntryModel.tableMetadata.contentName);
-                // 
+                //
+                cp.Log.Debug($"getArticleView, exit");
+                //
                 return result;
             } catch (Exception ex) {
                 cp.Site.ErrorReport(ex, "Hint [" + hint + "]");

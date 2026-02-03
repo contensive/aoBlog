@@ -29,7 +29,7 @@ namespace Contensive.Blog.Controllers {
         public static string getBlogMetaTitle(ApplicationEnvironmentModel app, BlogModel blog) {
             CPBaseClass cp = app.cp;
             string result = blog?.metaTitle ?? string.Empty;
-            if(string.IsNullOrWhiteSpace(result)) {
+            if (string.IsNullOrWhiteSpace(result)) {
                 //
                 // -- try page's meta title
                 result += " " + blog.name;
@@ -59,7 +59,7 @@ namespace Contensive.Blog.Controllers {
         public static string getEntryMetaTitle(ApplicationEnvironmentModel app, BlogModel blog, BlogEntryModel blogEntry) {
             CPBaseClass cp = app.cp;
             string result = blogEntry?.metaTitle;
-            if(string.IsNullOrWhiteSpace(result)) {
+            if (string.IsNullOrWhiteSpace(result)) {
                 //
                 // -- try page's meta title
                 result = blogEntry?.name;
@@ -95,7 +95,7 @@ namespace Contensive.Blog.Controllers {
             //
             // -- entry meta description
             string result = blog?.metaDescription ?? "";
-            if (string.IsNullOrWhiteSpace(result) ) {
+            if (string.IsNullOrWhiteSpace(result)) {
                 //
                 // -- try page's meta description
                 result = app.page.metaDescription;
@@ -146,7 +146,7 @@ namespace Contensive.Blog.Controllers {
         }
         // 
         // ====================================================================================================
-        public static void setEntryMetadata( ApplicationEnvironmentModel app, BlogModel blog,  BlogEntryModel blogEntry, List<BlogImageModel> blogImageList) {
+        public static void setEntryMetadata(ApplicationEnvironmentModel app, BlogModel blog, BlogEntryModel blogEntry, List<BlogImageModel> blogImageList) {
             CPBaseClass cp = app.cp;
             // 
             cp.Utils.AppendLog("Blog.setMetadata, blogEntry.id [" + blogEntry.id + "], set Open Graph Title = blogEntry.name [" + blogEntry.name + "]");
@@ -172,11 +172,11 @@ namespace Contensive.Blog.Controllers {
             cp.Doc.SetProperty("Open Graph Title", blogEntry.name);
             cp.Doc.SetProperty("Open Graph Description", blogEntryBrief);
             if (blogImageList.Count > 0) {
-                if (cp.Request.Secure) {
-                    cp.Doc.SetProperty("Open Graph Image", "https://" + cp.Site.Domain + cp.Http.CdnFilePathPrefix + blogImageList.First().Filename);
-                } else {
-                    cp.Doc.SetProperty("Open Graph Image", "http://" + cp.Site.Domain + cp.Http.CdnFilePathPrefix + blogImageList.First().Filename);
-                }
+                BlogImageModel blogImage = blogImageList.First();
+                string blogImageUrl = $"{cp.Http.CdnFilePathPrefixAbsolute}{blogImage.Filename}";
+                string encodedBlogImageUrl = _GenericController.encodeURLForHrefSrc(blogImageUrl);
+                cp.Log.Debug($"setEntryMetadata, blogImageUrl [{blogImageUrl}], encodedBlogImageUrl [{encodedBlogImageUrl}]");
+                cp.Doc.SetProperty("Open Graph Image", encodedBlogImageUrl);
             }
         }
     }

@@ -88,7 +88,7 @@ namespace Contensive.Blog.Views {
                     // 
                     // -- image
                     // 
-                    imageForm = imageForm + "<tr><td><input type=\"checkbox\" name=\"" + constants.rnBlogImageDelete + "." + Ptr + "\">&nbsp;Delete</td></tr><tr><td align=\"left\" class=\"ccAdminSmall\"><img class=\"aoBlogEditImagePreview\" alt=\"" + imageName + "\" title=\"" + imageName + "\" src=\"" + cp.Http.CdnFilePathPrefix + cp.Utils.EncodeUrl(imageFilename) + "\"></td></tr>";
+                    imageForm = imageForm + "<tr><td><input type=\"checkbox\" name=\"" + constants.rnBlogImageDelete + "." + Ptr + "\">&nbsp;Delete</td></tr><tr><td align=\"left\" class=\"ccAdminSmall\"><img class=\"aoBlogEditImagePreview\" alt=\"" + imageName + "\" title=\"" + imageName + "\" src=\"" + _GenericController.encodeURLForHrefSrc(cp.Http.CdnFilePathPrefix + imageFilename) + "\"></td></tr>";
 
 
 
