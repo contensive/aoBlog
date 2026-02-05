@@ -27,23 +27,13 @@ namespace Contensive.Blog.Controllers {
         /// <param name="cp"></param>
         /// <returns></returns>
         public static string getBlogMetaTitle(ApplicationEnvironmentModel app, BlogModel blog) {
-            CPBaseClass cp = app.cp;
             string result = blog?.metaTitle ?? string.Empty;
             if (string.IsNullOrWhiteSpace(result)) {
                 //
                 // -- try page's meta title
-                result += " " + blog.name;
+                result = blog.name;
             }
             result = result.Replace(Constants.vbCrLf, " ").Replace(Constants.vbCr, " ").Replace(Constants.vbLf, " ").Trim();
-            //if (result.Length > 60) {
-            //    int truncatePosition = result.LastIndexOf(" ", 60);
-            //    if (truncatePosition > 0) {
-            //        result = result.Substring(0, truncatePosition) + "...";
-            //    } else {
-            //        // No space found before position 60, truncate at 60
-            //        result = result.Substring(0, 60) + "...";
-            //    }
-            //}
             return result;
         }
         //
@@ -57,7 +47,6 @@ namespace Contensive.Blog.Controllers {
         /// <param name="cp"></param>
         /// <returns></returns>
         public static string getEntryMetaTitle(ApplicationEnvironmentModel app, BlogModel blog, BlogEntryModel blogEntry) {
-            CPBaseClass cp = app.cp;
             string result = blogEntry?.metaTitle;
             if (string.IsNullOrWhiteSpace(result)) {
                 //
@@ -67,18 +56,9 @@ namespace Contensive.Blog.Controllers {
             if (string.IsNullOrWhiteSpace(result)) {
                 //
                 // -- try blog name
-                result = blog.name;
+                result = getBlogMetaTitle(app, blog);
             }
             result = result.Replace(Constants.vbCrLf, " ").Replace(Constants.vbCr, " ").Replace(Constants.vbLf, " ").Trim();
-            //if (result.Length > 60) {
-            //    int truncatePosition = result.LastIndexOf(" ", 60);
-            //    if (truncatePosition > 0) {
-            //        result = result.Substring(0, truncatePosition) + "...";
-            //    } else {
-            //        // No space found before position 60, truncate at 60
-            //        result = result.Substring(0, 60) + "...";
-            //    }
-            //}
             return result;
         }
         //
@@ -146,10 +126,39 @@ namespace Contensive.Blog.Controllers {
         }
         // 
         // ====================================================================================================
+        public static void setBlogMetadata(ApplicationEnvironmentModel app, BlogModel blog, int pageCount, int pageNumber, string pageOneOfTenMsg) {
+
+            CPBaseClass cp = app.cp;
+            string metaDescription = getBlogMetaDescription(app, blog);
+            string metaTitle = getBlogMetaTitle(app, blog);
+            if (pageNumber > 1) {
+                // 
+                // -- set the page title if it is page 2 or more 
+                metaTitle = $"{pageOneOfTenMsg}, {metaTitle}";
+                metaDescription = $"{pageOneOfTenMsg}, {metaDescription}";
+            }
+            // 
+            // -- set article meta data
+            cp.Doc.AddTitle(metaTitle);
+            cp.Doc.AddMetaDescription(metaDescription);
+            cp.Doc.AddMetaKeywordList((blog.metaKeywordList).Replace(Constants.vbCrLf, ",").Replace(Constants.vbCr, ",").Replace(Constants.vbLf, ",").Replace(",,", ","));
+            // 
+            // -- set open graph properties modified by the Blog
+            //cp.Doc.SetProperty("Open Graph URL", cp.Content.GetPageLink(cp.Doc.PageId));
+            cp.Doc.SetProperty("Open Graph Title", metaTitle);
+            cp.Doc.SetProperty("Open Graph Description", metaDescription);
+            if (!string.IsNullOrWhiteSpace(blog.defaultImageFilename.filename)) {
+                string blogImageUrl =  $"{cp.Http.CdnFilePathPrefixAbsolute}{blog.defaultImageFilename.filename}";
+                string encodedBlogImageUrl = _GenericController.encodeURLForHrefSrc(blogImageUrl);
+                cp.Doc.SetProperty("Open Graph Image", encodedBlogImageUrl);
+            }
+        }
+        // 
+        // ====================================================================================================
         public static void setEntryMetadata(ApplicationEnvironmentModel app, BlogModel blog, BlogEntryModel blogEntry, List<BlogImageModel> blogImageList) {
             CPBaseClass cp = app.cp;
             // 
-            cp.Utils.AppendLog("Blog.setMetadata, blogEntry.id [" + blogEntry.id + "], set Open Graph Title = blogEntry.name [" + blogEntry.name + "]");
+            cp.Utils.AppendLog("Blog.setEntryMetadata, blogEntry.id [" + blogEntry.id + "], set Open Graph Title = blogEntry.name [" + blogEntry.name + "]");
             // 
             string blogEntryBrief = blogEntry.rssDescription;
             if (string.IsNullOrEmpty(blogEntryBrief)) {
