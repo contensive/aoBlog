@@ -698,25 +698,16 @@
 		<Field Name="rssfeedid" active="True" AdminOnly="False" Authorable="True" Caption="RSS Feed" DeveloperOnly="False" EditSortPriority="1000" FieldType="Lookup" HTMLContent="False" IndexColumn="10" IndexSortDirection="" IndexSortOrder="99" IndexWidth="27" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="RSS Feeds" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 		<Field Name="blogpostid" active="True" AdminOnly="False" Authorable="True" Caption="Blog Post" DeveloperOnly="False" EditSortPriority="1010" FieldType="Lookup" HTMLContent="False" IndexColumn="20" IndexSortDirection="" IndexSortOrder="99" IndexWidth="27" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="Blog Entries" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 	</CDef>
+	<!-->
 	<ImportCollection name="Social Media">{3B4362B9-5556-4890-B049-56B31B869C64}</ImportCollection>
 	<ImportCollection name="RSS">{06791870-0ef8-48cb-ac54-2327ff5a1c40}</ImportCollection>
 	<ImportCollection name="ReCaptcha V2">{B0330AE8-225D-429A-8985-B5F602E295E2}</ImportCollection>
 	<ImportCollection name="Open Graph Meta Tags">{E4FAFB02-D4B2-4336-8956-A1DE68291C3B}</ImportCollection>
 	<ImportCollection name="Twitter">{EADB8DAF-CC49-404E-AEDE-71AEE9C9BFEC}</ImportCollection>
-	<Resource name="defaultpostcopy.txt" type="www" path="blogs" />
-	<Resource name="blog.png" type="www" path="blogs" />
-	<Resource name="facebook.jpg" type="www" path="blogs" />
-	<Resource name="googleplus.jpg" type="www" path="blogs" />
-	<Resource name="linkedin.jpg" type="www" path="blogs" />
-	<Resource name="pinterest.jpg" type="www" path="blogs" />
-	<Resource name="rss.png" type="www" path="blogs" />
-	<Resource name="twitter.jpg" type="www" path="blogs" />
-	<Resource name="blogs.css" type="www" path="blogs" />
-	<Resource name="blogs.js" type="www" path="blogs" />
-	<Resource name="aoBlogs2.dll" type="executable" path="" />
-	<Resource name="HelpFiles.zip" type="privatefiles" path="helpfiles/Blog" />
+	-->
+	<Resource name="ui.zip" type="www" path="blogs" />
+	<Resource name="ui.zip" type="file" path="blogs" />
+	<Resource name="HelpFiles.zip" type="helpfiles" />
 	<Resource name="LatestPostLayout.html" type="file" path="aoBlog" />
-	<Resource name="gray.png" type="file" path="blogs" />
-	<Resource name="placeholder.jpg" type="file" path="blogs" />
 
 </Collection>

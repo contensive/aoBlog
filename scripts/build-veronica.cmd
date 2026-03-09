@@ -7,7 +7,7 @@ call build.cmd
 rem upload to contensive application
 c:
 cd %collectionPath%
-cc -a %appName% --installFile "%collectionName%.zip"
+cc -a %appName% --installFile "%deploymentFolderRoot%%versionNumber%\%collectionName%.zip"
 cd ..\..\scripts
 
 pause

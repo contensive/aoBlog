@@ -11,7 +11,7 @@ namespace Contensive.Blog {
         // -- layouts
         public const string layoutGuidLastestPosts = "{987cb36b-22f8-4896-a54e-aa7dbab98f93}";
         public const string layoutNameLastestPosts = "Latest Posts Layout";
-        public const string layoutPathFilenameLastestPosts = @"aoBlog\LatestPostLayout.html";
+        public const string layoutPathFilenameLastestPosts = @"blogs\LatestPostLayout.html";
         // 
         // -- Guids
         // 
