@@ -12,6 +12,8 @@ namespace Contensive.Blog {
         /// </summary>
         /// <param name="CP"></param>
         /// <returns></returns>
+        private const int codeVersion = 1;
+        //
         public override object Execute(CPBaseClass CP) {
             try {
                 //
@@ -42,6 +44,16 @@ namespace Contensive.Blog {
                 //
                 // -- reset layouts
                 CP.Db.ExecuteNonQuery($"delete from cclayouts where ccguid={CP.Db.EncodeSQLText(constants.layoutGuidLastestPosts)}");
+                //
+                // -- versioned upgrades
+                int siteVersion = CP.Site.GetInteger("Blog Version");
+                if (siteVersion < 1) {
+                    // -- v1: set blogupdatealarmdays to 30 for all existing blogs
+                    CP.Db.ExecuteNonQuery("update ccBlogs set blogupdatealarmdays=30 where (blogupdatealarmdays is null or blogupdatealarmdays=0)");
+                    siteVersion = 1;
+                }
+                CP.Site.SetProperty("Blog Version", siteVersion.ToString());
+                //
                 return "";
             }
             // 

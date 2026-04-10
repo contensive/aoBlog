@@ -1,132 +1,18 @@
-rem echo off
+@echo off
+setlocal
 
-rem
-rem Must be run from the projects git\project\scripts folder - everything is relative
-rem run >build [versionNumber]
-rem versionNumber is YY.MM.DD.build-number, like 20.5.8.1
-rem
+set nopause=0
+if /i "%~1"=="/nopause" set nopause=1
 
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0build.ps1"
+set exitcode=%errorlevel%
 
-c:
-cd \Git\aoBlog\scripts
-
-rem all paths are relative to the git scripts folder
-
-set collectionName=Blog
-set solutionName=aoBlogs2.sln
-set collectionPath=..\collections\blog\
-set binPath=..\source\aoBlogs2\bin\Debug\net472\
-set DebugRelease=Debug
-set deploymentFolderRoot=C:\deployments\aoBlog\Dev\
-
-
-set year=%date:~12,4%
-set month=%date:~4,2%
-if %month% GEQ 10 goto monthOk
-set month=%date:~5,1%
-:monthOk
-set day=%date:~7,2%
-if %day% GEQ 10 goto dayOk
-set day=%date:~8,1%
-:dayOk
-set versionMajor=%year%
-set versionMinor=%month%
-set versionBuild=%day%
-set versionRevision=1
-rem
-rem if deployment folder exists, delete it and make directory
-rem
-:tryagain
-set versionNumber=%versionMajor%.%versionMinor%.%versionBuild%.%versionRevision%
-if not exist "%deploymentFolderRoot%%versionNumber%" goto :makefolder
-set /a versionRevision=%versionRevision%+1
-goto tryagain
-:makefolder
-md "%deploymentFolderRoot%%versionNumber%"
-
-rem pause
-
-rem ==============================================================
-rem
-rem Clean build and collection folders
-rem
-
-if exist "..\source\aoBlogs2\bin" rd /S /Q "..\source\aoBlogs2\bin"
-if exist "..\source\aoBlogs2\obj" rd /S /Q "..\source\aoBlogs2\obj"
-del "%collectionPath%*.zip" /Q 2>nul
-del "%collectionPath%*.dll" /Q 2>nul
-
-rem pause
-
-rem ==============================================================
-rem
-rem Zip UI assets into ui.zip in the collection folder
-rem
-
-cd ..\ui
-"c:\program files\7-zip\7z.exe" a "%collectionPath%ui.zip" *
-cd ..\scripts
-
-rem pause
-
-rem ==============================================================
-rem
-rem create helpfiles.zip file for install in private/helpfiles/
-rem
-rem make a \helpfiles folder in the addon Git folder and store the collections markup files there.
-rem a comma in the filename represents a topic on the navigation, so to make an article "Shopping" in the "Ecommerce" topic, create a document "Ecommerce,Shopping.md"
-rem help files are installed in the "privateFiles\helpfiles\(collectionname)" folder. The collectionname must match the addoon collections name exactly.
-rem add a resource node to the collection xml file to install the helpfile zip to the site. For example
-rem    <Resource name="HelpFiles.zip" type="privatefiles" path="helpfiles/(collectionname)" />
-rem then if the first install,
-rem
-
-cd ..\helpfiles
-del "%collectionPath%HelpFiles.zip"
-
-rem copy default article and articles for the  Help Pages collection
-"c:\program files\7-zip\7z.exe" a "%collectionPath%HelpFiles.zip"
-cd ..\scripts
-
-rem pause
-
-rem ==============================================================
-rem
-echo build
-rem
-cd ..\source
-dotnet clean %solutionName% --configuration %DebugRelease%
-dotnet build %solutionName% --configuration %DebugRelease% /property:Version=%versionNumber% /property:AssemblyVersion=%versionNumber% /property:FileVersion=%versionNumber%
-if errorlevel 1 (
-   echo failure building
-   pause
-   exit /b %errorlevel%
+if not "%exitcode%"=="0" (
+    echo.
+    echo ========================================
+    echo BUILD FAILED
+    echo ========================================
 )
-cd ..\scripts
 
-rem pause
-
-rem ==============================================================
-rem
-echo Build addon collection
-rem
-
-rem copy compiled DLLs to collection folder
-copy "%binPath%*.dll" %collectionPath%
-
-c:
-cd %collectionPath%
-
-rem create new collection zip file
-del "%collectionName%.zip" /Q 2>nul
-"c:\program files\7-zip\7z.exe" a "%collectionName%.zip"
-xcopy "%collectionName%.zip" "%deploymentFolderRoot%%versionNumber%" /Y
-xcopy "%collectionName%.zip" "c:\deployments\_current_sprint" /Y
-cd ..\..\scripts
-
-rem clean collection folder
-del "%collectionPath%*.dll"
-del "%collectionPath%*.zip"
-
-rem pause
-
+if "%nopause%"=="0" pause
+exit /b %exitcode%

@@ -40,6 +40,7 @@ namespace Contensive.Blog.Models {
         public int ownerMemberId { get; set; }
         public int postsToDisplay { get; set; }
         public bool recaptcha { get; set; }
+        public int blogUpdateAlarmDays { get; set; }
         public int rssFeedId { get; set; }
         public int thumbnailImageWidth { get; set; }
         public string twitterLink { get; set; }

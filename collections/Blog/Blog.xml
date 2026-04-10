@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="windows-1252"?>
-<Collection name="Blog" guid="{13bb6661-3056-455e-b80d-b13779d11d2b}" system="No" updatable="Yes" blockNavigatorNode="No" onInstallAddonGuid="{F0DDB73F-0894-4510-A657-64CC5459E7BC}">
+<Collection name="Blog" guid="{13bb6661-3056-455e-b80d-b13779d11d2b}" system="No" updatable="Yes" blockNavigatorNode="No" onInstallAddonGuid="{F0DDB73F-0894-4510-A657-64CC5459E7BC}"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="https://contensive.s3.amazonaws.com/xsd/Collection.xsd"
+>
 	<HelpLink>http://wiki.kmacloud.net/index.php?title=Blogs</HelpLink>
 	<Help></Help>
 	<Addon name="Blog Install" guid="{F0DDB73F-0894-4510-A657-64CC5459E7BC}" type="Add-on">
@@ -223,6 +226,43 @@
 		<RemoteMethod>Yes</RemoteMethod>
 		<ProcessRunOnce>No</ProcessRunOnce>
 		<ProcessInterval>0</ProcessInterval>
+		<MetaDescription></MetaDescription>
+		<OtherHeadTags></OtherHeadTags>
+		<PageTitle></PageTitle>
+		<RemoteAssetLink></RemoteAssetLink>
+		<Styles></Styles>
+		<styleslinkhref></styleslinkhref>
+		<Scripting Language="VBScript" EntryPoint="" Timeout="5000"/>
+	</Addon>
+	<Addon name="Blog Diagnostics" guid="{E5A3B2C1-7F4D-4E6A-9B8C-1D2E3F4A5B6C}" type="Add-on">
+		<Copy></Copy>
+		<CopyText></CopyText>
+		<DotNetClass><![CDATA[Contensive.Blog.BlogDiagnostics]]></DotNetClass>
+		<ArgumentList></ArgumentList>
+		<AsAjax>No</AsAjax>
+		<Filter>No</Filter>
+		<Help></Help>
+		<HelpLink></HelpLink>
+		<Icon Link="" width="0" height="0" sprites="0" />
+		<InIframe>No</InIframe>
+		<BlockEditTools>No</BlockEditTools>
+		<FormXML></FormXML>
+		<IsInline>No</IsInline>
+		<JavascriptInHead></JavascriptInHead>
+		<javascriptForceHead>No</javascriptForceHead>
+		<JSHeadScriptSrc></JSHeadScriptSrc>
+		<Content>No</Content>
+		<Template>No</Template>
+		<Email>No</Email>
+		<Admin>No</Admin>
+		<OnPageEndEvent>No</OnPageEndEvent>
+		<OnPageStartEvent>No</OnPageStartEvent>
+		<OnBodyStart>No</OnBodyStart>
+		<OnBodyEnd>No</OnBodyEnd>
+		<RemoteMethod>No</RemoteMethod>
+		<Diagnostic>Yes</Diagnostic>
+		<ProcessRunOnce>No</ProcessRunOnce>
+		<ProcessInterval></ProcessInterval>
 		<MetaDescription></MetaDescription>
 		<OtherHeadTags></OtherHeadTags>
 		<PageTitle></PageTitle>
@@ -588,8 +628,11 @@
 		<Field Name="recaptcha" active="True" AdminOnly="False" Authorable="true" Caption="Allow recaptcha for comments" DeveloperOnly="False" EditSortPriority="3080" FieldType="Boolean" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="0" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="Features" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[When Checked reCaptcha will be used if users are allowed to add comments.]]></HelpDefault>
 		</Field>
+		<Field Name="blogupdatealarmdays" active="True" AdminOnly="False" Authorable="True" Caption="Blog Update Alarm Days" DeveloperOnly="False" EditSortPriority="3090" FieldType="Integer" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="30" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="Features" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+			<HelpDefault><![CDATA[The number of days the system expects a new blog post for this blog. After this period the blog alarm will be set.]]></HelpDefault>
+		</Field>
 
-		<!-- 
+		<!--
 			sidebar
 		-->		
 			<Field Name="allowemailsubscribe" active="True" AdminOnly="False" Authorable="True" Caption="Allow Email Subscribe" DeveloperOnly="False" EditSortPriority="1020" FieldType="Boolean" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="0" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="Sidebar" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
@@ -705,9 +748,8 @@
 	<ImportCollection name="Open Graph Meta Tags">{E4FAFB02-D4B2-4336-8956-A1DE68291C3B}</ImportCollection>
 	<ImportCollection name="Twitter">{EADB8DAF-CC49-404E-AEDE-71AEE9C9BFEC}</ImportCollection>
 	-->
-	<Resource name="ui.zip" type="www" path="blogs" />
-	<Resource name="ui.zip" type="file" path="blogs" />
-	<Resource name="HelpFiles.zip" type="helpfiles" />
-	<Resource name="LatestPostLayout.html" type="file" path="aoBlog" />
+	<Resource name="wwwFiles.zip" type="www" path="" />
+	<Resource name="cdnFiles.zip" type="file" path="" />
+	<Resource name="helpFiles.zip" type="helpfiles" path="" />
 
 </Collection>
