@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="windows-1252"?>
-<Collection name="Blog" guid="{13bb6661-3056-455e-b80d-b13779d11d2b}" system="No" updatable="Yes" blockNavigatorNode="No" onInstallAddonGuid="{F0DDB73F-0894-4510-A657-64CC5459E7BC}"
+<Collection name="Blog" guid="{13bb6661-3056-455e-b80d-b13779d11d2b}" system="false"  blockNavigatorNode="false" onInstallAddonGuid="{F0DDB73F-0894-4510-A657-64CC5459E7BC}"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="https://contensive.s3.amazonaws.com/xsd/Collection.xsd"
 >
@@ -741,6 +741,7 @@
 		<Field Name="rssfeedid" active="True" AdminOnly="False" Authorable="True" Caption="RSS Feed" DeveloperOnly="False" EditSortPriority="1000" FieldType="Lookup" HTMLContent="False" IndexColumn="10" IndexSortDirection="" IndexSortOrder="99" IndexWidth="27" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="RSS Feeds" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 		<Field Name="blogpostid" active="True" AdminOnly="False" Authorable="True" Caption="Blog Post" DeveloperOnly="False" EditSortPriority="1010" FieldType="Lookup" HTMLContent="False" IndexColumn="20" IndexSortDirection="" IndexSortOrder="99" IndexWidth="27" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="Blog Entries" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 	</CDef>
+	<ImportCollection name="Site Analytics">{be602ffd-f1a9-4932-988a-1d4d2658568b}</ImportCollection>
 	<!-->
 	<ImportCollection name="Social Media">{3B4362B9-5556-4890-B049-56B31B869C64}</ImportCollection>
 	<ImportCollection name="RSS">{06791870-0ef8-48cb-ac54-2327ff5a1c40}</ImportCollection>
