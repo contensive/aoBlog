@@ -21,8 +21,8 @@ namespace Contensive.Blog.Models.View {
         public bool hasApplyButton { get; set; }
         public string applyButtonHtml { get; set; }
         //
-        // -- comment form section (built in C#, complex auth/form logic)
-        public string commentFormHtml { get; set; }
+        // -- comment form section (nested view model, rendered inline in article layout)
+        public CommentFormViewModel commentForm { get; set; }
         //
         // -- hidden fields
         public string hiddenFieldsHtml { get; set; }
@@ -86,8 +86,8 @@ namespace Contensive.Blog.Models.View {
                     result.applyButtonHtml = cp.Html.Button(constants.rnButton,constants.FormButtonApplyCommentChanges);
                 }
                 //
-                // -- comment form section
-                result.commentFormHtml = buildCommentFormHtml(cp, app, visit, retryCommentPost);
+                // -- comment form section (rendered sub-template)
+                result.commentForm = CommentFormViewModel.create(cp, app, visit, retryCommentPost);
                 //
                 // -- hidden fields
                 result.hiddenFieldsHtml = Constants.vbCrLf + cp.Html5.Hidden(constants.RequestNameSourceFormID, constants.FormBlogPostDetails)
@@ -106,89 +106,6 @@ namespace Contensive.Blog.Models.View {
                 cp.Site.ErrorReport(ex, "BlogArticleViewModel.create");
                 throw;
             }
-        }
-        //
-        //====================================================================================================
-        /// <summary>
-        /// Build the comment form HTML. This includes auth states, form fields, recaptcha, and buttons.
-        /// Too complex for pure mustache — built in C# and injected via triple-brace.
-        /// </summary>
-        private static string buildCommentFormHtml(CPBaseClass cp, ApplicationEnvironmentModel app, VisitModel visit, bool retryCommentPost) {
-            if (app?.blogPost == null || !app.blogPost.allowComments || cp?.Visit == null || !cp.Visit.CookieSupport || (visit != null && visit.bot)) {
-                return "";
-            }
-            //
-            string result = "<div class=\"aoBlogCommentHeader\">Post a Comment</div>";
-            //
-            if (cp?.UserError != null && !cp.UserError.OK()) {
-                result += $"<div class=\"aoBlogCommentError\">{cp.UserError.OK()}</div>";
-            }
-            //
-            if (!app.blog.allowAnonymous && !cp.User.IsAuthenticated) {
-                //
-                // -- not authenticated, show login/join options
-                bool allowPasswordEmail = cp.Site.GetBoolean("AllowPasswordEmail", false);
-                bool allowMemberJoin = cp.Site.GetBoolean("AllowMemberJoin", false);
-                int auth = cp.Doc.GetInteger("auth");
-                if (auth == 1 && !allowPasswordEmail) { auth = 3; }
-                else if (auth == 2 && !allowMemberJoin) { auth = 3; }
-                //
-                cp.Doc.AddRefreshQueryString(constants.rnFormID, constants.FormBlogPostDetails.ToString());
-                cp.Doc.AddRefreshQueryString(constants.RequestNameBlogEntryID, app.blogPost.id.ToString());
-                cp.Doc.AddRefreshQueryString("auth", "0");
-                string qs = cp.Doc.RefreshQueryString;
-                //
-                switch (auth) {
-                    case 1: {
-                            string copy = "To retrieve your username and password, submit your email. ";
-                            qs = cp.Utils.ModifyQueryString(qs, "auth", "0");
-                            copy += $" <a href=\"?{qs}\"> Login?</a>";
-                            if (allowMemberJoin) {
-                                qs = cp.Utils.ModifyQueryString(qs, "auth", "2");
-                                copy += $" <a href=\"?{qs}\"> Join?</a>";
-                            }
-                            result += $"<div class=\"aoBlogLoginBox\">{Constants.vbCrLf}{Constants.vbTab}<div class=\"aoBlogCommentCopy\">{copy}</div>{Constants.vbCrLf}{Constants.vbTab}<div class=\"aoBlogCommentCopy\">send password form removed</div></div>";
-                            break;
-                        }
-                    case 2: {
-                            string copy = "To post a comment to this blog, complete this form. ";
-                            qs = cp.Utils.ModifyQueryString(qs, "auth", "0");
-                            copy += $" <a href=\"?{qs}\"> Login?</a>";
-                            if (allowPasswordEmail) {
-                                qs = cp.Utils.ModifyQueryString(qs, "auth", "1");
-                                copy += $" <a href=\"?{qs}\"> Forget your username or password?</a>";
-                            }
-                            result += $"<div class=\"aoBlogLoginBox\"><div class=\"aoBlogCommentCopy\">{copy}</div><div class=\"aoBlogCommentCopy\">Send join form removed</div></div>";
-                            break;
-                        }
-                    default: {
-                            string copy = "To post a comment to this Blog, please login.";
-                            if (allowMemberJoin) {
-                                qs = cp.Utils.ModifyQueryString(qs, "auth", "2");
-                                copy += $"<div class=\"aoBlogRegisterLink\"><a href=\"?{qs}\">Need to Register?</a></div>";
-                            }
-                            result += $"<div class=\"aoBlogCommentCopy\">{copy}</div></div>";
-                            break;
-                        }
-                }
-            } else {
-                //
-                // -- authenticated or anonymous allowed, show comment form
-                result += "<div>&nbsp;</div>";
-                result += "<div class=\"aoBlogCommentCopy\">Title</div>";
-                result += $"<div class=\"aoBlogCommentCopy\">{_GenericController.getField(cp, constants.RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(constants.RequestNameCommentTitle.ToString()))}</div>";
-                result += "<div>&nbsp;</div>";
-                result += "<div class=\"aoBlogCommentCopy\">Comment</div>";
-                result += $"<div class=\"aoBlogCommentCopy\">{cp.Html5.InputTextArea(constants.RequestNameCommentCopy, 500, cp.Doc.GetText(constants.RequestNameCommentCopy))}</div>";
-                //
-                if (app.blog.recaptcha) {
-                    result += "<div class=\"aoBlogCommentCopy\">Verify Text</div>";
-                    result += $"<div class=\"aoBlogCommentCopy\">{cp.Addon.Execute(constants.reCaptchaDisplayGuid)}</div>";
-                }
-                //
-                result += $"<div class=\"aoBlogCommentCopy\">{cp.Html.Button(constants.rnButton, constants.FormButtonPostComment)}&nbsp;{cp.Html.Button(constants.rnButton, constants.FormButtonCancel)}</div>";
-            }
-            return result;
         }
     }
 }

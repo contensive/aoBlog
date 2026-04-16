@@ -1,36 +1,64 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Blog Article View</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" data-delete>
-  </head>
-  <body>
-    <section data-layout="Blog Article View">
-
-        <input type="hidden" name="FormKey" value="{{formKey}}">
-
-        <div class="aoBlogHeaderLink"><a href="{{backToRecentLink}}">&#171; Back to Recent Articles</a></div>
-
-        {{#articleNotFound}}
-        <div class="aoBlogProblem">{{articleNotFoundMessage}}</div>
-        {{/articleNotFound}}
-
-        {{^articleNotFound}}
-        {{{postCellHtml}}}
-
-        {{#hasApplyButton}}
-        <div class="aoBlogCommentCopy">{{{applyButtonHtml}}}</div>
-        {{/hasApplyButton}}
-
-        {{{commentFormHtml}}}
-
-        {{{hiddenFieldsHtml}}}
-        {{/articleNotFound}}
-
-    </section>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous" data-delete></script>
-</body>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Blog Article View</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" data-delete>
+    </head>
+    <body>
+        <section data-layout="Blog Article View">
+            <input type="hidden" name="FormKey" value="{{formKey}}">
+            <div class="aoBlogHeaderLink"><a href="{{backToRecentLink}}">&#171; Back to Recent Articles</a></div>
+            {{#articleNotFound}}
+                <div class="aoBlogProblem">{{articleNotFoundMessage}}</div>
+            {{/articleNotFound}}
+            {{^articleNotFound}}
+                {{{postCellHtml}}}
+                {{#hasApplyButton}}
+                    <div class="aoBlogCommentCopy">{{{applyButtonHtml}}}</div>
+                {{/hasApplyButton}}
+                {{#commentForm}}
+                    {{#showCommentForm}}
+                        <div class="aoBlogCommentHeader">Post a Comment</div>
+                        {{#hasUserError}}
+                            <div class="aoBlogCommentError">{{userErrorMessage}}</div>
+                        {{/hasUserError}}
+                        {{#showLoginRequired}}
+                            {{#showPasswordEmail}}
+                                <div class="aoBlogLoginBox">
+                                    <div class="aoBlogCommentCopy">To retrieve your username and password, submit your email. <a href="{{loginLink}}">Login?</a>{{#allowMemberJoin}} <a href="{{joinLink}}">Join?</a>{{/allowMemberJoin}}</div>
+                                    <div class="aoBlogCommentCopy">send password form removed</div>
+                                </div>
+                            {{/showPasswordEmail}}
+                            {{#showJoin}}
+                                <div class="aoBlogLoginBox">
+                                    <div class="aoBlogCommentCopy">To post a comment to this blog, complete this form. <a href="{{loginLink}}">Login?</a>{{#allowPasswordEmail}} <a href="{{passwordEmailLink}}">Forget your username or password?</a>{{/allowPasswordEmail}}</div>
+                                    <div class="aoBlogCommentCopy">Send join form removed</div>
+                                </div>
+                            {{/showJoin}}
+                            {{#showLogin}}
+                                <div class="aoBlogCommentCopy">To post a comment to this Blog, please login.{{#allowMemberJoin}}<div class="aoBlogRegisterLink"><a href="{{joinLink}}">Need to Register?</a></div>{{/allowMemberJoin}}</div>
+                            {{/showLogin}}
+                        {{/showLoginRequired}}
+                        {{#showPostForm}}
+                            <div>&nbsp;</div>
+                            <div class="aoBlogCommentCopy">Title</div>
+                            <div class="aoBlogCommentCopy">{{{titleInputHtml}}}</div>
+                            <div>&nbsp;</div>
+                            <div class="aoBlogCommentCopy">Comment</div>
+                            <div class="aoBlogCommentCopy">{{{commentTextAreaHtml}}}</div>
+                            {{#hasRecaptcha}}
+                                <div class="aoBlogCommentCopy">Verify Text</div>
+                                <div class="aoBlogCommentCopy">{{{recaptchaHtml}}}</div>
+                            {{/hasRecaptcha}}
+                            <div class="aoBlogCommentCopy">{{{postButtonHtml}}}&nbsp;{{{cancelButtonHtml}}}</div>
+                        {{/showPostForm}}
+                    {{/showCommentForm}}
+                {{/commentForm}}
+                {{{hiddenFieldsHtml}}}
+            {{/articleNotFound}}
+        </section>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous" data-delete></script>
+    </body>
 </html>
