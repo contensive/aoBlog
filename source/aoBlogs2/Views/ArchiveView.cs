@@ -113,7 +113,7 @@ namespace Contensive.Blog.Views {
                         string BlogTagList = blogPost.tagList;
                         int primaryImagePositionId = blogPost.primaryImagePositionId;
                         List<BlogImageModel> blogImageList = BlogImageModel.getPostImageList(cp, blogPost);
-                        result += BlogEntryCellView.getBlogPostCell(cp, app, blogPost, blogImageList, false, false, Return_CommentCnt, entryEditLink);
+                        result += BlogEntryCellView.getBlogPostCell(cp, app, blogPost, blogImageList, false, false, ref Return_CommentCnt, entryEditLink);
                         result += "<hr>";
                     }
                     EntryPtr++;

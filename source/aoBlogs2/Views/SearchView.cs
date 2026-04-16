@@ -85,7 +85,7 @@ namespace Contensive.Blog.Views {
                             if (AuthorMemberID == 0)
                                 AuthorMemberID = cp.Utils.EncodeInteger(blogEntry.createdBy);
                             List<BlogImageModel> blogImageList = BlogImageModel.getPostImageList(cp, blogEntry);
-                            result.Append(BlogEntryCellView.getBlogPostCell(cp, app, blogEntry, blogImageList, false, true, Return_CommentCnt, ""));
+                            result.Append(BlogEntryCellView.getBlogPostCell(cp, app, blogEntry, blogImageList, false, true, ref Return_CommentCnt, ""));
                             result.Append("<hr>");
                         }
                     }

@@ -169,6 +169,7 @@ namespace Contensive.Blog.Controllers {
                 // 
                 result = cp.Html.InputText(RequestName, DefaultValue, 255);
                 result = Strings.Replace(result, "<INPUT ", "<INPUT maxlength=\"" + MaxLenghth + "\" ", 1, 99, CompareMethod.Text);
+                result = Strings.Replace(result, "<INPUT ", $"<INPUT style=\"width: {MaxLenghth}ch;max-width: 100%;\">");
             } catch (Exception ex) {
                 cp.Site.ErrorReport(ex);
             }

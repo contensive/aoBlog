@@ -82,7 +82,7 @@ namespace Contensive.Blog.Views {
                         }
                         if (!IsBlocked) {
                             List<BlogImageModel> blogImageList = BlogImageModel.getPostImageList(cp, post);
-                            string blogArticleCell = BlogEntryCellView.getBlogPostCell(cp, app, post, blogImageList, false, true, Return_CommentCnt, "");
+                            string blogArticleCell = BlogEntryCellView.getBlogPostCell(cp, app, post, blogImageList, false, true, ref Return_CommentCnt, "");
                             // 
                             // -- if editing enabled, add the link and wrapperwrapper
                             blogArticleCell = _GenericController.addEditWrapper(cp, blogArticleCell, post.id, post.name, BlogEntryModel.tableMetadata.contentName);

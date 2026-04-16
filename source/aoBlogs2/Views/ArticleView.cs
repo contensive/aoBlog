@@ -43,7 +43,7 @@ namespace Contensive.Blog.Views {
                 // Print the Blog Entry
                 var return_CommentCnt = default(int);
                 List<BlogImageModel> blogImageList = BlogImageModel.getPostImageList(cp, app.blogPost);
-                result += BlogEntryCellView.getBlogPostCell(cp, app, app.blogPost, blogImageList, true, false, return_CommentCnt, entryEditLink);
+                result += BlogEntryCellView.getBlogPostCell(cp, app, app.blogPost, blogImageList, true, false, ref return_CommentCnt, entryEditLink);
                 // 
                 var visit = DbBaseModel.create<VisitModel>(cp, cp.Visit.Id);
                 if (app?.user != null && visit is not null) {

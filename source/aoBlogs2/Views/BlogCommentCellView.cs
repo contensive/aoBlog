@@ -11,7 +11,7 @@ namespace Contensive.Blog.Views {
         // 
         // ====================================================================================
         // 
-        public static string getBlogCommentCell(CPBaseClass cp, BlogModel blog, BlogEntryModel blogEntry, BlogCommentModel blogComment, Models.PersonModel user, bool IsSearchListing) {
+        public static string getBlogCommentCell(CPBaseClass cp, BlogModel blog, BlogEntryModel blogEntry, BlogCommentModel blogComment, Models.PersonModel user, bool IsSearchListing, string fieldSuffix = "") {
             try {
                 string result = "";
                 // 
@@ -47,7 +47,7 @@ namespace Contensive.Blog.Views {
                     if (!string.IsNullOrEmpty(rowCopy)) {
                         rowCopy += " | ";
                     }
-                    rowCopy = rowCopy + cp.Html.Hidden("CommentID", blogComment.id.ToString()) + cp.Html.CheckBox("Approve", blogComment.approved) + cp.Html.Hidden("Approved", blogComment.approved.ToString()) + "&nbsp;Approved&nbsp;" + " | " + cp.Html.CheckBox("Delete", false) + "&nbsp;Delete" + "";
+                    rowCopy = rowCopy + cp.Html.Hidden($"CommentID{fieldSuffix}", blogComment.id.ToString()) + cp.Html.CheckBox($"Approve{fieldSuffix}", blogComment.approved) + cp.Html.Hidden($"Approved{fieldSuffix}", blogComment.approved.ToString()) + "&nbsp;Approved&nbsp;" + " | " + cp.Html.CheckBox($"Delete{fieldSuffix}", false) + "&nbsp;Delete" + "";
                 }
                 if (!string.IsNullOrEmpty(rowCopy)) {
                     result += "<div class=\"aoBlogCommentByLine\">Posted " + rowCopy + "</div>";

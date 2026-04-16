@@ -64,7 +64,7 @@ namespace Contensive.Blog.Models.View {
         /// Create the BlogPostCellViewModel from a blog entry.
         /// Extracts rendering logic from BlogEntryCellView.getBlogPostCell().
         /// </summary>
-        public static BlogPostCellViewModel create(CPBaseClass cp, ApplicationEnvironmentModel app, BlogEntryModel blogPost, List<BlogImageModel> blogImageList, bool isArticleView, bool isSearchListing, string entryEditLink) {
+        public static BlogPostCellViewModel create(CPBaseClass cp, ApplicationEnvironmentModel app, BlogEntryModel blogPost, List<BlogImageModel> blogImageList, bool isArticleView, bool isSearchListing, string entryEditLink, int entryIndex = 0) {
             try {
                 if (blogPost is null) { throw new ApplicationException("BlogPostCellViewModel.create called without valid BlogEntry"); }
                 //
@@ -209,7 +209,8 @@ namespace Contensive.Blog.Models.View {
                             string commentsHtml = "<div class=\"aoBlogCommentHeader\">Comments</div>";
                             commentsHtml += Constants.vbCrLf + divider;
                             foreach (var blogComment in commentList) {
-                                commentsHtml += Views.BlogCommentCellView.getBlogCommentCell(cp, app.blog, blogPost, blogComment, app.user, false);
+                                string fieldSuffix = $"{entryIndex}.{commentPtr}";
+                                commentsHtml += Views.BlogCommentCellView.getBlogCommentCell(cp, app.blog, blogPost, blogComment, app.user, false, fieldSuffix);
                                 commentsHtml += Constants.vbCrLf + divider;
                                 commentPtr++;
                             }
@@ -219,7 +220,7 @@ namespace Contensive.Blog.Models.View {
                 }
                 //
                 // -- hidden fields
-                result.hiddenFieldsHtml = cp.Html.Hidden($"CommentCnt{blogPost.id}", commentPtr.ToString());
+                result.hiddenFieldsHtml = cp.Html.Hidden($"CommentCnt{entryIndex}", commentPtr.ToString());
                 result.commentCount = commentPtr;
                 //
                 return result;

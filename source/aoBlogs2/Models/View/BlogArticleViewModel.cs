@@ -83,7 +83,7 @@ namespace Contensive.Blog.Models.View {
                 // -- apply comment changes button (editor only)
                 if (app?.user != null && app.user.isBlogEditor(cp, app.blog) && postCellVm.commentCount > 0) {
                     result.hasApplyButton = true;
-                    result.applyButtonHtml = cp.Html.Button(constants.FormButtonApplyCommentChanges);
+                    result.applyButtonHtml = cp.Html.Button(constants.rnButton,constants.FormButtonApplyCommentChanges);
                 }
                 //
                 // -- comment form section

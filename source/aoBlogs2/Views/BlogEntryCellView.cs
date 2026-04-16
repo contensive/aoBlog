@@ -13,7 +13,7 @@ namespace Contensive.Blog.Views {
         // 
         // ====================================================================================
         // 
-        public static string getBlogPostCell(CPBaseClass cp, ApplicationEnvironmentModel app, BlogEntryModel blogPost, List<BlogImageModel> blogImageList, bool isArticleView, bool IsSearchListing, int Return_CommentCnt, string entryEditLink) {
+        public static string getBlogPostCell(CPBaseClass cp, ApplicationEnvironmentModel app, BlogEntryModel blogPost, List<BlogImageModel> blogImageList, bool isArticleView, bool IsSearchListing, ref int Return_CommentCnt, string entryEditLink, int entryIndex = 0) {
             int hint = 0;
             try {
                 string result = "";
@@ -272,8 +272,8 @@ namespace Contensive.Blog.Views {
                             result += Constants.vbCrLf + Divider;
                             CommentPtr = 0;
                             foreach (var blogComment in DbBaseModel.createList<BlogCommentModel>(cp, Criteria)) {
-
-                                result += BlogCommentCellView.getBlogCommentCell(cp, app.blog, blogPost, blogComment, app.user, false);
+                                string fieldSuffix = $"{entryIndex}.{CommentPtr}";
+                                result += BlogCommentCellView.getBlogCommentCell(cp, app.blog, blogPost, blogComment, app.user, false, fieldSuffix);
                                 result += Constants.vbCrLf + Divider;
                                 CommentPtr += 1;
                             }
@@ -285,7 +285,7 @@ namespace Contensive.Blog.Views {
                 if (!string.IsNullOrEmpty(toolLine)) {
                     result += "<div class=\"aoBlogToolLink\">" + toolLine + "</div>";
                 }
-                result += Constants.vbCrLf + cp.Html.Hidden("CommentCnt" + blogPost.id, CommentPtr.ToString());
+                result += Constants.vbCrLf + cp.Html.Hidden($"CommentCnt{entryIndex}", CommentPtr.ToString());
                 // 
                 Return_CommentCnt = CommentPtr;
                 return result;
