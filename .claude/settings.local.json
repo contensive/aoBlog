@@ -6,7 +6,9 @@
       "Bash(curl:*)",
       "Bash(dotnet build:*)",
       "Bash(ls:*)",
-      "Bash(cmd //c:*)"
+      "Bash(cmd //c:*)",
+      "Bash(python3:*)",
+      "Bash(claude:*)"
     ]
   }
 }

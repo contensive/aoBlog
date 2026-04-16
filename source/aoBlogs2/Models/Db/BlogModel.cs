@@ -52,7 +52,33 @@ namespace Contensive.Blog.Models {
         public string metaTitle { get; set; }
         public string metaDescription { get; set; }
         public string metaKeywordList { get; set; }
-        // 
+        //
+        // ====================================================================================================
+        /// <summary>
+        /// Required by renderWidget pattern. Finds or creates the settings record for this widget instance.
+        /// </summary>
+        public static new BlogModel createOrAddSettings(CPBaseClass cp, string settingsGuid, string recordNameSuffix) {
+            try {
+                var result = create<BlogModel>(cp, settingsGuid);
+                if (result != null) { return result; }
+                //
+                // -- no existing blog, use verifyBlog to create a default
+                result = verifyBlog(cp, settingsGuid);
+                if (result != null) { return result; }
+                //
+                // -- create minimal default
+                result = addDefault<BlogModel>(cp);
+                result.name = $"{tableMetadata.contentName} {result.id}, created {DateTime.Now}" + (string.IsNullOrEmpty(recordNameSuffix) ? "" : $", {recordNameSuffix}");
+                result.ccguid = settingsGuid;
+                result.save(cp);
+                cp.Content.LatestContentModifiedDate.Track(result.modifiedDate);
+                return result;
+            } catch (Exception ex) {
+                cp.Site.ErrorReport($"Error in BlogModel createOrAddSettings: {ex}");
+                return new BlogModel();
+            }
+        }
+        //
         // ====================================================================================================
         /// <summary>
         /// Create a new default blog, ready to use.
@@ -109,7 +135,7 @@ namespace Contensive.Blog.Models {
                     blogEntry.blogId = Blog.id;
                     blogEntry.name = $"Blog Post (please update)";
                     blogEntry.rssTitle = "";
-                    blogEntry.copy = cp.WwwFiles.Read(@"blogs\DefaultPostCopy.txt");
+                    blogEntry.copy = cp.PrivateFiles.Read(@"blogs\defaultpostcopy.txt");
                     blogEntry.rssDescription = _GenericController.getBriefCopy(cp, blogEntry.copy, 150);
                     blogEntry.save(cp);
                     // 

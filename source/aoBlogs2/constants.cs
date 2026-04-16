@@ -11,8 +11,40 @@ namespace Contensive.Blog {
         // -- layouts
         public const string layoutGuidLastestPosts = "{987cb36b-22f8-4896-a54e-aa7dbab98f93}";
         public const string layoutNameLastestPosts = "Latest Posts Layout";
-        public const string layoutPathFilenameLastestPosts = @"blogs\LatestPostLayout.html";
-        // 
+        public const string layoutPathFilenameLastestPosts = @"LatestPostLayout.html";
+        //
+        public const string layoutGuidBlog = "{1E579F72-64D5-4413-89EA-A61E8EDA426D}";
+        public const string layoutNameBlog = "Blog Layout";
+        public const string layoutPathFilenameBlog = @"BlogLayout.html";
+        //
+        public const string layoutGuidBlogPostCell = "{FC6652FD-EA4D-4668-8745-8161A6D34291}";
+        public const string layoutNameBlogPostCell = "Blog Post Cell";
+        public const string layoutPathFilenameBlogPostCell = @"BlogPostCell.html";
+        //
+        public const string layoutGuidBlogListView = "{387E2746-E5E1-43CF-9413-C86C4EFF2B28}";
+        public const string layoutNameBlogListView = "Blog List View";
+        public const string layoutPathFilenameBlogListView = @"BlogListView.html";
+        //
+        public const string layoutGuidBlogArticleView = "{4FAA7369-2C91-43AC-82FC-B3B66A5439A0}";
+        public const string layoutNameBlogArticleView = "Blog Article View";
+        public const string layoutPathFilenameBlogArticleView = @"BlogArticleView.html";
+        //
+        public const string layoutGuidBlogEditView = "{F30FD369-31F0-46E8-BF61-910C119CDBCB}";
+        public const string layoutNameBlogEditView = "Blog Edit View";
+        public const string layoutPathFilenameBlogEditView = @"BlogEditView.html";
+        //
+        public const string layoutGuidBlogSearchView = "{075F6A58-7546-4638-987E-F88B766C5DC9}";
+        public const string layoutNameBlogSearchView = "Blog Search View";
+        public const string layoutPathFilenameBlogSearchView = @"BlogSearchView.html";
+        //
+        public const string layoutGuidBlogArchiveDateListView = "{716E91F8-0C48-4028-9D7B-F48E339FA8A9}";
+        public const string layoutNameBlogArchiveDateListView = "Blog Archive Date List View";
+        public const string layoutPathFilenameBlogArchiveDateListView = @"BlogArchiveDateListView.html";
+        //
+        public const string layoutGuidBlogArchivedPostsView = "{8288F2E2-BFE3-4F94-980E-FC9E076F477B}";
+        public const string layoutNameBlogArchivedPostsView = "Blog Archived Posts View";
+        public const string layoutPathFilenameBlogArchivedPostsView = @"BlogArchivedPostsView.html";
+        //
         // -- Guids
         // 
         public const string guidGroupBlogAuthors = "{082E5ADC-9477-4DB6-A3D7-39B6EAB3A519}";

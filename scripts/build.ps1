@@ -4,9 +4,14 @@
     aoBlog collection build — configuration only.
     All build steps are defined in the shared Contensive build library.
     Entry point: build.cmd
+.PARAMETER Configuration
+    Build configuration (Debug or Release). Defaults to Debug.
 #>
 [CmdletBinding()]
-param()
+param(
+    [ValidateSet('Debug', 'Release')]
+    [string]$Configuration = 'Debug'
+)
 
 $ErrorActionPreference = 'Stop'
 
@@ -24,8 +29,9 @@ Invoke-ContensiveBuild `
     -CollectionName    'Blog' `
     -CollectionPath    "$projectRoot\collections\Blog" `
     -SolutionPath      "$projectRoot\source\aoBlogs2.sln" `
-    -BinPath           "$projectRoot\source\aoBlogs2\bin\Release\net472" `
+    -BinPath           "$projectRoot\source\aoBlogs2\bin\$Configuration\net472" `
     -DeploymentRoot    'C:\deployments\aoBlog' `
+    -Configuration     $Configuration `
     -CleanFolders      @(
                            "$projectRoot\source\aoBlogs2\bin"
                            "$projectRoot\source\aoBlogs2\obj"

@@ -1,93 +1,95 @@
-﻿using System;
+using System;
 using Contensive.BaseClasses;
+using Contensive.Models.Db;
 
 namespace Contensive.Blog {
     public class SubscribeEmailRemote : AddonBaseClass {
-        // 
+        //
         // =====================================================================================
         // addon api
         // =====================================================================================
-        // 
-        public override object Execute(CPBaseClass CP) {
+        //
+        public override object Execute(CPBaseClass cp) {
             string returnHtml;
             try {
-                string email = CP.Doc.GetText("email");
-                int blogId = CP.Doc.GetInteger("blogId");
-                string blogName = "";
-                var cs = CP.CSNew();
+                string email = cp.Doc.GetText("email");
+                int blogId = cp.Doc.GetInteger("blogId");
                 int groupId = 0;
                 int userId = 0;
-                // 
-                if (CP.User.IsRecognized & !CP.User.IsAuthenticated) {
-                    CP.User.Logout();
+                //
+                if (cp.User.IsRecognized & !cp.User.IsAuthenticated) {
+                    cp.User.Logout();
                 }
-                // 
+                //
                 if (!string.IsNullOrEmpty(email) & blogId != 0) {
-                    if (cs.Open("blogs", "id=" + blogId)) {
-                        blogName = cs.GetText("name");
-                        groupId = cs.GetInteger("emailSubscribeGroupId");
-                    }
-                    cs.Close();
-                    if (!cs.Open("groups", "id=" + groupId)) {
-                        cs.Close();
-                        if (cs.Insert("Groups")) {
-                            groupId = cs.GetInteger("id");
-                            cs.SetField("name", "Email Subscriptions for Blog " + blogName);
-                            cs.SetField("caption", "Email Subscriptions for Blog " + blogName);
-                            cs.SetField("allowbulkemail", "1");
-                            cs.SetField("publicjoin", "1");
-                        }
-                        cs.Close();
-                        if (cs.Open("blogs", "id=" + blogId)) {
-                            cs.SetField("emailSubscribeGroupId", groupId.ToString());
-                        }
-                    }
-                    cs.Close();
-                    // 
+                    //
+                    // -- get blog and groupId
+                    var blog = DbBaseModel.create<Models.BlogModel>(cp, blogId);
+                    string blogName = blog?.name ?? "";
+                    groupId = blog?.emailSubscribeGroupId ?? 0;
+                    //
+                    // -- verify group exists, create if needed
                     if (groupId > 0) {
-                        if (cs.Open("people", "email=" + CP.Db.EncodeSQLText(email))) {
-                            userId = cs.GetInteger("id");
+                        var group = DbBaseModel.create<Models.GroupModel>(cp, groupId);
+                        if (group is null) { groupId = 0; }
+                    }
+                    if (groupId == 0) {
+                        var newGroup = DbBaseModel.addDefault<Models.GroupModel>(cp);
+                        if (newGroup is not null) {
+                            groupId = newGroup.id;
+                            newGroup.name = $"Email Subscriptions for Blog {blogName}";
+                            newGroup.caption = $"Email Subscriptions for Blog {blogName}";
+                            newGroup.allowBulkEmail = true;
+                            newGroup.publicJoin = true;
+                            newGroup.save(cp);
                         }
-                        cs.Close();
-                        // 
+                        if (blog is not null) {
+                            blog.emailSubscribeGroupId = groupId;
+                            blog.save(cp);
+                        }
+                    }
+                    //
+                    if (groupId > 0) {
+                        //
+                        // -- find user by email
+                        var personList = DbBaseModel.createList<Models.PersonModel>(cp, $"email={cp.Db.EncodeSQLText(email)}", "id", 1, 1);
+                        if (personList.Count > 0) {
+                            userId = personList[0].id;
+                        }
+                        //
                         if (userId == 0) {
-                            // 
-                            // this email address was not found in users, set it to the current user, authenticated or not
-                            // (recognized case is not possible b/c check at top of routine)
-                            // 
-                            userId = CP.User.Id;
-                            if (cs.Open("people", "id=" + CP.User.Id)) {
-                                cs.SetField("email", email);
-                            }
-                            cs.Close();
-                        }
-                        if (!cs.Open("member rules", "memberid=" + CP.User.Id + " and groupid=" + groupId)) {
-                            cs.Close();
-                            if (cs.Insert("member rules")) {
-                                cs.SetField("groupid", groupId);
-                                cs.SetField("memberid", CP.User.Id);
+                            //
+                            // -- email not found, set to current user
+                            userId = cp.User.Id;
+                            var person = DbBaseModel.create<Models.PersonModel>(cp, cp.User.Id);
+                            if (person is not null) {
+                                person.email = email;
+                                person.save(cp);
                             }
                         }
-                        cs.Close();
-                        // Call CP.Group.AddUser(groupId.ToString())
+                        //
+                        // -- add member rule if not exists
+                        var existingRules = DbBaseModel.createList<MemberRuleModel>(cp, $"memberid={cp.User.Id} and groupid={groupId}", "id", 1, 1);
+                        if (existingRules.Count == 0) {
+                            var memberRule = DbBaseModel.addDefault<MemberRuleModel>(cp);
+                            if (memberRule is not null) {
+                                memberRule.groupId = groupId;
+                                memberRule.memberId = cp.User.Id;
+                                memberRule.save(cp);
+                            }
+                        }
                     }
                 }
-                // 
-                // set flag to only allow this once per visit (for anonymous users who enter an email for soeone else)
-                // 
-                CP.Visit.SetProperty("EmailSubscribed-Blog" + blogId + "-user" + CP.User.Id, "1");
-                // 
-                // return OK to display thank you message
-                // 
-
+                //
+                // -- set flag to only allow this once per visit
+                cp.Visit.SetProperty($"EmailSubscribed-Blog{blogId}-user{cp.User.Id}", "1");
+                //
                 returnHtml = "OK";
-            }
-            catch (Exception ex) {
-                CP.Site.ErrorReport(ex, "execute");
+            } catch (Exception ex) {
+                cp.Site.ErrorReport(ex, "execute");
                 returnHtml = "";
             }
             return returnHtml;
         }
-
     }
 }

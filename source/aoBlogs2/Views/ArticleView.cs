@@ -351,23 +351,22 @@ namespace Contensive.Blog.Views {
                                                 // 
                                                 cp.Content.Delete("Blog Comments", "(id=" + CommentID + ")and(BlogID=" + blog.id + ")");
                                             } else if (cp.Doc.GetBoolean("Approve" + Suffix) && !cp.Doc.GetBoolean("Approved" + Suffix)) {
-                                                // 
+                                                //
                                                 // Approve Comment
-                                                // 
-                                                var BlogCommentModelList = DbBaseModel.createList<BlogCommentModel>(cp, "(name=" + cp.Utils.EncodeRequestVariable(blog.name) + ")", "ID");
-                                                if (BlogCommentModelList.Count > 0) {
-                                                    var BlogComment = DbBaseModel.addDefault<BlogCommentModel>(cp);
-                                                    if (cp.CSNew().OK()) {
-                                                        BlogComment.approved = true;
-                                                    }
-                                                } else if (!cp.Doc.GetBoolean("Approve" + Suffix) && cp.Doc.GetBoolean("Approved" + Suffix)) {
-                                                    // 
-                                                    // Unapprove comment
-                                                    // 
-                                                    var BlogComment = DbBaseModel.addDefault<BlogCommentModel>(cp);
-                                                    if (BlogComment is not null) {
-                                                        BlogComment.approved = false;
-                                                    }
+                                                //
+                                                var BlogComment = DbBaseModel.create<BlogCommentModel>(cp, CommentID);
+                                                if (BlogComment is not null) {
+                                                    BlogComment.approved = true;
+                                                    BlogComment.save(cp);
+                                                }
+                                            } else if (!cp.Doc.GetBoolean("Approve" + Suffix) && cp.Doc.GetBoolean("Approved" + Suffix)) {
+                                                //
+                                                // Unapprove comment
+                                                //
+                                                var BlogComment = DbBaseModel.create<BlogCommentModel>(cp, CommentID);
+                                                if (BlogComment is not null) {
+                                                    BlogComment.approved = false;
+                                                    BlogComment.save(cp);
                                                 }
                                             }
                                         }

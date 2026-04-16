@@ -3,6 +3,7 @@ using Contensive.BaseClasses;
 using Contensive.Models.Db;
 using System;
 using System.Collections.Generic;
+using System.Data;
 
 namespace Contensive.Blog.Models {
     public class BlogEntryModel : Contensive.Models.Db.DbBaseModel { 
@@ -110,24 +111,15 @@ namespace Contensive.Blog.Models {
         public static List<ArchiveDateModel> createArchiveListFromBlogCopy(CPBaseClass cp, int blogId) {
             var result = new List<ArchiveDateModel>();
             try {
-                // result = createList(cp, "(BlogID=" & blogId & ")", "year(dateAdded) desc, Month(dateAdded) desc")
-                string SQL = "SELECT DISTINCT month(dateAdded) as archiveMonth, year(dateAdded) as archiveYear From ccBlogCopy Where (ContentControlID = " + cp.Content.GetID(constants.cnBlogEntries) + ") And (Active <> 0) AND (BlogID=" + blogId + ") ORDER BY year(dateAdded) desc, month(dateAdded) desc ";
-
-
-
-                var cs = cp.CSNew();
-                if (cs.OpenSQL(SQL)) {
-                    do {
-                        var archiveDate = new ArchiveDateModel();
-                        archiveDate.Month = cs.GetInteger("archiveMonth");
-                        archiveDate.Year = cs.GetInteger("archiveYear");
-                        result.Add(archiveDate);
-                        cs.GoNext();
+                string sql = $"SELECT DISTINCT month(dateAdded) as archiveMonth, year(dateAdded) as archiveYear From ccBlogCopy Where (ContentControlID = {cp.Content.GetID(constants.cnBlogEntries)}) And (Active <> 0) AND (BlogID={blogId}) ORDER BY year(dateAdded) desc, month(dateAdded) desc";
+                using (DataTable dt = cp.Db.ExecuteQuery(sql)) {
+                    foreach (DataRow row in dt.Rows) {
+                        result.Add(new ArchiveDateModel {
+                            Month = cp.Utils.EncodeInteger(row["archiveMonth"]),
+                            Year = cp.Utils.EncodeInteger(row["archiveYear"])
+                        });
                     }
-                    while (cs.OK());
                 }
-
-                cs.Close();
             } catch (Exception ex) {
                 cp.Site.ErrorReport(ex);
             }

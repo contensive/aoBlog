@@ -129,7 +129,6 @@ namespace Contensive.Blog.Views {
                 qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameBlogEntryID, "", true);
                 qs = cp.Utils.ModifyQueryString(qs, constants.rnFormID, constants.FormBlogPostList.ToString());
                 result += "<div Class=\"aoBlogFooterLink\"><a href=\"" + app.blogPageBaseLink + "\">" + constants.BackToRecentPostsMsg + "</a></div>";
-                cp.CSNew().Close();
                 result += cp.Html.Hidden(constants.RequestNameSourceFormID, constants.FormBlogArchivedBlogs.ToString());
                 result = cp.Html.Form(result);
                 // 

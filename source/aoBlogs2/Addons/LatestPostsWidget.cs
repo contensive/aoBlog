@@ -15,7 +15,7 @@ namespace Contensive.Blog {
                     layoutGuid: constants.layoutGuidLastestPosts, 
                     layoutName: constants.layoutNameLastestPosts, 
                     layoutPathFilename: constants.layoutPathFilenameLastestPosts, 
-                    layoutBS5PathFilename: @"blogs\LatestPostLayout.html");
+                    layoutBS5PathFilename: @"LatestPostLayout.html");
             }
             catch (Exception ex) {
                 cp.Site.ErrorReport(ex);
