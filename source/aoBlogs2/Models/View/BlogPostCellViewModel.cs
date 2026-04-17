@@ -44,17 +44,19 @@ namespace Contensive.Blog.Models.View {
         //
         // -- tags section (article view only)
         public bool hasTags { get; set; }
-        public string tagListHtml { get; set; }
+        public List<TagItemViewModel> tagList { get; set; }
         //
         // -- comments section (article view only)
         public string commentsHtml { get; set; }
         //
         // -- tool line (list view, blog editor only)
         public bool hasToolLine { get; set; }
-        public string toolLineHtml { get; set; }
+        public int unapprovedCommentCount { get; set; }
+        public string editUrl { get; set; }
         //
-        // -- hidden fields
-        public string hiddenFieldsHtml { get; set; }
+        // -- hidden fields data
+        public string commentCntName { get; set; }
+        public string commentCntValue { get; set; }
         //
         // -- comment count (used by callers)
         public int commentCount { get; set; }
@@ -117,14 +119,22 @@ namespace Contensive.Blog.Models.View {
                 //
                 // -- tags (article view only)
                 if (isArticleView && app.sitePropertyAllowTags && !string.IsNullOrEmpty(blogPost.tagList)) {
-                    string clickableLinkList = "";
-                    string[] tags = Strings.Split(Strings.Replace(blogPost.tagList, ",", Constants.vbCrLf), Constants.vbCrLf);
+                    string[] tags = blogPost.tagList.Split(',');
+                    var tagItems = new List<TagItemViewModel>();
                     foreach (var tag in tags) {
-                        string link = $"{app.blogBaseLink}?{constants.rnFormID}={constants.FormBlogSearch}&{constants.rnQueryTag}={cp.Utils.EncodeHTML(tag)}";
-                        clickableLinkList += $", <a href=\"{link}\">{tag}</a>";
+                        string trimmedTag = tag.Trim();
+                        if (!string.IsNullOrEmpty(trimmedTag)) {
+                            tagItems.Add(new TagItemViewModel {
+                                separator = tagItems.Count > 0 ? ", " : "",
+                                name = trimmedTag,
+                                url = $"{app.blogBaseLink}?{constants.rnFormID}={constants.FormBlogSearch}&{constants.rnQueryTag}={cp.Utils.EncodeHTML(trimmedTag)}"
+                            });
+                        }
                     }
-                    result.hasTags = true;
-                    result.tagListHtml = Strings.Mid(clickableLinkList, 3);
+                    if (tagItems.Count > 0) {
+                        result.hasTags = true;
+                        result.tagList = tagItems;
+                    }
                 }
                 //
                 // -- podcast
@@ -183,18 +193,14 @@ namespace Contensive.Blog.Models.View {
                     if (!isArticleView) {
                         //
                         // -- list view tool line (for blog editors)
-                        string toolLine = "";
                         if (app.user.isBlogEditor(cp, app.blog)) {
                             var unapprovedComments = DbBaseModel.createList<BlogCommentModel>(cp, $"(Approved=0)and(EntryID={blogPost.id})");
-                            toolLine += $"Unapproved Comments ({unapprovedComments.Count})";
+                            result.hasToolLine = true;
+                            result.unapprovedCommentCount = unapprovedComments.Count;
                             string editQs = app.blogBaseLink;
                             editQs = cp.Utils.ModifyQueryString(editQs, constants.RequestNameBlogEntryID, blogPost.id.ToString());
                             editQs = cp.Utils.ModifyQueryString(editQs, constants.rnFormID, constants.FormBlogEntryEditor.ToString());
-                            toolLine += $"&nbsp;|&nbsp;<a href=\"?{editQs}\">Edit</a>";
-                        }
-                        if (!string.IsNullOrEmpty(toolLine)) {
-                            result.hasToolLine = true;
-                            result.toolLineHtml = toolLine;
+                            result.editUrl = $"?{editQs}";
                         }
                     } else {
                         //
@@ -219,8 +225,9 @@ namespace Contensive.Blog.Models.View {
                     }
                 }
                 //
-                // -- hidden fields
-                result.hiddenFieldsHtml = cp.Html.Hidden($"CommentCnt{entryIndex}", commentPtr.ToString());
+                // -- hidden fields data
+                result.commentCntName = $"CommentCnt{entryIndex}";
+                result.commentCntValue = commentPtr.ToString();
                 result.commentCount = commentPtr;
                 //
                 return result;

@@ -127,7 +127,7 @@ namespace Contensive.Blog.Models {
                                 cp.Log.Debug($"BlogWidgetViewModel.create, CTA found: id={cta.id}, name={cta.name}, headline={cta.headline}, buttontext={cta.buttontext}, link={cta.link}");
                                 result.ctaList.Add(new CtaItemViewModel {
                                     headline = cta.headline,
-                                    brief = cta.brief,
+                                    brief = cp.Utils.DecodeHTML(cta.brief),
                                     buttonText = cta.buttontext,
                                     buttonLink = cta.link,
                                     hasButton = !string.IsNullOrEmpty(cta.buttontext) && !string.IsNullOrEmpty(cta.link)

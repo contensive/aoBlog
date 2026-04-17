@@ -23,7 +23,7 @@ namespace Contensive.Blog.Models.View {
         public string backToRecentLink { get; set; }
         //
         // -- hidden fields
-        public string hiddenFieldsHtml { get; set; }
+        public string sourceFormIdValue { get; set; }
         //
         //====================================================================================================
         /// <summary>
@@ -65,7 +65,7 @@ namespace Contensive.Blog.Models.View {
                     result.postCellsHtml = postCellsHtml;
                 }
                 //
-                result.hiddenFieldsHtml = cp.Html.Hidden(constants.RequestNameSourceFormID, constants.FormBlogArchivedBlogs.ToString());
+                result.sourceFormIdValue = constants.FormBlogArchivedBlogs.ToString();
                 //
                 return result;
             } catch (Exception ex) {

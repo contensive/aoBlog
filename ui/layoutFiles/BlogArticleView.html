@@ -16,7 +16,7 @@
             {{^articleNotFound}}
                 {{{postCellHtml}}}
                 {{#hasApplyButton}}
-                    <div class="aoBlogCommentCopy">{{{applyButtonHtml}}}</div>
+                    <div class="aoBlogCommentCopy"><input type="submit" name="button" value="{{applyButtonValue}}"></div>
                 {{/hasApplyButton}}
                 {{#commentForm}}
                     {{#showCommentForm}}
@@ -44,19 +44,27 @@
                         {{#showPostForm}}
                             <div>&nbsp;</div>
                             <div class="aoBlogCommentCopy">Title</div>
-                            <div class="aoBlogCommentCopy">{{{titleInputHtml}}}</div>
+                            <div class="aoBlogCommentCopy">
+                                <input type="text" name="CommentTitle" value="{{titleInputValue}}" maxlength="35" style="width:35ch;max-width:100%;">
+                            </div>
                             <div>&nbsp;</div>
                             <div class="aoBlogCommentCopy">Comment</div>
-                            <div class="aoBlogCommentCopy">{{{commentTextAreaHtml}}}</div>
+                            <div class="aoBlogCommentCopy">
+                                <textarea name="CommentCopy" maxlength="500">{{commentTextAreaValue}}</textarea>
+                            </div>
                             {{#hasRecaptcha}}
                                 <div class="aoBlogCommentCopy">Verify Text</div>
                                 <div class="aoBlogCommentCopy">{{{recaptchaHtml}}}</div>
                             {{/hasRecaptcha}}
-                            <div class="aoBlogCommentCopy">{{{postButtonHtml}}}&nbsp;{{{cancelButtonHtml}}}</div>
+                            <div class="aoBlogCommentCopy">
+                                <input type="submit" name="button" value="{{postButtonValue}}">&nbsp;<input type="submit" name="button" value="{{cancelButtonValue}}">
+                            </div>
                         {{/showPostForm}}
                     {{/showCommentForm}}
                 {{/commentForm}}
-                {{{hiddenFieldsHtml}}}
+                <input type="hidden" name="SourceFormID" value="{{sourceFormIdValue}}">
+                <input type="hidden" name="BlogEntryID" value="{{blogEntryIdValue}}">
+                <input type="hidden" name="EntryCnt" value="{{entryCntValue}}">
             {{/articleNotFound}}
         </section>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous" data-delete></script>

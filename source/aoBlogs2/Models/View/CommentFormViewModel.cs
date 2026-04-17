@@ -1,6 +1,5 @@
 
 using Contensive.BaseClasses;
-using Contensive.Blog.Controllers;
 using Contensive.Models.Db;
 using System;
 
@@ -33,16 +32,16 @@ namespace Contensive.Blog.Models.View {
         //
         // -- post form (authenticated or anonymous allowed)
         public bool showPostForm { get; set; }
-        public string titleInputHtml { get; set; }
-        public string commentTextAreaHtml { get; set; }
+        public string titleInputValue { get; set; }
+        public string commentTextAreaValue { get; set; }
         //
         // -- recaptcha
         public bool hasRecaptcha { get; set; }
         public string recaptchaHtml { get; set; }
         //
         // -- buttons
-        public string postButtonHtml { get; set; }
-        public string cancelButtonHtml { get; set; }
+        public string postButtonValue { get; set; }
+        public string cancelButtonValue { get; set; }
         //
         //====================================================================================================
         /// <summary>
@@ -96,16 +95,16 @@ namespace Contensive.Blog.Models.View {
                     //
                     // -- authenticated or anonymous allowed, show comment form
                     result.showPostForm = true;
-                    result.titleInputHtml = _GenericController.getField(cp, constants.RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(constants.RequestNameCommentTitle.ToString()));
-                    result.commentTextAreaHtml = cp.Html5.InputTextArea(constants.RequestNameCommentCopy, 500, cp.Doc.GetText(constants.RequestNameCommentCopy));
+                    result.titleInputValue = cp.Doc.GetText(constants.RequestNameCommentTitle);
+                    result.commentTextAreaValue = cp.Doc.GetText(constants.RequestNameCommentCopy);
                     //
                     if (app.blog.recaptcha) {
                         result.hasRecaptcha = true;
                         result.recaptchaHtml = cp.Addon.Execute(constants.reCaptchaDisplayGuid);
                     }
                     //
-                    result.postButtonHtml = cp.Html.Button(constants.rnButton, constants.FormButtonPostComment);
-                    result.cancelButtonHtml = cp.Html.Button(constants.rnButton, constants.FormButtonCancel);
+                    result.postButtonValue = constants.FormButtonPostComment;
+                    result.cancelButtonValue = constants.FormButtonCancel;
                 }
             } catch (Exception ex) {
                 cp.Site.ErrorReport(ex, "CommentFormViewModel.create");

@@ -43,14 +43,14 @@
             {{#hasTags}}
                 <div class="aoBlogTagListSection">
                     <div class="aoBlogTagListHeader">Tags</div>
-                    <div class="aoBlogTagList">{{{tagListHtml}}}</div>
+                    <div class="aoBlogTagList">{{#tagList}}{{separator}}<a href="{{url}}">{{name}}</a>{{/tagList}}</div>
                 </div>
             {{/hasTags}}
             {{{commentsHtml}}}
             {{#hasToolLine}}
-                <div class="aoBlogToolLink">{{{toolLineHtml}}}</div>
+                <div class="aoBlogToolLink">Unapproved Comments ({{unapprovedCommentCount}})&nbsp;|&nbsp;<a href="{{editUrl}}">Edit</a></div>
             {{/hasToolLine}}
-            {{{hiddenFieldsHtml}}}
+            <input type="hidden" name="{{commentCntName}}" value="{{commentCntValue}}">
         </section>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous" data-delete></script>
     </body>

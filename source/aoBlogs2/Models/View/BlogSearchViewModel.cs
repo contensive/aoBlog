@@ -21,11 +21,12 @@ namespace Contensive.Blog.Models.View {
         public string searchResultsHtml { get; set; }
         public string noResultsMessage { get; set; }
         //
-        // -- search form (built in C#, contains form controls)
-        public string searchFormHtml { get; set; }
+        // -- search form data
+        public string keywordListValue { get; set; }
         //
-        // -- hidden fields
-        public string hiddenFieldsHtml { get; set; }
+        // -- hidden fields data
+        public string sourceFormIdValue { get; set; }
+        public string formIdValue { get; set; }
         //
         // -- back link
         public string backToRecentLink { get; set; }
@@ -106,12 +107,12 @@ namespace Contensive.Blog.Models.View {
                     }
                 }
                 //
-                // -- search form
-                result.searchFormHtml = $"<div class=\"aoBlogSearchFormCon\"><table width=100% border=0 cellspacing=0 cellpadding=5 class=\"aoBlogSearchTable\">{_GenericController.getFormTableRow(cp, "Keyword(s):", _GenericController.getField(cp, constants.RequestNameKeywordList, 1, 10, 30, cp.Doc.GetText(constants.RequestNameKeywordList)))}{_GenericController.getFormTableRow(cp, "", cp.Html.Button(constants.rnButton, constants.FormButtonSearch))}{_GenericController.getFormTableRow2(cp, $"<div class=\"aoBlogFooterLink\"><a href=\"{app.blogPageBaseLink}\">{constants.BackToRecentPostsMsg}</a></div>")}</table></div>";
+                // -- search form data
+                result.keywordListValue = cp.Doc.GetText(constants.RequestNameKeywordList);
                 //
-                // -- hidden fields
-                result.hiddenFieldsHtml = $"<input type=\"hidden\" name=\"{constants.RequestNameSourceFormID}\" value=\"{constants.FormBlogSearch}\">"
-                    + $"<input type=\"hidden\" name=\"{constants.rnFormID}\" value=\"{constants.FormBlogSearch}\">";
+                // -- hidden fields data
+                result.sourceFormIdValue = constants.FormBlogSearch.ToString();
+                result.formIdValue = constants.FormBlogSearch.ToString();
                 //
                 return result;
             } catch (Exception ex) {

@@ -3,7 +3,6 @@ using Contensive.BaseClasses;
 using Contensive.Blog.Controllers;
 using Contensive.Blog.Views;
 using Contensive.Models.Db;
-using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
 using System;
 using System.Collections.Generic;
@@ -19,13 +18,15 @@ namespace Contensive.Blog.Models.View {
         //
         // -- apply comment changes button (editor only, when comments exist)
         public bool hasApplyButton { get; set; }
-        public string applyButtonHtml { get; set; }
+        public string applyButtonValue { get; set; }
         //
         // -- comment form section (nested view model, rendered inline in article layout)
         public CommentFormViewModel commentForm { get; set; }
         //
-        // -- hidden fields
-        public string hiddenFieldsHtml { get; set; }
+        // -- hidden fields data
+        public string sourceFormIdValue { get; set; }
+        public string blogEntryIdValue { get; set; }
+        public string entryCntValue { get; set; }
         //
         // -- form key
         public string formKey { get; set; }
@@ -83,16 +84,16 @@ namespace Contensive.Blog.Models.View {
                 // -- apply comment changes button (editor only)
                 if (app?.user != null && app.user.isBlogEditor(cp, app.blog) && postCellVm.commentCount > 0) {
                     result.hasApplyButton = true;
-                    result.applyButtonHtml = cp.Html.Button(constants.rnButton,constants.FormButtonApplyCommentChanges);
+                    result.applyButtonValue = constants.FormButtonApplyCommentChanges;
                 }
                 //
                 // -- comment form section (rendered sub-template)
                 result.commentForm = CommentFormViewModel.create(cp, app, visit, retryCommentPost);
                 //
-                // -- hidden fields
-                result.hiddenFieldsHtml = Constants.vbCrLf + cp.Html5.Hidden(constants.RequestNameSourceFormID, constants.FormBlogPostDetails)
-                    + Constants.vbCrLf + cp.Html5.Hidden(constants.RequestNameBlogEntryID, app.blogPost.id)
-                    + Constants.vbCrLf + cp.Html5.Hidden("EntryCnt", 1);
+                // -- hidden fields data
+                result.sourceFormIdValue = constants.FormBlogPostDetails.ToString();
+                result.blogEntryIdValue = app.blogPost.id.ToString();
+                result.entryCntValue = "1";
                 //
                 cp.Visit.SetProperty(constants.SNBlogCommentName, cp.Utils.GetRandomInteger().ToString());
                 //
