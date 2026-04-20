@@ -10,26 +10,16 @@
         <div class="editingEnabled">
             <section data-layout="Blog Layout">
                 <style>
-                    .blogWrapper {
-                        display: flex;
-                        flex-wrap: wrap;
+                    body {
+                        font-size: 15px;
                     }
-                    .blogColumn1-Wrap {
-                        flex: 1;
-                        min-width: 0;
-                    }
-                    .blogSidebar {
-                        width: 300px;
-                        flex-shrink: 0;
-                    }
-                    @media (max-width: 768px) {
-                        .blogSidebar {
-                            width: 100%;
+
+                    @media (min-width: 767px) {
+                        body {
+                            font-size: 16px;
                         }
                     }
-                    .blogClear {
-                        clear: both;
-                    }
+            
                     .blogSidebarCellWrap {
                         margin-bottom: 20px;
                     }
@@ -39,6 +29,10 @@
                     .blogSidebarCellButton a {
                         display: inline-block;
                         margin-top: 5px;
+                    }
+
+                    .blogSidebarSearchCell {
+                        width: 100%;
                     }
                     .blogSidebarSocialLogo {
                         margin-right: 5px;
@@ -54,14 +48,12 @@
                 </style>
                 <div class="{{outerContainerClass}} designBlockContainer">
                     <div class="{{contentContainerClass}}">
-                        <div class="blogWrapper">
-                            <div class="blogColumn1-Wrap">
-                                <div class="blogColumn1">
-                                    {{{blogBody}}}
-                                </div>
+                        <div class="blogWrapper row">
+                            <div class="col-12 {{#hasSidebar}}col-xl-8{{/hasSidebar}}">
+                                {{{blogBody}}}
                             </div>
                             {{#hasSidebar}}
-                                <div class="blogSidebar">
+                                <aside class="blogSidebarWrapper col-12 col-xl-4 d-flex flex-column align-items-center flex-wrap">
                                     {{#allowArticleCTA}}
                                         {{#ctaList}}
                                             <div class="blogSidebarCellWrap">
@@ -70,13 +62,14 @@
                                                     <div class="blogSidebarCellCopy">{{{brief}}}</div>
                                                     {{#hasButton}}
                                                         <div class="blogSidebarCellButton">
-                                                            <a target="_blank" href="{{buttonLink}}">{{buttonText}}</a>
+                                                            <a target="_blank" href="{{buttonLink}}" class="btn btn-primary d-grid">{{buttonText}}</a>
                                                         </div>
                                                     {{/hasButton}}
                                                 </div>
                                             </div>
                                         {{/ctaList}}
                                     {{/allowArticleCTA}}
+                                    
                                     {{#allowEmailSubscribe}}
                                         <div id="blogSidebarEmailCell">
                                             <div class="blogSidebarCellWrap">
@@ -88,16 +81,17 @@
                                                     {{^isSubscribed}}
                                                         <h3 class="blogSidebarCellInputCaption">Email*</h3>
                                                         <div class="blogSidebarCellInput">
-                                                            <input type="text" id="blogSubscribeEmail" name="email" value="{{userEmail}}">
+                                                            <input type="text" id="blogSubscribeEmail" name="email" value="{{userEmail}}" class="form-control w-100">
                                                         </div>
                                                         <div class="blogSidebarCellButton">
-                                                            <a href="#" id="blogSidebarEmailSubscribe">Subscribe</a>
+                                                            <a href="#" id="blogSidebarEmailSubscribe" class="btn btn-primary d-grid">Subscribe</a>
                                                         </div>
                                                     {{/isSubscribed}}
                                                 </div>
                                             </div>
                                         </div>
                                     {{/allowEmailSubscribe}}
+
                                     {{#allowSocialLinks}}
                                         <div id="blogSidebarSocialCell">
                                             <div class="blogSidebarCellWrap">
@@ -128,7 +122,7 @@
                                         </div>
                                     {{/allowSocialLinks}}
                                     {{#allowSearch}}
-                                        <div id="blogSidebarSearchCell">
+                                        <div id="blogSidebarSearchCell" class="blogSidebarSearchCell">
                                             <div class="blogSidebarCellWrap">
                                                 <div class="blogSidebarCell">
                                                     <h2 class="blogSidebarCellHeadline">Search</h2>
@@ -141,7 +135,7 @@
                                                         </form>
                                                     </div>
                                                     <div class="blogSidebarCellButton">
-                                                        <a href="#" id="blogSidebarSearch" onclick="jQuery('#blogSidebarSearchForm').submit();return false;">Search</a>
+                                                        <a href="#" id="blogSidebarSearch" onclick="jQuery('#blogSidebarSearchForm').submit();return false;" class="btn btn-primary d-grid">Search</a>
                                                     </div>
                                                 </div>
                                             </div>
@@ -178,9 +172,8 @@
                                     {{#showNoCTAWarning}}
                                         <div class="aoBlogFooterLink" style="color:red;">Blog Post has no CTA selected<br></div>
                                     {{/showNoCTAWarning}}
-                                </div>
+                                </aside>
                             {{/hasSidebar}}
-                            <div class="blogClear"></div>
                         </div>
                         <input type="hidden" name="blogId" value="{{blogId}}" id="blogId">
                         {{#isAdmin}}{{{adminSuggestions}}}{{/isAdmin}}

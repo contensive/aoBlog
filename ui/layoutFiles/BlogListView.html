@@ -11,23 +11,29 @@
             {{#hasCaption}}
                 <h1 class="aoBlogCaption">{{{caption}}}</h1>
             {{/hasCaption}}
+
             {{#hasDescription}}
                 <div class="aoBlogDescription">{{{description}}}</div>
             {{/hasDescription}}
+
             {{#hasCategory}}
                 <div class="aoBlogCategoryCaption">Category {{categoryName}}</div>
             {{/hasCategory}}
+
             {{#hasPosts}}
                 {{{postCellsHtml}}}
             {{/hasPosts}}
+
             {{^hasPosts}}
                 <div class="aoBlogProblem">{{noneMessage}}</div>
             {{/hasPosts}}
+
             {{{paginationHtml}}}
-            <div>&nbsp;</div>
+
             {{{addLinkHtml}}}
+            
             {{#hasRssFeed}}
-                <div class="aoBlogFooterLink">RSS: <a href="{{rssFeedUrl}}">{{rssFeedName}}</a>&nbsp;{{{rssIcon}}}</div>
+                <div class="aoBlogFooterLink mb-4">RSS: <a href="{{rssFeedUrl}}">{{rssFeedName}}</a>&nbsp;{{{rssIcon}}}</div>
             {{/hasRssFeed}}
             <input type="hidden" name="SourceFormID" value="{{sourceFormId}}">
         </section>

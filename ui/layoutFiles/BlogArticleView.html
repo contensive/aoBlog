@@ -19,48 +19,55 @@
                     <div class="aoBlogCommentCopy"><input type="submit" name="button" value="{{applyButtonValue}}"></div>
                 {{/hasApplyButton}}
                 {{#commentForm}}
-                    {{#showCommentForm}}
-                        <div class="aoBlogCommentHeader">Post a Comment</div>
-                        {{#hasUserError}}
-                            <div class="aoBlogCommentError">{{userErrorMessage}}</div>
-                        {{/hasUserError}}
-                        {{#showLoginRequired}}
-                            {{#showPasswordEmail}}
-                                <div class="aoBlogLoginBox">
-                                    <div class="aoBlogCommentCopy">To retrieve your username and password, submit your email. <a href="{{loginLink}}">Login?</a>{{#allowMemberJoin}} <a href="{{joinLink}}">Join?</a>{{/allowMemberJoin}}</div>
-                                    <div class="aoBlogCommentCopy">send password form removed</div>
+                    <div class="m-3">
+                        <div class="card rounded-0">
+                            {{#showCommentForm}}
+                                <div class="card-header py-3 bg-white"><h4>Post a Comment</h4></div>
+                                <div class="card-body">
+                                {{#hasUserError}}
+                                    <div class="aoBlogCommentError">{{userErrorMessage}}</div>
+                                {{/hasUserError}}
+                                {{#showLoginRequired}}
+                                    {{#showPasswordEmail}}
+                                        <div class="aoBlogLoginBox">
+                                            <div class="aoBlogCommentCopy">To retrieve your username and password, submit your email. <a href="{{loginLink}}">Login?</a>{{#allowMemberJoin}} <a href="{{joinLink}}">Join?</a>{{/allowMemberJoin}}</div>
+                                            <div class="aoBlogCommentCopy">send password form removed</div>
+                                        </div>
+                                    {{/showPasswordEmail}}
+                                    {{#showJoin}}
+                                        <div class="aoBlogLoginBox">
+                                            <div class="aoBlogCommentCopy">To post a comment to this blog, complete this form. <a href="{{loginLink}}">Login?</a>{{#allowPasswordEmail}} <a href="{{passwordEmailLink}}">Forget your username or password?</a>{{/allowPasswordEmail}}</div>
+                                            <div class="aoBlogCommentCopy">Send join form removed</div>
+                                        </div>
+                                    {{/showJoin}}
+                                    {{#showLogin}}
+                                        <div class="aoBlogCommentCopy">To post a comment to this Blog, please login.{{#allowMemberJoin}}<div class="aoBlogRegisterLink"><a href="{{joinLink}}">Need to Register?</a></div>{{/allowMemberJoin}}</div>
+                                    {{/showLogin}}
+                                {{/showLoginRequired}}
+                                {{#showPostForm}}
+                                    <div class="mb-3"></div>
+                                    <label for="CommentTitle">Title</label>
+                                    <div class="aoBlogCommentCopy">
+                                        <input type="text" id="CommentTitle" name="CommentTitle" value="{{titleInputValue}}" maxlength="35" class="form-control">
+                                    </div>
+                            
+                                    <label for="CommentCopy">Comment</label>
+                                    <div class="aoBlogCommentCopy">
+                                        <textarea id="CommentCopy" name="CommentCopy" maxlength="500" class="form-control">{{commentTextAreaValue}}</textarea>
+                                    </div>
+                                    {{#hasRecaptcha}}
+                                        <label for="Recaptcha">Verify Text</label>
+                                        <div class="aoBlogCommentCopy">{{{recaptchaHtml}}}</div>
+                                    {{/hasRecaptcha}}
+                                    <div class="aoBlogCommentCopy mb-3">
+                                        <input type="submit" name="button" value="{{postButtonValue}}" class="btn btn-primary">
+                                        <input type="submit" name="button" value="{{cancelButtonValue}}" class="btn btn-outline-danger">
+                                    </div>
+                                {{/showPostForm}}
                                 </div>
-                            {{/showPasswordEmail}}
-                            {{#showJoin}}
-                                <div class="aoBlogLoginBox">
-                                    <div class="aoBlogCommentCopy">To post a comment to this blog, complete this form. <a href="{{loginLink}}">Login?</a>{{#allowPasswordEmail}} <a href="{{passwordEmailLink}}">Forget your username or password?</a>{{/allowPasswordEmail}}</div>
-                                    <div class="aoBlogCommentCopy">Send join form removed</div>
-                                </div>
-                            {{/showJoin}}
-                            {{#showLogin}}
-                                <div class="aoBlogCommentCopy">To post a comment to this Blog, please login.{{#allowMemberJoin}}<div class="aoBlogRegisterLink"><a href="{{joinLink}}">Need to Register?</a></div>{{/allowMemberJoin}}</div>
-                            {{/showLogin}}
-                        {{/showLoginRequired}}
-                        {{#showPostForm}}
-                            <div>&nbsp;</div>
-                            <div class="aoBlogCommentCopy">Title</div>
-                            <div class="aoBlogCommentCopy">
-                                <input type="text" name="CommentTitle" value="{{titleInputValue}}" maxlength="35" style="width:35ch;max-width:100%;">
-                            </div>
-                            <div>&nbsp;</div>
-                            <div class="aoBlogCommentCopy">Comment</div>
-                            <div class="aoBlogCommentCopy">
-                                <textarea name="CommentCopy" maxlength="500">{{commentTextAreaValue}}</textarea>
-                            </div>
-                            {{#hasRecaptcha}}
-                                <div class="aoBlogCommentCopy">Verify Text</div>
-                                <div class="aoBlogCommentCopy">{{{recaptchaHtml}}}</div>
-                            {{/hasRecaptcha}}
-                            <div class="aoBlogCommentCopy">
-                                <input type="submit" name="button" value="{{postButtonValue}}">&nbsp;<input type="submit" name="button" value="{{cancelButtonValue}}">
-                            </div>
-                        {{/showPostForm}}
-                    {{/showCommentForm}}
+                            {{/showCommentForm}}
+                        </div>
+                    </div>
                 {{/commentForm}}
                 <input type="hidden" name="SourceFormID" value="{{sourceFormIdValue}}">
                 <input type="hidden" name="BlogEntryID" value="{{blogEntryIdValue}}">
