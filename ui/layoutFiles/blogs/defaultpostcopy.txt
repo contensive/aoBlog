@@ -1,0 +1,4 @@
+<p>Congratulations, your new blog was created!</p>
+<p>If you are the author, this post was created for you automatically. You can modify or remove this post using the links at the bottom of the blog. Use these links to manage all your day to day blog tasks.</p>
+<p>For help with the blog, turn on Advanced Edit in the toolbar and click the help icon that appears right above the blog (the question mark icon). Use the Instance Options icon (the wrench icon) to change settings for the blog.</p>
+<p>The RSS Feed add-on has also been added to your system. When you create a new blog, a new feed is automatically added as well.</p>
