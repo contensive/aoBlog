@@ -77,8 +77,9 @@ namespace Contensive.Blog.Views {
                 // 
                 // List Blog Entries
                 // 
-                cp.Doc.AddMetaDescription($"Archives {DateTimeFormatInfo.CurrentInfo.GetMonthName(request.ArchiveMonth)} {request.ArchiveYear}, {MetadataController.getBlogMetaDescription(app, blog)}");
-                string title = $"Archives {DateTimeFormatInfo.CurrentInfo.GetMonthName(request.ArchiveMonth)} {request.ArchiveYear}, {MetadataController.getBlogMetaTitle(app, blog)} ";
+                int archiveMonth = (request.ArchiveMonth >= 1 && request.ArchiveMonth <= 12) ? request.ArchiveMonth : 1;
+                cp.Doc.AddMetaDescription($"Archives {DateTimeFormatInfo.CurrentInfo.GetMonthName(archiveMonth)} {request.ArchiveYear}, {MetadataController.getBlogMetaDescription(app, blog)}");
+                string title = $"Archives {DateTimeFormatInfo.CurrentInfo.GetMonthName(archiveMonth)} {request.ArchiveYear}, {MetadataController.getBlogMetaTitle(app, blog)} ";
                 MetadataController.addTitle(cp, title);
                 //
                 result += $"<h1>{title}</h1>";
