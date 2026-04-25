@@ -51,6 +51,42 @@ namespace Contensive.Blog {
         public const string guidGroupBlogAuthors = "{082E5ADC-9477-4DB6-A3D7-39B6EAB3A519}";
         public const string nameGroupBlogAuthors = "Blog Authors";
         //
+        // -- portal
+        public const string guidPortalContentManagement = "{3fdd7c5c-68a5-435f-ba62-a3e4cb0ee61e}";
+        public const string guidPortalFeatureBlogList = "{BEF4ADF2-A6FA-4C59-B413-69D369F8B6CE}";
+        public const string guidPortalFeatureBlogDetails = "{08FBDABE-CB0E-4CC2-8BE0-57198A80102D}";
+        public const string guidAddonBlogList = "{9C74771D-B95B-4ABF-86F1-00F4D5219EFC}";
+        public const string guidAddonBlogDetails = "{DF86F90B-C13A-4E27-B88E-BBE7206637E4}";
+        public const string guidPortalFeatureBlogPostList = "{ABF702AC-1A8E-4C52-A4CC-2EDF3B787A2B}";
+        public const string guidAddonBlogPostList = "{9D2F6B87-BB3A-43BE-AE38-3922381254DA}";
+        public const string guidPortalFeatureBlogPostInfo = "{209E7D9C-5A49-409F-B949-9D49F341735E}";
+        public const string guidAddonBlogPostInfo = "{064D20C0-3615-420C-931A-92689EE50F28}";
+        public const string guidPortalFeatureBlogPostDetails = "{33EA4B39-544B-4E1A-A8B3-80E694DD9842}";
+        public const string guidAddonBlogPostDetails = "{F7665186-E496-4855-AB20-CC4CAF2094FA}";
+        public const string guidPortalFeatureBlogPostRss = "{A1B12154-07AB-408F-8FA0-BAF27C137F4B}";
+        public const string guidAddonBlogPostRss = "{F252F188-061A-46D3-B993-0B815003CF8F}";
+        public const string guidPortalFeatureBlogPostSeo = "{B3B1F551-9AA4-4230-9A34-A59BC20F5F79}";
+        public const string guidAddonBlogPostSeo = "{E73111BB-1DFB-4FFF-AC7D-D08292946087}";
+        //
+        public const string rnBlogId = "blogId";
+        public const string rnBlogPostId = "blogPostId";
+        public const string rnDstFeatureGuid = "dstFeatureGuid";
+        public const string rnSrcFormId = "srcFormId";
+        //
+        public const int formIdBlogList = 700;
+        public const int formIdBlogDetails = 710;
+        public const int formIdBlogPostList = 720;
+        public const int formIdBlogPostInfo = 730;
+        public const int formIdBlogPostDetails = 740;
+        public const int formIdBlogPostRss = 750;
+        public const int formIdBlogPostSeo = 760;
+        //
+        public const string buttonAdd = " Add ";
+        public const string buttonSave = " Save ";
+        public const string buttonCancel = " Cancel ";
+        public const string buttonOK = " OK ";
+        public const string buttonDelete = " Delete ";
+        //
         public const string reCaptchaDisplayGuid = "{E9E51C6E-9152-4284-A44F-D3ABC423AB90}";
         public const string reCaptchaProcessGuid = "{030AC5B0-F796-4EA4-B94C-986B1C29C16C}";
         public const string RSSProcessAddonGuid = "{2119C2DA-1D57-4C32-B13C-28CD2D85EDF5}";

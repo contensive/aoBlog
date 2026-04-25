@@ -271,6 +271,41 @@
 		<styleslinkhref></styleslinkhref>
 		<Scripting Language="VBScript" EntryPoint="" Timeout="5000"/>
 	</Addon>
+	<Addon Name="Blog List" Guid="{9C74771D-B95B-4ABF-86F1-00F4D5219EFC}" Type="Add-on">
+		<DotNetClass><![CDATA[Contensive.Blog.BlogListAddon]]></DotNetClass>
+		<BlockEditTools>Yes</BlockEditTools>
+		<Category>Blog</Category>
+	</Addon>
+	<Addon Name="Blog Details" Guid="{DF86F90B-C13A-4E27-B88E-BBE7206637E4}" Type="Add-on">
+		<DotNetClass><![CDATA[Contensive.Blog.BlogDetailsAddon]]></DotNetClass>
+		<BlockEditTools>Yes</BlockEditTools>
+		<Category>Blog</Category>
+	</Addon>
+	<Addon Name="Blog Post List" Guid="{9D2F6B87-BB3A-43BE-AE38-3922381254DA}" Type="Add-on">
+		<DotNetClass><![CDATA[Contensive.Blog.BlogPostListAddon]]></DotNetClass>
+		<BlockEditTools>Yes</BlockEditTools>
+		<Category>Blog</Category>
+	</Addon>
+	<Addon Name="Blog Post Info" Guid="{064D20C0-3615-420C-931A-92689EE50F28}" Type="Add-on">
+		<DotNetClass><![CDATA[Contensive.Blog.BlogPostInfoAddon]]></DotNetClass>
+		<BlockEditTools>Yes</BlockEditTools>
+		<Category>Blog</Category>
+	</Addon>
+	<Addon Name="Blog Post Details" Guid="{F7665186-E496-4855-AB20-CC4CAF2094FA}" Type="Add-on">
+		<DotNetClass><![CDATA[Contensive.Blog.BlogPostDetailsAddon]]></DotNetClass>
+		<BlockEditTools>Yes</BlockEditTools>
+		<Category>Blog</Category>
+	</Addon>
+	<Addon Name="Blog Post RSS" Guid="{F252F188-061A-46D3-B993-0B815003CF8F}" Type="Add-on">
+		<DotNetClass><![CDATA[Contensive.Blog.BlogPostRssAddon]]></DotNetClass>
+		<BlockEditTools>Yes</BlockEditTools>
+		<Category>Blog</Category>
+	</Addon>
+	<Addon Name="Blog Post SEO" Guid="{E73111BB-1DFB-4FFF-AC7D-D08292946087}" Type="Add-on">
+		<DotNetClass><![CDATA[Contensive.Blog.BlogPostSeoAddon]]></DotNetClass>
+		<BlockEditTools>Yes</BlockEditTools>
+		<Category>Blog</Category>
+	</Addon>
 	<data>
 		<record content="Layouts" guid="{58788483-D050-4464-9261-627278A57B35}" name="Blog Layout (Legacy)">
 			<field name="active">False</field>
@@ -347,6 +382,84 @@
 			<field name="sortorder"></field>
 			<field name="stylesfilename"></field>
 		</record>
+		<Record Content="Portal Features" Guid="{BEF4ADF2-A6FA-4C59-B413-69D369F8B6CE}" Name="Blogs">
+			<Field Name="sortorder"><![CDATA[Blogs]]></Field>
+			<Field Name="portalid">{3fdd7c5c-68a5-435f-ba62-a3e4cb0ee61e}</Field>
+			<Field Name="addonid">{9C74771D-B95B-4ABF-86F1-00F4D5219EFC}</Field>
+			<Field Name="heading"><![CDATA[Blogs]]></Field>
+			<Field Name="parentfeatureid"></Field>
+			<Field Name="datacontentid"></Field>
+			<Field Name="collectionid">{13bb6661-3056-455e-b80d-b13779d11d2b}</Field>
+		</Record>
+		<Record Content="Portal Features" Guid="{08FBDABE-CB0E-4CC2-8BE0-57198A80102D}" Name="Blog Details">
+			<Field Name="sortorder"><![CDATA[000 Details]]></Field>
+			<Field Name="portalid">{3fdd7c5c-68a5-435f-ba62-a3e4cb0ee61e}</Field>
+			<Field Name="addonid">{DF86F90B-C13A-4E27-B88E-BBE7206637E4}</Field>
+			<Field Name="heading"><![CDATA[Blog Details]]></Field>
+			<Field Name="parentfeatureid">{BEF4ADF2-A6FA-4C59-B413-69D369F8B6CE}</Field>
+			<Field Name="datacontentid"></Field>
+			<Field Name="addpadding">False</Field>
+			<Field Name="collectionid">{13bb6661-3056-455e-b80d-b13779d11d2b}</Field>
+		</Record>
+		<Record Content="Portal Features" Guid="{ABF702AC-1A8E-4C52-A4CC-2EDF3B787A2B}" Name="Blog Posts">
+			<Field Name="sortorder"><![CDATA[010 Posts]]></Field>
+			<Field Name="portalid">{3fdd7c5c-68a5-435f-ba62-a3e4cb0ee61e}</Field>
+			<Field Name="addonid">{9D2F6B87-BB3A-43BE-AE38-3922381254DA}</Field>
+			<Field Name="heading"><![CDATA[Posts]]></Field>
+			<Field Name="parentfeatureid">{BEF4ADF2-A6FA-4C59-B413-69D369F8B6CE}</Field>
+			<Field Name="datacontentid"></Field>
+			<Field Name="addpadding">False</Field>
+			<Field Name="collectionid">{13bb6661-3056-455e-b80d-b13779d11d2b}</Field>
+		</Record>
+		<Record Content="Portal Features" Guid="{33EA4B39-544B-4E1A-A8B3-80E694DD9842}" Name="Blog Post Details">
+			<Field Name="sortorder"><![CDATA[000 Details]]></Field>
+			<Field Name="portalid">{3fdd7c5c-68a5-435f-ba62-a3e4cb0ee61e}</Field>
+			<Field Name="addonid">{F7665186-E496-4855-AB20-CC4CAF2094FA}</Field>
+			<Field Name="heading"><![CDATA[Post Details]]></Field>
+			<Field Name="parentfeatureid">{ABF702AC-1A8E-4C52-A4CC-2EDF3B787A2B}</Field>
+			<Field Name="datacontentid"></Field>
+			<Field Name="addpadding">False</Field>
+			<Field Name="collectionid">{13bb6661-3056-455e-b80d-b13779d11d2b}</Field>
+		</Record>
+		<Record Content="Portal Features" Guid="{209E7D9C-5A49-409F-B949-9D49F341735E}" Name="Blog Post Info">
+			<Field Name="sortorder"><![CDATA[010 Info]]></Field>
+			<Field Name="portalid">{3fdd7c5c-68a5-435f-ba62-a3e4cb0ee61e}</Field>
+			<Field Name="addonid">{064D20C0-3615-420C-931A-92689EE50F28}</Field>
+			<Field Name="heading"><![CDATA[Post Info]]></Field>
+			<Field Name="parentfeatureid">{ABF702AC-1A8E-4C52-A4CC-2EDF3B787A2B}</Field>
+			<Field Name="datacontentid"></Field>
+			<Field Name="addpadding">False</Field>
+			<Field Name="collectionid">{13bb6661-3056-455e-b80d-b13779d11d2b}</Field>
+		</Record>
+		<Record Content="Portal Features" Guid="{A1B12154-07AB-408F-8FA0-BAF27C137F4B}" Name="Blog Post RSS">
+			<Field Name="sortorder"><![CDATA[020 RSS]]></Field>
+			<Field Name="portalid">{3fdd7c5c-68a5-435f-ba62-a3e4cb0ee61e}</Field>
+			<Field Name="addonid">{F252F188-061A-46D3-B993-0B815003CF8F}</Field>
+			<Field Name="heading"><![CDATA[Post RSS]]></Field>
+			<Field Name="parentfeatureid">{ABF702AC-1A8E-4C52-A4CC-2EDF3B787A2B}</Field>
+			<Field Name="datacontentid"></Field>
+			<Field Name="addpadding">False</Field>
+			<Field Name="collectionid">{13bb6661-3056-455e-b80d-b13779d11d2b}</Field>
+		</Record>
+		<Record Content="Portal Features" Guid="{B3B1F551-9AA4-4230-9A34-A59BC20F5F79}" Name="Blog Post SEO">
+			<Field Name="sortorder"><![CDATA[030 SEO]]></Field>
+			<Field Name="portalid">{3fdd7c5c-68a5-435f-ba62-a3e4cb0ee61e}</Field>
+			<Field Name="addonid">{E73111BB-1DFB-4FFF-AC7D-D08292946087}</Field>
+			<Field Name="heading"><![CDATA[Post SEO]]></Field>
+			<Field Name="parentfeatureid">{ABF702AC-1A8E-4C52-A4CC-2EDF3B787A2B}</Field>
+			<Field Name="datacontentid"></Field>
+			<Field Name="addpadding">False</Field>
+			<Field Name="collectionid">{13bb6661-3056-455e-b80d-b13779d11d2b}</Field>
+		</Record>
+		<Record Content="Portal Features" Guid="{B970D8CB-6ABB-4C2A-9D2D-FDA2718A57EE}" Name="Blog Views">
+			<Field Name="sortorder"><![CDATA[Blog Views]]></Field>
+			<Field Name="portalid">{3fdd7c5c-68a5-435f-ba62-a3e4cb0ee61e}</Field>
+			<Field Name="addonid">{97130EC9-E5D4-4B05-9641-85D5A307BB84}</Field>
+			<Field Name="heading"><![CDATA[Blog Views]]></Field>
+			<Field Name="parentfeatureid"></Field>
+			<Field Name="datacontentid"></Field>
+			<Field Name="collectionid">{13bb6661-3056-455e-b80d-b13779d11d2b}</Field>
+		</Record>
 	</data>
 	<CDef Name="Blog Categories" Active="1" AdminOnly="0" AllowAdd="1" AllowCalendarEvents="0" AllowContentChildTool="0" AllowContentTracking="0" AllowDelete="1" AllowMetaContent="" AllowTopicRules="0" AllowWorkflowAuthoring="0" AuthoringDataSourceName="Default" AuthoringTableName="BlogCategories" ContentDataSourceName="Default" ContentTableName="BlogCategories" DefaultSortMethod="By Name" DeveloperOnly="0" DropDownFieldList="Name" EditorGroupName="" Parent="" IconLink="" IconHeight="0" IconWidth="0" IconSprites="0" isbasecontent="0" guid="{111F2579-1148-4953-ACB3-0B4A770DA581}" >
 		<Field Name="name" active="True" AdminOnly="False" Authorable="True" Caption="Name" DeveloperOnly="False" EditSortPriority="110" FieldType="Text" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="0" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
