@@ -22,7 +22,8 @@ namespace Contensive.Blog {
                             }
                         }
                     }
-                    if (!lastDate.HasValue || lastDate.Value.AddDays(blog.blogUpdateAlarmDays) < DateTime.Now) {
+                    if (!lastDate.HasValue) { continue; }
+                    if (lastDate.Value.AddDays(blog.blogUpdateAlarmDays) < DateTime.Now) {
                         errors.Add($"ERROR, {blog.name} does not have a published post within the page {blog.blogUpdateAlarmDays} day, the Blog Update Alarm Days value set in the blog.");
                     }
                 }
