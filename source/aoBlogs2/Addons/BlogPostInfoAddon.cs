@@ -46,6 +46,7 @@ namespace Contensive.Blog {
                         }
                         if (cs.OK()) {
                             cs.SetFormInput("active", "rnPostActive");
+                            cs.SetFormInput("datePublished", "rnPostDatePublished");
                             cs.SetFormInput("allowComments", "rnPostAllowComments");
                             cs.SetFormInput("tagList", "rnPostTagList");
                         }
@@ -108,6 +109,13 @@ namespace Contensive.Blog {
                 layoutBuilder.rowName = "Date Added";
                 layoutBuilder.rowValue = post?.dateAdded == null ? "" : ((DateTime)post.dateAdded).ToShortDateString();
                 layoutBuilder.rowHelp = "The date this post was created.";
+                //
+                layoutBuilder.addRow();
+                layoutBuilder.rowName = "Publish Date";
+                layoutBuilder.rowValue = "<div style=\"display:inline-block;width:400px\">"
+                    + cp.Html5.InputDate("rnPostDatePublished", post?.datePublished != null ? ((DateTime)post.datePublished).Date : DateTime.MinValue, "form-control")
+                    + "</div>";
+                layoutBuilder.rowHelp = "Posts are ordered by this date and it displays on the blog page. If this date is missing, the date added is used.";
                 //
                 layoutBuilder.addRow();
                 layoutBuilder.rowName = "Views";

@@ -106,6 +106,7 @@ namespace Contensive.Blog {
                 sql += $" OFFSET {(layoutBuilder.paginationPageNumber - 1) * layoutBuilder.paginationPageSize} ROWS FETCH NEXT {layoutBuilder.paginationPageSize} ROWS ONLY";
                 //
                 string detailLink = cp.AdminUI.GetPortalFeatureLink(constants.guidPortalContentManagement, constants.guidPortalFeatureBlogDetails) + $"&{constants.rnBlogId}=";
+                string postListLink = cp.AdminUI.GetPortalFeatureLink(constants.guidPortalContentManagement, constants.guidPortalFeatureBlogPostList) + $"&{constants.rnBlogId}=";
                 //
                 int rowPtr = 0;
                 using (var csList = cp.CSNew()) {
@@ -125,7 +126,7 @@ namespace Contensive.Blog {
                             layoutBuilder.setCell(blogId.ToString());
                             layoutBuilder.setCell(blogName);
                             layoutBuilder.setCell(blogCaption);
-                            layoutBuilder.setCell(postCount.ToString());
+                            layoutBuilder.setCell($"<a href=\"{postListLink}{blogId}\">{postCount}</a>");
                             layoutBuilder.setCell(isActive ? "Yes" : "No");
                             //
                             rowPtr += 1;
