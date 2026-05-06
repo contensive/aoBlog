@@ -37,7 +37,7 @@ function blogNewRow() {
 			//
 			NewRow = RLTable.insertRow(RowCnt);
 			NewCell = NewRow.insertCell(0);
-			NewCell.innerHTML='<hr>';
+			// NewCell.innerHTML='<hr>';
 			//
 			//  order
 			//

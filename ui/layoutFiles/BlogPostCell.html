@@ -1,58 +1,103 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Blog Post Cell</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" data-delete>
-        <link href="blogs/blogs.css" rel="stylesheet" type="text/css" data-delete>
-    </head>
-    <body>
-        <section data-layout="Blog Post Cell">
-            {{#isArticleView}}
-                <h1 class="aoBlogEntryName">{{headline}}</h1>
-            {{/isArticleView}}
-            {{^isArticleView}}
-                {{{editLinkHtml}}}
-                <h2 class="aoBlogEntryName"><a href="{{entryLink}}">{{headline}}</a></h2>
-            {{/isArticleView}}
-            <div class="aoBlogEntryCopy">
-                {{#hasImage}}
-                    {{#isArticleView}}
-                        <img alt="{{imageName}}" title="{{imageName}}" class="{{imageClass}}" src="{{imageUrl}}" style="width:{{imageWidth}};">
-                    {{/isArticleView}}
-                    {{^isArticleView}}
-                        <a href="{{entryLink}}"><img alt="{{imageName}}" title="{{imageName}}" class="{{imageClass}}" src="{{imageUrl}}" style="width:{{imageWidth}};"></a>
-                    {{/isArticleView}}
-                {{/hasImage}}
-                {{#isArticleView}}
-                    {{{copy}}}
-                {{/isArticleView}}
-                {{^isArticleView}}
-                    <p>{{{copy}}}</p>
-                {{/isArticleView}}
-            </div>
-            {{#showReadMore}}
-                <div class="aoBlogEntryReadMore"><a href="{{entryLink}}">Read More</a></div>
-            {{/showReadMore}}
-            {{#hasPodcast}}
-                {{{podcastHtml}}}
-            {{/hasPodcast}}
-            {{#hasByLine}}
-                <div class="aoBlogEntryByLine">Posted {{{byLine}}}</div>
-            {{/hasByLine}}
-            {{#hasTags}}
-                <div class="aoBlogTagListSection">
-                    <div class="aoBlogTagListHeader">Tags</div>
-                    <div class="aoBlogTagList">{{#tagList}}{{separator}}<a href="{{url}}">{{name}}</a>{{/tagList}}</div>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Blog Post Cell</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"
+        data-delete>
+    <link href="blogs/blogs.css" rel="stylesheet" type="text/css" data-delete>
+</head>
+
+<body>
+
+    <div   data-layout="Blog Post Cell">
+        
+           
+        <div class="col-6">
+            <div class="border rounded-2 mb-4 shadow-sm h-md-250 position-relative">
+                <div class="blogImageWrapper">
+                    {{#hasImage}}
+                        {{#isArticleView}}
+                            <img alt="{{imageName}}" title="{{imageName}}" class="{{imageClass}}" src="{{imageUrl}}" style="width:{{imageWidth}};">
+                        {{/isArticleView}}
+
+                        {{^isArticleView}}
+                            <a href="{{entryLink}}">
+                                <img alt="{{imageName}}" title="{{imageName}}" class="{{imageClass}}"src="{{imageUrl}}" style="width:{{imageWidth}};">
+                            </a>
+                        {{/isArticleView}}
+                    {{/hasImage}}  
                 </div>
-            {{/hasTags}}
-            {{{commentsHtml}}}
-            {{#hasToolLine}}
-                <div class="aoBlogToolLink">Unapproved Comments ({{unapprovedCommentCount}})&nbsp;|&nbsp;<a href="{{editUrl}}">Edit</a></div>
-            {{/hasToolLine}}
-            <input type="hidden" name="{{commentCntName}}" value="{{commentCntValue}}">
-        </section>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous" data-delete></script>
-    </body>
+
+                <div class="blogContentWrapper p-4">
+                    {{#isArticleView}}
+                        <h1 class="aoBlogEntryName mb-3 fw-bold fst-italic">{{headline}}</h1>
+                    {{/isArticleView}}
+                    
+                    {{^isArticleView}}
+                        {{{editLinkHtml}}}
+                        <h2 class="aoBlogEntryName"><a href="{{entryLink}}">{{headline}}</a></h2>
+                    {{/isArticleView}}
+                    <div class="mb-1 text-body-secondary">
+                        {{#hasByLine}}
+                            <div class="aoBlogEntryByLine">Posted {{{byLine}}}</div>
+                        {{/hasByLine}}
+                    </div>
+                    <hr>
+                
+                    {{#isArticleView}}
+                        {{{copy}}}
+                    {{/isArticleView}}
+
+                    {{^isArticleView}}
+                        <p>{{{copy}}}</p>
+                    {{/isArticleView}}
+            
+                    {{#showReadMore}}
+                        <a href="{{entryLink}}" class="aoBlogEntryReadMore">
+                            Continue reading
+                            <!-- <svg class="bi" aria-hidden="true">
+                                <use xlink:href="#chevron-right"></use>
+                            </svg>  -->
+                        </a>
+                    {{/showReadMore}}
+                    
+                </div>
+            </div>
+                {{#hasPodcast}}
+                    {{{podcastHtml}}}
+                {{/hasPodcast}}
+                        
+                {{#hasTags}}
+                    <div class="aoBlogTagListSection">
+                        <div class="aoBlogTagListHeader">Tags</div>
+                        <div class="aoBlogTagList">{{#tagList}}{{separator}}<a href="{{url}}">{{name}}</a>{{/tagList}}</div>
+                    </div>
+                {{/hasTags}}
+
+                {{{commentsHtml}}}
+                    
+                {{#hasToolLine}}
+                    <div class="aoBlogToolLink">Unapproved Comments ({{unapprovedCommentCount}})&nbsp;|&nbsp;<a
+                            href="{{editUrl}}">Edit</a>
+                    </div>
+                {{/hasToolLine}}
+        </div>
+            
+     
+
+
+
+        <input type="hidden" name="{{commentCntName}}" value="{{commentCntValue}}">
+    </div>
+ 
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"
+        data-delete></script>
+</body>
+
 </html>
