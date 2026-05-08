@@ -10,7 +10,7 @@
     <body>
         <section data-layout="Blog Article View">
             <input type="hidden" name="FormKey" value="{{formKey}}">
-            <div class="aoBlogHeaderLink"><a href="{{backToRecentLink}}">&#171; Back to Recent Articles</a></div>
+            <div class="aoBlogHeaderLink"><a href="{{backToRecentLink}}"><i class="fa-solid fa-arrow-left me-3"></i> Back to Recent Articles</a></div>
             {{#articleNotFound}}
                 <div class="aoBlogProblem">{{articleNotFoundMessage}}</div>
             {{/articleNotFound}}

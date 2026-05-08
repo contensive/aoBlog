@@ -77,12 +77,20 @@ force blog nav background
 	text-decoration:none;
 	color:black
 }
-.blogWrapper .aoBlogEntryThumbnail
-{
-	float:left;
-	margin:0 20px 20px 0;
-	border:0;
+.blogWrapper .blogImageWrapper
+{	padding: 1.5rem;
 }
+.blogWrapper .aoBlogEntryThumbnail
+	{
+		min-width: 100% !important;
+		min-height: 200px !important;
+		max-height: 600px;
+		object-fit: cover !important;
+		border-radius: 12px !important;
+		object-position: center;
+	}
+	
+/* 
 .blogWrapper .aoBlogEntryThumbnailRight
 {
 	float:right;
@@ -94,7 +102,7 @@ force blog nav background
 	float:left;
 	margin:0 10px 10px 0;
 	border:0;
-}
+} */
 .blogWrapper .aoBlogEditImagePreview {
     max-width: 200px;
     max-height: 200px;
@@ -107,10 +115,10 @@ force blog nav background
 	margin-bottom:10px;
 }
 
-.blogWrapper .aoBlogEntryReadMore
+.blogWrapper a.aoBlogEntryReadMore
 {
-	clear:both;
-	margin-bottom:10px;
+	text-decoration: none!important;
+	
 }
 .blogWrapper .aoBlogEntryByLine
 {
@@ -119,6 +127,17 @@ force blog nav background
     /* margin-bottom: 3rem;
     border-bottom: 1px solid grey;
     padding-bottom: .5rem; */
+}
+
+.blogArticleWrapper {	
+}
+
+@media (min-width: 1200px)
+{
+	.blogArticleWrapper p {	
+		font-size: 18px;
+		line-height: 30px;
+	}
 }
 .blogWrapper .aoBlogCommentHeader
 {
@@ -183,6 +202,14 @@ force blog nav background
 {
 	margin:0;
 }
+
+.aoBlogCaption {
+	font-weight: 800;
+}
+
+.aoBlogDescription p {
+	line-height: 30px;
+}
 .blogWrapper .aoBlogRSSFeedImage
 {
 	vertical-align:middle;
@@ -207,8 +234,14 @@ force blog nav background
 }
 .blogWrapper .aoBlogHeaderLink
 {
-	padding:4px 0 4px 0;
+	margin-bottom: 1.5rem;
 }
+
+.blogWrapper .aoBlogHeaderLink a
+{
+	text-decoration: none !important;
+}
+
 .blogWrapper .aoBlogEntryImageSection
 {
 }
@@ -331,6 +364,22 @@ width: inherit;
 	font-size: 14px;
 	line-height: 20px;
 }
+
+.blogSidebarSearchForm input {
+	border-top-right-radius: 0 !important;
+	border-bottom-right-radius: 0 !important;
+	border-top-left-radius: 50em !important;
+	border-bottom-left-radius: 50em !important;
+	padding-left: 20px !important;
+}
+
+.blogSidebarSearchForm a {
+	border-top-left-radius: 0 !important;
+	border-bottom-left-radius: 0 !important;
+	border-top-right-radius: 50em !important;
+	border-bottom-right-radius: 50em !important;
+}
+
 .blogWrapper .blogSidebarWrapper .blogSidebarCellWrap .blogSidebarCell h3.blogSidebarCellInputCaption
 {
 	color: #999;

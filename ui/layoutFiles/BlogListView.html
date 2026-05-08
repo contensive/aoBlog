@@ -9,14 +9,16 @@
     </head>
     <body>
         <section data-layout="Blog List View">
-            <div class="mb-4">
-                {{#hasCaption}}
-                    <h1 class="aoBlogCaption">{{{caption}}}</h1>
-                {{/hasCaption}}
+            <div class="w-75 m-auto mb-5">
+                <div class="blogHdrDescription">
+                    {{#hasCaption}}
+                        <h1 class="aoBlogCaption text-center">{{{caption}}}</h1>
+                    {{/hasCaption}}
 
-                {{#hasDescription}}
-                    <div class="aoBlogDescription w-75">{{{description}}}</div>
-                {{/hasDescription}}
+                    {{#hasDescription}}
+                        <div class="aoBlogDescription">{{{description}}}</div>
+                    {{/hasDescription}}
+                </div>
             </div>
 
             {{#hasCategory}}

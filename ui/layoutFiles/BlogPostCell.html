@@ -13,11 +13,9 @@
 
 <body>
 
-    <div   data-layout="Blog Post Cell">
-        
-           
-        <div class="col-6">
-            <div class="border rounded-2 mb-4 shadow-sm h-md-250 position-relative">
+    <div  data-layout="Blog Post Cell">     
+        <div class="{{#isArticleView}}col-12{{/isArticleView}} {{^isArticleView}}col-12 col-md-6 col-lg-4{{/isArticleView}}">
+            <div class="border rounded-4 mb-4 shadow-sm bg-light">
                 <div class="blogImageWrapper">
                     {{#hasImage}}
                         {{#isArticleView}}
@@ -32,15 +30,16 @@
                     {{/hasImage}}  
                 </div>
 
-                <div class="blogContentWrapper p-4">
+                <div class="blogContentWrapper p-4 pt-0">
                     {{#isArticleView}}
-                        <h1 class="aoBlogEntryName mb-3 fw-bold fst-italic">{{headline}}</h1>
+                        <h1 class="aoBlogEntryName mb-3 fw-bold">{{headline}}</h1>
                     {{/isArticleView}}
                     
                     {{^isArticleView}}
                         {{{editLinkHtml}}}
-                        <h2 class="aoBlogEntryName"><a href="{{entryLink}}">{{headline}}</a></h2>
+                        <h2 class="aoBlogEntryName mb-3"><a href="{{entryLink}}" class="fw-medium">{{headline}}</a></h2>
                     {{/isArticleView}}
+
                     <div class="mb-1 text-body-secondary">
                         {{#hasByLine}}
                             <div class="aoBlogEntryByLine">Posted {{{byLine}}}</div>
@@ -48,20 +47,19 @@
                     </div>
                     <hr>
                 
-                    {{#isArticleView}}
-                        {{{copy}}}
-                    {{/isArticleView}}
+                   <div class="blogArticleWrapper mt-4">
+                        {{#isArticleView}}
+                            {{{copy}}}
+                        {{/isArticleView}}
 
-                    {{^isArticleView}}
-                        <p>{{{copy}}}</p>
-                    {{/isArticleView}}
+                        {{^isArticleView}}
+                            <p>{{{copy}}}</p>
+                        {{/isArticleView}}
+                   </div>
             
                     {{#showReadMore}}
                         <a href="{{entryLink}}" class="aoBlogEntryReadMore">
-                            Continue reading
-                            <!-- <svg class="bi" aria-hidden="true">
-                                <use xlink:href="#chevron-right"></use>
-                            </svg>  -->
+                            Continue reading <i class="fa-solid fa-arrow-right ms-3"></i>
                         </a>
                     {{/showReadMore}}
                     
@@ -86,13 +84,9 @@
                     </div>
                 {{/hasToolLine}}
         </div>
-            
-     
-
-
-
         <input type="hidden" name="{{commentCntName}}" value="{{commentCntValue}}">
     </div>
+
  
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
