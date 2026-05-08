@@ -50,118 +50,14 @@
                 <div class="{{outerContainerClass}} designBlockContainer">
                     <div class="{{contentContainerClass}}">
                         <div class="blogWrapper">
-
-                            {{{blogBody}}}
-                       
-                            {{#hasSidebar}}
-                                <aside class="blogSidebarWrapper col-12">
-                                    {{#allowArticleCTA}}
-                                        {{#ctaList}}
-                                            <div class="blogSidebarCellWrap">
-                                                <div class="blogSidebarCell">
-                                                    <h2 class="blogSidebarCellHeadline">{{headline}}<br></h2>
-                                                    <div class="blogSidebarCellCopy">{{{brief}}}</div>
-                                                    {{#hasButton}}
-                                                        <div class="blogSidebarCellButton">
-                                                            <a target="_blank" href="{{buttonLink}}" class="btn btn-primary d-grid">{{buttonText}}</a>
-                                                        </div>
-                                                    {{/hasButton}}
-                                                </div>
-                                            </div>
-                                        {{/ctaList}}
-                                    {{/allowArticleCTA}}
-                                    
-                                    {{#allowEmailSubscribe}}
-                                        <div id="blogSidebarEmailCell">
-                                            <div class="blogSidebarCellWrap">
-                                                <div class="blogSidebarCell">
-                                                    <h2 class="blogSidebarCellHeadline">Subscribe By Email</h2>
-                                                    {{#isSubscribed}}
-                                                        <h3 class="blogSidebarCellInputCaption">You are subscribed to this blog.</h3>
-                                                    {{/isSubscribed}}
-                                                    {{^isSubscribed}}
-                                                        <h3 class="blogSidebarCellInputCaption">Email*</h3>
-                                                        <div class="blogSidebarCellInput">
-                                                            <input type="text" id="blogSubscribeEmail" name="email" value="{{userEmail}}" class="form-control w-100">
-                                                        </div>
-                                                        <div class="blogSidebarCellButton">
-                                                            <a href="#" id="blogSidebarEmailSubscribe" class="btn btn-primary d-grid">Subscribe</a>
-                                                        </div>
-                                                    {{/isSubscribed}}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {{/allowEmailSubscribe}}
-
-                                    {{#allowSocialLinks}}
-                                        <div id="blogSidebarSocialCell">
-                                            <div class="blogSidebarCellWrap">
-                                                <div class="blogSidebarCell">
-                                                    <h2 class="blogSidebarCellHeadline">{{followUsCaption}}</h2>
-                                                    <h3 class="blogSidebarCellInputCaption">
-                                                        {{#hasFacebookLink}}
-                                                            <a href="{{facebookLink}}" target="_blank"><img class="blogSidebarSocialLogo" src="/blogs/facebook.jpg" width="32" height="32"></a>
-                                                        {{/hasFacebookLink}}
-                                                        {{#showFacebookWarning}}
-                                                            <div class="blogAdminWarning"><h2>Administrator</h2><p>Add a facebook link for this blog, or disable the Allow Facebook Sidebar checkbox.</p></div>
-                                                        {{/showFacebookWarning}}
-                                                        {{#hasTwitterLink}}
-                                                            <a href="{{twitterLink}}" target="_blank"><img class="blogSidebarSocialLogo" src="/blogs/twitter.jpg" width="32" height="32"></a>
-                                                        {{/hasTwitterLink}}
-                                                        {{#showTwitterWarning}}
-                                                            <div class="blogAdminWarning"><h2>Administrator</h2><p>Add a twitter link for this blog, or disable the Allow Twitter Sidebar checkbox.</p></div>
-                                                        {{/showTwitterWarning}}
-                                                        {{#hasGooglePlusLink}}
-                                                            <a href="{{googlePlusLink}}" target="_blank"><img class="blogSidebarSocialLogo" src="/blogs/GooglePlus.jpg" width="32" height="32"></a>
-                                                        {{/hasGooglePlusLink}}
-                                                        {{#showGooglePlusWarning}}
-                                                            <div class="blogAdminWarning"><h2>Administrator</h2><p>Add a GooglePlus link for this blog, or disable the Allow Google Plus Sidebar checkbox.</p></div>
-                                                        {{/showGooglePlusWarning}}
-                                                    </h3>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {{/allowSocialLinks}}
-                       
-                                    {{#allowArchiveList}}
-                                        <div id="blogSidebarArchiveCell">
-                                            <div class="blogSidebarCellWrap">
-                                                <div class="blogSidebarCell">
-                                                    <h2 class="blogSidebarCellHeadline">Archives</h2>
-                                                    <div class="blogSidebarCellCopy">
-                                                        <ul class="aoBlogArchiveLinkList">
-                                                            {{#archiveList}}
-                                                                <li class="aoBlogArchiveLink"><a href="{{url}}">{{monthName}}&nbsp;{{year}}</a></li>
-                                                            {{/archiveList}}
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {{/allowArchiveList}}
-                                    {{#allowRSSSubscribe}}
-                                        <div id="blogSidebarRSSCell">
-                                            <div class="blogSidebarCellWrap">
-                                                <div class="blogSidebarCell">
-                                                    <h2 class="blogSidebarCellHeadline">Subscribe By RSS</h2>
-                                                    <h3 class="blogSidebarCellInputCaption">
-                                                        <a href="{{rssUrl}}"><img id="blogSidebarRSSLogo" src="/blogs/rss.png" width="25" height="25">{{rssFeedName}}</a>
-                                                    </h3>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {{/allowRSSSubscribe}}
-                                    {{#showNoCTAWarning}}
-                                        <div class="aoBlogFooterLink" style="color:red;">Blog Post has no CTA selected<br></div>
-                                    {{/showNoCTAWarning}}
-                                </aside>
-                            {{/hasSidebar}}
-
-                             {{#allowSearch}}
-                                <div class="container mb-4">
-                                    <div class="row">
-                                        <!-- <h2 class="blogSidebarCellHeadline">Search</h2> -->
-                                        <div class="col-6 m-auto">
+                            <div class="row">
+                                <div class="col-12 {{#hasSidebar}}col-md-8{{/hasSidebar}}">
+                                    {{{blogBody}}}
+                                </div>
+                        
+                                {{#hasSidebar}}
+                                    <aside class="blogSidebarWrapper col-12 col-md-4 mt-5">
+                                        {{#allowSearch}}
                                             <div class="mb-3">
                                                 <form action="?" enctype="multipart/form-data" method="post" class="blogSidebarSearchForm" id="blogSidebarSearchForm">
                                                     <div class="d-flex">
@@ -173,10 +69,110 @@
                                                     <input type="hidden" name="button" value=" Search Blogs "> 
                                                 </form>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            {{/allowSearch}}
+                                        {{/allowSearch}}
+
+                                        {{#allowArticleCTA}}
+                                            {{#ctaList}}
+                                                <div class="blogSidebarCellWrap">
+                                                    <div class="blogSidebarCell shadow-sm">
+                                                        <h2 class="blogSidebarCellHeadline">{{headline}}</h2>
+                                                        <div class="blogSidebarCellCopy">{{{brief}}}</div>
+                                                        {{#hasButton}}
+                                                            <div class="blogSidebarCellButton">
+                                                                <a target="_blank" href="{{buttonLink}}" class="btn btn-primary">{{buttonText}}</a>
+                                                            </div>
+                                                        {{/hasButton}}
+                                                    </div>
+                                                </div>
+                                            {{/ctaList}}
+                                        {{/allowArticleCTA}}
+                                        
+                                        {{#allowEmailSubscribe}}
+                                            <div id="blogSidebarEmailCell">
+                                                <div class="blogSidebarCellWrap">
+                                                    <div class="blogSidebarCell shadow-sm">
+                                                        <h2 class="blogSidebarCellHeadline">Subscribe By Email</h2>
+                                                        {{#isSubscribed}}
+                                                            <h3 class="blogSidebarCellInputCaption">You are now subscribed to this blog.</h3>
+                                                        {{/isSubscribed}}
+                                                        {{^isSubscribed}}
+                                                            <div class="blogSidebarCellInput">
+                                                                <input type="text" id="blogSubscribeEmail" name="email" value="{{userEmail}}" placeholder="Email" class="form-control w-100">
+                                                            </div>
+                                                            <div class="blogSidebarCellButton">
+                                                                <a href="#" id="blogSidebarEmailSubscribe" class="btn btn-primary d-grid">Subscribe</a>
+                                                            </div>
+                                                        {{/isSubscribed}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {{/allowEmailSubscribe}}
+
+                                        {{#allowSocialLinks}}
+                                            <div id="blogSidebarSocialCell">
+                                                <div class="blogSidebarCellWrap">
+                                                    <div class="blogSidebarCell">
+                                                        <h2 class="blogSidebarCellHeadline">{{followUsCaption}}</h2>
+                                                        <h3 class="blogSidebarCellInputCaption">
+                                                            {{#hasFacebookLink}}
+                                                                <a href="{{facebookLink}}" target="_blank"><img class="blogSidebarSocialLogo" src="/blogs/facebook.jpg" width="32" height="32"></a>
+                                                            {{/hasFacebookLink}}
+                                                            {{#showFacebookWarning}}
+                                                                <div class="blogAdminWarning"><h2>Administrator</h2><p>Add a facebook link for this blog, or disable the Allow Facebook Sidebar checkbox.</p></div>
+                                                            {{/showFacebookWarning}}
+                                                            {{#hasTwitterLink}}
+                                                                <a href="{{twitterLink}}" target="_blank"><img class="blogSidebarSocialLogo" src="/blogs/twitter.jpg" width="32" height="32"></a>
+                                                            {{/hasTwitterLink}}
+                                                            {{#showTwitterWarning}}
+                                                                <div class="blogAdminWarning"><h2>Administrator</h2><p>Add a twitter link for this blog, or disable the Allow Twitter Sidebar checkbox.</p></div>
+                                                            {{/showTwitterWarning}}
+                                                            {{#hasGooglePlusLink}}
+                                                                <a href="{{googlePlusLink}}" target="_blank"><img class="blogSidebarSocialLogo" src="/blogs/GooglePlus.jpg" width="32" height="32"></a>
+                                                            {{/hasGooglePlusLink}}
+                                                            {{#showGooglePlusWarning}}
+                                                                <div class="blogAdminWarning"><h2>Administrator</h2><p>Add a GooglePlus link for this blog, or disable the Allow Google Plus Sidebar checkbox.</p></div>
+                                                            {{/showGooglePlusWarning}}
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {{/allowSocialLinks}}
+                        
+                                        {{#allowArchiveList}}
+                                            <div id="blogSidebarArchiveCell">
+                                                <div class="blogSidebarCellWrap">
+                                                    <div class="blogSidebarCell shadow-sm">
+                                                        <h2 class="blogSidebarCellHeadline border-bottom">Archives</h2>
+                                                        <div class="blogSidebarCellCopy">
+                                                            <ul class="aoBlogArchiveLinkList">
+                                                                {{#archiveList}}
+                                                                    <li class="aoBlogArchiveLink"><a href="{{url}}">{{monthName}}&nbsp;{{year}}</a></li>
+                                                                {{/archiveList}}
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {{/allowArchiveList}}
+                                        {{#allowRSSSubscribe}}
+                                            <div id="blogSidebarRSSCell">
+                                                <div class="blogSidebarCellWrap">
+                                                    <div class="blogSidebarCell">
+                                                        <h2 class="blogSidebarCellHeadline">Subscribe By RSS</h2>
+                                                        <h3 class="blogSidebarCellInputCaption">
+                                                            <a href="{{rssUrl}}"><img id="blogSidebarRSSLogo" src="/blogs/rss.png" width="25" height="25">{{rssFeedName}}</a>
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {{/allowRSSSubscribe}}
+                                        {{#showNoCTAWarning}}
+                                            <div class="aoBlogFooterLink" style="color:red;">Blog Post has no CTA selected<br></div>
+                                        {{/showNoCTAWarning}}
+                                    </aside>
+                                {{/hasSidebar}}
+                            </div>
+                            
                         </div>
                         <input type="hidden" name="blogId" value="{{blogId}}" id="blogId">
                         {{#isAdmin}}{{{adminSuggestions}}}{{/isAdmin}}

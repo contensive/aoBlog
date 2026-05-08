@@ -12,7 +12,7 @@
             {{{archiveHeader}}}
             {{#hasNoArchives}}
                 <div class="aoBlogProblem">There are no current blog entries</div>
-                <div class="aoBlogFooterLink"><a href="{{backToRecentLink}}">&#171; Back to Recent Articles</a></div>
+                <div class="aoBlogFooterLink"><a href="{{backToRecentLink}}"><i class="fa-solid fa-arrow-left me-3"></i> Back to Recent Articles</a></div>
             {{/hasNoArchives}}
             {{#hasSingleArchive}}
                 {{{singleArchiveHtml}}}
@@ -21,7 +21,7 @@
                 {{#archiveDateList}}
                     <div class="aoBlogArchiveLink"><a href="{{url}}">{{monthName}} {{year}}</a></div>
                 {{/archiveDateList}}
-                <div class="aoBlogFooterLink"><a href="{{backToRecentLink}}">&#171; Back to Recent Articles</a></div>
+                <div class="aoBlogFooterLink"><a href="{{backToRecentLink}}"><i class="fa-solid fa-arrow-left me-3"></i> Back to Recent Articles</a></div>
             {{/hasDateList}}
         </section>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous" data-delete></script>

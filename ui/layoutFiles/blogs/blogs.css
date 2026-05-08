@@ -342,28 +342,24 @@ width: inherit;
 /*
 * Sidebar cell format
 */
-.blogWrapper .blogSidebarWrapper .blogSidebarCellWrap .blogSidebarCell
-{
-	background-color: #f6f6f6;
+.blogWrapper .blogSidebarWrapper .blogSidebarCellWrap .blogSidebarCell {
+	background-color: #fff;
 	color: #666;
 	border: 1px solid #ddd;
 	padding: 0 24px 24px 24px;
 	margin: 0 0 20px 0;
+	border-radius: 12px;
 }
+
 .blogWrapper .blogSidebarWrapper .blogSidebarCellWrap .blogSidebarCell h2.blogSidebarCellHeadline
 {
 	color: #495b67;
 	font-size: 24px;
 	line-height: 36px;
 	margin: 24px 0 5px 0;
-	font-weight: 300;
+	font-weight: 600;
 }
-.blogWrapper .blogSidebarWrapper .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellCopy
-{
-	margin: 5px 0 5px 0;
-	font-size: 14px;
-	line-height: 20px;
-}
+
 
 .blogSidebarSearchForm input {
 	border-top-right-radius: 0 !important;
@@ -410,6 +406,7 @@ width: inherit;
 	border: 1px solid #b0b0b0;
 	outline: none;
 }
+
 .blogWrapper .blogSidebarWrapper .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellButton
 {
 	margin: 20px 0 0 0;
@@ -490,6 +487,12 @@ width: inherit;
 	padding:0 0 5px 0;;
 	margin:0;
 }
+
+ .blogWrapper .blogSidebarWrapper .blogSidebarArchiveCell .blogSidebarCellCopy {
+    max-height: 600px;
+	overflow-y: auto;
+}
+
 @media screen and (max-width: 480px)
 {
 	.blogWrapper .aoBlogCommentHeader { margin: 20px 0; }

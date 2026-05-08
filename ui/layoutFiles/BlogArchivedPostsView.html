@@ -9,7 +9,7 @@
     </head>
     <body>
         <section data-layout="Blog Archived Posts View">
-            <h1>{{{title}}}</h1>
+            <h1 class="aoBlogEntryName mb-3 fw-bold">{{{title}}}</h1>
             {{#hasPosts}}
                 {{{postCellsHtml}}}
             {{/hasPosts}}
@@ -17,7 +17,7 @@
                 <div class="aoBlogProblem">{{noPostsMessage}}</div>
             {{/hasPosts}}
             <div>&nbsp;</div>
-            <div class="aoBlogFooterLink"><a href="{{backToRecentLink}}">&#171; Back to Recent Articles</a></div>
+            <div class="aoBlogFooterLink"><a href="{{backToRecentLink}}"><i class="fa-solid fa-arrow-left me-3"></i> Back to Recent Articles</a></div>
             <input type="hidden" name="SourceFormID" value="{{sourceFormIdValue}}">
         </section>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous" data-delete></script>

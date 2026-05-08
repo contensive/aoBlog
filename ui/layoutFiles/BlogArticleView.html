@@ -20,11 +20,12 @@
                     <div class="aoBlogCommentCopy"><input type="submit" name="button" value="{{applyButtonValue}}"></div>
                 {{/hasApplyButton}}
                 {{#commentForm}}
+                    
+                {{#showCommentForm}}
                     <div class="m-3">
                         <div class="card rounded-0">
-                            {{#showCommentForm}}
-                                <div class="card-header py-3 bg-white"><h4>Post a Comment</h4></div>
-                                <div class="card-body">
+                            <div class="card-header py-3 bg-white"><h4>Post a Comment</h4></div>
+                            <div class="card-body">
                                 {{#hasUserError}}
                                     <div class="aoBlogCommentError">{{userErrorMessage}}</div>
                                 {{/hasUserError}}
@@ -65,10 +66,10 @@
                                         <input type="submit" name="button" value="{{cancelButtonValue}}" class="btn btn-outline-danger">
                                     </div>
                                 {{/showPostForm}}
-                                </div>
-                            {{/showCommentForm}}
+                            </div>
                         </div>
                     </div>
+                    {{/showCommentForm}}
                 {{/commentForm}}
                 <input type="hidden" name="SourceFormID" value="{{sourceFormIdValue}}">
                 <input type="hidden" name="BlogEntryID" value="{{blogEntryIdValue}}">
