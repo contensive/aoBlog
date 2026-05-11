@@ -11,8 +11,6 @@ namespace Contensive.Blog.Models.View {
     public class BlogListViewModel {
         //
         // -- blog header
-        public bool hasCaption { get; set; }
-        public string caption { get; set; }
         public bool hasDescription { get; set; }
         public string description { get; set; }
         public bool hasCategory { get; set; }
@@ -32,6 +30,10 @@ namespace Contensive.Blog.Models.View {
         public string rssFeedUrl { get; set; }
         public string rssFeedName { get; set; }
         public string rssIcon { get; set; }
+        //
+        // -- pagination data (used by layout-level caption)
+        public int pageNumber { get; set; }
+        public int pageCount { get; set; }
         //
         // -- hidden fields
         public string sourceFormId { get; set; }
@@ -68,11 +70,9 @@ namespace Contensive.Blog.Models.View {
                 int pageCount = (int)Math.Round(Math.Truncate(recordCount / (double)blog.postsToDisplay + 0.999d));
                 string pageOneOfTenMsg = $"Page {pageNumber} of {pageCount}";
                 //
-                // -- caption
-                if (!string.IsNullOrEmpty(blog.caption)) {
-                    result.hasCaption = true;
-                    result.caption = blog.caption + (pageNumber == 1 ? "" : $", {pageOneOfTenMsg}");
-                }
+                // -- pagination data (used by layout-level caption)
+                result.pageNumber = pageNumber;
+                result.pageCount = pageCount;
                 //
                 // -- description
                 if (!string.IsNullOrEmpty(blog.copy)) {

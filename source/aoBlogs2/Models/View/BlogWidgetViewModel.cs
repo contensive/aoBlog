@@ -21,6 +21,10 @@ namespace Contensive.Blog.Models {
         public bool isArticleView { get; set; }
         public string blogId { get; set; }
         //
+        // -- blog caption (displayed above all content at layout level)
+        public bool hasCaption { get; set; }
+        public string caption { get; set; }
+        //
         // -- email subscribe section
         public bool allowEmailSubscribe { get; set; }
         public bool isSubscribed { get; set; }
@@ -95,13 +99,19 @@ namespace Contensive.Blog.Models {
                 var app = new ApplicationEnvironmentModel(cp, blog, blogBodyRequest.entryId);
                 var request = new View.RequestModel(cp);
                 //
+                // -- caption (displayed at layout level, above all content)
+                if (!string.IsNullOrEmpty(blog.caption)) {
+                    result.hasCaption = true;
+                    result.caption = blog.caption;
+                }
+                //
                 // -- process form input and get blog body
                 bool retryCommentPost = false;
                 int dstFormId = request.FormID;
                 if (!string.IsNullOrEmpty(request.ButtonValue)) {
                     dstFormId = BlogBodyController.ProcessForm(cp, app, request, ref retryCommentPost);
                 }
-                result.blogBody = getBodyHtml(cp, app, request, dstFormId, retryCommentPost);
+                result.blogBody = getBodyHtml(cp, app, request, dstFormId, retryCommentPost, result);
                 //
                 // -- populate sidebar properties
                 result.blogId = blog.id.ToString();
@@ -225,7 +235,7 @@ namespace Contensive.Blog.Models {
         /// Get the blog body HTML for the current view.
         /// Replaces BlogBodyView.getBlogBody() and BlogBodyView.GetForm().
         /// </summary>
-        private static string getBodyHtml(CPBaseClass cp, ApplicationEnvironmentModel app, View.RequestModel request, int dstFormId, bool retryCommentPost) {
+        private static string getBodyHtml(CPBaseClass cp, ApplicationEnvironmentModel app, View.RequestModel request, int dstFormId, bool retryCommentPost, BlogWidgetViewModel result) {
             try {
                 switch (dstFormId) {
                     case constants.FormBlogPostDetails:
@@ -254,6 +264,11 @@ namespace Contensive.Blog.Models {
                             return renderArticleView(cp, app, retryCommentPost);
                         }
                         var listVm = BlogListViewModel.create(cp, app, request);
+                        //
+                        // -- append pagination suffix to layout caption
+                        if (result.hasCaption && listVm.pageNumber > 1) {
+                            result.caption = $"{result.caption}, Page {listVm.pageNumber} of {listVm.pageCount}";
+                        }
                         return cp.Mustache.Render(cp.Layout.GetLayout(constants.layoutGuidBlogListView, constants.layoutNameBlogListView, constants.layoutPathFilenameBlogListView), listVm);
                 }
             } catch (Exception ex) {
