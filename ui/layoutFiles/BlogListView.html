@@ -22,7 +22,9 @@
             {{/hasCategory}}
 
             {{#hasPosts}}
-                {{{postCellsHtml}}}
+                <div class="row outside_postCellsHtml" >
+                    {{{postCellsHtml}}}
+                </div>
             {{/hasPosts}}
 
             {{^hasPosts}}

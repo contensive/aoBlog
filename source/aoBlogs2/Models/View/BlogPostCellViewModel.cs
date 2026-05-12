@@ -21,6 +21,10 @@ namespace Contensive.Blog.Models.View {
         // -- edit link (injected HTML from framework)
         public string editLinkHtml { get; set; }
         //
+        // -- edit wrapper (opening and closing tags split for insertion around card content)
+        public string editWrapperStart { get; set; }
+        public string editWrapperEnd { get; set; }
+        //
         // -- image
         public bool hasImage { get; set; }
         public string imageUrl { get; set; }

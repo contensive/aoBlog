@@ -13,8 +13,9 @@
 
 <body>
 
-    <div  data-layout="Blog Post Cell">     
+    <div  data-layout="Blog Post Cell">
         <div class="{{#isArticleView}}col-12{{/isArticleView}} {{^isArticleView}}col-12 col-md-6{{/isArticleView}}">
+            {{{editWrapperStart}}}
             <div class="border rounded-4 mb-4 shadow-sm bg-light">
                 <div class="blogImageWrapper">
                     {{#hasImage}}
@@ -83,6 +84,7 @@
                             href="{{editUrl}}">Edit</a>
                     </div>
                 {{/hasToolLine}}
+            {{{editWrapperEnd}}}
         </div>
         <input type="hidden" name="{{commentCntName}}" value="{{commentCntValue}}">
     </div>

@@ -107,11 +107,18 @@ namespace Contensive.Blog.Models.View {
                         if (!isBlocked) {
                             List<BlogImageModel> blogImageList = BlogImageModel.getPostImageList(cp, post);
                             var postCellVm = BlogPostCellViewModel.create(cp, app, post, blogImageList, false, true, "");
-                            string blogArticleCell = cp.Mustache.Render(cp.Layout.GetLayout(constants.layoutGuidBlogPostCell, constants.layoutNameBlogPostCell, constants.layoutPathFilenameBlogPostCell), postCellVm);
                             //
-                            // -- if editing enabled, add the edit wrapper
-                            blogArticleCell = _GenericController.addEditWrapper(cp, blogArticleCell, post.id, post.name, BlogEntryModel.tableMetadata.contentName);
-                            postCellsHtml += blogArticleCell + "<hr>";
+                            // -- add edit wrapper HTML as template variables (only when editing enabled)
+                            if (cp.User.IsEditing()) {
+                                string editWrapperHtml = _GenericController.addEditWrapper(cp, "EDIT_WRAPPER_PLACEHOLDER", post.id, post.name, BlogEntryModel.tableMetadata.contentName);
+                                int placeholderIndex = editWrapperHtml.IndexOf("EDIT_WRAPPER_PLACEHOLDER");
+                                if (placeholderIndex >= 0) {
+                                    postCellVm.editWrapperStart = editWrapperHtml.Substring(0, placeholderIndex);
+                                    postCellVm.editWrapperEnd = editWrapperHtml.Substring(placeholderIndex + "EDIT_WRAPPER_PLACEHOLDER".Length);
+                                }
+                            }
+                            string blogArticleCell = cp.Mustache.Render(cp.Layout.GetLayout(constants.layoutGuidBlogPostCell, constants.layoutNameBlogPostCell, constants.layoutPathFilenameBlogPostCell), postCellVm);
+                            postCellsHtml += blogArticleCell;
                         }
                         recordsOnThisPage++;
                     }
