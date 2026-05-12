@@ -306,33 +306,6 @@
 		<Category>Blog</Category>
 	</Addon>
 	<data>
-		<record content="Layouts" guid="{58788483-D050-4464-9261-627278A57B35}" name="Blog Layout (Legacy)">
-			<field name="active">False</field>
-			<field name="layout"><![CDATA[
-				<div class="blogWrapper">
-					<div class="blogColumn1-Wrap">
-						<div class="blogColumn1">
-							{{legacyBlog}}
-						</div>
-					</div>
-					<div class="blogSidebar">
-						<div class="blogSidebarCellWrap">
-							<div class="blogSidebarCell">
-								<h2 class="blogSidebarCellHeadline">Headline</h2>
-								<p class="blogSidebarCellCopy">This is the short description for the cell. It describes the cell quickly.</p>
-								<h3 class="blogSidebarCellInputCaption">Email</h3>
-								<div class="blogSidebarCellInput"><input type="text" name="email" value=""></div>
-								<div class="blogSidebarCellButton"><a href="#">Click Me</a></div>
-							</div>
-						</div>
-					</div>
-					<div class="blogClear">
-					</div>
-				</div>
-				]]></field>
-			<field name="sortorder"></field>
-			<field name="stylesfilename"></field>
-		</record>
 		<record content="Layouts" guid="{1E579F72-64D5-4413-89EA-A61E8EDA426D}" name="Blog Layout">
 			<field name="active">True</field>
 			<field name="layout"></field>

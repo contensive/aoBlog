@@ -175,30 +175,6 @@ namespace Contensive.Blog.Views {
                     }
                 }
                 hint = 190;
-                //// 
-                //result += "<div class=\"aoBlogCommentDivider\">&nbsp;</div>";
-                //// 
-                //// edit link
-                //// 
-                //hint = 200;
-                //if (app?.user != null && app.user.isBlogEditor(cp, app.blog)) {
-                //    qs = cp.Doc.RefreshQueryString;
-                //    qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameBlogEntryID, app.blogPost.id);
-                //    qs = cp.Utils.ModifyQueryString(qs, constants.rnFormID, constants.FormBlogEntryEditor);
-                //    result += "<div class=\"aoBlogToolLink\"><a href=\"?" + qs + "\">Edit</a></div>";
-                //}
-                // 
-                // Search
-                // 
-                // hint = 210
-                // qs = cp.Doc.RefreshQueryString
-                // qs = cp.Utils.ModifyQueryString(qs, RequestNameFormID, FormBlogSearch, True)
-                // result &= "<div class=""aoBlogFooterLink""><a href=""?" & qs & """>Search</a></div>"
-                // 
-                // back to recent posts
-                //result += "<div class=\"aoBlogFooterLink\"><a href=\"" + app.blogPageBaseLink + "\">" + constants.BackToRecentPostsMsg + "</a></div>";
-                //if (!string.IsNullOrEmpty(app.nextArticleLink))
-                //    result += "<div class=\"aoBlogFooterLink\"><a href=\"" + app.nextArticleLink + "\">" + constants.NextArticlePrefix + app.nextArticleLinkCaption + "</a></div>";
                 // 
                 result += Constants.vbCrLf + cp.Html5.Hidden(constants.RequestNameSourceFormID, constants.FormBlogPostDetails);
                 result += Constants.vbCrLf + cp.Html5.Hidden(constants.RequestNameBlogEntryID, app.blogPost.id);
