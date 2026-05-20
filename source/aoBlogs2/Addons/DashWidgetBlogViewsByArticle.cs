@@ -32,15 +32,19 @@ namespace Contensive.Blog {
                         //
                         // Lowest 10
                         sql = $@"
-                            select top 10 
-                                count(v.id) as cnt,b.name as post
+                            select top 10
+                                count(v.id) as cnt, b.name as post
                             from
-	                            BlogViewingLog v
-	                            left join ccBlogCopy b on b.id=v.blogentryid
+                                BlogViewingLog v
+                                left join ccBlogCopy b on b.id = v.blogentryid
+                                inner join ccVisits vis on vis.id = v.visitid
+                            where
+                                vis.bot = 0
+                                and vis.excludeFromAnalytics = 0
                             group by
-	                            b.name, b.id
+                                b.name, b.id
                             having
-	                            b.id is not null
+                                b.id is not null
                             order by count(v.id)
                         ";
                         break;
@@ -48,11 +52,15 @@ namespace Contensive.Blog {
                         //
                         // Last 10
                         sql = $@"
-                            select top 10 
-                                count(v.id) as cnt,b.name as post
+                            select top 10
+                                count(v.id) as cnt, b.name as post
                             from
                                 BlogViewingLog v
-                                left join ccBlogCopy b on b.id=v.blogentryid
+                                left join ccBlogCopy b on b.id = v.blogentryid
+                                inner join ccVisits vis on vis.id = v.visitid
+                            where
+                                vis.bot = 0
+                                and vis.excludeFromAnalytics = 0
                             group by
                                 b.name, b.id, b.datepublished
                             having
@@ -60,19 +68,23 @@ namespace Contensive.Blog {
                             order by b.datepublished desc
                         ";
                         break;
-                    default: 
+                    default:
                         //
                         // Top 10
                         sql = $@"
-                            select top 10 
-                                count(v.id) as cnt,b.name as post
+                            select top 10
+                                count(v.id) as cnt, b.name as post
                             from
-	                            BlogViewingLog v
-	                            left join ccBlogCopy b on b.id=v.blogentryid
+                                BlogViewingLog v
+                                left join ccBlogCopy b on b.id = v.blogentryid
+                                inner join ccVisits vis on vis.id = v.visitid
+                            where
+                                vis.bot = 0
+                                and vis.excludeFromAnalytics = 0
                             group by
-	                            b.name, b.id
+                                b.name, b.id
                             having
-	                            b.id is not null
+                                b.id is not null
                             order by count(v.id) desc
                         ";
                         break;

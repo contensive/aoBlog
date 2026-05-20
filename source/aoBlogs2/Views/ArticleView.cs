@@ -33,25 +33,24 @@ namespace Contensive.Blog.Views {
                     // -- This article cannot be found
                     return result + "<div class=\"aoBlogProblem\">Sorry, the blog post you selected is not currently available</div>";
                 }
-                // 
-                // -- count the viewing
-                cp.Db.ExecuteNonQuery("update " + BlogEntryModel.tableMetadata.tableNameLower + " set viewings=" + (app.blogPost.viewings + 1));
-                hint = 20;
-                // 
+                //
                 string entryEditLink = app.userIsEditing ? cp.Content.GetEditLink(BlogModel.tableMetadata.contentName, app.blogPost.id.ToString(), false, app.blogPost.name, true) : "";
-                // 
+                //
                 // Print the Blog Entry
                 var return_CommentCnt = default(int);
                 List<BlogImageModel> blogImageList = BlogImageModel.getPostImageList(cp, app.blogPost);
                 result += BlogEntryCellView.getBlogPostCell(cp, app, app.blogPost, blogImageList, true, false, ref return_CommentCnt, entryEditLink);
-                // 
+                //
+                // -- count the viewing and log it, excluding bots
+                hint = 20;
                 var visit = DbBaseModel.create<VisitModel>(cp, cp.Visit.Id);
                 if (app?.user != null && visit is not null) {
-                    if (!visit.excludeFromAnalytics) {
+                    if (!visit.excludeFromAnalytics && !visit.bot) {
+                        cp.Db.ExecuteNonQuery($"update {BlogEntryModel.tableMetadata.tableNameLower} set viewings={app.blogPost.viewings + 1}");
                         int blogEntryId = app.blogPost is not null ? app.blogPost.id : 0;
                         var BlogViewingLog = DbBaseModel.addDefault<BlogViewingLogModel>(cp);
                         if (BlogViewingLog is not null) {
-                            BlogViewingLog.name = cp.User.Name + ", post " + blogEntryId.ToString() + ", " + Conversions.ToString(DateTime.Now);
+                            BlogViewingLog.name = $"{cp.User.Name}, post {blogEntryId}, {Conversions.ToString(DateTime.Now)}";
                             BlogViewingLog.BlogEntryID = blogEntryId;
                             BlogViewingLog.MemberID = cp.User.Id;
                             BlogViewingLog.VisitID = cp.Visit.Id;

@@ -54,9 +54,6 @@ namespace Contensive.Blog.Models.View {
                     return result;
                 }
                 //
-                // -- count the viewing
-                cp.Db.ExecuteNonQuery($"update {BlogEntryModel.tableMetadata.tableNameLower} set viewings={app.blogPost.viewings + 1}");
-                //
                 // -- entry edit link
                 string entryEditLink = app.userIsEditing ? cp.Content.GetEditLink(BlogModel.tableMetadata.contentName, app.blogPost.id.ToString(), false, app.blogPost.name, true) : "";
                 //
@@ -65,10 +62,11 @@ namespace Contensive.Blog.Models.View {
                 var postCellVm = BlogPostCellViewModel.create(cp, app, app.blogPost, blogImageList, true, false, entryEditLink);
                 result.postCellHtml = cp.Mustache.Render(cp.Layout.GetLayout(constants.layoutGuidBlogPostCell, constants.layoutNameBlogPostCell, constants.layoutPathFilenameBlogPostCell), postCellVm);
                 //
-                // -- viewing log
+                // -- count the viewing and log it, excluding bots
                 var visit = DbBaseModel.create<VisitModel>(cp, cp.Visit.Id);
                 if (app?.user != null && visit is not null) {
-                    if (!visit.excludeFromAnalytics) {
+                    if (!visit.excludeFromAnalytics && !visit.bot) {
+                        cp.Db.ExecuteNonQuery($"update {BlogEntryModel.tableMetadata.tableNameLower} set viewings={app.blogPost.viewings + 1}");
                         int blogEntryId = app.blogPost is not null ? app.blogPost.id : 0;
                         var blogViewingLog = DbBaseModel.addDefault<BlogViewingLogModel>(cp);
                         if (blogViewingLog is not null) {

@@ -13,7 +13,7 @@ namespace Contensive.Blog {
         /// </summary>
         /// <param name="CP"></param>
         /// <returns></returns>
-        private const int codeVersion = 1;
+        private const int codeVersion = 2;
         //
         public override object Execute(CPBaseClass CP) {
             try {
@@ -26,6 +26,11 @@ namespace Contensive.Blog {
                     // -- v1: set blogupdatealarmdays to 30 for all existing blogs
                     CP.Db.ExecuteNonQuery("update ccBlogs set blogupdatealarmdays=30 where (blogupdatealarmdays is null or blogupdatealarmdays=0)");
                     siteVersion = 1;
+                }
+                if (siteVersion < 2) {
+                    // -- v2: purge bot/spider hits from BlogViewingLog so dashboard widget shows only real views
+                    CP.Db.ExecuteNonQuery("delete v from BlogViewingLog v inner join ccVisits vis on vis.id = v.visitid where vis.bot = 1 or vis.excludeFromAnalytics = 1");
+                    siteVersion = 2;
                 }
                 CP.Site.SetProperty("Blog Version", siteVersion.ToString());
                 //
