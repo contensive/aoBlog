@@ -881,10 +881,10 @@
 		<Field Name="blogpostid" active="True" AdminOnly="False" Authorable="True" Caption="Blog Post" DeveloperOnly="False" EditSortPriority="1010" FieldType="Lookup" HTMLContent="False" IndexColumn="20" IndexSortDirection="" IndexSortOrder="99" IndexWidth="27" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="Blog Entries" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 	</CDef>
 	<ImportCollection name="Site Analytics">{be602ffd-f1a9-4932-988a-1d4d2658568b}</ImportCollection>
-	<!-->
-	<ImportCollection name="Social Media">{3B4362B9-5556-4890-B049-56B31B869C64}</ImportCollection>
 	<ImportCollection name="RSS">{06791870-0ef8-48cb-ac54-2327ff5a1c40}</ImportCollection>
 	<ImportCollection name="ReCaptcha V2">{B0330AE8-225D-429A-8985-B5F602E295E2}</ImportCollection>
+	<!-->
+	<ImportCollection name="Social Media">{3B4362B9-5556-4890-B049-56B31B869C64}</ImportCollection>
 	<ImportCollection name="Open Graph Meta Tags">{E4FAFB02-D4B2-4336-8956-A1DE68291C3B}</ImportCollection>
 	<ImportCollection name="Twitter">{EADB8DAF-CC49-404E-AEDE-71AEE9C9BFEC}</ImportCollection>
 	-->
