@@ -68,6 +68,10 @@ namespace Contensive.Blog {
         public const string guidPortalFeatureBlogPostSeo = "{B3B1F551-9AA4-4230-9A34-A59BC20F5F79}";
         public const string guidAddonBlogPostSeo = "{E73111BB-1DFB-4FFF-AC7D-D08292946087}";
         //
+        public const string guidPortalFeatureReports = "{E2F3A4B5-6C7D-8E9F-0A1B-2C3D4E5F6A7B}";
+        public const string guidPortalFeatureBlogPostReport = "{D4E5F6A7-1B2C-3D4E-5F6A-7B8C9D0E1F2A}";
+        public const string guidAddonBlogPostReport = "{A1B2C3D4-5E6F-7A8B-9C0D-E1F2A3B4C5D6}";
+        //
         public const string rnBlogId = "blogId";
         public const string rnBlogPostId = "blogPostId";
         public const string rnDstFeatureGuid = "dstFeatureGuid";
@@ -80,6 +84,10 @@ namespace Contensive.Blog {
         public const int formIdBlogPostDetails = 740;
         public const int formIdBlogPostRss = 750;
         public const int formIdBlogPostSeo = 760;
+        public const int formIdBlogPostReport = 770;
+        //
+        public const string rnReportBlogFilter = "reportBlogFilter";
+        public const string rnReportPeriodFilter = "reportPeriodFilter";
         //
         public const string buttonAdd = " Add ";
         public const string buttonSave = " Save ";
