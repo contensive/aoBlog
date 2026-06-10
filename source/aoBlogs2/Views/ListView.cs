@@ -30,7 +30,7 @@ namespace Contensive.Blog.Views {
                 var blogCategory = request.categoryId.Equals(0) ? null : Contensive.Models.Db.DbBaseModel.create<BlogCategoriesModel>(cp, request.categoryId);
                 if (blogCategory is not null) {
                     criteria += "and(BlogCategoryID=" + request.categoryId + ")";
-                    NoneMsg = "There are no articles available in the category " + blogCategory.name;
+                    NoneMsg = "There are no articles available in the category " + cp.Utils.EncodeHTML(blogCategory.name);
                 }
                 int recordCount = DbBaseModel.getCount<BlogEntryModel>(cp, criteria);
                 int pageNumber = request.page;
@@ -42,14 +42,14 @@ namespace Contensive.Blog.Views {
                 string pageOneOfTenMsg = "Page " + pageNumber + " of " + pageCount + "";
                 // 
                 if (!string.IsNullOrEmpty(blog.caption)) {
-                    result.Append("\r\n" + "<h1 Class=\"aoBlogCaption\">" + blog.caption + (pageNumber == 1 ? "" : ", " + pageOneOfTenMsg) + "</h1>");
+                    result.Append("\r\n" + "<h1 Class=\"aoBlogCaption\">" + cp.Utils.EncodeHTML(blog.caption) + (pageNumber == 1 ? "" : ", " + pageOneOfTenMsg) + "</h1>");
                 }
                 if (!string.IsNullOrEmpty(blog.copy)) {
                     result.Append("\r\n" + "<div Class=\"aoBlogDescription\">" + blog.copy + "</div>");
                 }
 
                 if (blogCategory is not null) {
-                    result.Append("<div Class=\"aoBlogCategoryCaption\">Category " + blogCategory.name + "</div>");
+                    result.Append("<div Class=\"aoBlogCategoryCaption\">Category " + cp.Utils.EncodeHTML(blogCategory.name) + "</div>");
                 }
                 // 
                 // Display the most recent entries

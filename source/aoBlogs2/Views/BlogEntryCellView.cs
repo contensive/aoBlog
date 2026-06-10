@@ -35,7 +35,7 @@ namespace Contensive.Blog.Views {
                     hint = 30;
                     // 
                     // -- article view
-                    result += "<h1 class=\"aoBlogEntryName\">" + blogPost.name + "</h1>";
+                    result += "<h1 class=\"aoBlogEntryName\">" + cp.Utils.EncodeHTML(blogPost.name) + "</h1>";
                     result += "<div class=\"aoBlogEntryCopy\">";
                     if (blogImageList.Count > 0) {
                         hint = 40;
@@ -48,25 +48,25 @@ namespace Contensive.Blog.Views {
                             case 2: {
                                     // 
                                     // align right
-                                    result += "<img alt=\"" + imageName + "\" title=\"" + imageName + "\" class=\"aoBlogEntryThumbnailRight\" src=\"" + _GenericController.encodeURLForHrefSrc(cp.Http.CdnFilePathPrefix + ThumbnailFilename) + "\" style=\"width:40%;\">";
+                                    result += "<img alt=\"" + cp.Utils.EncodeHTML(imageName) + "\" title=\"" + cp.Utils.EncodeHTML(imageName) + "\" class=\"aoBlogEntryThumbnailRight\" src=\"" + _GenericController.encodeURLForHrefSrc(cp.Http.CdnFilePathPrefix + ThumbnailFilename) + "\" style=\"width:40%;\">";
                                     break;
                                 }
                             case 3: {
-                                    // 
+                                    //
                                     // align left
-                                    result += "<img alt=\"" + imageName + "\" title=\"" + imageName + "\" class=\"aoBlogEntryThumbnailLeft\" src=\"" + _GenericController.encodeURLForHrefSrc(cp.Http.CdnFilePathPrefix + ThumbnailFilename) + "\" style=\"width:40%;\">";
+                                    result += "<img alt=\"" + cp.Utils.EncodeHTML(imageName) + "\" title=\"" + cp.Utils.EncodeHTML(imageName) + "\" class=\"aoBlogEntryThumbnailLeft\" src=\"" + _GenericController.encodeURLForHrefSrc(cp.Http.CdnFilePathPrefix + ThumbnailFilename) + "\" style=\"width:40%;\">";
                                     break;
                                 }
-                            // 
+                            //
                             // hide
                             case 4: {
                                     break;
                                 }
 
                             default: {
-                                    // 
+                                    //
                                     // 1 and none align per stylesheet
-                                    result += "<img alt=\"" + imageName + "\" title=\"" + imageName + "\" class=\"aoBlogEntryThumbnail\" src=\"" + _GenericController.encodeURLForHrefSrc(cp.Http.CdnFilePathPrefix + ThumbnailFilename) + "\" style=\"width:40%;\">";
+                                    result += "<img alt=\"" + cp.Utils.EncodeHTML(imageName) + "\" title=\"" + cp.Utils.EncodeHTML(imageName) + "\" class=\"aoBlogEntryThumbnail\" src=\"" + _GenericController.encodeURLForHrefSrc(cp.Http.CdnFilePathPrefix + ThumbnailFilename) + "\" style=\"width:40%;\">";
                                     break;
                                 }
                         }
@@ -81,7 +81,7 @@ namespace Contensive.Blog.Views {
                         string[] tags = blogPost.tagList.Replace(",", "\r\n").Split(new[] { "\r\n" }, StringSplitOptions.None);
                         foreach (var tag in tags) {
                             string Link = app.blogBaseLink + "?" + constants.rnFormID + "=" + constants.FormBlogSearch + "&" + constants.rnQueryTag + "=" + cp.Utils.EncodeHTML(tag);
-                            clickableLinkList += ", <a href=\"" + Link + "\">" + tag + "</a>";
+                            clickableLinkList += ", <a href=\"" + Link + "\">" + cp.Utils.EncodeHTML(tag) + "</a>";
                         }
                         TagListRow = "<div class=\"aoBlogTagListSection\"><div class=\"aoBlogTagListHeader\">Tags</div><div class=\"aoBlogTagList\">" + clickableLinkList.Substring(2) + "</div></div>";
 
@@ -93,7 +93,7 @@ namespace Contensive.Blog.Views {
                     hint = 70;
                     // 
                     // -- list view
-                    result += "\r\n" + entryEditLink + "<h2 class=\"aoBlogEntryName\"><a href=\"" + entryLink + "\">" + blogPost.name + "</a></h2>";
+                    result += "\r\n" + entryEditLink + "<h2 class=\"aoBlogEntryName\"><a href=\"" + entryLink + "\">" + cp.Utils.EncodeHTML(blogPost.name) + "</a></h2>";
                     result += "<div class=\"aoBlogEntryCopy\">";
                     if (blogImageList.Count > 0) {
                         hint = 80;
@@ -108,28 +108,28 @@ namespace Contensive.Blog.Views {
                                         // 
                                         // align right
                                         // 
-                                        result += "<a href=\"" + entryLink + "\"><img alt=\"" + imageName + "\" title=\"" + imageName + "\" class=\"aoBlogEntryThumbnailRight\" src=\"" + _GenericController.encodeURLForHrefSrc(cp.Http.CdnFilePathPrefix + ThumbnailFilename) + "\" style=\"width:25%;\"></a>";
+                                        result += "<a href=\"" + entryLink + "\"><img alt=\"" + cp.Utils.EncodeHTML(imageName) + "\" title=\"" + cp.Utils.EncodeHTML(imageName) + "\" class=\"aoBlogEntryThumbnailRight\" src=\"" + _GenericController.encodeURLForHrefSrc(cp.Http.CdnFilePathPrefix + ThumbnailFilename) + "\" style=\"width:25%;\"></a>";
                                         break;
                                     }
                                 case 3: {
-                                        // 
+                                        //
                                         // align left
-                                        // 
-                                        result += "<a href=\"" + entryLink + "\"><img alt=\"" + imageName + "\" title=\"" + imageName + "\" class=\"aoBlogEntryThumbnailLeft\" src=\"" + _GenericController.encodeURLForHrefSrc(cp.Http.CdnFilePathPrefix + ThumbnailFilename) + "\" style=\"width:25%;\"></a>";
+                                        //
+                                        result += "<a href=\"" + entryLink + "\"><img alt=\"" + cp.Utils.EncodeHTML(imageName) + "\" title=\"" + cp.Utils.EncodeHTML(imageName) + "\" class=\"aoBlogEntryThumbnailLeft\" src=\"" + _GenericController.encodeURLForHrefSrc(cp.Http.CdnFilePathPrefix + ThumbnailFilename) + "\" style=\"width:25%;\"></a>";
                                         break;
                                     }
-                                // 
+                                //
                                 // hide
-                                // 
+                                //
                                 case 4: {
                                         break;
                                     }
 
                                 default: {
-                                        // 
+                                        //
                                         // 1 and none align per stylesheet
-                                        // 
-                                        result += "<a href=\"" + entryLink + "\"><img alt=\"" + imageName + "\" title=\"" + imageName + "\" class=\"aoBlogEntryThumbnail\" src=\"" + _GenericController.encodeURLForHrefSrc(cp.Http.CdnFilePathPrefix + ThumbnailFilename) + "\" style=\"width:25%;\"></a>";
+                                        //
+                                        result += "<a href=\"" + entryLink + "\"><img alt=\"" + cp.Utils.EncodeHTML(imageName) + "\" title=\"" + cp.Utils.EncodeHTML(imageName) + "\" class=\"aoBlogEntryThumbnail\" src=\"" + _GenericController.encodeURLForHrefSrc(cp.Http.CdnFilePathPrefix + ThumbnailFilename) + "\" style=\"width:25%;\"></a>";
                                         break;
                                     }
 

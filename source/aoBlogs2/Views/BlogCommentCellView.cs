@@ -17,7 +17,7 @@ namespace Contensive.Blog.Views {
                     string qs = cp.Doc.RefreshQueryString;
                     qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameBlogEntryID, blogEntry.id.ToString());
                     qs = cp.Utils.ModifyQueryString(qs, constants.rnFormID, constants.FormBlogPostList.ToString());
-                    result += "<div class=\"aoBlogEntryName\">Comment to Blog Post " + blogEntry.name + ", <a href=\"?" + qs + "\">View this post</a></div>";
+                    result += "<div class=\"aoBlogEntryName\">Comment to Blog Post " + cp.Utils.EncodeHTML(blogEntry.name) + ", <a href=\"?" + qs + "\">View this post</a></div>";
                     result += "<div class=\"aoBlogCommentDivider\">&nbsp;</div>";
                 }
                 result += "<div class=\"aoBlogCommentName\">" + cp.Utils.EncodeHTML(blogComment.name) + "</div>";
