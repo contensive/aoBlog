@@ -5,9 +5,7 @@ using Contensive.DesignBlockBase.Models.View;
 using Contensive.Models.Db;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
 using System.Linq;
-using System.Security.Policy;
 
 namespace Contensive.Blog.Models {
 

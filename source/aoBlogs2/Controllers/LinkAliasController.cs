@@ -3,7 +3,6 @@ using Contensive.Models.Db;
 using System;
 using Contensive.Blog.Models;
 using Contensive.BaseClasses;
-using Microsoft.VisualBasic;
 
 namespace Contensive.Blog.Controllers {
     public sealed class LinkAliasController {

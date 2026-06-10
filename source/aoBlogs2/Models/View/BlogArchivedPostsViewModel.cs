@@ -3,7 +3,6 @@ using Contensive.BaseClasses;
 using Contensive.Blog.Controllers;
 using Contensive.Blog.Views;
 using Contensive.Models.Db;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

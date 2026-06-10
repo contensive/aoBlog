@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Contensive.Addons.Blog</RootNamespace>
     <AssemblyName>aoBlogs2</AssemblyName>
     <SignAssembly>true</SignAssembly>
@@ -10,33 +10,17 @@
     <LangVersion>latest</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Deterministic>false</Deterministic>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <NoWarn>42353;42354;42355;CS1591;1591</NoWarn>
-    <DefaultItemExcludes>$(DefaultItemExcludes);**\*.vb</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Contensive.CPBaseClass" Version="26.4.15.1" />
-    <PackageReference Include="Contensive.DbModels" Version="26.4.15.1" />
-    <PackageReference Include="Contensive.DesignBlockBase" Version="26.4.12.5" />
+    <PackageReference Include="Contensive.CPBaseClass" Version="26.6.7.40522" />
+    <PackageReference Include="Contensive.DbModels" Version="26.6.7.40522" />
+    <PackageReference Include="Contensive.DesignBlockBase" Version="26.6.7.41231" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.6" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Microsoft.VisualBasic" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Resources.Designer.cs" />
-    <Compile Remove="My Project\Application.Designer.cs" />
-    <Compile Remove="My Project\MyNamespace.Static.1.Designer.cs" />
-    <Compile Remove="My Project\Settings.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Remove="Resources.resx" />
-    <EmbeddedResource Remove="My Project\Resources.resx" />
   </ItemGroup>
 
 </Project>

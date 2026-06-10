@@ -2,7 +2,6 @@
 using Contensive.Blog.Controllers;
 using Contensive.Blog.Models;
 using Contensive.Models.Db;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -33,7 +32,7 @@ namespace Contensive.Blog.Views {
                     // -- Keyword list
                     var subCriteria = new StringBuilder();
                     if (!string.IsNullOrEmpty(request.KeywordList)) {
-                        string[] KeyWordsArray = Strings.Split("," + request.KeywordList + ",", ",", Compare: Constants.vbTextCompare);
+                        string[] KeyWordsArray = ("," + request.KeywordList + ",").Split(',');
                         foreach (var keyword in KeyWordsArray) {
                             if (!string.IsNullOrWhiteSpace(keyword)) {
                                 pageTitle = (string.IsNullOrEmpty(pageTitle) ? "" : " or ") + cp.Utils.EncodeHTML(keyword);

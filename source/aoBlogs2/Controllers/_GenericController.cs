@@ -1,7 +1,7 @@
 ﻿using Contensive.BaseClasses;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Contensive.Blog.Controllers {
     public sealed class _GenericController {
@@ -119,8 +119,8 @@ namespace Contensive.Blog.Controllers {
         internal static string getBriefCopy(CPBaseClass cp, string rawCopy, int MaxLength) {
             try {
                 string Copy = cp.Utils.ConvertHTML2Text(rawCopy);
-                if (Strings.Len(Copy) > MaxLength) {
-                    Copy = Strings.Left(Copy, MaxLength);
+                if ((Copy?.Length ?? 0) > MaxLength) {
+                    Copy = Copy.Substring(0, MaxLength);
                     Copy = Copy + "...";
                 }
                 return Copy;
@@ -168,8 +168,8 @@ namespace Contensive.Blog.Controllers {
                 }
                 // 
                 result = cp.Html.InputText(RequestName, DefaultValue, 255);
-                result = Strings.Replace(result, "<INPUT ", "<INPUT maxlength=\"" + MaxLenghth + "\" ", 1, 99, CompareMethod.Text);
-                result = Strings.Replace(result, "<INPUT ", $"<INPUT style=\"width:{MaxLenghth}ch;max-width: 100%;\" ", 1, 99, CompareMethod.Text);
+                result = Regex.Replace(result, "<INPUT ", $"<INPUT maxlength=\"{MaxLenghth}\" ", RegexOptions.IgnoreCase);
+                result = Regex.Replace(result, "<INPUT ", $"<INPUT style=\"width:{MaxLenghth}ch;max-width: 100%;\" ", RegexOptions.IgnoreCase);
             } catch (Exception ex) {
                 cp.Site.ErrorReport(ex);
             }

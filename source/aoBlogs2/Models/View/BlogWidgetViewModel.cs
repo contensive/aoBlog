@@ -4,10 +4,10 @@ using Contensive.Blog.Models.Db;
 using Contensive.Blog.Models.View;
 using Contensive.DesignBlockBase.Models.View;
 using Contensive.Models.Db;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 
 namespace Contensive.Blog.Models {
 
@@ -319,7 +319,7 @@ namespace Contensive.Blog.Models {
                     foreach (DataRow row in dt.Rows) {
                         int archiveMonth = cp.Utils.EncodeInteger(row["ArchiveMonth"]);
                         int archiveYear = cp.Utils.EncodeInteger(row["ArchiveYear"]);
-                        string archiveMonthName = DateAndTime.MonthName(archiveMonth < 1 ? 1 : archiveMonth > 12 ? 12 : archiveMonth);
+                        string archiveMonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(archiveMonth < 1 ? 1 : archiveMonth > 12 ? 12 : archiveMonth);
                         string linkAlias = $"{blogPageUrl}-archives-{archiveMonthName}-{archiveYear}";
                         string qs = cp.Utils.ModifyQueryString(qsBase, constants.RequestNameArchiveMonth, archiveMonth.ToString());
                         qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameArchiveYear, archiveYear.ToString());

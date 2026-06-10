@@ -5,7 +5,6 @@ using Contensive.Blog.Models;
 using Contensive.Blog.Models.Db;
 using Contensive.Blog.Views;
 using Contensive.Models.Db;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -217,11 +216,11 @@ namespace Contensive.Blog.Models.View {
                         if (commentList.Count > 0) {
                             string divider = "<div class=\"aoBlogCommentDivider\">&nbsp;</div>";
                             string commentsHtml = "<div class=\"aoBlogCommentHeader\">Comments</div>";
-                            commentsHtml += Constants.vbCrLf + divider;
+                            commentsHtml += "\r\n" + divider;
                             foreach (var blogComment in commentList) {
                                 string fieldSuffix = $"{entryIndex}.{commentPtr}";
                                 commentsHtml += Views.BlogCommentCellView.getBlogCommentCell(cp, app.blog, blogPost, blogComment, app.user, false, fieldSuffix);
-                                commentsHtml += Constants.vbCrLf + divider;
+                                commentsHtml += "\r\n" + divider;
                                 commentPtr++;
                             }
                             result.commentsHtml = commentsHtml;

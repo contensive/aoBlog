@@ -2,8 +2,6 @@
 using Contensive.Blog.Models;
 using Contensive.BaseClasses;
 using Contensive.Models.Db;
-using Microsoft.VisualBasic;
-using Microsoft.VisualBasic.CompilerServices;
 
 namespace Contensive.Blog.Views {
     // 
@@ -25,7 +23,7 @@ namespace Contensive.Blog.Views {
                 result += "<div class=\"aoBlogCommentName\">" + cp.Utils.EncodeHTML(blogComment.name) + "</div>";
                 string Copy = blogComment.copyText;
                 Copy = cp.Utils.EncodeHTML(Copy);
-                Copy = Strings.Replace(Copy, Constants.vbCrLf, "<BR />");
+                Copy = Copy.Replace("\r\n", "<BR />");
                 result += "<div class=\"aoBlogCommentCopy\">" + Copy + "</div>";
                 string rowCopy = "";
                 //

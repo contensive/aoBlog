@@ -3,7 +3,6 @@ using Contensive.BaseClasses;
 using Contensive.Blog.Controllers;
 using Contensive.Blog.Views;
 using Contensive.Models.Db;
-using Microsoft.VisualBasic.CompilerServices;
 using System;
 using System.Collections.Generic;
 
@@ -70,7 +69,7 @@ namespace Contensive.Blog.Models.View {
                         int blogEntryId = app.blogPost is not null ? app.blogPost.id : 0;
                         var blogViewingLog = DbBaseModel.addDefault<BlogViewingLogModel>(cp);
                         if (blogViewingLog is not null) {
-                            blogViewingLog.name = $"{cp.User.Name}, post {blogEntryId}, {Conversions.ToString(DateTime.Now)}";
+                            blogViewingLog.name = $"{cp.User.Name}, post {blogEntryId}, {DateTime.Now}";
                             blogViewingLog.BlogEntryID = blogEntryId;
                             blogViewingLog.MemberID = cp.User.Id;
                             blogViewingLog.VisitID = cp.Visit.Id;

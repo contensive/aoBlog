@@ -3,7 +3,6 @@ using Contensive.BaseClasses;
 using Contensive.Blog.Controllers;
 using Contensive.Blog.Models;
 using Contensive.Models.Db;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -24,7 +23,7 @@ namespace Contensive.Blog.Views {
                 var blogEntry = app.blogPost;
                 string contentControlId = cp.Content.GetID(constants.cnBlogEntries).ToString();
                 // 
-                result = Constants.vbCrLf + cp.Content.GetCopy("Blogs Archives Header for " + blog.name, "<h1>" + blog.name + " Archives</h1>");
+                result = "\r\n" + cp.Content.GetCopy("Blogs Archives Header for " + blog.name, "<h1>" + blog.name + " Archives</h1>");
                 // 
                 var archiveDateList = BlogEntryModel.createArchiveListFromBlogCopy(cp, blog.id);
                 if (archiveDateList.Count == 0) {
@@ -49,12 +48,12 @@ namespace Contensive.Blog.Views {
                         foreach (var archiveDate in archiveDateList) {
                             ArchiveMonth = archiveDate.Month;
                             ArchiveYear = archiveDate.Year;
-                            string NameOfMonth = DateAndTime.MonthName(ArchiveMonth);
+                            string NameOfMonth = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(ArchiveMonth);
                             qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameArchiveMonth, ArchiveMonth.ToString());
                             qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameArchiveYear, ArchiveYear.ToString());
-                            result += Constants.vbCrLf + Constants.vbTab + Constants.vbTab + "<div class=\"aoBlogArchiveLink\"><a href=\"" + qs + "\">" + NameOfMonth + " " + ArchiveYear + "</a></div>";
+                            result += "\r\n\t\t" + "<div class=\"aoBlogArchiveLink\"><a href=\"" + qs + "\">" + NameOfMonth + " " + ArchiveYear + "</a></div>";
                         }
-                        result += Constants.vbCrLf + Constants.vbTab + "<div class=\"aoBlogFooterLink\"><a href=\"" + app.blogPageBaseLink + "\">" + constants.BackToRecentPostsMsg + "</a></div>";
+                        result += "\r\n\t" + "<div class=\"aoBlogFooterLink\"><a href=\"" + app.blogPageBaseLink + "\">" + constants.BackToRecentPostsMsg + "</a></div>";
                     }
                 }
             }

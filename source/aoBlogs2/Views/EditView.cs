@@ -4,7 +4,6 @@ using System.Text;
 using Contensive.Blog.Controllers;
 using Contensive.Blog.Models;
 using Contensive.BaseClasses;
-using Microsoft.VisualBasic;
 using Contensive.Models.Db;
 
 namespace Contensive.Blog.Views {
@@ -57,7 +56,7 @@ namespace Contensive.Blog.Views {
                 }
                 if (app.blog.allowCategories) {
                     string CategorySelect = cp.Html.SelectContent(constants.RequestNameBlogEntryCategoryID, blongEntry_blogCategoryId.ToString(), "Blog Categories");
-                    if (Strings.InStr(1, CategorySelect, "<option value=\"\"></option></select>", Constants.vbTextCompare) != 0) {
+                    if (CategorySelect.IndexOf("<option value=\"\"></option></select>", StringComparison.OrdinalIgnoreCase) >= 0) {
                         // 
                         // Select is empty
                         CategorySelect = "<div>This blog has no categories defined</div>";
@@ -159,7 +158,7 @@ namespace Contensive.Blog.Views {
                 string qs = cp.Doc.RefreshQueryString;
                 qs = cp.Utils.ModifyQueryString(qs, constants.RequestNameBlogEntryID, "", true);
                 qs = cp.Utils.ModifyQueryString(qs, constants.rnFormID, constants.FormBlogPostList.ToString());
-                result.Append(Constants.vbCrLf + _GenericController.getFormTableRow2(cp, "<div class=\"aoBlogFooterLink\"><a href=\"" + app.blogPageBaseLink + "\">" + constants.BackToRecentPostsMsg + "</a></div>"));
+                result.Append("\r\n" + _GenericController.getFormTableRow2(cp, "<div class=\"aoBlogFooterLink\"><a href=\"" + app.blogPageBaseLink + "\">" + constants.BackToRecentPostsMsg + "</a></div>"));
                 // 
                 result.Append(cp.Html.Hidden(constants.RequestNameBlogEntryID, blogEntry_id.ToString()));
                 result.Append(cp.Html.Hidden(constants.RequestNameSourceFormID, constants.FormBlogEntryEditor.ToString()));
@@ -274,10 +273,10 @@ namespace Contensive.Blog.Views {
                                         // BlogImage.description = imageDescription
                                         string FileExtension = "";
                                         string FilenameNoExtension = "";
-                                        int Pos = Strings.InStrRev(imageFilename, ".");
-                                        if (Pos > 0) {
-                                            FileExtension = Strings.Mid(imageFilename, Pos + 1);
-                                            FilenameNoExtension = Strings.Left(imageFilename, Pos - 1);
+                                        int Pos = imageFilename.LastIndexOf(".");
+                                        if (Pos >= 0) {
+                                            FileExtension = imageFilename.Substring(Pos + 1);
+                                            FilenameNoExtension = imageFilename.Substring(0, Pos);
                                         }
                                         string VirtualFilePath = BlogImage.getUploadPath("filename");
                                         cp.Html.ProcessInputFile(constants.rnBlogUploadPrefix + "." + UploadPointer, VirtualFilePath);

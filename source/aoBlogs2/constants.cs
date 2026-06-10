@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualBasic;
-
-namespace Contensive.Blog {
+﻿namespace Contensive.Blog {
 
     public static class constants {
         // 
@@ -193,7 +191,7 @@ namespace Contensive.Blog {
         public const int FormBlogArchiveDateList = 400;
         public const int FormBlogArchivedBlogs = 600;
         // 
-        public const string cr = Constants.vbCrLf;
+        public const string cr = "\r\n";
         // 
         // -- errors for resultErrList
         public enum resultErrorEnum {

@@ -1,7 +1,5 @@
 ﻿using Contensive.BaseClasses;
 using Contensive.Blog.Models;
-using Microsoft.VisualBasic;
-using Microsoft.VisualBasic.Logging;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,7 +31,7 @@ namespace Contensive.Blog.Controllers {
                 // -- try page's meta title
                 result = blog.name;
             }
-            result = result.Replace(Constants.vbCrLf, " ").Replace(Constants.vbCr, " ").Replace(Constants.vbLf, " ").Trim();
+            result = result.Replace("\r\n", " ").Replace("\r", " ").Replace("\n", " ").Trim();
             return result;
         }
         //
@@ -58,7 +56,7 @@ namespace Contensive.Blog.Controllers {
                 // -- try blog name
                 result = getBlogMetaTitle(app, blog);
             }
-            result = result.Replace(Constants.vbCrLf, " ").Replace(Constants.vbCr, " ").Replace(Constants.vbLf, " ").Trim();
+            result = result.Replace("\r\n", " ").Replace("\r", " ").Replace("\n", " ").Trim();
             return result;
         }
         //
@@ -80,7 +78,7 @@ namespace Contensive.Blog.Controllers {
                 // -- try page's meta description
                 result = app.page.metaDescription;
             }
-            result = result.Replace(Constants.vbCrLf, " ").Replace(Constants.vbCr, " ").Replace(Constants.vbLf, " ").Trim();
+            result = result.Replace("\r\n", " ").Replace("\r", " ").Replace("\n", " ").Trim();
             //if (result.Length > 160) {
             //    //
             //    // trim to 160 characters
@@ -113,7 +111,7 @@ namespace Contensive.Blog.Controllers {
                 // -- try blog copy
                 result = cp.Utils.ConvertHTML2Text(blogEntry.copy);
             }
-            result = result.Replace(Constants.vbCrLf, " ").Replace(Constants.vbCr, " ").Replace(Constants.vbLf, " ").Trim();
+            result = result.Replace("\r\n", " ").Replace("\r", " ").Replace("\n", " ").Trim();
             //if (result.Length > 160) {
             //    //
             //    // trim to 160 characters
@@ -141,7 +139,7 @@ namespace Contensive.Blog.Controllers {
             // -- set article meta data
             cp.Doc.AddTitle(metaTitle);
             cp.Doc.AddMetaDescription(metaDescription);
-            cp.Doc.AddMetaKeywordList((blog.metaKeywordList).Replace(Constants.vbCrLf, ",").Replace(Constants.vbCr, ",").Replace(Constants.vbLf, ",").Replace(",,", ","));
+            cp.Doc.AddMetaKeywordList((blog.metaKeywordList).Replace("\r\n", ",").Replace("\r", ",").Replace("\n", ",").Replace(",,", ","));
             // 
             // -- set open graph properties modified by the Blog
             //cp.Doc.SetProperty("Open Graph URL", cp.Content.GetPageLink(cp.Doc.PageId));
@@ -174,7 +172,7 @@ namespace Contensive.Blog.Controllers {
             // -- set article meta data
             MetadataController.addTitle(cp, MetadataController.getEntryMetaTitle(app, blog, blogEntry));
             cp.Doc.AddMetaDescription(MetadataController.getEntryMetaDescription(cp, blogEntry));
-            cp.Doc.AddMetaKeywordList((blogEntry.metaKeywordList + "," + blogEntry.tagList).Replace(Constants.vbCrLf, ",").Replace(Constants.vbCr, ",").Replace(Constants.vbLf, ",").Replace(",,", ","));
+            cp.Doc.AddMetaKeywordList((blogEntry.metaKeywordList + "," + blogEntry.tagList).Replace("\r\n", ",").Replace("\r", ",").Replace("\n", ",").Replace(",,", ","));
             // 
             // -- set open graph properties modified by the Blog
             cp.Doc.SetProperty("Open Graph URL", cp.Content.GetPageLink(cp.Doc.PageId, "BlogEntryID=" + blogEntry.id + "&FormID=300"));

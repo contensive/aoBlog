@@ -2,7 +2,6 @@
 using Contensive.Blog.Controllers;
 using Contensive.Blog.Models;
 using Contensive.Models.Db;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,12 +78,12 @@ namespace Contensive.Blog.Views {
                         // 
                         // -- make a clickable section
                         string clickableLinkList = "";
-                        string[] tags = Strings.Split(Strings.Replace(blogPost.tagList, ",", Constants.vbCrLf), Constants.vbCrLf);
+                        string[] tags = blogPost.tagList.Replace(",", "\r\n").Split(new[] { "\r\n" }, StringSplitOptions.None);
                         foreach (var tag in tags) {
                             string Link = app.blogBaseLink + "?" + constants.rnFormID + "=" + constants.FormBlogSearch + "&" + constants.rnQueryTag + "=" + cp.Utils.EncodeHTML(tag);
                             clickableLinkList += ", <a href=\"" + Link + "\">" + tag + "</a>";
                         }
-                        TagListRow = "<div class=\"aoBlogTagListSection\"><div class=\"aoBlogTagListHeader\">Tags</div><div class=\"aoBlogTagList\">" + Strings.Mid(clickableLinkList, 3) + "</div></div>";
+                        TagListRow = "<div class=\"aoBlogTagListSection\"><div class=\"aoBlogTagListHeader\">Tags</div><div class=\"aoBlogTagList\">" + clickableLinkList.Substring(2) + "</div></div>";
 
 
 
@@ -94,7 +93,7 @@ namespace Contensive.Blog.Views {
                     hint = 70;
                     // 
                     // -- list view
-                    result += Constants.vbCrLf + entryEditLink + "<h2 class=\"aoBlogEntryName\"><a href=\"" + entryLink + "\">" + blogPost.name + "</a></h2>";
+                    result += "\r\n" + entryEditLink + "<h2 class=\"aoBlogEntryName\"><a href=\"" + entryLink + "\">" + blogPost.name + "</a></h2>";
                     result += "<div class=\"aoBlogEntryCopy\">";
                     if (blogImageList.Count > 0) {
                         hint = 80;
@@ -269,12 +268,12 @@ namespace Contensive.Blog.Views {
                         if (BlogCommentModelList.Count > 0) {
                             string Divider = "<div class=\"aoBlogCommentDivider\">&nbsp;</div>";
                             result += "<div class=\"aoBlogCommentHeader\">Comments</div>";
-                            result += Constants.vbCrLf + Divider;
+                            result += "\r\n" + Divider;
                             CommentPtr = 0;
                             foreach (var blogComment in DbBaseModel.createList<BlogCommentModel>(cp, Criteria)) {
                                 string fieldSuffix = $"{entryIndex}.{CommentPtr}";
                                 result += BlogCommentCellView.getBlogCommentCell(cp, app.blog, blogPost, blogComment, app.user, false, fieldSuffix);
-                                result += Constants.vbCrLf + Divider;
+                                result += "\r\n" + Divider;
                                 CommentPtr += 1;
                             }
                         }
@@ -285,7 +284,7 @@ namespace Contensive.Blog.Views {
                 if (!string.IsNullOrEmpty(toolLine)) {
                     result += "<div class=\"aoBlogToolLink\">" + toolLine + "</div>";
                 }
-                result += Constants.vbCrLf + cp.Html.Hidden($"CommentCnt{entryIndex}", CommentPtr.ToString());
+                result += "\r\n" + cp.Html.Hidden($"CommentCnt{entryIndex}", CommentPtr.ToString());
                 // 
                 Return_CommentCnt = CommentPtr;
                 return result;

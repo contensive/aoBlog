@@ -2,8 +2,6 @@
 using Contensive.Blog.Controllers;
 using Contensive.Blog.Models;
 using Contensive.Models.Db;
-using Microsoft.VisualBasic;
-using Microsoft.VisualBasic.CompilerServices;
 using System;
 using System.Collections.Generic;
 
@@ -50,7 +48,7 @@ namespace Contensive.Blog.Views {
                         int blogEntryId = app.blogPost is not null ? app.blogPost.id : 0;
                         var BlogViewingLog = DbBaseModel.addDefault<BlogViewingLogModel>(cp);
                         if (BlogViewingLog is not null) {
-                            BlogViewingLog.name = $"{cp.User.Name}, post {blogEntryId}, {Conversions.ToString(DateTime.Now)}";
+                            BlogViewingLog.name = $"{cp.User.Name}, post {blogEntryId}, {DateTime.Now}";
                             BlogViewingLog.BlogEntryID = blogEntryId;
                             BlogViewingLog.MemberID = cp.User.Id;
                             BlogViewingLog.VisitID = cp.Visit.Id;
@@ -104,7 +102,7 @@ namespace Contensive.Blog.Views {
                                         qs = cp.Utils.ModifyQueryString(qs, "auth", "2");
                                         Copy = Copy + " <a href=\"?" + qs + "\"> Join?</a>";
                                     }
-                                    result = result + "<div class=\"aoBlogLoginBox\">" + Constants.vbCrLf + Constants.vbTab + "<div class=\"aoBlogCommentCopy\">" + Copy + "</div>" + Constants.vbCrLf + Constants.vbTab + "<div class=\"aoBlogCommentCopy\">send password form removed</div></div>";
+                                    result = result + "<div class=\"aoBlogLoginBox\">\r\n\t<div class=\"aoBlogCommentCopy\">" + Copy + "</div>\r\n\t<div class=\"aoBlogCommentCopy\">send password form removed</div></div>";
 
 
 
@@ -175,9 +173,9 @@ namespace Contensive.Blog.Views {
                 }
                 hint = 190;
                 // 
-                result += Constants.vbCrLf + cp.Html5.Hidden(constants.RequestNameSourceFormID, constants.FormBlogPostDetails);
-                result += Constants.vbCrLf + cp.Html5.Hidden(constants.RequestNameBlogEntryID, app.blogPost.id);
-                result += Constants.vbCrLf + cp.Html5.Hidden("EntryCnt", 1);
+                result += "\r\n" + cp.Html5.Hidden(constants.RequestNameSourceFormID, constants.FormBlogPostDetails);
+                result += "\r\n" + cp.Html5.Hidden(constants.RequestNameBlogEntryID, app.blogPost.id);
+                result += "\r\n" + cp.Html5.Hidden("EntryCnt", 1);
                 getArticleViewRet = result;
                 result = cp.Html.Form(getArticleViewRet);
                 // 
@@ -273,13 +271,13 @@ namespace Contensive.Blog.Views {
                                     // 
                                     // Send Comment Notification
                                     string EntryLink = blogEntry.rssLink;
-                                    if (Strings.InStr(1, EntryLink, "?") == 0) {
+                                    if (!EntryLink.Contains("?")) {
                                         EntryLink += "?";
                                     } else {
                                         EntryLink += "&";
                                     }
                                     EntryLink = EntryLink + "blogentryid=" + blogEntry.id;
-                                    string EmailBody = "The following blog comment was posted " + Conversions.ToString(DateTime.Now) + "To approve this comment, go to " + EntryLink + Constants.vbCrLf + "Blog '" + blog.name + "'Post '" + blogEntry.name + "'By " + cp.User.Name + Constants.vbCrLf + Constants.vbCrLf + cp.Utils.EncodeHTML(Copy) + Constants.vbCrLf;
+                                    string EmailBody = $"The following blog comment was posted {DateTime.Now}To approve this comment, go to {EntryLink}\r\nBlog '{blog.name}'Post '{blogEntry.name}'By {cp.User.Name}\r\n\r\n{cp.Utils.EncodeHTML(Copy)}\r\n";
                                     string EmailFromAddress = cp.Site.GetText("EmailFromAddress", "info@" + cp.Site.Domain);
                                     if (blogEntry.authorMemberId != 0) {
                                         cp.Email.sendUser(blogEntry.authorMemberId, EmailFromAddress, "Blog comment notification for [" + blog.name + "]", EmailBody, true, false);

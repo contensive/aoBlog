@@ -3,7 +3,6 @@ using Contensive.BaseClasses;
 using Contensive.Blog.Controllers;
 using Contensive.Blog.Models.Db;
 using Contensive.Models.Db;
-using Microsoft.VisualBasic;
 using System.Linq;
 using System.Text;
 using System;
@@ -69,7 +68,7 @@ namespace Contensive.Blog.Models.View {
                 // -- categories
                 if (app.blog.allowCategories) {
                     string categorySelect = cp.Html.SelectContent(constants.RequestNameBlogEntryCategoryID, blogEntry_blogCategoryId.ToString(), "Blog Categories");
-                    if (Strings.InStr(1, categorySelect, "<option value=\"\"></option></select>", Constants.vbTextCompare) != 0) {
+                    if (categorySelect.IndexOf("<option value=\"\"></option></select>", StringComparison.OrdinalIgnoreCase) >= 0) {
                         categorySelect = "<div>This blog has no categories defined</div>";
                     }
                     formHtml.Append(_GenericController.getFormTableRow(cp, "Category: ", categorySelect));
@@ -107,7 +106,7 @@ namespace Contensive.Blog.Models.View {
                 }
                 //
                 // -- back link
-                formHtml.Append(Constants.vbCrLf + _GenericController.getFormTableRow2(cp, $"<div class=\"aoBlogFooterLink\"><a href=\"{app.blogPageBaseLink}\">{constants.BackToRecentPostsMsg}</a></div>"));
+                formHtml.Append("\r\n" + _GenericController.getFormTableRow2(cp, $"<div class=\"aoBlogFooterLink\"><a href=\"{app.blogPageBaseLink}\">{constants.BackToRecentPostsMsg}</a></div>"));
                 //
                 // -- hidden fields
                 formHtml.Append(cp.Html.Hidden(constants.RequestNameBlogEntryID, blogEntry_id.ToString()));

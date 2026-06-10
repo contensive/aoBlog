@@ -2,7 +2,6 @@
 using Contensive.Blog.Controllers;
 using Contensive.Blog.Models;
 using Contensive.Models.Db;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -43,10 +42,10 @@ namespace Contensive.Blog.Views {
                 string pageOneOfTenMsg = "Page " + pageNumber + " of " + pageCount + "";
                 // 
                 if (!string.IsNullOrEmpty(blog.caption)) {
-                    result.Append(Constants.vbCrLf + "<h1 Class=\"aoBlogCaption\">" + blog.caption + (pageNumber == 1 ? "" : ", " + pageOneOfTenMsg) + "</h1>");
+                    result.Append("\r\n" + "<h1 Class=\"aoBlogCaption\">" + blog.caption + (pageNumber == 1 ? "" : ", " + pageOneOfTenMsg) + "</h1>");
                 }
                 if (!string.IsNullOrEmpty(blog.copy)) {
-                    result.Append(Constants.vbCrLf + "<div Class=\"aoBlogDescription\">" + blog.copy + "</div>");
+                    result.Append("\r\n" + "<div Class=\"aoBlogDescription\">" + blog.copy + "</div>");
                 }
 
                 if (blogCategory is not null) {

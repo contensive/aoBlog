@@ -1,8 +1,8 @@
 
 using Contensive.BaseClasses;
 using Contensive.Blog.Controllers;
-using Microsoft.VisualBasic;
 using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -57,7 +57,7 @@ namespace Contensive.Blog.Models.View {
                     foreach (var archiveDate in archiveDateList) {
                         int archiveMonth = archiveDate.Month;
                         int archiveYear = archiveDate.Year;
-                        string nameOfMonth = DateAndTime.MonthName(archiveMonth);
+                        string nameOfMonth = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(archiveMonth);
                         string dateQs = cp.Utils.ModifyQueryString(qs, constants.RequestNameArchiveMonth, archiveMonth.ToString());
                         dateQs = cp.Utils.ModifyQueryString(dateQs, constants.RequestNameArchiveYear, archiveYear.ToString());
                         result.archiveDateList.Add(new ArchiveDateItemViewModel {
