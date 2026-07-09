@@ -235,7 +235,7 @@ namespace Contensive.Blog.Views {
                         }
 
                         // get the unapproved comments
-                        if (app.user.isBlogEditor(cp, app.blog)) {
+                        if (app.user != null && app.user.isBlogEditor(cp, app.blog)) {
                             hint = 150;
                             var BlogUnapprovedCommentModelList = DbBaseModel.createList<BlogCommentModel>(cp, "(Approved=0)and(EntryID=" + blogPost.id + ")");
                             int unapprovedCommentCount = BlogUnapprovedCommentModelList.Count;
@@ -258,7 +258,7 @@ namespace Contensive.Blog.Views {
                         // Show all comments
                         // 
                         string Criteria = "(EntryID=" + blogPost.id + ")";
-                        if (!app.user.isBlogEditor(cp, app.blog)) {
+                        if (app.user == null || !app.user.isBlogEditor(cp, app.blog)) {
                             // 
                             // non-owner - just approved comments plus your own comments
                             // 

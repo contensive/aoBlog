@@ -261,7 +261,7 @@ namespace Contensive.Blog.Views {
                                 BlogComment.name = cp.Doc.GetText(constants.RequestNameCommentTitle);
                                 BlogComment.copyText = Copy;
                                 BlogComment.entryId = blogEntry.id;
-                                BlogComment.approved = user.isBlogEditor(cp, blog) | blog.autoApproveComments;
+                                BlogComment.approved = (user != null && user.isBlogEditor(cp, blog)) | blog.autoApproveComments;
                                 BlogComment.formKey = formKey;
                                 BlogComment.save(cp);
                                 CommentID = BlogComment.id;
@@ -305,7 +305,7 @@ namespace Contensive.Blog.Views {
                         // 
                         // Post approval changes if the person is the owner
                         // 
-                        if (user.isBlogEditor(cp, blog)) {
+                        if (user != null && user.isBlogEditor(cp, blog)) {
                             int EntryCnt = cp.Doc.GetInteger("EntryCnt");
                             if (EntryCnt > 0) {
                                 int EntryPtr;

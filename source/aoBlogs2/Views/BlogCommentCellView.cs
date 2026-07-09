@@ -38,10 +38,10 @@ namespace Contensive.Blog.Views {
                     rowCopy += $"{cp.Utils.EncodeDate(blogComment.dateAdded).ToShortDateString()}";
                 }
                 // 
-                if (user.isBlogEditor(cp, blog)) {
-                    // 
+                if (user != null && user.isBlogEditor(cp, blog)) {
+                    //
                     // Blog owner Approval checkbox
-                    // 
+                    //
                     if (!string.IsNullOrEmpty(rowCopy)) {
                         rowCopy += " | ";
                     }
@@ -50,8 +50,8 @@ namespace Contensive.Blog.Views {
                 if (!string.IsNullOrEmpty(rowCopy)) {
                     result += "<div class=\"aoBlogCommentByLine\">Posted " + rowCopy + "</div>";
                 }
-                // 
-                if (!blogComment.approved & !user.isBlogEditor(cp, blog) & blogComment.createdBy == cp.User.Id) {
+                //
+                if (!blogComment.approved & (user == null || !user.isBlogEditor(cp, blog)) & blogComment.createdBy == cp.User.Id) {
                     result = "<div style=\"border:1px solid red;padding-top:10px;padding-bottom:10px;\"><span class=\"aoBlogCommentName\" style=\"color:red;\">Your comment pending approval</span><br />" + result + "</div>";
                 }
                 // 

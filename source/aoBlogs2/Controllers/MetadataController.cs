@@ -73,7 +73,7 @@ namespace Contensive.Blog.Controllers {
             //
             // -- entry meta description
             string result = blog?.metaDescription ?? "";
-            if (string.IsNullOrWhiteSpace(result)) {
+            if (string.IsNullOrWhiteSpace(result) && app.page != null) {
                 //
                 // -- try page's meta description
                 result = app.page.metaDescription;

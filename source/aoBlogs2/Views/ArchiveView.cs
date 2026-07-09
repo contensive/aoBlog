@@ -81,7 +81,7 @@ namespace Contensive.Blog.Views {
                 string title = $"Archives {DateTimeFormatInfo.CurrentInfo.GetMonthName(archiveMonth)} {request.ArchiveYear}, {MetadataController.getBlogMetaTitle(app, blog)} ";
                 MetadataController.addTitle(cp, title);
                 //
-                result += $"<h1>{title}</h1>";
+                result += $"<h2>{title}</h2>";
                 var postList = DbBaseModel.createList<BlogEntryModel>(cp, "(Month(COALESCE(datePublished, dateAdded)) = " + request.ArchiveMonth + ")And(year(COALESCE(datePublished, dateAdded))=" + request.ArchiveYear + ")And(BlogID=" + blog.id + ")", "COALESCE(datePublished, dateAdded) Desc");
                 if (postList.Count == 0) {
                     // 

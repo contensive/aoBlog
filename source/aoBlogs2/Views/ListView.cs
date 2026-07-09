@@ -33,12 +33,14 @@ namespace Contensive.Blog.Views {
                     NoneMsg = "There are no articles available in the category " + cp.Utils.EncodeHTML(blogCategory.name);
                 }
                 int recordCount = DbBaseModel.getCount<BlogEntryModel>(cp, criteria);
-                int pageNumber = request.page;
-                if (pageNumber > recordCount)
-                    pageNumber = recordCount;
-                if (pageNumber < 1)
-                    pageNumber = 1;
                 int pageCount = (int)Math.Round(Math.Truncate(recordCount / (double)blog.postsToDisplay + 0.999d));
+                int pageNumber = request.page;
+                if (pageNumber > pageCount) {
+                    pageNumber = pageCount;
+                }
+                if (pageNumber < 1) {
+                    pageNumber = 1;
+                }
                 string pageOneOfTenMsg = "Page " + pageNumber + " of " + pageCount + "";
                 // 
                 if (!string.IsNullOrEmpty(blog.caption)) {
@@ -98,7 +100,7 @@ namespace Contensive.Blog.Views {
                 // 
                 // Footer
                 result.Append("<div>&nbsp;</div>");
-                if (user.isBlogEditor(cp, blog)) {
+                if (user != null && user.isBlogEditor(cp, blog)) {
                     result.Append(cp.Content.GetAddLink(BlogEntryModel.tableMetadata.contentName, $"blogId={app.blog.id}", false, app.userIsEditing, false));
                 }
                 // 

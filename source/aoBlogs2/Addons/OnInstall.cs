@@ -13,7 +13,7 @@ namespace Contensive.Blog {
         /// </summary>
         /// <param name="CP"></param>
         /// <returns></returns>
-        private const int codeVersion = 2;
+        private const int codeVersion = 3;
         //
         public override object Execute(CPBaseClass CP) {
             try {
@@ -31,6 +31,11 @@ namespace Contensive.Blog {
                     // -- v2: purge bot/spider hits from BlogViewingLog so dashboard widget shows only real views
                     CP.Db.ExecuteNonQuery("delete v from BlogViewingLog v inner join ccVisits vis on vis.id = v.visitid where vis.bot = 1 or vis.excludeFromAnalytics = 1");
                     siteVersion = 2;
+                }
+                if (siteVersion < 3) {
+                    // -- v3: increase imageWidthMax default from 400 to 800 for existing blogs still at the old default
+                    CP.Db.ExecuteNonQuery("update ccBlogs set imagewidthmax=800 where imagewidthmax=400");
+                    siteVersion = 3;
                 }
                 CP.Site.SetProperty("Blog Version", siteVersion.ToString());
                 //

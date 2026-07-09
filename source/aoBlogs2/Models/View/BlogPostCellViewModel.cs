@@ -196,7 +196,7 @@ namespace Contensive.Blog.Models.View {
                     if (!isArticleView) {
                         //
                         // -- list view tool line (for blog editors)
-                        if (app.user.isBlogEditor(cp, app.blog)) {
+                        if (app.user != null && app.user.isBlogEditor(cp, app.blog)) {
                             var unapprovedComments = DbBaseModel.createList<BlogCommentModel>(cp, $"(Approved=0)and(EntryID={blogPost.id})");
                             result.hasToolLine = true;
                             result.unapprovedCommentCount = unapprovedComments.Count;
@@ -209,7 +209,7 @@ namespace Contensive.Blog.Models.View {
                         //
                         // -- article view: show all comments
                         string criteria = $"(EntryID={blogPost.id})";
-                        if (!app.user.isBlogEditor(cp, app.blog)) {
+                        if (app.user == null || !app.user.isBlogEditor(cp, app.blog)) {
                             criteria += $"and((Approved<>0)or(createdby={cp.User.Id}))";
                         }
                         var commentList = DbBaseModel.createList<BlogCommentModel>(cp, criteria, "dateAdded");

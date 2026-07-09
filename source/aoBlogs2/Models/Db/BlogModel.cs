@@ -122,7 +122,7 @@ namespace Contensive.Blog.Models {
                 Blog.postsToDisplay = 5;
                 Blog.overviewLength = 500;
                 Blog.thumbnailImageWidth = 200;
-                Blog.imageWidthMax = 400;
+                Blog.imageWidthMax = 800;
                 Blog.allowArticleCTA = true;
                 Blog.ccguid = instanceGuid;
                 Blog.save(cp);

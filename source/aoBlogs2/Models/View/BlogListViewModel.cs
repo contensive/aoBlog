@@ -63,10 +63,10 @@ namespace Contensive.Blog.Models.View {
                     result.categoryName = blogCategory.name;
                 }
                 int recordCount = DbBaseModel.getCount<BlogEntryModel>(cp, criteria);
-                int pageNumber = request.page;
-                if (pageNumber > recordCount) { pageNumber = recordCount; }
-                if (pageNumber < 1) { pageNumber = 1; }
                 int pageCount = (int)Math.Round(Math.Truncate(recordCount / (double)blog.postsToDisplay + 0.999d));
+                int pageNumber = request.page;
+                if (pageNumber > pageCount) { pageNumber = pageCount; }
+                if (pageNumber < 1) { pageNumber = 1; }
                 string pageOneOfTenMsg = $"Page {pageNumber} of {pageCount}";
                 //
                 // -- pagination data (used by layout-level caption)
@@ -128,7 +128,7 @@ namespace Contensive.Blog.Models.View {
                 result.paginationHtml = PaginationController.getRecordPagination(cp, blog.postsToDisplay, pageNumber, recordsOnThisPage, recordCount);
                 //
                 // -- footer
-                if (user.isBlogEditor(cp, blog)) {
+                if (user != null && user.isBlogEditor(cp, blog)) {
                     result.addLinkHtml = cp.Content.GetAddLink(BlogEntryModel.tableMetadata.contentName, $"blogId={app.blog.id}", false, app.userIsEditing, false);
                 }
                 //

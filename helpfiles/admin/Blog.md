@@ -31,7 +31,7 @@ When a blog is first created, it uses these defaults:
 - **Posts to Display**: 5
 - **Overview Length**: 500 characters
 - **Thumbnail Image Width**: 200px
-- **Max Image Width**: 400px
+- **Max Image Width**: 800px
 - **Allow Anonymous Comments**: Yes
 - **Auto-Approve Comments**: No
 - **Allow Categories**: Yes
@@ -97,7 +97,7 @@ Set a **Default Image** at the blog level to serve as a fallback for posts that 
 #### Image Sizing
 
 - **Thumbnail Image Width**: Controls the width of images in the post list view (default: 200px in new blogs).
-- **Max Image Width**: Controls the maximum width of secondary images when displayed (default: 400px).
+- **Max Image Width**: Controls the maximum width of secondary images when displayed (default: 800px).
 
 ### Updating the Publish Date
 
@@ -234,7 +234,7 @@ These settings control how the blog list page appears:
 - **Posts to Display**: Number of posts shown per page before pagination begins (default: 5).
 - **Overview Length**: Maximum number of characters displayed in the post preview on the list page. HTML is stripped from the preview (default: 500 in new blogs, 150 in XML definition).
 - **Thumbnail Image Width**: Width in pixels for post thumbnail images on the list page (default: 200px in new blogs).
-- **Max Image Width**: Maximum width in pixels for secondary images displayed within a post (default: 400px).
+- **Max Image Width**: Maximum width in pixels for secondary images displayed within a post (default: 800px).
 
 ### Blog Update Alarm
 
@@ -268,7 +268,7 @@ Table: `ccBlogs`
 | postsToDisplay | Integer | 5 | Number of posts shown per page on the blog list view. |
 | overviewLength | Integer | 150 | Maximum character count for post previews on the list page. |
 | thumbnailImageWidth | Integer | 150 | Width in pixels for thumbnail images on the list page. |
-| imageWidthMax | Integer | 400 | Maximum width in pixels for secondary images in posts. |
+| imageWidthMax | Integer | 800 | Maximum width in pixels for secondary images in posts. |
 | blogUpdateAlarmDays | Integer | 30 | Days before a stale-blog alert is triggered. |
 | allowAnonymous | Boolean | false | Allow comments from unauthenticated visitors. |
 | autoApproveComments | Boolean | false | Automatically approve new comments without moderation. |
