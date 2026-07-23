@@ -13,7 +13,7 @@ namespace Contensive.Blog {
         public override object Execute(CPBaseClass cp) {
             try {
                 if (!cp.User.IsAdmin) { return "<p>You are not authorized to access this feature.</p>"; }
-                if (!cp.AdminUI.EndpointContainsPortal()) { return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalContentManagement, constants.guidPortalFeatureBlogList, ""); }
+                if (!cp.AdminUI.EndpointContainsPortal()) { return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogList, ""); }
                 processForm(cp);
                 return getForm(cp);
             } catch (Exception ex) {
@@ -49,7 +49,7 @@ namespace Contensive.Blog {
                     }
                 }
                 if ((button ?? "") == constants.buttonCancel || (button ?? "") == constants.buttonOK) {
-                    cp.AdminUI.RedirectToPortalFeature(constants.guidPortalContentManagement, constants.guidPortalFeatureBlogList, "");
+                    cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogList, "");
                     return;
                 }
             } catch (Exception ex) {

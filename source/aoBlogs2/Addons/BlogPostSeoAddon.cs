@@ -14,7 +14,7 @@ namespace Contensive.Blog {
             try {
                 if (!cp.User.IsAdmin) { return "<p>You are not authorized to access this feature.</p>"; }
                 if (!cp.AdminUI.EndpointContainsPortal()) {
-                    return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalContentManagement, constants.guidPortalFeatureBlogList, "");
+                    return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogList, "");
                 }
                 processForm(cp);
                 return getForm(cp);
@@ -45,7 +45,7 @@ namespace Contensive.Blog {
                 if (button == constants.buttonCancel || button == constants.buttonOK) {
                     //
                     // -- return to post list
-                    cp.AdminUI.RedirectToPortalFeature(constants.guidPortalContentManagement, constants.guidPortalFeatureBlogPostList, $"&{constants.rnBlogId}={blogId}");
+                    cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogPostList, $"&{constants.rnBlogId}={blogId}");
                     return;
                 }
             } catch (Exception ex) {
@@ -63,12 +63,12 @@ namespace Contensive.Blog {
                 //
                 var blog = DbBaseModel.create<BlogModel>(cp, blogId);
                 if (blog == null) {
-                    return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalContentManagement, constants.guidPortalFeatureBlogList);
+                    return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogList);
                 }
                 //
                 var post = DbBaseModel.create<BlogEntryModel>(cp, postId);
                 if (post == null) {
-                    return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalContentManagement, constants.guidPortalFeatureBlogPostList, $"&{constants.rnBlogId}={blogId}");
+                    return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogPostList, $"&{constants.rnBlogId}={blogId}");
                 }
                 //
                 var layoutBuilder = cp.AdminUI.CreateLayoutBuilderNameValue();

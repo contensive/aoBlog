@@ -17,7 +17,7 @@ namespace Contensive.Blog {
             try {
                 if (!cp.User.IsAdmin) { return "<p>You are not authorized to access this feature.</p>"; }
                 if (!cp.AdminUI.EndpointContainsPortal()) {
-                    return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalContentManagement, constants.guidPortalFeatureBlogPostReport, "");
+                    return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogPostReport, "");
                 }
                 return getForm(cp);
             } catch (Exception ex) {
@@ -156,8 +156,8 @@ namespace Contensive.Blog {
                 sql += $" OFFSET {(layoutBuilder.paginationPageNumber - 1) * layoutBuilder.paginationPageSize} ROWS FETCH NEXT {layoutBuilder.paginationPageSize} ROWS ONLY";
                 //
                 // -- build the post detail link base
-                string postDetailBaseUrl = cp.AdminUI.GetPortalFeatureLink(constants.guidPortalContentManagement, constants.guidPortalFeatureBlogPostDetails);
-                string blogDetailBaseUrl = cp.AdminUI.GetPortalFeatureLink(constants.guidPortalContentManagement, constants.guidPortalFeatureBlogDetails);
+                string postDetailBaseUrl = cp.AdminUI.GetPortalFeatureLink(constants.guidPortalShare, constants.guidPortalFeatureBlogPostDetails);
+                string blogDetailBaseUrl = cp.AdminUI.GetPortalFeatureLink(constants.guidPortalShare, constants.guidPortalFeatureBlogDetails);
                 //
                 int rowPtr = 0;
                 using (DataTable dt = cp.Db.ExecuteQuery(sql)) {

@@ -50,7 +50,7 @@
         public const string nameGroupBlogAuthors = "Blog Authors";
         //
         // -- portal
-        public const string guidPortalContentManagement = "{3fdd7c5c-68a5-435f-ba62-a3e4cb0ee61e}";
+        public const string guidPortalShare = "{e4d011e9-9f3b-4f7e-8ec3-f4fcc2a20455}";
         public const string guidPortalFeatureBlogList = "{BEF4ADF2-A6FA-4C59-B413-69D369F8B6CE}";
         public const string guidPortalFeatureBlogDetails = "{08FBDABE-CB0E-4CC2-8BE0-57198A80102D}";
         public const string guidAddonBlogList = "{9C74771D-B95B-4ABF-86F1-00F4D5219EFC}";

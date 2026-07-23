@@ -12,7 +12,7 @@ namespace Contensive.Blog {
         public override object Execute(CPBaseClass cp) {
             try {
                 if (!cp.User.IsAdmin) { return "<p>You are not authorized to access this feature.</p>"; }
-                if (!cp.AdminUI.EndpointContainsPortal()) { return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalContentManagement, constants.guidPortalFeatureBlogList, ""); }
+                if (!cp.AdminUI.EndpointContainsPortal()) { return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogList, ""); }
                 processForm(cp);
                 return getForm(cp);
             } catch (Exception ex) {
@@ -37,7 +37,7 @@ namespace Contensive.Blog {
                             cs.SetField("postsToDisplay", "5");
                             cs.SetField("overviewLength", "500");
                             cs.Close();
-                            string detailLink = cp.AdminUI.GetPortalFeatureLink(constants.guidPortalContentManagement, constants.guidPortalFeatureBlogDetails) + $"&{constants.rnBlogId}={newBlogId}";
+                            string detailLink = cp.AdminUI.GetPortalFeatureLink(constants.guidPortalShare, constants.guidPortalFeatureBlogDetails) + $"&{constants.rnBlogId}={newBlogId}";
                             cp.Response.Redirect(detailLink);
                         }
                     }
@@ -105,8 +105,8 @@ namespace Contensive.Blog {
                 sql += string.IsNullOrEmpty(layoutBuilder.sqlOrderBy) ? " order by b.name" : $" order by {layoutBuilder.sqlOrderBy}";
                 sql += $" OFFSET {(layoutBuilder.paginationPageNumber - 1) * layoutBuilder.paginationPageSize} ROWS FETCH NEXT {layoutBuilder.paginationPageSize} ROWS ONLY";
                 //
-                string detailLink = cp.AdminUI.GetPortalFeatureLink(constants.guidPortalContentManagement, constants.guidPortalFeatureBlogDetails) + $"&{constants.rnBlogId}=";
-                string postListLink = cp.AdminUI.GetPortalFeatureLink(constants.guidPortalContentManagement, constants.guidPortalFeatureBlogPostList) + $"&{constants.rnBlogId}=";
+                string detailLink = cp.AdminUI.GetPortalFeatureLink(constants.guidPortalShare, constants.guidPortalFeatureBlogDetails) + $"&{constants.rnBlogId}=";
+                string postListLink = cp.AdminUI.GetPortalFeatureLink(constants.guidPortalShare, constants.guidPortalFeatureBlogPostList) + $"&{constants.rnBlogId}=";
                 //
                 int rowPtr = 0;
                 using (var csList = cp.CSNew()) {

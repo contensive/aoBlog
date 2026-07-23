@@ -17,21 +17,8 @@
         <div class="{{#isArticleView}}col-12{{/isArticleView}} {{^isArticleView}}col-12 col-md-6{{/isArticleView}}">
             {{{editWrapperStart}}}
             <div class="border rounded-4 mb-4 shadow-sm bg-light">
-                <div class="blogImageWrapper">
-                    {{#hasImage}}
-                        {{#isArticleView}}
-                            <img alt="{{imageName}}" title="{{imageName}}" class="{{imageClass}}" src="{{imageUrl}}" style="width:{{imageWidth}};">
-                        {{/isArticleView}}
 
-                        {{^isArticleView}}
-                            <a href="{{entryLink}}">
-                                <img alt="{{imageName}}" title="{{imageName}}" class="{{imageClass}}"src="{{imageUrl}}" style="width:{{imageWidth}};">
-                            </a>
-                        {{/isArticleView}}
-                    {{/hasImage}}  
-                </div>
-
-                <div class="blogContentWrapper p-4 pt-0">
+                <div class="blogContentWrapper p-4">
                     {{#isArticleView}}
                         <h1 class="aoBlogEntryName mb-3 fw-bold">{{headline}}</h1>
                     {{/isArticleView}}
@@ -46,9 +33,24 @@
                             <div class="aoBlogEntryByLine">Posted {{{byLine}}}</div>
                         {{/hasByLine}}
                     </div>
+                
+                    <div class="blogImageWrapper">
+                        {{#hasImage}}
+                            {{#isArticleView}}
+                                <img alt="{{imageName}}" title="{{imageName}}" class="{{imageClass}}" src="{{imageUrl}}" style="width:{{imageWidth}};">
+                            {{/isArticleView}}
+
+                            {{^isArticleView}}
+                                <a href="{{entryLink}}">
+                                    <img alt="{{imageName}}" title="{{imageName}}" class="{{imageClass}}"src="{{imageUrl}}" style="width:{{imageWidth}};">
+                                </a>
+                            {{/isArticleView}}
+                        {{/hasImage}}  
+                    </div>
+                    
                     <hr>
                 
-                   <div class="blogArticleWrapper mt-4">
+                    <div class="blogArticleWrapper mt-4">
                         {{#isArticleView}}
                             {{{copy}}}
                         {{/isArticleView}}
@@ -56,7 +58,7 @@
                         {{^isArticleView}}
                             <p>{{{copy}}}</p>
                         {{/isArticleView}}
-                   </div>
+                    </div>
             
                     {{#showReadMore}}
                         <a href="{{entryLink}}" class="aoBlogEntryReadMore">

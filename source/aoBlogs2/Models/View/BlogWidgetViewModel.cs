@@ -117,6 +117,9 @@ namespace Contensive.Blog.Models {
                 result.blogId = blog.id.ToString();
                 result.isAdmin = cp.User.IsAdmin;
                 result.isArticleView = request.blogEntryId > 0;
+                if (result.isArticleView) {
+                    result.hasCaption = false;
+                }
                 //
                 bool allowListSidebar = blog.allowEmailSubscribe | blog.allowFacebookLink | blog.allowGooglePlusLink | blog.allowRSSSubscribe | blog.allowTwitterLink | blog.allowArchiveList | blog.allowSearch;
                 bool allowArticleSidebar = allowListSidebar | blog.allowArticleCTA;

@@ -15,7 +15,7 @@ namespace Contensive.Blog {
             try {
                 if (!cp.User.IsAdmin) { return "<p>You are not authorized to access this feature.</p>"; }
                 if (!cp.AdminUI.EndpointContainsPortal()) {
-                    return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalContentManagement, constants.guidPortalFeatureBlogList, "");
+                    return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogList, "");
                 }
                 processForm(cp);
                 return getForm(cp);
@@ -34,11 +34,11 @@ namespace Contensive.Blog {
                     case constants.buttonAdd: {
                             //
                             // -- redirect to post info with postId=0 for new
-                            cp.AdminUI.RedirectToPortalFeature(constants.guidPortalContentManagement, constants.guidPortalFeatureBlogPostInfo, $"&{constants.rnBlogId}={blogId}&{constants.rnBlogPostId}=0");
+                            cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogPostInfo, $"&{constants.rnBlogId}={blogId}&{constants.rnBlogPostId}=0");
                             return;
                         }
                     case constants.buttonCancel: {
-                            cp.AdminUI.RedirectToPortalFeature(constants.guidPortalContentManagement, constants.guidPortalFeatureBlogDetails, $"&{constants.rnBlogId}={blogId}");
+                            cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogDetails, $"&{constants.rnBlogId}={blogId}");
                             return;
                         }
                 }
@@ -108,7 +108,7 @@ namespace Contensive.Blog {
                 sql += string.IsNullOrEmpty(layoutBuilder.sqlOrderBy) ? " order by dateAdded desc" : $" order by {layoutBuilder.sqlOrderBy}";
                 sql += $" OFFSET {(layoutBuilder.paginationPageNumber - 1) * layoutBuilder.paginationPageSize} ROWS FETCH NEXT {layoutBuilder.paginationPageSize} ROWS ONLY";
                 //
-                string postDetailBaseUrl = cp.AdminUI.GetPortalFeatureLink(constants.guidPortalContentManagement, constants.guidPortalFeatureBlogPostDetails);
+                string postDetailBaseUrl = cp.AdminUI.GetPortalFeatureLink(constants.guidPortalShare, constants.guidPortalFeatureBlogPostDetails);
                 postDetailBaseUrl = cp.Utils.ModifyLinkQueryString(postDetailBaseUrl, constants.rnBlogId, blogId);
                 //
                 int rowPtr = 0;
