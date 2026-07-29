@@ -80,6 +80,10 @@ force blog nav background
 	text-decoration:none;
 	color:black
 }
+.blogWrapper h2
+{
+	font-size:1.25rem;
+}
 .blogWrapper .aoBlogEntryThumbnail
 {
 	float:left;

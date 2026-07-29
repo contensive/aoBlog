@@ -118,16 +118,91 @@ namespace Contensive.Blog.Controllers {
         /// <returns></returns>
         internal static string getBriefCopy(CPBaseClass cp, string rawCopy, int MaxLength) {
             try {
-                string Copy = cp.Utils.ConvertHTML2Text(rawCopy);
-                if ((Copy?.Length ?? 0) > MaxLength) {
-                    Copy = Copy.Substring(0, MaxLength);
-                    Copy = Copy + "...";
-                }
-                return Copy;
+                return truncateHtml(rawCopy, MaxLength);
             } catch (Exception ex) {
                 cp.Site.ErrorReport(ex);
                 return "";
             }
+        }
+        //
+        // ====================================================================================================
+        /// <summary>
+        /// Truncate HTML to a maximum number of visible text characters without splitting tags.
+        /// Counts only visible text toward the limit, preserves complete HTML tags,
+        /// and closes any open tags in the correct order.
+        /// </summary>
+        internal static string truncateHtml(string html, int maxLength) {
+            if (string.IsNullOrEmpty(html)) { return html; }
+            var result = new System.Text.StringBuilder();
+            var openTags = new Stack<string>();
+            int textLength = 0;
+            int i = 0;
+            bool truncated = false;
+            while (i < html.Length) {
+                if (textLength >= maxLength) {
+                    truncated = true;
+                    break;
+                }
+                if (html[i] == '<') {
+                    // -- find the end of this tag
+                    int tagEnd = html.IndexOf('>', i);
+                    if (tagEnd < 0) {
+                        // malformed html, stop here
+                        break;
+                    }
+                    string tag = html.Substring(i, tagEnd - i + 1);
+                    result.Append(tag);
+                    // -- determine if this is an opening, closing, or self-closing tag
+                    string tagContent = tag.Substring(1, tag.Length - 2).Trim();
+                    bool isSelfClosing = tagContent.EndsWith("/") || tag.StartsWith("<br", StringComparison.OrdinalIgnoreCase) || tag.StartsWith("<img", StringComparison.OrdinalIgnoreCase) || tag.StartsWith("<hr", StringComparison.OrdinalIgnoreCase) || tag.StartsWith("<input", StringComparison.OrdinalIgnoreCase);
+                    if (tagContent.StartsWith("/")) {
+                        // -- closing tag, pop from stack
+                        string closingName = Regex.Match(tagContent, @"/\s*(\w+)").Groups[1].Value.ToLowerInvariant();
+                        // -- pop tags until we find the matching one (handles minor nesting issues)
+                        var tempStack = new Stack<string>();
+                        while (openTags.Count > 0) {
+                            string top = openTags.Pop();
+                            if (top == closingName) { break; }
+                            tempStack.Push(top);
+                        }
+                        // -- push back any non-matching tags
+                        while (tempStack.Count > 0) {
+                            openTags.Push(tempStack.Pop());
+                        }
+                    } else if (!isSelfClosing && !tagContent.StartsWith("!")) {
+                        // -- opening tag, push tag name onto stack
+                        string tagName = Regex.Match(tagContent, @"^(\w+)").Groups[1].Value.ToLowerInvariant();
+                        if (!string.IsNullOrEmpty(tagName)) {
+                            openTags.Push(tagName);
+                        }
+                    }
+                    i = tagEnd + 1;
+                } else if (html[i] == '&') {
+                    // -- HTML entity (e.g. &amp;), counts as one visible character
+                    int semiPos = html.IndexOf(';', i);
+                    if (semiPos > i && semiPos - i < 10) {
+                        result.Append(html, i, semiPos - i + 1);
+                        i = semiPos + 1;
+                    } else {
+                        result.Append(html[i]);
+                        i++;
+                    }
+                    textLength++;
+                } else {
+                    // -- visible text character
+                    result.Append(html[i]);
+                    textLength++;
+                    i++;
+                }
+            }
+            // -- if we truncated, append ellipsis and close open tags
+            if (truncated) {
+                result.Append("...");
+                while (openTags.Count > 0) {
+                    result.Append($"</{openTags.Pop()}>");
+                }
+            }
+            return result.ToString();
         }
         // 
         // ====================================================================================

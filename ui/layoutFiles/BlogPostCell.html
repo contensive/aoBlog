@@ -34,8 +34,8 @@
                         {{/hasByLine}}
                     </div>
                 
-                    <div class="blogImageWrapper">
-                        {{#hasImage}}
+                    {{#hasImage}}
+                        <div class="blogImageWrapper">
                             {{#isArticleView}}
                                 <img alt="{{imageName}}" title="{{imageName}}" class="{{imageClass}}" src="{{imageUrl}}" style="width:{{imageWidth}};">
                             {{/isArticleView}}
@@ -45,8 +45,8 @@
                                     <img alt="{{imageName}}" title="{{imageName}}" class="{{imageClass}}"src="{{imageUrl}}" style="width:{{imageWidth}};">
                                 </a>
                             {{/isArticleView}}
-                        {{/hasImage}}  
-                    </div>
+                        </div>
+                    {{/hasImage}}  
                     
                     <hr>
                 
