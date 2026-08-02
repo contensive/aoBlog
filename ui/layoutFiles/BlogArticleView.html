@@ -26,6 +26,10 @@
                         <div class="card rounded-0">
                             <div class="card-header py-3 bg-white"><h4>Post a Comment</h4></div>
                             <div class="card-body">
+                                {{#commentAccepted}}
+                                    <div class="aoBlogCommentCopy">Thank you. Your comment has been received and will be reviewed.</div>
+                                {{/commentAccepted}}
+                                {{^commentAccepted}}
                                 {{#hasUserError}}
                                     <div class="aoBlogCommentError">{{userErrorMessage}}</div>
                                 {{/hasUserError}}
@@ -48,17 +52,17 @@
                                 {{/showLoginRequired}}
                                 {{#showPostForm}}
                                     <div class="mb-3"></div>
-                                    <label for="CommentTitle">Title</label>
+                                    <label class="mt-2"  for="CommentTitle">Title</label>
                                     <div class="aoBlogCommentCopy">
                                         <input type="text" id="CommentTitle" name="CommentTitle" value="{{titleInputValue}}" maxlength="35" class="form-control">
                                     </div>
                             
-                                    <label for="CommentCopy">Comment</label>
+                                    <label class="mt-2" for="CommentCopy">Comment</label>
                                     <div class="aoBlogCommentCopy">
                                         <textarea id="CommentCopy" name="CommentCopy" maxlength="500" class="form-control">{{commentTextAreaValue}}</textarea>
                                     </div>
                                     {{#hasRecaptcha}}
-                                        <label for="Recaptcha">Verify Text</label>
+                                        <label class="mt-2" for="Recaptcha">Verification Test</label>
                                         <div class="aoBlogCommentCopy">{{{recaptchaHtml}}}</div>
                                     {{/hasRecaptcha}}
                                     <div class="aoBlogCommentCopy mb-3">
@@ -66,6 +70,7 @@
                                         <input type="submit" name="button" value="{{cancelButtonValue}}" class="btn btn-outline-danger">
                                     </div>
                                 {{/showPostForm}}
+                                {{/commentAccepted}}
                             </div>
                         </div>
                     </div>

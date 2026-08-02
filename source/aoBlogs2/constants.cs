@@ -92,6 +92,7 @@
         public const string buttonCancel = " Cancel ";
         public const string buttonOK = " OK ";
         public const string buttonDelete = " Delete ";
+        public const string buttonEmailVersion = " Email Version ";
         //
         public const string reCaptchaDisplayGuid = "{E9E51C6E-9152-4284-A44F-D3ABC423AB90}";
         public const string reCaptchaProcessGuid = "{030AC5B0-F796-4EA4-B94C-986B1C29C16C}";
@@ -106,6 +107,7 @@
         // -- messages
         // 
         public const string BackToRecentPostsMsg = "« Back to Recent Articles";
+        public const string spamBlockedMsg = "Your comment could not be posted.";
         // 
         // -- content
         // 
@@ -122,6 +124,7 @@
         public const string cnBlogImages = "Blog Images";
         public const string cnBlogImageRules = "Blog Image Rules";
         public const string cnCTA = "Calls to Action";
+        public const string cnGroupEmail = "Group Email";
         // 
         // -- no idea what this is
         // 

@@ -68,107 +68,87 @@ namespace Contensive.Blog.Views {
                     hint = 70;
                     result += "<div class=\"aoBlogCommentHeader\">Post a Comment</div>";
                     // 
-                    if (cp?.UserError != null && !cp.UserError.OK()) {
-                        result += "<div class=\"aoBlogCommentError\">" + cp.UserError.OK() + "</div>";
-                    }
-                    // 
-                    if (!app.blog.allowAnonymous && !cp.User.IsAuthenticated) {
-                        hint = 80;
-                        bool AllowPasswordEmail = cp.Site.GetBoolean("AllowPasswordEmail", false);
-                        bool AllowMemberJoin = cp.Site.GetBoolean("AllowMemberJoin", false);
-                        // 
-                        int Auth = cp.Doc.GetInteger("auth");
-                        if (Auth == 1 && !AllowPasswordEmail) {
-                            Auth = 3;
-                        } else if (Auth == 2 && !AllowMemberJoin) {
-                            Auth = 3;
-                        }
-                        cp.Doc.AddRefreshQueryString(constants.rnFormID, constants.FormBlogPostDetails.ToString());
-                        cp.Doc.AddRefreshQueryString(constants.RequestNameBlogEntryID, app.blogPost.id.ToString());
-                        cp.Doc.AddRefreshQueryString("auth", "0");
-                        qs = cp.Doc.RefreshQueryString;
-                        string Copy;
-                        hint = 90;
-                        switch (Auth) {
-                            case 1: {
-                                    hint = 100;
-                                    // 
-                                    // password email
-                                    // 
-                                    Copy = "To retrieve your username and password, submit your email. ";
-                                    qs = cp.Utils.ModifyQueryString(qs, "auth", "0");
-                                    Copy = Copy + " <a href=\"?" + qs + "\"> Login?</a>";
-                                    if (AllowMemberJoin) {
-                                        qs = cp.Utils.ModifyQueryString(qs, "auth", "2");
-                                        Copy = Copy + " <a href=\"?" + qs + "\"> Join?</a>";
-                                    }
-                                    result = result + "<div class=\"aoBlogLoginBox\">\r\n\t<div class=\"aoBlogCommentCopy\">" + Copy + "</div>\r\n\t<div class=\"aoBlogCommentCopy\">send password form removed</div></div>";
-
-
-
-                                    break;
-                                }
-                            case 2: {
-                                    hint = 110;
-                                    // 
-                                    // join
-                                    // 
-                                    Copy = "To post a comment to this blog, complete this form. ";
-                                    qs = cp.Utils.ModifyQueryString(qs, "auth", "0");
-                                    Copy = Copy + " <a href=\"?" + qs + "\"> Login?</a>";
-                                    if (AllowPasswordEmail) {
-                                        qs = cp.Utils.ModifyQueryString(qs, "auth", "1");
-                                        Copy = Copy + " <a href=\"?" + qs + "\"> Forget your username or password?</a>";
-                                    }
-                                    result = result + "<div class=\"aoBlogLoginBox\"><div class=\"aoBlogCommentCopy\">" + Copy + "</div><div class=\"aoBlogCommentCopy\">Send join form removed</div></div>";
-
-
-
-                                    break;
-                                }
-
-                            default: {
-                                    hint = 120;
-                                    // 
-                                    // login
-                                    // 
-                                    Copy = "To post a comment to this Blog, please login.";
-                                    if (AllowMemberJoin) {
-                                        qs = cp.Utils.ModifyQueryString(qs, "auth", "2");
-                                        Copy = Copy + "<div class=\"aoBlogRegisterLink\"><a href=\"?" + qs + "\">Need to Register?</a></div>";
-                                    }
-                                    result = result + "<div class=\"aoBlogCommentCopy\">" + Copy + "</div></div>";
-
-                                    break;
-                                }
-                        }
-                        hint = 140;
+                    //
+                    // -- check if a comment was just successfully posted
+                    string buttonValue = cp.Doc.GetText("button");
+                    if (buttonValue == constants.FormButtonPostComment && !RetryCommentPost && cp.UserError.OK()) {
+                        result += "<div class=\"aoBlogCommentCopy\">Thank you. Your comment has been received and will be reviewed.</div>";
                     } else {
-                        hint = 150;
-                        result += "<div>&nbsp;</div>";
-                        result += "<div class=\"aoBlogCommentCopy\">Title</div>";
-                        if (RetryCommentPost) {
-                            hint = 160;
-                            result += "<div class=\"aoBlogCommentCopy\">" + _GenericController.getField(cp, constants.RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(constants.RequestNameCommentTitle.ToString())) + "</div>";
-                            result += "<div>&nbsp;</div>";
-                            result += "<div class=\"aoBlogCommentCopy\">Comment</div>";
-                            result += "<div class=\"aoBlogCommentCopy\">" + cp.Html5.InputTextArea(constants.RequestNameCommentCopy, 500, cp.Doc.GetText(constants.RequestNameCommentCopy)) + "</div>";
+                        if (cp?.UserError != null && !cp.UserError.OK()) {
+                            result += "<div class=\"aoBlogCommentError\">" + cp.Utils.ConvertHTML2Text(cp.Html.ul(cp.UserError.GetList())) + "</div>";
+                        }
+                        //
+                        if (!app.blog.allowAnonymous && !cp.User.IsAuthenticated) {
+                            hint = 80;
+                            bool AllowPasswordEmail = cp.Site.GetBoolean("AllowPasswordEmail", false);
+                            bool AllowMemberJoin = cp.Site.GetBoolean("AllowMemberJoin", false);
+                            //
+                            int Auth = cp.Doc.GetInteger("auth");
+                            if (Auth == 1 && !AllowPasswordEmail) {
+                                Auth = 3;
+                            } else if (Auth == 2 && !AllowMemberJoin) {
+                                Auth = 3;
+                            }
+                            cp.Doc.AddRefreshQueryString(constants.rnFormID, constants.FormBlogPostDetails.ToString());
+                            cp.Doc.AddRefreshQueryString(constants.RequestNameBlogEntryID, app.blogPost.id.ToString());
+                            cp.Doc.AddRefreshQueryString("auth", "0");
+                            qs = cp.Doc.RefreshQueryString;
+                            string Copy;
+                            hint = 90;
+                            switch (Auth) {
+                                case 1: {
+                                        hint = 100;
+                                        Copy = "To retrieve your username and password, submit your email. ";
+                                        qs = cp.Utils.ModifyQueryString(qs, "auth", "0");
+                                        Copy = Copy + " <a href=\"?" + qs + "\"> Login?</a>";
+                                        if (AllowMemberJoin) {
+                                            qs = cp.Utils.ModifyQueryString(qs, "auth", "2");
+                                            Copy = Copy + " <a href=\"?" + qs + "\"> Join?</a>";
+                                        }
+                                        result = result + "<div class=\"aoBlogLoginBox\">\r\n\t<div class=\"aoBlogCommentCopy\">" + Copy + "</div>\r\n\t<div class=\"aoBlogCommentCopy\">send password form removed</div></div>";
+                                        break;
+                                    }
+                                case 2: {
+                                        hint = 110;
+                                        Copy = "To post a comment to this blog, complete this form. ";
+                                        qs = cp.Utils.ModifyQueryString(qs, "auth", "0");
+                                        Copy = Copy + " <a href=\"?" + qs + "\"> Login?</a>";
+                                        if (AllowPasswordEmail) {
+                                            qs = cp.Utils.ModifyQueryString(qs, "auth", "1");
+                                            Copy = Copy + " <a href=\"?" + qs + "\"> Forget your username or password?</a>";
+                                        }
+                                        result = result + "<div class=\"aoBlogLoginBox\"><div class=\"aoBlogCommentCopy\">" + Copy + "</div><div class=\"aoBlogCommentCopy\">Send join form removed</div></div>";
+                                        break;
+                                    }
+                                default: {
+                                        hint = 120;
+                                        Copy = "To post a comment to this Blog, please login.";
+                                        if (AllowMemberJoin) {
+                                            qs = cp.Utils.ModifyQueryString(qs, "auth", "2");
+                                            Copy = Copy + "<div class=\"aoBlogRegisterLink\"><a href=\"?" + qs + "\">Need to Register?</a></div>";
+                                        }
+                                        result = result + "<div class=\"aoBlogCommentCopy\">" + Copy + "</div></div>";
+                                        break;
+                                    }
+                            }
+                            hint = 140;
                         } else {
-                            hint = 170;
+                            hint = 150;
+                            result += "<div>&nbsp;</div>";
+                            result += "<div class=\"aoBlogCommentCopy\">Title</div>";
                             result += "<div class=\"aoBlogCommentCopy\">" + _GenericController.getField(cp, constants.RequestNameCommentTitle, 1, 35, 35, cp.Doc.GetText(constants.RequestNameCommentTitle.ToString())) + "</div>";
                             result += "<div>&nbsp;</div>";
                             result += "<div class=\"aoBlogCommentCopy\">Comment</div>";
                             result += "<div class=\"aoBlogCommentCopy\">" + cp.Html5.InputTextArea(constants.RequestNameCommentCopy, 500, cp.Doc.GetText(constants.RequestNameCommentCopy)) + "</div>";
+                            //
+                            hint = 180;
+                            if (app.blog.recaptcha) {
+                                result += "<div class=\"aoBlogCommentCopy\">Verification Test</div>";
+                                result += "<div class=\"aoBlogCommentCopy\">" + cp.Addon.Execute(constants.reCaptchaDisplayGuid) + "</div>";
+                            }
+                            //
+                            result += "<div class=\"aoBlogCommentCopy\">" + cp.Html.Button(constants.rnButton, constants.FormButtonPostComment) + "&nbsp;" + cp.Html.Button(constants.rnButton, constants.FormButtonCancel) + "</div>";
                         }
-                        // 
-                        // todo re-enable recaptcha 20190123
-                        hint = 180;
-                        if (app.blog.recaptcha) {
-                            result += "<div class=\"aoBlogCommentCopy\">Verify Text</div>";
-                            result += "<div class=\"aoBlogCommentCopy\">" + cp.Addon.Execute(constants.reCaptchaDisplayGuid) + "</div>";
-                        }
-                        // 
-                        result += "<div class=\"aoBlogCommentCopy\">" + cp.Html.Button(constants.rnButton, constants.FormButtonPostComment) + "&nbsp;" + cp.Html.Button(constants.rnButton, constants.FormButtonCancel) + "</div>";
                     }
                 }
                 hint = 190;
@@ -220,7 +200,7 @@ namespace Contensive.Blog.Views {
                     // 
                     result = constants.FormBlogPostList;
                 } else {
-                    string Copy;
+                    string Copy = "";
                     string formKey;
                     int CommentID;
                     if ((request.ButtonValue ?? "") == constants.FormButtonCancel) {
@@ -238,66 +218,67 @@ namespace Contensive.Blog.Views {
                             optionStr = optionStr + "&Response=" + cp.Doc.GetText("recaptcha_response_field");
                             string captchaResponse = cp.Addon.Execute(constants.reCaptchaProcessGuid);
                             if (!string.IsNullOrEmpty(captchaResponse)) {
-                                cp.UserError.Add("The verify text you entered did not match correctly. Please try again.");
+                                cp.UserError.Add("The verification test was not successful. Please try again.");
                             }
                         }
-                        // 
-                        // Process comment post
-                        // 
+                        //
+                        // Process comment post (skip if recaptcha or other validation failed)
+                        //
                         RetryCommentPost = true;
-                        formKey = cp.Doc.GetText("formkey");
-                        Copy = cp.Doc.GetText(constants.RequestNameCommentCopy);
-                        if (!string.IsNullOrEmpty(Copy)) {
-                            var BlogCommentModelList = DbBaseModel.createList<BlogCommentModel>(cp, "(formkey=" + cp.Db.EncodeSQLText(formKey) + ")", "ID");
-                            if (BlogCommentModelList.Count != 0) {
-                                cp.UserError.Add("<p>This comment has already been accepted.</p>");
-                                RetryCommentPost = false;
-                            } else {
-                                // Dim EntryID = cp.Doc.GetInteger(RequestNameBlogEntryID)
-                                // Dim BlogEntry As BlogEntryModel = DbBaseModel.create(Of BlogEntryModel)(cp, EntryID)
-                                var BlogComment = DbBaseModel.addDefault<BlogCommentModel>(cp);
-                                BlogComment.blogId = blog.id;
-                                BlogComment.active = true;
-                                BlogComment.name = cp.Doc.GetText(constants.RequestNameCommentTitle);
-                                BlogComment.copyText = Copy;
-                                BlogComment.entryId = blogEntry.id;
-                                BlogComment.approved = (user != null && user.isBlogEditor(cp, blog)) | blog.autoApproveComments;
-                                BlogComment.formKey = formKey;
-                                BlogComment.save(cp);
-                                CommentID = BlogComment.id;
-                                RetryCommentPost = false;
-                                // 
-                                if (blog.emailComment) {
-                                    // 
-                                    // Send Comment Notification
-                                    string EntryLink = blogEntry.rssLink;
-                                    if (!EntryLink.Contains("?")) {
-                                        EntryLink += "?";
-                                    } else {
-                                        EntryLink += "&";
-                                    }
-                                    EntryLink = EntryLink + "blogentryid=" + blogEntry.id;
-                                    string EmailBody = $"The following blog comment was posted {DateTime.Now}To approve this comment, go to {EntryLink}\r\nBlog '{blog.name}'Post '{blogEntry.name}'By {cp.User.Name}\r\n\r\n{cp.Utils.EncodeHTML(Copy)}\r\n";
-                                    string EmailFromAddress = cp.Site.GetText("EmailFromAddress", "info@" + cp.Site.Domain);
-                                    if (blogEntry.authorMemberId != 0) {
-                                        cp.Email.sendUser(blogEntry.authorMemberId, EmailFromAddress, "Blog comment notification for [" + blog.name + "]", EmailBody, true, false);
-                                        cp.Email.sendUser(blogEntry.authorMemberId, EmailFromAddress, "Blog comment notification for [" + blog.name + "]", EmailBody, false, false);
-                                    }
-
-                                    // If blog.AuthoringGroupID <> 0 Then
-                                    // Dim MemberRuleList As List(Of MemberRuleModel) = DbBaseModel.createList(Of MemberRuleModel)(cp, "GroupId=" & blog.AuthoringGroupID)
-                                    // For Each MemberRule In MemberRuleList
-                                    // Call cp.Email.sendUser(MemberRule.MemberID.ToString(), EmailFromAddress, "Blog comment on " & blog.name, EmailBody, False, False)
-                                    // Next
-                                    // End If
-                                    int blogAuthorsGroupId = cp.Group.GetId(constants.nameGroupBlogAuthors);
-                                    if (blogAuthorsGroupId != 0) {
-                                        var MemberRuleList = DbBaseModel.createList<MemberRuleModel>(cp, "GroupId=" + blogAuthorsGroupId);
-                                        foreach (var MemberRule in MemberRuleList)
-                                            cp.Email.sendUser(MemberRule.memberId, EmailFromAddress, "Blog comment on " + blog.name, EmailBody, false, false);
+                        if (cp.UserError.OK()) {
+                            //
+                            // -- spam detection: block entirely if spam patterns detected
+                            string commentTitle = cp.Doc.GetText(constants.RequestNameCommentTitle);
+                            Copy = cp.Doc.GetText(constants.RequestNameCommentCopy);
+                            if (Controllers.SpamDetector.isSpam(commentTitle, Copy)) {
+                                cp.UserError.Add(constants.spamBlockedMsg);
+                            }
+                        }
+                        if (cp.UserError.OK()) {
+                            formKey = cp.Doc.GetText("formkey");
+                            if (!string.IsNullOrEmpty(Copy)) {
+                                var BlogCommentModelList = DbBaseModel.createList<BlogCommentModel>(cp, "(formkey=" + cp.Db.EncodeSQLText(formKey) + ")", "ID");
+                                if (BlogCommentModelList.Count != 0) {
+                                    cp.UserError.Add("This comment has already been accepted.");
+                                    RetryCommentPost = false;
+                                } else {
+                                    var BlogComment = DbBaseModel.addDefault<BlogCommentModel>(cp);
+                                    BlogComment.blogId = blog.id;
+                                    BlogComment.active = true;
+                                    BlogComment.name = cp.Doc.GetText(constants.RequestNameCommentTitle);
+                                    BlogComment.copyText = Copy;
+                                    BlogComment.entryId = blogEntry.id;
+                                    BlogComment.approved = (user != null && user.isBlogEditor(cp, blog)) | blog.autoApproveComments;
+                                    BlogComment.formKey = formKey;
+                                    BlogComment.save(cp);
+                                    CommentID = BlogComment.id;
+                                    RetryCommentPost = false;
+                                    //
+                                    if (blog.emailComment) {
+                                        //
+                                        // Send Comment Notification
+                                        string EntryLink = blogEntry.rssLink;
+                                        if (!EntryLink.Contains("?")) {
+                                            EntryLink += "?";
+                                        } else {
+                                            EntryLink += "&";
+                                        }
+                                        EntryLink = EntryLink + "blogentryid=" + blogEntry.id;
+                                        string EmailBody = $"The following blog comment was posted {DateTime.Now}To approve this comment, go to {EntryLink}\r\nBlog '{blog.name}'Post '{blogEntry.name}'By {cp.User.Name}\r\n\r\n{cp.Utils.EncodeHTML(Copy)}\r\n";
+                                        string EmailFromAddress = cp.Site.GetText("EmailFromAddress", "info@" + cp.Site.Domain);
+                                        if (blogEntry.authorMemberId != 0) {
+                                            cp.Email.sendUser(blogEntry.authorMemberId, EmailFromAddress, "Blog comment notification for [" + blog.name + "]", EmailBody, true, false);
+                                            cp.Email.sendUser(blogEntry.authorMemberId, EmailFromAddress, "Blog comment notification for [" + blog.name + "]", EmailBody, false, false);
+                                        }
+                                        int blogAuthorsGroupId = cp.Group.GetId(constants.nameGroupBlogAuthors);
+                                        if (blogAuthorsGroupId != 0) {
+                                            var MemberRuleList = DbBaseModel.createList<MemberRuleModel>(cp, "GroupId=" + blogAuthorsGroupId);
+                                            foreach (var MemberRule in MemberRuleList) {
+                                                cp.Email.sendUser(MemberRule.memberId, EmailFromAddress, "Blog comment on " + blog.name, EmailBody, false, false);
+                                            }
+                                        }
                                     }
                                 }
-
                             }
                         }
                         result = constants.FormBlogPostDetails;

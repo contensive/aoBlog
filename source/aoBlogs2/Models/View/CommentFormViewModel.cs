@@ -30,6 +30,9 @@ namespace Contensive.Blog.Models.View {
         public bool allowMemberJoin { get; set; }
         public bool allowPasswordEmail { get; set; }
         //
+        // -- comment accepted confirmation
+        public bool commentAccepted { get; set; }
+        //
         // -- post form (authenticated or anonymous allowed)
         public bool showPostForm { get; set; }
         public string titleInputValue { get; set; }
@@ -55,10 +58,17 @@ namespace Contensive.Blog.Models.View {
                 }
                 result.showCommentForm = true;
                 //
+                // -- check if a comment was just successfully posted
+                string buttonValue = cp.Doc.GetText("button");
+                if (buttonValue == constants.FormButtonPostComment && !retryCommentPost && cp.UserError.OK()) {
+                    result.commentAccepted = true;
+                    return result;
+                }
+                //
                 // -- user error
                 if (cp?.UserError != null && !cp.UserError.OK()) {
                     result.hasUserError = true;
-                    result.userErrorMessage = cp.UserError.OK().ToString();
+                    result.userErrorMessage = cp.Utils.ConvertHTML2Text(cp.Html.ul(cp.UserError.GetList()));
                 }
                 //
                 if (!app.blog.allowAnonymous && !cp.User.IsAuthenticated) {
