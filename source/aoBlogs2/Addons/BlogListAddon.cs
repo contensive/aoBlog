@@ -54,6 +54,7 @@ namespace Contensive.Blog {
                 if (!cp.Response.isOpen) { return ""; }
                 //
                 var layoutBuilder = cp.AdminUI.CreateLayoutBuilderList();
+                layoutBuilder.callbackAddonGuid = constants.guidAddonBlogList;
                 //
                 // -- columns
                 layoutBuilder.columnCaption = "Row";
@@ -139,7 +140,6 @@ namespace Contensive.Blog {
                 // -- layout settings
                 layoutBuilder.title = "Blogs";
                 layoutBuilder.description = "Click a blog to see its details.";
-                layoutBuilder.callbackAddonGuid = constants.guidAddonBlogList;
                 layoutBuilder.includeBodyColor = true;
                 layoutBuilder.includeBodyPadding = true;
                 layoutBuilder.includeForm = true;

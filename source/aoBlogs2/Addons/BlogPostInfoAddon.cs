@@ -87,6 +87,7 @@ namespace Contensive.Blog {
                 }
                 //
                 var layoutBuilder = cp.AdminUI.CreateLayoutBuilderNameValue();
+                layoutBuilder.callbackAddonGuid = constants.guidAddonBlogPostInfo;
                 //
                 var post = DbBaseModel.create<BlogEntryModel>(cp, postId);
                 bool isNew = (post == null);
@@ -97,7 +98,6 @@ namespace Contensive.Blog {
                 layoutBuilder.includeBodyColor = true;
                 layoutBuilder.includeBodyPadding = true;
                 layoutBuilder.isOuterContainer = false;
-                layoutBuilder.callbackAddonGuid = constants.guidAddonBlogPostInfo;
                 //
                 // -- form fields
                 layoutBuilder.addRow();

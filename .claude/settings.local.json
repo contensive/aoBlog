@@ -11,7 +11,9 @@
       "Bash(claude:*)",
       "Bash(powershell -Command:*)",
       "Bash(grep:*)",
-      "WebFetch(domain:www.contensive.com)"
+      "WebFetch(domain:www.contensive.com)",
+      "WebFetch(domain:contensive.io)",
+      "WebFetch(domain:support.contensive.com)"
     ]
   }
 }

@@ -31,6 +31,7 @@ namespace Contensive.Blog {
                 if (!cp.Response.isOpen) { return ""; }
                 //
                 var layoutBuilder = cp.AdminUI.CreateLayoutBuilderList();
+                layoutBuilder.callbackAddonGuid = constants.guidAddonBlogPostReport;
                 //
                 // -- get filter values
                 int blogFilterId = layoutBuilder.getFilterInteger(constants.rnReportBlogFilter, filterViewName);
@@ -194,7 +195,6 @@ namespace Contensive.Blog {
                 // -- layout settings
                 layoutBuilder.title = "Blog Post Report";
                 layoutBuilder.description = "Blog post views report with period and blog filters.";
-                layoutBuilder.callbackAddonGuid = constants.guidAddonBlogPostReport;
                 layoutBuilder.includeForm = true;
                 layoutBuilder.includeBodyColor = true;
                 layoutBuilder.includeBodyPadding = true;

@@ -121,6 +121,7 @@ namespace Contensive.Blog {
                 }
                 //
                 var layoutBuilder = cp.AdminUI.CreateLayoutBuilder();
+                layoutBuilder.callbackAddonGuid = constants.guidAddonBlogPostDetails;
                 //
                 // -- title field and WYSIWYG editor for blog copy
                 string titleInput = cp.Html5.InputText("rnPostTitle", 255, post.name ?? "", "form-control");
@@ -130,7 +131,6 @@ namespace Contensive.Blog {
                 // -- layout settings
                 layoutBuilder.title = $"Edit Post: {post.name}";
                 layoutBuilder.portalSubNavTitle = $"{blog.name}, #{blog.id}";
-                layoutBuilder.callbackAddonGuid = constants.guidAddonBlogPostDetails;
                 layoutBuilder.includeForm = true;
                 //
                 // -- buttons
