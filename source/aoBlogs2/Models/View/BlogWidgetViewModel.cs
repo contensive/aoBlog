@@ -138,12 +138,13 @@ namespace Contensive.Blog.Models {
                             var cta = DbBaseModel.create<CallsToActionModel>(cp, rule.calltoactionid);
                             if (cta is not null) {
                                 cp.Log.Debug($"BlogWidgetViewModel.create, CTA found: id={cta.id}, name={cta.name}, headline={cta.headline}, buttontext={cta.buttontext}, link={cta.link}");
+                                string ctaButtonText = string.IsNullOrEmpty(cta.buttontext) ? "Find Out More" : cta.buttontext;
                                 result.ctaList.Add(new CtaItemViewModel {
                                     headline = cta.headline,
                                     brief = cp.Utils.DecodeHTML(cta.brief),
-                                    buttonText = cta.buttontext,
+                                    buttonText = ctaButtonText,
                                     buttonLink = cta.link,
-                                    hasButton = !string.IsNullOrEmpty(cta.buttontext) && !string.IsNullOrEmpty(cta.link)
+                                    hasButton = !string.IsNullOrEmpty(cta.link)
                                 });
                             }
                         }

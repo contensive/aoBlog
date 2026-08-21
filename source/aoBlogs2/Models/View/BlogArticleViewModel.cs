@@ -98,6 +98,9 @@ namespace Contensive.Blog.Models.View {
                 cp.Log.Debug("BlogArticleViewModel.create, call setEntryMetadata");
                 MetadataController.setEntryMetadata(app, app.blog, app.blogPost, blogImageList);
                 //
+                // -- set structured data (JSON-LD)
+                StructuredDataController.addBlogPostingJsonLd(cp, app, app.blog, app.blogPost, blogImageList);
+                //
                 cp.Log.Debug("BlogArticleViewModel.create, exit");
                 return result;
             } catch (Exception ex) {
