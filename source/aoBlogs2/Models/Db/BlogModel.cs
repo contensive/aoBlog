@@ -36,6 +36,7 @@ namespace Contensive.Blog.Models {
         public string followUsCaption { get; set; }
         public string googlePlusLink { get; set; }
         public int imageWidthMax { get; set; }
+        public int defaultImageAspectRatioId { get; set; }
         public int overviewLength { get; set; }
         public int ownerMemberId { get; set; }
         public int postsToDisplay { get; set; }
@@ -123,6 +124,7 @@ namespace Contensive.Blog.Models {
                 Blog.overviewLength = 500;
                 Blog.thumbnailImageWidth = 200;
                 Blog.imageWidthMax = 800;
+                Blog.defaultImageAspectRatioId = 5; // 16:9 aspect ratio
                 Blog.allowArticleCTA = true;
                 Blog.ccguid = instanceGuid;
                 Blog.save(cp);

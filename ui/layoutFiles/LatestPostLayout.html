@@ -118,7 +118,15 @@
                                             <div>{{{mainPost.editTag}}}</div>
                                             <div class="{{#isEditing}}ccEditWrapper{{/isEditing}}">
                                                 <div class="d-md-flex d-lg-block">
-                                                    <img src="{{mainPost.postImage}}" alt="image for post {{mainPost.headline}}" title="{{mainPost.headline}}" class="firstPostImg latestPostImgs">
+                                                    <img src="{{mainPost.postImageSrc}}"
+                                                         srcset="{{mainPost.postImageSrcSet}}"
+                                                         sizes="{{mainPost.postImageSizes}}"
+                                                         width="{{mainPost.postImageWidth}}"
+                                                         height="{{mainPost.postImageHeight}}"
+                                                         alt="image for post {{mainPost.headline}}"
+                                                         title="{{mainPost.headline}}"
+                                                         class="firstPostImg latestPostImgs"
+                                                         fetchpriority="high">
                                                     <div>
                                                         <p class="txt-hghlt">{{mainPost.postDate}}</p>
                                                         <h4 class="hdr-conR">{{mainPost.headline}}</h4>
@@ -135,7 +143,15 @@
                                                 <div>{{{editTag}}}</div>
                                                 <div class="{{#isEditing}}ccEditWrapper{{/isEditing}}">
                                                     <div class="column col2">
-                                                        <img src="{{postImage}}" alt="image for post {{headline}}" title="{{headline}}" class="latestPostImgs">
+                                                        <img src="{{postImageSrc}}"
+                                                             srcset="{{postImageSrcSet}}"
+                                                             sizes="{{postImageSizes}}"
+                                                             width="{{postImageWidth}}"
+                                                             height="{{postImageHeight}}"
+                                                             alt="image for post {{headline}}"
+                                                             title="{{headline}}"
+                                                             class="latestPostImgs"
+                                                             loading="lazy">
                                                         <div>
                                                             <p class="txt-hghlt">{{postDate}}</p>
                                                             <h4 class="hdr-conR">{{headline}}</h4>

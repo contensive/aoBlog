@@ -15,10 +15,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Contensive.CPBaseClass" Version="26.6.7.40522" />
-    <PackageReference Include="Contensive.DbModels" Version="26.6.7.40522" />
+    <PackageReference Include="Contensive.CPBaseClass" Version="26.8.25.27222" />
+    <PackageReference Include="Contensive.DbModels" Version="26.8.25.27222" />
     <PackageReference Include="Contensive.DesignBlockBase" Version="26.6.7.41231" />
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.6" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.11" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
   </ItemGroup>

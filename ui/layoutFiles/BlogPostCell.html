@@ -37,12 +37,30 @@
                     {{#hasImage}}
                         <div class="blogImageWrapper">
                             {{#isArticleView}}
-                                <img alt="{{imageName}}" title="{{imageName}}" class="{{imageClass}}" src="{{imageUrl}}" style="width:{{imageWidth}};">
+                                <img alt="{{imageName}}"
+                                     title="{{imageName}}"
+                                     class="{{imageClass}}"
+                                     src="{{imageSrc}}"
+                                     srcset="{{imageSrcSet}}"
+                                     sizes="{{imageSizes}}"
+                                     width="{{imageWidth}}"
+                                     height="{{imageHeight}}"
+                                     loading="lazy"
+                                     style="width:{{imageWidth}};">
                             {{/isArticleView}}
 
                             {{^isArticleView}}
                                 <a href="{{entryLink}}">
-                                    <img alt="{{imageName}}" title="{{imageName}}" class="{{imageClass}}"src="{{imageUrl}}" style="width:{{imageWidth}};">
+                                    <img alt="{{imageName}}"
+                                         title="{{imageName}}"
+                                         class="{{imageClass}}"
+                                         src="{{imageSrc}}"
+                                         srcset="{{imageSrcSet}}"
+                                         sizes="{{imageSizes}}"
+                                         width="{{imageWidth}}"
+                                         height="{{imageHeight}}"
+                                         loading="lazy"
+                                         style="width:{{imageWidth}};">
                                 </a>
                             {{/isArticleView}}
                         </div>

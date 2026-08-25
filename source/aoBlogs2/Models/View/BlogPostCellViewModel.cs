@@ -31,6 +31,16 @@ namespace Contensive.Blog.Models.View {
         public string imageClass { get; set; }
         public string imageWidth { get; set; }
         //
+        // -- responsive image properties
+        public string imageSrc { get; set; }
+        public string imageSrcSet { get; set; }
+        public string imageSizes { get; set; }
+        public int imageHeight { get; set; }
+        //
+        // -- aspect ratio styling
+        public bool manageAspectRatio { get; set; }
+        public string styleAspectRatio { get; set; }
+        //
         // -- copy content (full for article, brief for list)
         public string copy { get; set; }
         //
@@ -88,27 +98,64 @@ namespace Contensive.Blog.Models.View {
                 //
                 // -- image
                 if (blogImageList.Count > 0 && blogPost.primaryImagePositionId != 4) {
-                    string thumbnailFilename = "";
-                    string imageFilename = "";
-                    string imageName = "";
-                    string imageDescription = "";
-                    BlogImageView.getBlogImage(cp, app, blogImageList.First(), ref thumbnailFilename, ref imageFilename, ref imageDescription, ref imageName);
-                    if (isArticleView || !string.IsNullOrEmpty(thumbnailFilename)) {
-                        result.hasImage = true;
-                        result.imageName = imageName;
-                        result.imageUrl = _GenericController.encodeURLForHrefSrc(cp.Http.CdnFilePathPrefix + thumbnailFilename);
-                        result.imageWidth = isArticleView ? "40%" : "25%";
-                        switch (blogPost.primaryImagePositionId) {
-                            case 2:
-                                result.imageClass = "aoBlogEntryThumbnailRight";
-                                break;
-                            case 3:
-                                result.imageClass = "aoBlogEntryThumbnailLeft";
-                                break;
-                            default:
-                                result.imageClass = "aoBlogEntryThumbnail";
-                                break;
-                        }
+                    // Get first image (note: this may be a virtual BlogImageModel created from primaryImage fields)
+                    var blogImage = blogImageList.First();
+
+                    // Determine aspect ratio (post-specific or blog default)
+                    int aspectRatioId = blogPost.primaryImageAspectRatioId > 0
+                        ? blogPost.primaryImageAspectRatioId
+                        : app.blog.defaultImageAspectRatioId;
+
+                    // Default widths based on view type
+                    int effectiveWidth = isArticleView ? 800 : 400;
+
+                    // Calculate height from aspect ratio
+                    int effectiveHeight = ImageController.getImageHeight(effectiveWidth, aspectRatioId);
+
+                    // Get srcset/sizes from platform
+                    string altSizeList = blogImage.altSizeList ?? "";
+                    var imgResult = cp.Image.GetImgSrcSet(blogImage.Filename, effectiveWidth, effectiveHeight, ref altSizeList);
+
+                    // Update altSizeList back to blogPost if this is the primary image
+                    // (BlogImageModel.getPostImageList creates virtual model from primaryImage fields)
+                    if (altSizeList != blogPost.primaryImageAltSizeList && blogImage.id == 0) {
+                        blogPost.primaryImageAltSizeList = altSizeList;
+                        blogPost.save(cp);
+                    } else if (altSizeList != blogImage.altSizeList && blogImage.id > 0) {
+                        // Update actual BlogImageModel record
+                        blogImage.altSizeList = altSizeList;
+                        blogImage.save(cp);
+                    }
+
+                    // Populate view model
+                    result.hasImage = true;
+                    result.imageName = blogImage.name;
+                    result.imageSrc = imgResult.src;
+                    result.imageSrcSet = imgResult.srcset;
+                    result.imageSizes = imgResult.sizes;
+                    result.imageWidth = isArticleView ? "40%" : "25%";
+                    result.imageHeight = imgResult.imageHeight;
+
+                    // Backwards compatibility
+                    result.imageUrl = imgResult.src;
+
+                    // Position class (keep existing logic)
+                    switch (blogPost.primaryImagePositionId) {
+                        case 2:
+                            result.imageClass = "aoBlogEntryThumbnailRight";
+                            break;
+                        case 3:
+                            result.imageClass = "aoBlogEntryThumbnailLeft";
+                            break;
+                        default:
+                            result.imageClass = "aoBlogEntryThumbnail";
+                            break;
+                    }
+
+                    // Aspect ratio styling
+                    if (aspectRatioId > 0) {
+                        result.manageAspectRatio = true;
+                        result.styleAspectRatio = ImageController.getAspectRatioStyle(aspectRatioId);
                     }
                 }
                 //

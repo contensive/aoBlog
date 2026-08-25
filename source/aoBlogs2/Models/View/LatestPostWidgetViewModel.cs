@@ -74,23 +74,39 @@ namespace Contensive.Blog.Models {
                 headline = post.name,
                 editTag = cp.Content.GetEditLink("Blog Entries", post.id, "Edit Latest Post")
             };
+
+            // Get image filename using cascade logic
+            string imageFilename = null;
+            string altSizeList = "";
+
             var postImageList = BlogImageModel.getPostImageList(cp, post);
             if (postImageList.Count > 0) {
-                cell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.ResizeAndCrop(postImageList[0].Filename, 550, 452);
-                return cell;
-            }
-            var blog = DbBaseModel.create<BlogModel>(cp, post.blogId);
-            if (blog != null) {
-                if (!string.IsNullOrEmpty(blog.defaultImageFilename.filename)) {
-                    cell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.ResizeAndCrop(blog.defaultImageFilename.filename, 550, 452);
-                    return cell;
+                imageFilename = postImageList[0].Filename;
+                altSizeList = postImageList[0].altSizeList ?? "";
+            } else {
+                var blog = DbBaseModel.create<BlogModel>(cp, post.blogId);
+                if (blog != null && !string.IsNullOrEmpty(blog.defaultImageFilename.filename)) {
+                    imageFilename = blog.defaultImageFilename.filename;
+                } else if (!string.IsNullOrEmpty(settings.defaultpostimage)) {
+                    imageFilename = settings.defaultpostimage;
+                } else {
+                    imageFilename = constants.defaultImageUrl;
                 }
             }
-            if (!string.IsNullOrEmpty(settings.defaultpostimage)) {
-                cell.postImage = cp.Http.CdnFilePathPrefix + cp.Image.ResizeAndCrop(settings.defaultpostimage, 550, 452);
-                return cell;
+
+            // Generate responsive image
+            if (!string.IsNullOrEmpty(imageFilename)) {
+                var imgResult = cp.Image.GetImgSrcSet(imageFilename, 550, 452, ref altSizeList);
+                cell.postImageSrc = imgResult.src;
+                cell.postImageSrcSet = imgResult.srcset;
+                cell.postImageSizes = imgResult.sizes;
+                cell.postImageWidth = imgResult.imageWidth;
+                cell.postImageHeight = imgResult.imageHeight;
+
+                // Backwards compatibility
+                cell.postImage = imgResult.src;
             }
-            cell.postImage = cp.Http.CdnFilePathPrefix + constants.defaultImageUrl;
+
             return cell;
         }
     }

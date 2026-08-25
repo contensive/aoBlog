@@ -147,8 +147,17 @@ namespace Contensive.Blog.Views {
                 // 
                 imageForm = imageForm + cp.Html.Hidden("LibraryUploadCount", Ptr.ToString(), "LibraryUploadCount") + hiddenList.ToString();
 
-                // 
+                //
                 result.Append(_GenericController.getFormTableRow(cp, "Images: ", imageForm));
+                //
+                // -- aspect ratio selector
+                int currentAspectRatio = app.blogPost?.primaryImageAspectRatioId ?? 0;
+                string aspectRatioSelect = cp.Html.SelectList(
+                    constants.rnPrimaryImageAspectRatioId,
+                    currentAspectRatio.ToString(),
+                    "0|Default (Use Blog Setting),1|As Uploaded,2|Square (1:1),3|Classic (3:2),4|Standard (4:3),5|Widescreen (16:9),6|Panoramic (2:1)"
+                );
+                result.Append(_GenericController.getFormTableRow(cp, "Image Aspect Ratio: ", aspectRatioSelect));
                 if (blogEntry_id != 0) {
                     result.Append(_GenericController.getFormTableRow(cp, "", cp.Html.Button(constants.rnButton, constants.FormButtonPost) + "&nbsp;" + cp.Html.Button(constants.rnButton, constants.FormButtonCancel) + "&nbsp;" + cp.Html.Button(constants.rnButton, constants.FormButtonDelete)));
                 }
@@ -223,6 +232,7 @@ namespace Contensive.Blog.Views {
                         post.name = request.BlogEntryName;
                         post.copy = request.BlogEntryCopy;
                         post.blogId = blog.id;
+                        post.primaryImageAspectRatioId = cp.Doc.GetInteger(constants.rnPrimaryImageAspectRatioId);
                         post.save(cp);
                         if (app.sitePropertyAllowTags) {                        // 
                             post.tagList = request.BlogEntryTagList;

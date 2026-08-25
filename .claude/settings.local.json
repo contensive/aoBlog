@@ -13,7 +13,11 @@
       "Bash(grep:*)",
       "WebFetch(domain:www.contensive.com)",
       "WebFetch(domain:contensive.io)",
-      "WebFetch(domain:support.contensive.com)"
+      "WebFetch(domain:support.contensive.com)",
+      "Bash(dotnet list:*)",
+      "Bash(dotnet restore:*)",
+      "Bash(dotnet remove package:*)",
+      "Bash(dotnet clean:*)"
     ]
   }
 }

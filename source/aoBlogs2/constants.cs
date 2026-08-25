@@ -168,6 +168,7 @@
         public const string RequestNameBlogEntryCopy = "blogEntryCopy";
         public const string RequestNameBlogEntryTagList = "blogEntryTagList";
         public const string RequestNameBlogEntryCategoryID = "blogEntryCategoryId";
+        public const string rnPrimaryImageAspectRatioId = "PrimaryImageAspectRatioId";
         // 
         // -- system email
         // 

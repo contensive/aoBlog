@@ -85,6 +85,7 @@ namespace Contensive.Blog.Models {
         public string primaryImage { get; set; }
         public string primaryImageAltSizeList { get; set; }
         public string primaryImageDescription { get; set; }
+        public int primaryImageAspectRatioId { get; set; }
         //public int primaryImageHeight { get; set; }
         //public int primaryImageWidth { get; set; }
         // ==================================================================================================== 
