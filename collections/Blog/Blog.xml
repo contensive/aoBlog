@@ -797,6 +797,9 @@
 		<Field Name="blogupdatealarmdays" active="True" AdminOnly="False" Authorable="True" Caption="Blog Update Alarm Days" DeveloperOnly="False" EditSortPriority="3090" FieldType="Integer" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="30" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="Features" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[The number of days the system expects a new blog post for this blog. After this period the blog alarm will be set.]]></HelpDefault>
 		</Field>
+		<Field Name="blogupdatealarmsnoozedate" active="True" AdminOnly="False" Authorable="True" Caption="Blog Update Alarm Snooze Date" DeveloperOnly="False" EditSortPriority="3095" FieldType="Date" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="Features" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+			<HelpDefault><![CDATA[Set a future date to suppress the blog update alarm until after that date. The alarm will resume after this date passes.]]></HelpDefault>
+		</Field>
 
 		<!--
 			sidebar

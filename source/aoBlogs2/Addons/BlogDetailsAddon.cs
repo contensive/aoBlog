@@ -44,6 +44,12 @@ namespace Contensive.Blog {
                             cs.SetFormInput("allowSearch", "rnBlogAllowSearch");
                             cs.SetFormInput("allowAnonymous", "rnBlogAllowAnonymous");
                             cs.SetFormInput("allowArticleCTA", "rnBlogAllowArticleCTA");
+                            string snoozeInput = cp.Doc.GetText("rnBlogAlarmSnoozeDate");
+                            if (string.IsNullOrWhiteSpace(snoozeInput)) {
+                                cs.SetField("blogUpdateAlarmSnoozeDate", "");
+                            } else {
+                                cs.SetField("blogUpdateAlarmSnoozeDate", snoozeInput);
+                            }
                         }
                         cs.Close();
                     }
@@ -146,6 +152,12 @@ namespace Contensive.Blog {
                     layoutBuilder.rowName = "Allow Article CTA";
                     layoutBuilder.rowValue = cp.Html5.CheckBox("rnBlogAllowArticleCTA", cs.GetBoolean("allowArticleCTA"), "form-check-input");
                     layoutBuilder.rowHelp = "When checked, calls-to-action can be displayed on articles.";
+                    //
+                    DateTime snoozeDate = cs.GetDate("blogUpdateAlarmSnoozeDate");
+                    layoutBuilder.addRow();
+                    layoutBuilder.rowName = "Alarm Snooze Date";
+                    layoutBuilder.rowValue = cp.Html5.InputDate("rnBlogAlarmSnoozeDate", snoozeDate == DateTime.MinValue ? DateTime.MinValue : snoozeDate.Date, "form-control");
+                    layoutBuilder.rowHelp = "Set a future date to suppress the blog update alarm until after that date. The alarm will resume after this date passes.";
                     //
                     cs.Close();
                 }

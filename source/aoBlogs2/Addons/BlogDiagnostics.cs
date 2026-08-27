@@ -24,7 +24,8 @@ namespace Contensive.Blog {
                     }
                     if (!lastDate.HasValue) { continue; }
                     if (lastDate.Value.AddDays(blog.blogUpdateAlarmDays) < DateTime.Now) {
-                        errors.Add($"ERROR, {blog.name} does not have a published post within the page {blog.blogUpdateAlarmDays} day, the Blog Update Alarm Days value set in the blog.");
+                        if (blog.blogUpdateAlarmSnoozeDate.HasValue && blog.blogUpdateAlarmSnoozeDate.Value > DateTime.Now) { continue; }
+                        errors.Add($"ERROR, {blog.name} does not have a published post within the past {blog.blogUpdateAlarmDays} days, the Blog Update Alarm Days value set in the blog.");
                     }
                 }
                 return errors.Count == 0 ? "ok" : string.Join("\r\n", errors);
