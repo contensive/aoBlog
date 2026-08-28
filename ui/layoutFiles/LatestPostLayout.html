@@ -11,101 +11,97 @@
         <div class="editingEnabled">
             <section data-layout="Latest Posts Layout">
                 <style>
-                    section.post .post-inr {
+                    .latestPostWidget section.post .post-inr {
                         margin: auto;
                         max-width: 1900px;
                     }
                     @media (min-width: 992px) {
-                        section.post .post-inr .row {
+                        .latestPostWidget section.post .post-inr .row {
                             display: flex;
                         }
                     }
-                    section.post .post-inr .column {
+                    .latestPostWidget section.post .post-inr .column {
                         margin-bottom: 42px;
                     }
-                    section.post .post-inr .column img.latestPostImgs {
+                    .latestPostWidget section.post .post-inr .column img.latestPostImgs {
                         width: 100%;
                         object-fit: cover;
                         margin-bottom: 20px;
                     }
                     @media (min-width: 768px) {
-                        section.post .post-inr .column img.latestPostImgs {
+                        .latestPostWidget section.post .post-inr .column img.latestPostImgs {
                             height: 164px;
                             width: 172px;
                             margin-right: 20px;
                         }
                     }
                     @media (min-width: 992px) {
-                        section.post .post-inr .column.col1 {
+                        .latestPostWidget section.post .post-inr .column.col1 {
                             display: block;
                         }
                     }
                     @media (min-width: 768px) {
-                        section.post .post-inr .column {
+                        .latestPostWidget section.post .post-inr .column {
                             display: flex;
                         }
                     }
                     @media (min-width: 992px) {
-                        section.post .post-inr .column.col1 {
+                        .latestPostWidget section.post .post-inr .column.col1 {
                             width: 40%;
                             float: left;
                         }
                     }
-                    @media (min-width: 992px) and (min-width: 992px) {
-                        section.post .post-inr .column.col1 img.firstPostImg {
+                    @media (min-width: 992px) {
+                        .latestPostWidget section.post .post-inr .column.col1 img.firstPostImg {
                             height: 452px;
                             width: 100%;
                         }
                     }
                     @media (min-width: 992px) {
-                        section.post .post-inr .column.col2,
-                        section.post .post-inr .column.col3,
-                        section.post .post-inr .column.col4 {
+                        .latestPostWidget section.post .post-inr .column.col2,
+                        .latestPostWidget section.post .post-inr .column.col3,
+                        .latestPostWidget section.post .post-inr .column.col4 {
                             display: flex;
                         }
-                        section.post .post-inr .column.col2 img.latestPostImgs,
-                        section.post .post-inr .column.col3 img.latestPostImgs,
-                        section.post .post-inr .column.col4 img.latestPostImgs.latestPostImgs {
+                        .latestPostWidget section.post .post-inr .column.col2 img.latestPostImgs,
+                        .latestPostWidget section.post .post-inr .column.col3 img.latestPostImgs,
+                        .latestPostWidget section.post .post-inr .column.col4 img.latestPostImgs {
                             width: 191px;
                             height: 172px;
                             margin-right: 20px;
                         }
                     }
                     @media (min-width: 992px) {
-                        section.post .post-inr .column.col2,
-                        section.post .post-inr .column.col3 {
+                        .latestPostWidget section.post .post-inr .column.col2,
+                        .latestPostWidget section.post .post-inr .column.col3 {
                             padding-bottom: 20px;
                             border-bottom: 1px solid #222326;
                         }
                     }
                     @media (min-width: 992px) {
-                        section.post .post-inr .col-rgt {
+                        .latestPostWidget section.post .post-inr .col-rgt {
                             width: 60%;
                         }
                     }
-                    section.post h2 {
+                    .latestPostWidget section.post h2 {
                         font-size: 1.25rem;
                         margin-bottom: 30px;
                     }
-                    section.post .txt-hghlt {
+                    .latestPostWidget section.post .txt-hghlt {
                         font-size: 90%;
                         font-weight: 500;
                         margin-bottom: 0;
                         text-transform: uppercase;
                     }
-                    section.post a.cont-link {
+                    .latestPostWidget section.post a.cont-link {
                         text-transform: uppercase;
                         text-decoration: none;
                     }
-                    section.post a.cont-link span {
+                    .latestPostWidget section.post a.cont-link span {
                         padding-left: 10px;
                     }
-                    @media (min-width: 1200px) {
-                        section.post a.cont-link {
-                        }
-                    }
                 </style>
-                <div class="{{outerContainerClass}} designBlockContainer" style="{{styleHeight}}{{styleBackgroundImage}}">
+                <div class="latestPostWidget {{outerContainerClass}} designBlockContainer" style="{{styleHeight}}{{styleBackgroundImage}}">
                     <div class="{{contentContainerClass}}">
                         <section class="post">
                             <div class="post-inr">
