@@ -9,10 +9,8 @@ namespace Contensive.Blog {
         // 
         // =====================================================================================
         /// <summary>
-        /// Blog Addon
+        /// Blog Addon install handler
         /// </summary>
-        /// <param name="CP"></param>
-        /// <returns></returns>
         private const int codeVersion = 3;
         //
         public override object Execute(CPBaseClass CP) {

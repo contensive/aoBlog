@@ -130,7 +130,7 @@ namespace Contensive.Blog {
                 //
                 // -- layout settings
                 layoutBuilder.title = $"Edit Post: {post.name}";
-                layoutBuilder.portalSubNavTitle = $"{blog.name}, #{blog.id}";
+                layoutBuilder.portalSubNavTitleList.Add($"{blog.name}, #{blog.id}");
                 layoutBuilder.includeForm = true;
                 //
                 // -- buttons

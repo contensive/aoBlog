@@ -26,7 +26,7 @@ namespace Contensive.Blog.Models {
         /// <returns></returns>
         public bool userIsEditing {
             get {
-                local_userIsEditing ??= cp.User.IsEditingAnything;
+                local_userIsEditing ??= cp.User.IsEditing();
                 return (bool)local_userIsEditing;
             }
         }

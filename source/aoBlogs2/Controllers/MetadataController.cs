@@ -22,7 +22,6 @@ namespace Contensive.Blog.Controllers {
         /// </summary>
         /// <param name="app"></param>
         /// <param name="blog"></param>
-        /// <param name="cp"></param>
         /// <returns></returns>
         public static string getBlogMetaTitle(ApplicationEnvironmentModel app, BlogModel blog) {
             string result = blog?.metaTitle ?? string.Empty;
@@ -42,7 +41,6 @@ namespace Contensive.Blog.Controllers {
         /// <param name="app"></param>
         /// <param name="blog"></param>
         /// <param name="blogEntry"></param>
-        /// <param name="cp"></param>
         /// <returns></returns>
         public static string getEntryMetaTitle(ApplicationEnvironmentModel app, BlogModel blog, BlogEntryModel blogEntry) {
             string result = blogEntry?.metaTitle;
@@ -66,7 +64,6 @@ namespace Contensive.Blog.Controllers {
         /// </summary>
         /// <param name="app"></param>
         /// <param name="blog"></param>
-        /// <param name="cp"></param>
         /// <returns></returns>
         public static string getBlogMetaDescription(ApplicationEnvironmentModel app, BlogModel blog) {
             CPBaseClass cp = app.cp;

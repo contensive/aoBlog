@@ -56,8 +56,7 @@ namespace Contensive.Blog {
                 var blog = DbBaseModel.create<BlogModel>(cp, blogId);
                 if (blog == null) { return "The blog is not valid."; }
                 //
-                var layoutBuilder = cp.AdminUI.CreateLayoutBuilderList();
-                layoutBuilder.callbackAddonGuid = constants.guidAddonBlogPostList;
+                var layoutBuilder = cp.AdminUI.CreateLayoutBuilderList(constants.guidAddonBlogPostList);
                 //
                 // -- columns
                 layoutBuilder.columnCaption = "Row";
@@ -146,7 +145,7 @@ namespace Contensive.Blog {
                 //
                 // -- feature subnav
                 cp.Doc.AddRefreshQueryString(constants.rnBlogId, blogId);
-                layoutBuilder.portalSubNavTitle = $"{blog.name}, #{blog.id}";
+                layoutBuilder.portalSubNavTitleList.Add($"{blog.name}, #{blog.id}");
                 //
                 // -- buttons
                 layoutBuilder.addFormButton(constants.buttonAdd);

@@ -89,14 +89,14 @@ namespace Contensive.Blog {
                 using (var cs = cp.CSNew()) {
                     cs.Open(constants.cnBlogs, $"id={blogId}");
                     if (!cs.OK()) {
-                        layoutBuilder.portalSubNavTitle = "Unknown Blog";
+                        layoutBuilder.portalSubNavTitleList.Add("Unknown Blog");
                         layoutBuilder.addRow();
                         layoutBuilder.rowName = "&nbsp;";
                         layoutBuilder.rowValue = $"Blog [{blogId}] was not found.";
                         return layoutBuilder.getHtml();
                     }
                     //
-                    layoutBuilder.portalSubNavTitle = $"{cs.GetText("name")}, #{cs.GetInteger("id")}";
+                    layoutBuilder.portalSubNavTitleList.Add($"{cs.GetText("name")}, #{cs.GetInteger("id")}");
                     //
                     layoutBuilder.addRow();
                     layoutBuilder.rowName = "Name";
@@ -162,7 +162,7 @@ namespace Contensive.Blog {
                     cs.Close();
                 }
                 //
-                layoutBuilder.portalSubNavTitle = $"{blog.name}, #{blog.id}";
+                layoutBuilder.portalSubNavTitleList.Add($"{blog.name}, #{blog.id}");
                 //
                 // -- buttons
                 layoutBuilder.addFormButton(constants.buttonCancel);

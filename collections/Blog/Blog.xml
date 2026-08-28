@@ -311,6 +311,11 @@
 		<Category>Blog</Category>
 	</Addon>
 	<data>
+		<!-- Share portal {e4d011e9-9f3b-4f7e-8ec3-f4fcc2a20455} defines the portal and top-level nav headings:
+			Reports heading: {bf40b429-78b0-4556-991b-6928c1c5c55c}
+			Tools heading:   defined in Share collection
+			Settings heading: defined in Share collection
+		-->
 		<record content="Layouts" guid="{1E579F72-64D5-4413-89EA-A61E8EDA426D}" name="Blog Layout">
 			<field name="active">True</field>
 			<field name="layout"></field>

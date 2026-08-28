@@ -30,8 +30,7 @@ namespace Contensive.Blog {
             try {
                 if (!cp.Response.isOpen) { return ""; }
                 //
-                var layoutBuilder = cp.AdminUI.CreateLayoutBuilderList();
-                layoutBuilder.callbackAddonGuid = constants.guidAddonBlogPostReport;
+                var layoutBuilder = cp.AdminUI.CreateLayoutBuilderList(constants.guidAddonBlogPostReport);
                 //
                 // -- get filter values
                 int blogFilterId = layoutBuilder.getFilterInteger(constants.rnReportBlogFilter, filterViewName);

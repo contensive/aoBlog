@@ -135,8 +135,8 @@ force blog nav background
 @media (min-width: 1200px)
 {
 	.blogArticleWrapper p {	
-		font-size: 18px;
-		line-height: 30px;
+		/*font-size: 18px;*/
+		/* line-height: 30px; */
 	}
 }
 .blogWrapper .aoBlogCommentHeader
@@ -204,11 +204,11 @@ force blog nav background
 }
 
 .aoBlogCaption {
-	font-weight: 800;
+	/* font-weight: 800; */
 }
 
 .aoBlogDescription p {
-	line-height: 24px;
+	/* line-height: 24px; */
 }
 .blogWrapper .aoBlogRSSFeedImage
 {
@@ -354,8 +354,8 @@ width: inherit;
 .blogWrapper .blogSidebarWrapper .blogSidebarCellWrap .blogSidebarCell h2.blogSidebarCellHeadline
 {
 	color: #495b67;
-	font-size: 24px;
-	line-height: 36px;
+	/*font-size: 24px;*/
+	/* line-height: 36px; */
 	margin: 24px 0 5px 0;
 	font-weight: 600;
 }
@@ -379,9 +379,9 @@ width: inherit;
 .blogWrapper .blogSidebarWrapper .blogSidebarCellWrap .blogSidebarCell h3.blogSidebarCellInputCaption
 {
 	color: #999;
-	font-size: 16px;
+	/*font-size: 16px;*/
 	font-weight: 300;
-	line-height: 24px;
+	/*line-height: 24px; */
 }
 .blogWrapper .blogSidebarWrapper .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellInput input
 {

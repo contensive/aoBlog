@@ -53,8 +53,7 @@ namespace Contensive.Blog {
             try {
                 if (!cp.Response.isOpen) { return ""; }
                 //
-                var layoutBuilder = cp.AdminUI.CreateLayoutBuilderList();
-                layoutBuilder.callbackAddonGuid = constants.guidAddonBlogList;
+                var layoutBuilder = cp.AdminUI.CreateLayoutBuilderList(constants.guidAddonBlogList);
                 //
                 // -- columns
                 layoutBuilder.columnCaption = "Row";

@@ -101,7 +101,7 @@ namespace Contensive.Blog {
                 // -- feature subnav
                 cp.Doc.AddRefreshQueryString(constants.rnBlogId, blogId);
                 cp.Doc.AddRefreshQueryString(constants.rnBlogPostId, postId);
-                layoutBuilder.portalSubNavTitle = $"{blog.name}, #{blog.id}";
+                layoutBuilder.portalSubNavTitleList.Add($"{blog.name}, #{blog.id}");
                 //
                 // -- buttons
                 layoutBuilder.addFormButton(constants.buttonOK);

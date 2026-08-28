@@ -13,6 +13,7 @@ namespace Contensive.Blog.Controllers {
         /// <param name="cp"></param>
         /// <param name="blogPostname"></param>
         /// <param name="blogEntryId"></param>
+        /// <param name="src"></param>
         public static void addLinkAlias(CPBaseClass cp, string blogPostname, int blogEntryId, string src) {
             string qs = getLinkAliasQueryString(cp, blogEntryId);
             cp.Site.AddLinkAlias(blogPostname, cp.Doc.PageId, qs);
