@@ -37,10 +37,9 @@ namespace Contensive.Blog {
                             from
                                 BlogViewingLog v
                                 left join ccBlogCopy b on b.id = v.blogentryid
-                                inner join ccVisits vis on vis.id = v.visitid
+                                left join ccVisits vis on vis.id = v.visitid
                             where
-                                vis.bot = 0
-                                and vis.excludeFromAnalytics = 0
+                                (vis.id is null or (vis.bot = 0 and vis.excludeFromAnalytics = 0))
                             group by
                                 b.name, b.id
                             having
@@ -57,10 +56,9 @@ namespace Contensive.Blog {
                             from
                                 BlogViewingLog v
                                 left join ccBlogCopy b on b.id = v.blogentryid
-                                inner join ccVisits vis on vis.id = v.visitid
+                                left join ccVisits vis on vis.id = v.visitid
                             where
-                                vis.bot = 0
-                                and vis.excludeFromAnalytics = 0
+                                (vis.id is null or (vis.bot = 0 and vis.excludeFromAnalytics = 0))
                             group by
                                 b.name, b.id, b.datepublished
                             having
@@ -77,10 +75,9 @@ namespace Contensive.Blog {
                             from
                                 BlogViewingLog v
                                 left join ccBlogCopy b on b.id = v.blogentryid
-                                inner join ccVisits vis on vis.id = v.visitid
+                                left join ccVisits vis on vis.id = v.visitid
                             where
-                                vis.bot = 0
-                                and vis.excludeFromAnalytics = 0
+                                (vis.id is null or (vis.bot = 0 and vis.excludeFromAnalytics = 0))
                             group by
                                 b.name, b.id
                             having
@@ -130,17 +127,17 @@ namespace Contensive.Blog {
                            new() {
                                filterCaption = "Top 10",
                                filterValue = "1",
-                               filterActive = (mode == 2)
+                               filterActive = (mode == 1)
                            },
                            new() {
                                filterCaption = "Lowest 10",
                                filterValue = "2",
-                               filterActive = (mode == 6)
+                               filterActive = (mode == 2)
                            },
                            new() {
                                filterCaption = "Last 10",
                                filterValue = "3",
-                               filterActive = (mode == 10)
+                               filterActive = (mode == 3)
                            }
                        ]
                 };

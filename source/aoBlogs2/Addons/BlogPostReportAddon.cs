@@ -133,9 +133,8 @@ namespace Contensive.Blog {
                                 v.blogEntryId,
                                 count(v.id) as viewCount
                             from BlogViewingLog v
-                                inner join ccVisits vis on vis.id = v.visitId
-                            where vis.bot = 0
-                                and vis.excludeFromAnalytics = 0
+                                left join ccVisits vis on vis.id = v.visitId
+                            where (vis.id is null or (vis.bot = 0 and vis.excludeFromAnalytics = 0))
                                 {dateFilterClause}
                             group by v.blogEntryId
                         ) vc on vc.blogEntryId = p.id
@@ -144,9 +143,8 @@ namespace Contensive.Blog {
                                 v.blogEntryId,
                                 count(v.id) as utmViewCount
                             from BlogViewingLog v
-                                inner join ccVisits vis on vis.id = v.visitId
-                            where vis.bot = 0
-                                and vis.excludeFromAnalytics = 0
+                                left join ccVisits vis on vis.id = v.visitId
+                            where (vis.id is null or (vis.bot = 0 and vis.excludeFromAnalytics = 0))
                                 and (vis.refererPathPage like '%utm_%' or vis.http_referer like '%utm_%')
                                 {dateFilterClause}
                             group by v.blogEntryId

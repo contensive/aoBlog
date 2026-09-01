@@ -359,7 +359,8 @@ width: inherit;
 	border-bottom-right-radius: 50em;
 }
 
-.blogWrapper .blogSidebarWrapper .blogSidebarCellWrap .blogSidebarCell h3.blogSidebarCellInputCaption
+.blogWrapper .blogSidebarWrapper .blogSidebarCellWrap .blogSidebarCell h3.blogSidebarCellInputCaption,
+.blogWrapper .blogSidebarWrapper .blogSidebarCellWrap .blogSidebarCell p.blogSidebarCellInputCaption
 {
 	color: #999;
 	/*font-size: 16px;*/
@@ -395,7 +396,8 @@ width: inherit;
 	margin: 20px 0 0 0;
 }
 
-.blogWrapper .blogSidebarWrapper.blogSidebarCellWrap .blogSidebarCell  h3.blogSidebarCellInputCaption a
+.blogWrapper .blogSidebarWrapper.blogSidebarCellWrap .blogSidebarCell  h3.blogSidebarCellInputCaption a,
+.blogWrapper .blogSidebarWrapper.blogSidebarCellWrap .blogSidebarCell  p.blogSidebarCellInputCaption a
 {
 	text-decoration: none;
 }
@@ -471,7 +473,11 @@ width: inherit;
 	margin:0;
 }
 
- .blogWrapper .blogSidebarWrapper .blogSidebarArchiveCell .blogSidebarCellCopy {
+.blogWrapper .blogSidebarWrapper .blogSidebarCellWrap .blogSidebarCell .blogSidebarCellCopy {
+	font-weight: 400;
+}
+
+.blogWrapper .blogSidebarWrapper .blogSidebarArchiveCell .blogSidebarCellCopy {
     max-height: 600px;
 	overflow-y: auto;
 }

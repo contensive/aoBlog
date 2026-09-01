@@ -65,7 +65,7 @@ namespace Contensive.Blog.Models.View {
                 var visit = DbBaseModel.create<VisitModel>(cp, cp.Visit.Id);
                 if (app?.user != null && visit is not null) {
                     if (!visit.excludeFromAnalytics && !visit.bot) {
-                        cp.Db.ExecuteNonQuery($"update {BlogEntryModel.tableMetadata.tableNameLower} set viewings={app.blogPost.viewings + 1}");
+                        cp.Db.ExecuteNonQuery($"update {BlogEntryModel.tableMetadata.tableNameLower} set viewings={app.blogPost.viewings + 1} where id={app.blogPost.id}");
                         int blogEntryId = app.blogPost is not null ? app.blogPost.id : 0;
                         var blogViewingLog = DbBaseModel.addDefault<BlogViewingLogModel>(cp);
                         if (blogViewingLog is not null) {
