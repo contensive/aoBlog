@@ -152,11 +152,9 @@ namespace Contensive.Blog.Models.View {
                             break;
                     }
 
-                    // Aspect ratio styling
-                    if (aspectRatioId > 0) {
-                        result.manageAspectRatio = true;
-                        result.styleAspectRatio = ImageController.getAspectRatioStyle(aspectRatioId);
-                    }
+                    // Aspect ratio styling (matches DesignBlocks pattern)
+                    result.styleAspectRatio = ImageController.getAspectRatioStyle(aspectRatioId);
+                    result.manageAspectRatio = !string.IsNullOrEmpty(result.styleAspectRatio);
                 }
                 //
                 // -- copy

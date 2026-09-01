@@ -35,32 +35,58 @@
                     </div>
                 
                     {{#hasImage}}
-                        <div class="blogImageWrapper">
+                        <div class="blogImageContainer {{styleAspectRatio}}">
                             {{#isArticleView}}
+                                {{#manageAspectRatio}}
                                 <img alt="{{imageName}}"
                                      title="{{imageName}}"
-                                     class="{{imageClass}}"
+                                     class="blogImage"
+                                     src="{{imageSrc}}"
+                                     srcset="{{imageSrcSet}}"
+                                     sizes="{{imageSizes}}"
+                                     width="{{imageWidth}}"
+                                     height="{{imageHeight}}"
+                                     loading="lazy">
+                                {{/manageAspectRatio}}
+                                {{^manageAspectRatio}}
+                                <img alt="{{imageName}}"
+                                     title="{{imageName}}"
+                                     class="w-100 mx-auto d-block"
                                      src="{{imageSrc}}"
                                      srcset="{{imageSrcSet}}"
                                      sizes="{{imageSizes}}"
                                      width="{{imageWidth}}"
                                      height="{{imageHeight}}"
                                      loading="lazy"
-                                     style="width:{{imageWidth}};">
+                                     style="height:auto">
+                                {{/manageAspectRatio}}
                             {{/isArticleView}}
 
                             {{^isArticleView}}
                                 <a href="{{entryLink}}">
+                                    {{#manageAspectRatio}}
                                     <img alt="{{imageName}}"
                                          title="{{imageName}}"
-                                         class="{{imageClass}}"
+                                         class="blogImage"
+                                         src="{{imageSrc}}"
+                                         srcset="{{imageSrcSet}}"
+                                         sizes="{{imageSizes}}"
+                                         width="{{imageWidth}}"
+                                         height="{{imageHeight}}"
+                                         loading="lazy">
+                                    {{/manageAspectRatio}}
+                                    {{^manageAspectRatio}}
+                                    <img alt="{{imageName}}"
+                                         title="{{imageName}}"
+                                         class="w-100 mx-auto d-block"
                                          src="{{imageSrc}}"
                                          srcset="{{imageSrcSet}}"
                                          sizes="{{imageSizes}}"
                                          width="{{imageWidth}}"
                                          height="{{imageHeight}}"
                                          loading="lazy"
-                                         style="width:{{imageWidth}};">
+                                         style="height:auto">
+                                    {{/manageAspectRatio}}
                                 </a>
                             {{/isArticleView}}
                         </div>

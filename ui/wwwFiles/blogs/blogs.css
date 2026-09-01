@@ -77,18 +77,56 @@ force blog nav background
 	text-decoration:none;
 	color:inherit
 }
-.blogWrapper .blogImageWrapper
-{	padding: 1.5rem;
+.blogWrapper .blogImageContainer
+{
+	position: relative;
+	padding: 1.5rem;
 }
-.blogWrapper .aoBlogEntryThumbnail
-	{
-		min-width: 100%;
-		min-height: 200px;
-		max-height: 600px;
-		object-fit: cover;
-		border-radius: 12px;
-		object-position: center;
-	}
+.blogWrapper .blogImage
+{
+	object-fit: cover;
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	border-radius: 12px;
+}
+/*
+* image aspect ratio styles (padding-top trick)
+*/
+.blogWrapper .blogImageAspect-1-1
+{
+	padding-top: 100%;
+}
+.blogWrapper .blogImageAspect-3-2
+{
+	padding-top: 67%;
+}
+.blogWrapper .blogImageAspect-4-3
+{
+	padding-top: 75%;
+}
+.blogWrapper .blogImageAspect-16-9
+{
+	padding-top: 56%;
+}
+.blogWrapper .blogImageAspect-2-1
+{
+	padding-top: 50%;
+}
+.blogWrapper .blogImageAspect-3-1
+{
+	padding-top: 33%;
+}
+.blogWrapper .blogImageAspect-4-1
+{
+	padding-top: 25%;
+}
+.blogWrapper .blogImageAspect-5-1
+{
+	padding-top: 20%;
+}
 
 /*
 .blogWrapper .aoBlogEntryThumbnailRight

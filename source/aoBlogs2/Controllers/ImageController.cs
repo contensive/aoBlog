@@ -41,6 +41,8 @@ namespace Contensive.Blog.Controllers {
                     return "blogImageAspect-3-1";
                 case 8:
                     return "blogImageAspect-4-1";
+                case 9:
+                    return "blogImageAspect-5-1";
                 default:
                     return string.Empty;
             }
@@ -70,6 +72,8 @@ namespace Contensive.Blog.Controllers {
                     return 3.0;     // 3:1
                 case 8:
                     return 4.0;     // 4:1
+                case 9:
+                    return 5.0;     // 5:1
                 default:
                     return -1;      // Treat unknown as As-Is
             }
