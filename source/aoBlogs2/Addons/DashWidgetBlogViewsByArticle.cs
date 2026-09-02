@@ -115,7 +115,7 @@ namespace Contensive.Blog {
                 DashboardWidgetBarChartModel result = new() {
                     widgetName = "Blog Post Views",
                     subhead = "Blog Post Views",
-                    description = "Blog posts by article.",
+                    description = "Blog page views by article",
                     uniqueId = cp.Utils.GetRandomString(4),
                     width = 2,
                     refreshSeconds = 0,
