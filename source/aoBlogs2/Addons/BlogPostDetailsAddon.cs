@@ -120,18 +120,31 @@ namespace Contensive.Blog {
                     return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogPostList, $"&{constants.rnBlogId}={blogId}");
                 }
                 //
-                var layoutBuilder = cp.AdminUI.CreateLayoutBuilder();
+                var layoutBuilder = cp.AdminUI.CreateLayoutBuilderNameValue();
                 layoutBuilder.callbackAddonGuid = constants.guidAddonBlogPostDetails;
                 //
-                // -- title field and WYSIWYG editor for blog copy
-                string titleInput = cp.Html5.InputText("rnPostTitle", 255, post.name ?? "", "form-control");
-                string titleRow = $"<div class=\"mb-3\"><label class=\"form-label\"><b>Title</b></label>{titleInput}</div>";
-                layoutBuilder.body = titleRow + cp.Html.InputWysiwyg("rnPostCopy", post.copy ?? "", CPHtmlBaseClass.EditorUserScope.Administrator);
-                //
-                // -- layout settings
                 layoutBuilder.title = $"Edit Post: {post.name}";
-                layoutBuilder.portalSubNavTitleList.Add($"{blog.name}, #{blog.id}");
+                layoutBuilder.description = "";
                 layoutBuilder.includeForm = true;
+                layoutBuilder.includeBodyColor = true;
+                layoutBuilder.includeBodyPadding = true;
+                layoutBuilder.isOuterContainer = false;
+                //
+                // -- form fields
+                layoutBuilder.addRow();
+                layoutBuilder.rowName = "Title";
+                layoutBuilder.rowValue = cp.Html5.InputText("rnPostTitle", 255, post.name ?? "", "form-control");
+                layoutBuilder.rowHelp = "The title of the blog post.";
+                //
+                layoutBuilder.addRow();
+                layoutBuilder.rowName = "Content";
+                layoutBuilder.rowValue = cp.Html.InputWysiwyg("rnPostCopy", post.copy ?? "", CPHtmlBaseClass.EditorUserScope.Administrator);
+                layoutBuilder.rowHelp = "The full content of the blog post.";
+                //
+                // -- feature subnav
+                cp.Doc.AddRefreshQueryString(constants.rnBlogId, blogId);
+                cp.Doc.AddRefreshQueryString(constants.rnBlogPostId, postId);
+                layoutBuilder.portalSubNavTitleList.Add($"{blog.name}, #{blog.id}");
                 //
                 // -- buttons
                 layoutBuilder.addFormButton(constants.buttonOK);
@@ -143,10 +156,6 @@ namespace Contensive.Blog {
                 layoutBuilder.addFormHidden(constants.rnSrcFormId, constants.formIdBlogPostDetails);
                 layoutBuilder.addFormHidden(constants.rnBlogPostId, postId);
                 layoutBuilder.addFormHidden(constants.rnBlogId, blogId);
-                //
-                // -- feature subnav
-                cp.Doc.AddRefreshQueryString(constants.rnBlogId, blogId);
-                cp.Doc.AddRefreshQueryString(constants.rnBlogPostId, postId);
                 //
                 return layoutBuilder.getHtml();
             } catch (Exception ex) {
