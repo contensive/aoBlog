@@ -15,6 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Contensive.Addons.Mcp.Shared" Version="1.0.0" />
     <PackageReference Include="Contensive.CPBaseClass" Version="26.8.25.27222" />
     <PackageReference Include="Contensive.DbModels" Version="26.8.25.27222" />
     <PackageReference Include="Contensive.DesignBlockBase" Version="26.6.7.41231" />
