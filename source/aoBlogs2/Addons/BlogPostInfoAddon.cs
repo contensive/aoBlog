@@ -136,6 +136,9 @@ namespace Contensive.Blog {
                 cp.Doc.AddRefreshQueryString(constants.rnBlogId, blogId);
                 cp.Doc.AddRefreshQueryString(constants.rnBlogPostId, postId);
                 layoutBuilder.portalSubNavTitleList.Add($"{blog.name}, #{blog.id}");
+                if (!isNew) {
+                    layoutBuilder.portalSubNavTitleList.Add($"{post.name}");
+                }
                 //
                 // -- buttons
                 layoutBuilder.addFormButton(constants.buttonOK);

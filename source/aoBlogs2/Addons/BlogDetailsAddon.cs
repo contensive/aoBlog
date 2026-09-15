@@ -162,8 +162,6 @@ namespace Contensive.Blog {
                     cs.Close();
                 }
                 //
-                layoutBuilder.portalSubNavTitleList.Add($"{blog.name}, #{blog.id}");
-                //
                 // -- buttons
                 layoutBuilder.addFormButton(constants.buttonCancel);
                 layoutBuilder.addFormButton(constants.buttonSave);
