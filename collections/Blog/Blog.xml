@@ -325,6 +325,14 @@
 			Settings heading: defined in Share collection
 		-->
 		<!--
+			MCP Server Instructions - workflow guidance for AI clients
+		-->
+		<record content="MCP Server Instructions" guid="{130998D4-3D3E-402B-9146-1E80D5D8E018}" name="Blog">
+			<field name="sortOrder">1000</field>
+			<field name="category">Blog</field>
+			<field name="instructions"><![CDATA[Blog: A blog is created by adding a Blog widget to a page using page_widget_add. Each Blog widget instance represents one blog. If no blogs exist, first use widget_types to find the Blog widget, then add it to a page. Use blog_list to see existing blogs. Each blog contains posts managed with blog_post_list, blog_post_get, blog_post_create, blog_post_update, and blog_post_delete. Blog-level settings (caption, comment moderation, post display count) are updated with blog_update.]]></field>
+		</record>
+		<!--
 			MCP Tool Definitions - AI-callable tools for blog management
 		-->
 		<record content="MCP Tool Definitions" guid="{9B54413D-06FC-46B0-9BD3-C35423E23999}" name="blog_list">
