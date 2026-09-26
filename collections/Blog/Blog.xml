@@ -4,19 +4,41 @@
   xsi:noNamespaceSchemaLocation="https://contensive.s3.amazonaws.com/xsd/Collection.xsd"
 >
 	<HelpLink>http://wiki.kmacloud.net/index.php?title=Blogs</HelpLink>
-	<Help></Help>
+	<Help>Add a full-featured blog to any page on your site. Create multiple independent blogs, write and schedule posts with a rich text editor, organize content with categories and tags, and let visitors comment, search, and browse archives. Built-in email and RSS subscriptions keep your audience engaged, while comment moderation and group-based access controls give you confidence that published content meets your standards.
+
+An admin portal puts day-to-day management in one place: create and edit posts, configure SEO metadata for each article, manage images, and review performance with view-count reports and CSV exports. A dashboard widget surfaces your most-read articles at a glance, and a latest-posts sidebar widget highlights new content wherever you need it. Post-freshness monitoring alerts you when a blog has gone too long without an update, so your site always looks active and current.</Help>
 	<Addon name="Blog Install" guid="{F0DDB73F-0894-4510-A657-64CC5459E7BC}" type="Add-on">
 		<DotNetClass><![CDATA[Contensive.Blog.OnInstall]]></DotNetClass>
-		<Scripting Language="VBScript" EntryPoint="" Timeout="5000">
-			<Code><![CDATA[ ]]></Code>
-		</Scripting>
+		<Content>No</Content>
+		<Template>No</Template>
+		<Email>No</Email>
+		<Admin>No</Admin>
+		<OnPageEndEvent>No</OnPageEndEvent>
+		<OnPageStartEvent>No</OnPageStartEvent>
+		<OnBodyStart>No</OnBodyStart>
+		<OnBodyEnd>No</OnBodyEnd>
+		<RemoteMethod>No</RemoteMethod>
+		<ProcessRunOnce>No</ProcessRunOnce>
+		<ProcessInterval>0</ProcessInterval>
+		<Scripting Language="" EntryPoint="" Timeout="5000"/>
 	</Addon>
 
 	<Addon Name="Blog Views By Article Dashboard Widget" Guid="{97130EC9-E5D4-4B05-9641-85D5A307BB84}" Type="Add-on">
 		<DashboardWidget>Yes</DashboardWidget>
 		<DotNetClass><![CDATA[Contensive.Blog.DashWidgetBlogViewsByArticle]]></DotNetClass>
 		<BlockEditTools>Yes</BlockEditTools>
-	</Addon>	
+		<Content>No</Content>
+		<Template>No</Template>
+		<Email>No</Email>
+		<Admin>No</Admin>
+		<OnPageEndEvent>No</OnPageEndEvent>
+		<OnPageStartEvent>No</OnPageStartEvent>
+		<OnBodyStart>No</OnBodyStart>
+		<OnBodyEnd>No</OnBodyEnd>
+		<RemoteMethod>No</RemoteMethod>
+		<ProcessRunOnce>No</ProcessRunOnce>
+		<ProcessInterval>0</ProcessInterval>
+	</Addon>
 
 	<Addon name="Blog" guid="{7B7614BB-92E5-4D91-8A60-2058401B8524}" type="Add-on">
 		<Copy></Copy>
@@ -139,6 +161,7 @@
 		<OnBodyStart>No</OnBodyStart>
 		<OnBodyEnd>No</OnBodyEnd>
 		<RemoteMethod>No</RemoteMethod>
+		<ProcessRunOnce>No</ProcessRunOnce>
 		<ProcessInterval>0</ProcessInterval>
 		<PageTitle></PageTitle>
 		<RemoteAssetLink></RemoteAssetLink>
@@ -148,7 +171,7 @@
 		<Category>Content</Category>
 		<Scripting Language="" EntryPoint="" Timeout="5000"/>
 	</Addon>
-	
+
 	<Addon name="blogSubscribeByEmailHandler" guid="{499CE116-2516-42C6-9AF7-9E190E2929D0}" type="Add-on">
 		<Copy></Copy>
 		<CopyText></CopyText>
@@ -160,7 +183,7 @@
 		<HelpLink><![CDATA[http://www.Contensive.com]]></HelpLink>
 		<Icon Link="/blogs/blog.png" width="57" height="59" sprites="4" />
 		<InIframe>No</InIframe>
-		<BlockEditTools>No</BlockEditTools>
+		<BlockEditTools>Yes</BlockEditTools>
 		<FormXML></FormXML>
 		<IsInline>No</IsInline>
 		<JavascriptInHead><![CDATA[
@@ -259,7 +282,7 @@
 		<RemoteMethod>No</RemoteMethod>
 		<Diagnostic>Yes</Diagnostic>
 		<ProcessRunOnce>No</ProcessRunOnce>
-		<ProcessInterval></ProcessInterval>
+		<ProcessInterval>0</ProcessInterval>
 		<MetaDescription></MetaDescription>
 		<OtherHeadTags></OtherHeadTags>
 		<PageTitle></PageTitle>
@@ -271,50 +294,192 @@
 	<Addon Name="Blog List" Guid="{9C74771D-B95B-4ABF-86F1-00F4D5219EFC}" Type="Add-on">
 		<DotNetClass><![CDATA[Contensive.Blog.BlogListAddon]]></DotNetClass>
 		<BlockEditTools>Yes</BlockEditTools>
+		<Content>No</Content>
+		<Template>No</Template>
+		<Email>No</Email>
+		<Admin>No</Admin>
+		<OnPageEndEvent>No</OnPageEndEvent>
+		<OnPageStartEvent>No</OnPageStartEvent>
+		<OnBodyStart>No</OnBodyStart>
+		<OnBodyEnd>No</OnBodyEnd>
+		<RemoteMethod>No</RemoteMethod>
+		<ProcessRunOnce>No</ProcessRunOnce>
+		<ProcessInterval>0</ProcessInterval>
 		<Category>Blog</Category>
 	</Addon>
 	<Addon Name="Blog Details" Guid="{DF86F90B-C13A-4E27-B88E-BBE7206637E4}" Type="Add-on">
 		<DotNetClass><![CDATA[Contensive.Blog.BlogDetailsAddon]]></DotNetClass>
 		<BlockEditTools>Yes</BlockEditTools>
+		<Content>No</Content>
+		<Template>No</Template>
+		<Email>No</Email>
+		<Admin>No</Admin>
+		<OnPageEndEvent>No</OnPageEndEvent>
+		<OnPageStartEvent>No</OnPageStartEvent>
+		<OnBodyStart>No</OnBodyStart>
+		<OnBodyEnd>No</OnBodyEnd>
+		<RemoteMethod>No</RemoteMethod>
+		<ProcessRunOnce>No</ProcessRunOnce>
+		<ProcessInterval>0</ProcessInterval>
 		<Category>Blog</Category>
 	</Addon>
 	<Addon Name="Blog Post List" Guid="{9D2F6B87-BB3A-43BE-AE38-3922381254DA}" Type="Add-on">
 		<DotNetClass><![CDATA[Contensive.Blog.BlogPostListAddon]]></DotNetClass>
 		<BlockEditTools>Yes</BlockEditTools>
+		<Content>No</Content>
+		<Template>No</Template>
+		<Email>No</Email>
+		<Admin>No</Admin>
+		<OnPageEndEvent>No</OnPageEndEvent>
+		<OnPageStartEvent>No</OnPageStartEvent>
+		<OnBodyStart>No</OnBodyStart>
+		<OnBodyEnd>No</OnBodyEnd>
+		<RemoteMethod>No</RemoteMethod>
+		<ProcessRunOnce>No</ProcessRunOnce>
+		<ProcessInterval>0</ProcessInterval>
 		<Category>Blog</Category>
 	</Addon>
 	<Addon Name="Blog Post Info" Guid="{064D20C0-3615-420C-931A-92689EE50F28}" Type="Add-on">
 		<DotNetClass><![CDATA[Contensive.Blog.BlogPostInfoAddon]]></DotNetClass>
 		<BlockEditTools>Yes</BlockEditTools>
+		<Content>No</Content>
+		<Template>No</Template>
+		<Email>No</Email>
+		<Admin>No</Admin>
+		<OnPageEndEvent>No</OnPageEndEvent>
+		<OnPageStartEvent>No</OnPageStartEvent>
+		<OnBodyStart>No</OnBodyStart>
+		<OnBodyEnd>No</OnBodyEnd>
+		<RemoteMethod>No</RemoteMethod>
+		<ProcessRunOnce>No</ProcessRunOnce>
+		<ProcessInterval>0</ProcessInterval>
 		<Category>Blog</Category>
 	</Addon>
 	<Addon Name="Blog Post Details" Guid="{F7665186-E496-4855-AB20-CC4CAF2094FA}" Type="Add-on">
 		<DotNetClass><![CDATA[Contensive.Blog.BlogPostDetailsAddon]]></DotNetClass>
 		<BlockEditTools>Yes</BlockEditTools>
+		<Content>No</Content>
+		<Template>No</Template>
+		<Email>No</Email>
+		<Admin>No</Admin>
+		<OnPageEndEvent>No</OnPageEndEvent>
+		<OnPageStartEvent>No</OnPageStartEvent>
+		<OnBodyStart>No</OnBodyStart>
+		<OnBodyEnd>No</OnBodyEnd>
+		<RemoteMethod>No</RemoteMethod>
+		<ProcessRunOnce>No</ProcessRunOnce>
+		<ProcessInterval>0</ProcessInterval>
 		<Category>Blog</Category>
 	</Addon>
 	<Addon Name="Blog Post RSS" Guid="{F252F188-061A-46D3-B993-0B815003CF8F}" Type="Add-on">
 		<DotNetClass><![CDATA[Contensive.Blog.BlogPostRssAddon]]></DotNetClass>
 		<BlockEditTools>Yes</BlockEditTools>
+		<Content>No</Content>
+		<Template>No</Template>
+		<Email>No</Email>
+		<Admin>No</Admin>
+		<OnPageEndEvent>No</OnPageEndEvent>
+		<OnPageStartEvent>No</OnPageStartEvent>
+		<OnBodyStart>No</OnBodyStart>
+		<OnBodyEnd>No</OnBodyEnd>
+		<RemoteMethod>No</RemoteMethod>
+		<ProcessRunOnce>No</ProcessRunOnce>
+		<ProcessInterval>0</ProcessInterval>
 		<Category>Blog</Category>
 	</Addon>
 	<Addon Name="Blog Post SEO" Guid="{E73111BB-1DFB-4FFF-AC7D-D08292946087}" Type="Add-on">
 		<DotNetClass><![CDATA[Contensive.Blog.BlogPostSeoAddon]]></DotNetClass>
 		<BlockEditTools>Yes</BlockEditTools>
+		<Content>No</Content>
+		<Template>No</Template>
+		<Email>No</Email>
+		<Admin>No</Admin>
+		<OnPageEndEvent>No</OnPageEndEvent>
+		<OnPageStartEvent>No</OnPageStartEvent>
+		<OnBodyStart>No</OnBodyStart>
+		<OnBodyEnd>No</OnBodyEnd>
+		<RemoteMethod>No</RemoteMethod>
+		<ProcessRunOnce>No</ProcessRunOnce>
+		<ProcessInterval>0</ProcessInterval>
+		<Category>Blog</Category>
+	</Addon>
+	<Addon Name="Blog Post Images" Guid="{D5E3F4A2-9B8C-4D6E-AF70-B2C3D4E5F6A9}" Type="Add-on">
+		<DotNetClass><![CDATA[Contensive.Blog.BlogPostImagesAddon]]></DotNetClass>
+		<BlockEditTools>Yes</BlockEditTools>
+		<Content>No</Content>
+		<Template>No</Template>
+		<Email>No</Email>
+		<Admin>No</Admin>
+		<OnPageEndEvent>No</OnPageEndEvent>
+		<OnPageStartEvent>No</OnPageStartEvent>
+		<OnBodyStart>No</OnBodyStart>
+		<OnBodyEnd>No</OnBodyEnd>
+		<RemoteMethod>No</RemoteMethod>
+		<ProcessRunOnce>No</ProcessRunOnce>
+		<ProcessInterval>0</ProcessInterval>
+		<Category>Blog</Category>
+	</Addon>
+	<Addon Name="Blog Post Image Details" Guid="{F6A4B5C3-1DAE-4F80-C192-D4E5F6A7B8C1}" Type="Add-on">
+		<DotNetClass><![CDATA[Contensive.Blog.BlogPostImageDetailsAddon]]></DotNetClass>
+		<BlockEditTools>Yes</BlockEditTools>
+		<Content>No</Content>
+		<Template>No</Template>
+		<Email>No</Email>
+		<Admin>No</Admin>
+		<OnPageEndEvent>No</OnPageEndEvent>
+		<OnPageStartEvent>No</OnPageStartEvent>
+		<OnBodyStart>No</OnBodyStart>
+		<OnBodyEnd>No</OnBodyEnd>
+		<RemoteMethod>No</RemoteMethod>
+		<ProcessRunOnce>No</ProcessRunOnce>
+		<ProcessInterval>0</ProcessInterval>
 		<Category>Blog</Category>
 	</Addon>
 	<Addon Name="Blog Post Report" Guid="{A1B2C3D4-5E6F-7A8B-9C0D-E1F2A3B4C5D6}" Type="Add-on">
 		<DotNetClass><![CDATA[Contensive.Blog.BlogPostReportAddon]]></DotNetClass>
 		<BlockEditTools>Yes</BlockEditTools>
+		<Content>No</Content>
+		<Template>No</Template>
+		<Email>No</Email>
+		<Admin>No</Admin>
+		<OnPageEndEvent>No</OnPageEndEvent>
+		<OnPageStartEvent>No</OnPageStartEvent>
+		<OnBodyStart>No</OnBodyStart>
+		<OnBodyEnd>No</OnBodyEnd>
+		<RemoteMethod>No</RemoteMethod>
+		<ProcessRunOnce>No</ProcessRunOnce>
+		<ProcessInterval>0</ProcessInterval>
+		<Category>Blog</Category>
+	</Addon>
+	<Addon Name="Post List" Guid="{E5C6D7B8-3F4A-4E6B-9CAD-A1B2C3D4E5F6}" Type="Add-on">
+		<DotNetClass><![CDATA[Contensive.Blog.PostListAddon]]></DotNetClass>
+		<BlockEditTools>Yes</BlockEditTools>
+		<Content>No</Content>
+		<Template>No</Template>
+		<Email>No</Email>
+		<Admin>No</Admin>
+		<OnPageEndEvent>No</OnPageEndEvent>
+		<OnPageStartEvent>No</OnPageStartEvent>
+		<OnBodyStart>No</OnBodyStart>
+		<OnBodyEnd>No</OnBodyEnd>
+		<RemoteMethod>No</RemoteMethod>
+		<ProcessRunOnce>No</ProcessRunOnce>
+		<ProcessInterval>0</ProcessInterval>
 		<Category>Blog</Category>
 	</Addon>
 	<Addon Name="Blog MCP Tools" Guid="{2673988C-B513-4EDD-9BCE-DEE883981C5E}" Type="Add-on">
 		<DotNetClass><![CDATA[Contensive.Addons.Blog.BlogMcpTools]]></DotNetClass>
-		<Admin>No</Admin>
 		<Content>No</Content>
 		<Template>No</Template>
 		<Email>No</Email>
+		<Admin>No</Admin>
+		<OnPageEndEvent>No</OnPageEndEvent>
+		<OnPageStartEvent>No</OnPageStartEvent>
+		<OnBodyStart>No</OnBodyStart>
+		<OnBodyEnd>No</OnBodyEnd>
 		<RemoteMethod>No</RemoteMethod>
+		<ProcessRunOnce>No</ProcessRunOnce>
+		<ProcessInterval>0</ProcessInterval>
 		<Help><![CDATA[MCP extension tools for AI-driven blog management. Provides tools to list, create, update, and delete blog posts, and to update blog settings.]]></Help>
 		<Category>Blog</Category>
 	</Addon>
@@ -649,13 +814,32 @@
 			<field name="sortorder"></field>
 			<field name="stylesfilename"></field>
 		</record>
+		<Record Content="Portal Features" Guid="{C3A1B2D4-5E6F-4A8B-9C0D-E1F2A3B4C5D7}" Name="Blog">
+			<Field Name="sortorder"><![CDATA[Blog]]></Field>
+			<Field Name="portalid">{e4d011e9-9f3b-4f7e-8ec3-f4fcc2a20455}</Field>
+			<Field Name="addonid"></Field>
+			<Field Name="heading"><![CDATA[Blog]]></Field>
+			<Field Name="parentfeatureid"></Field>
+			<Field Name="datacontentid"></Field>
+			<Field Name="collectionid">{13bb6661-3056-455e-b80d-b13779d11d2b}</Field>
+		</Record>
 		<Record Content="Portal Features" Guid="{BEF4ADF2-A6FA-4C59-B413-69D369F8B6CE}" Name="Blogs">
-			<Field Name="sortorder"><![CDATA[Blogs]]></Field>
+			<Field Name="sortorder"><![CDATA[000 Blogs]]></Field>
 			<Field Name="portalid">{e4d011e9-9f3b-4f7e-8ec3-f4fcc2a20455}</Field>
 			<Field Name="addonid">{9C74771D-B95B-4ABF-86F1-00F4D5219EFC}</Field>
 			<Field Name="heading"><![CDATA[Blogs]]></Field>
-			<Field Name="parentfeatureid"></Field>
+			<Field Name="parentfeatureid">{C3A1B2D4-5E6F-4A8B-9C0D-E1F2A3B4C5D7}</Field>
 			<Field Name="datacontentid"></Field>
+			<Field Name="collectionid">{13bb6661-3056-455e-b80d-b13779d11d2b}</Field>
+		</Record>
+		<Record Content="Portal Features" Guid="{D4B5C6A7-2E3F-4D5A-8B9C-F0E1D2C3B4A5}" Name="Posts">
+			<Field Name="sortorder"><![CDATA[010 Posts]]></Field>
+			<Field Name="portalid">{e4d011e9-9f3b-4f7e-8ec3-f4fcc2a20455}</Field>
+			<Field Name="addonid">{E5C6D7B8-3F4A-4E6B-9CAD-A1B2C3D4E5F6}</Field>
+			<Field Name="heading"><![CDATA[Posts]]></Field>
+			<Field Name="parentfeatureid">{C3A1B2D4-5E6F-4A8B-9C0D-E1F2A3B4C5D7}</Field>
+			<Field Name="datacontentid"></Field>
+			<Field Name="addpadding">False</Field>
 			<Field Name="collectionid">{13bb6661-3056-455e-b80d-b13779d11d2b}</Field>
 		</Record>
 		<Record Content="Portal Features" Guid="{08FBDABE-CB0E-4CC2-8BE0-57198A80102D}" Name="Blog Details">
@@ -714,6 +898,26 @@
 			<Field Name="addonid">{E73111BB-1DFB-4FFF-AC7D-D08292946087}</Field>
 			<Field Name="heading"><![CDATA[Post SEO]]></Field>
 			<Field Name="parentfeatureid">{ABF702AC-1A8E-4C52-A4CC-2EDF3B787A2B}</Field>
+			<Field Name="datacontentid"></Field>
+			<Field Name="addpadding">False</Field>
+			<Field Name="collectionid">{13bb6661-3056-455e-b80d-b13779d11d2b}</Field>
+		</Record>
+		<Record Content="Portal Features" Guid="{C4D2E3F1-8A7B-4C5D-9E6F-A1B2C3D4E5F8}" Name="Blog Post Images">
+			<Field Name="sortorder"><![CDATA[040 Images]]></Field>
+			<Field Name="portalid">{e4d011e9-9f3b-4f7e-8ec3-f4fcc2a20455}</Field>
+			<Field Name="addonid">{D5E3F4A2-9B8C-4D6E-AF70-B2C3D4E5F6A9}</Field>
+			<Field Name="heading"><![CDATA[Post Images]]></Field>
+			<Field Name="parentfeatureid">{ABF702AC-1A8E-4C52-A4CC-2EDF3B787A2B}</Field>
+			<Field Name="datacontentid"></Field>
+			<Field Name="addpadding">False</Field>
+			<Field Name="collectionid">{13bb6661-3056-455e-b80d-b13779d11d2b}</Field>
+		</Record>
+		<Record Content="Portal Features" Guid="{E5F3A4B2-0C9D-4E7F-B081-C3D4E5F6A7B0}" Name="Blog Post Image Details">
+			<Field Name="sortorder"><![CDATA[000 Image Details]]></Field>
+			<Field Name="portalid">{e4d011e9-9f3b-4f7e-8ec3-f4fcc2a20455}</Field>
+			<Field Name="addonid">{F6A4B5C3-1DAE-4F80-C192-D4E5F6A7B8C1}</Field>
+			<Field Name="heading"><![CDATA[Image Details]]></Field>
+			<Field Name="parentfeatureid">{C4D2E3F1-8A7B-4C5D-9E6F-A1B2C3D4E5F8}</Field>
 			<Field Name="datacontentid"></Field>
 			<Field Name="addpadding">False</Field>
 			<Field Name="collectionid">{13bb6661-3056-455e-b80d-b13779d11d2b}</Field>
@@ -853,7 +1057,7 @@
 		<Field Name="images2" Caption="Secondary Images" EditTab="Images" FieldType="Redirect" Authorable="True" EditSortPriority="2050" DefaultValue="" Active="True" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" MemberSelectGroup="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="BlogEntryID" RedirectPath="" IsBaseField="False" EditorAddonId="" LookupContent="" RedirectContent="Blog Images" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[Click Open in New Window to see all the images associated with this entry. If not primary image is set, the first secondary image is used.]]></HelpDefault>
 		</Field>
-		<Field Name="images" Caption="Shared Image Rules (legacy)" EditTab="Images" FieldType="Redirect" Authorable="True" EditSortPriority="2060" DefaultValue="" Active="True" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" MemberSelectGroup="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="BlogEntryID" RedirectPath="" IsBaseField="False" EditorAddonId="" LookupContent="" RedirectContent="Blog Image Rules" ManyToManyContent="" ManyToManyRuleContent="" >
+		<Field Name="images" Caption="Shared Image Rules (deprecated)" EditTab="Images" FieldType="Redirect" Authorable="True" EditSortPriority="2060" DefaultValue="" Active="False" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" MemberSelectGroup="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="BlogEntryID" RedirectPath="" IsBaseField="False" EditorAddonId="" LookupContent="" RedirectContent="Blog Image Rules" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[Click Open in New Window to see all the images associated with this entry. To add an image to a blog use the public blog interface.]]></HelpDefault>
 		</Field>
 		<Field Name="primaryimagepositionid" Caption="List View Primary Image Position" EditTab="Images" FieldType="Lookup" Authorable="True" EditSortPriority="2070" DefaultValue="1" Active="True" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" MemberSelectGroup="" Scramble="False" LookupList="Use Stylesheet,Align Right,Align Left,Do Not Display" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" IsBaseField="False" EditorAddonId="" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
@@ -936,7 +1140,7 @@
 		<Field Name="padleft" Caption="Left Padding" EditGroup="Padding" EditTab="Styles" FieldType="Boolean" Authorable="True" EditSortPriority="2030" DefaultValue="0" active="True" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[Add space between the edge of the block and the content.]]></HelpDefault>
 		</Field>
-		<Field Name="backgroundimagefilename" Caption="Background Image" EditGroup="Background" EditTab="Styles" FieldType="File" Authorable="True" EditSortPriority="2040" DefaultValue="" active="True" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+		<Field Name="backgroundimagefilename" Caption="Background Image" EditGroup="Background" EditTab="Styles" FieldType="image" Authorable="True" EditSortPriority="2040" DefaultValue="" active="True" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[Add a background image to the design block. It will be reduced in size to cover the entire background.]]></HelpDefault>
 		</Field>
 		<Field Name="asfullbleed" Caption="Add Container Margin for Full Bleed template" EditGroup="Padding" EditTab="Styles" FieldType="Boolean" Authorable="True" EditSortPriority="2050" DefaultValue="1" active="True" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
@@ -951,6 +1155,15 @@
 		<Field Name="fontstyleid" Caption="Optional Layout Wrapper Class for Font (deprecated)" EditTab="Styles" FieldType="Integer" Authorable="False" EditSortPriority="9999" DefaultValue="" active="True" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[deprecated]]></HelpDefault>
 		</Field>
+		<Field Name="anchortag" Caption="Anchor Target" EditGroup="Styles" EditTab="Styles" FieldType="Text" Authorable="True" EditSortPriority="4030" DefaultValue="" active="True" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+				<HelpDefault><![CDATA[Optional. Enter a unique name (e.g. 'contact-form') to create an anchor target for this block. Link to this block with #contact-form on the same page, or /page-url#contact-form from another page. Use only lowercase letters, numbers, and hyphens.]]></HelpDefault>
+			</Field>
+		<Field Name="animatestyleid" Caption="Animation Style" EditGroup="Animation" EditTab="Styles" FieldType="Lookup" Authorable="True" EditSortPriority="4050" DefaultValue="1" active="True" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" Scramble="False" LookupList="No Animation,Fade In Up,Fade In Down,Fade In Left,Fade In Right,Bounce In,Zoom In" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+			<HelpDefault><![CDATA[Select an animation style. Choose 'No Animation' to disable scroll animations, or pick a style to animate this block when scrolled into view.]]></HelpDefault>
+		</Field>
+		<Field Name="animatespeedid" Caption="Animation Speed" EditGroup="Animation" EditTab="Styles" FieldType="Lookup" Authorable="True" EditSortPriority="4060" DefaultValue="2" active="True" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" Scramble="False" LookupList="Slow,Normal,Fast" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+			<HelpDefault><![CDATA[Select the animation speed. Only applies when an animation style is selected.]]></HelpDefault>
+		</Field>
 		<Field Name="defaultpostimage" active="True" AdminOnly="False" Authorable="True" Caption="Default post image" DeveloperOnly="False" EditSortPriority="130" FieldType="Image" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[If a post is does not have an image, it will use this image]]></HelpDefault>
 		</Field>
@@ -964,44 +1177,35 @@
 		<Field Name="blogentryid" active="True" AdminOnly="False" Authorable="True" Caption="Blog Entry" DeveloperOnly="False" EditSortPriority="1000" FieldType="Lookup" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="Blog Entries" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 		<Field Name="calltoactionid" active="True" AdminOnly="False" Authorable="True" Caption="Call to Action" DeveloperOnly="False" EditSortPriority="1100" FieldType="Lookup" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="Call To Action Widgets" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 	</CDef>
-	<CDef Name="Blog Image Rules" Active="1" AdminOnly="0" AllowAdd="1" AllowCalendarEvents="0" AllowContentChildTool="0" AllowContentTracking="0" AllowDelete="1" AllowMetaContent="" AllowTopicRules="0" AllowWorkflowAuthoring="0" AuthoringDataSourceName="Default" AuthoringTableName="BlogImageRules" ContentDataSourceName="Default" ContentTableName="BlogImageRules" DefaultSortMethod="By Name" DeveloperOnly="0" DropDownFieldList="Name" EditorGroupName="" Parent="" IconLink="" IconHeight="0" IconWidth="0" IconSprites="0" isbasecontent="0" guid="{BFFEE420-5632-41D5-9520-1594F425ED79}" >
-		<Field Name="name" active="True" AdminOnly="False" Authorable="True" Caption="Name" DeveloperOnly="False" EditSortPriority="110" FieldType="Text" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="0" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
-		<Field Name="active" active="True" AdminOnly="False" Authorable="True" Caption="Active" DeveloperOnly="False" EditSortPriority="200" FieldType="Boolean" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="0" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="1" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
-		<Field Name="sortorder" active="True" AdminOnly="False" Authorable="False" Caption="Alpha Sort Order" DeveloperOnly="False" EditSortPriority="2000" FieldType="Text" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="0" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
-		<Field Name="blogimageid" active="True" AdminOnly="False" Authorable="True" Caption="Blog Image" DeveloperOnly="False" EditSortPriority="1000" FieldType="Lookup" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="Blog Images" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
-		<Field Name="blogentryid" active="True" AdminOnly="False" Authorable="True" Caption="Blog Entry" DeveloperOnly="False" EditSortPriority="1100" FieldType="Lookup" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="Blog Entries" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
-	</CDef>
-
-
-
-
-
 	<CDef Name="Blog Images" Active="1" AdminOnly="0" AllowAdd="1" AllowCalendarEvents="0" AllowContentChildTool="0" AllowContentTracking="0" AllowDelete="1" AllowMetaContent="" AllowTopicRules="0" AllowWorkflowAuthoring="0" AuthoringDataSourceName="Default" AuthoringTableName="BlogImages" ContentDataSourceName="Default" ContentTableName="BlogImages" DefaultSortMethod="By Name" DeveloperOnly="0" DropDownFieldList="Name" EditorGroupName="" Parent="" IconLink="" IconHeight="0" IconWidth="0" IconSprites="0" isbasecontent="0" guid="{21A60853-5A3D-40EB-B279-51EB75EECDA0}" >
 		<Field Name="name" active="True" AdminOnly="False" Authorable="True" Caption="Name" DeveloperOnly="False" EditSortPriority="1000" FieldType="Text" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="10" RedirectID="0" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[A name that is used as the ALT image tag for screen readers. Use to help you keep track of the images. ]]></HelpDefault>
 		</Field>
-		<Field Name="filename" active="True" AdminOnly="False" Authorable="True" Caption="Filename" DeveloperOnly="False" EditSortPriority="1010" FieldType="File" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+		<Field Name="filename" active="True" AdminOnly="False" Authorable="True" Caption="Filename" DeveloperOnly="False" EditSortPriority="1010" FieldType="image" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[The uploaded image]]></HelpDefault>
 		</Field>
 		<Field Name="description" active="True" AdminOnly="False" Authorable="True" Caption="Description" DeveloperOnly="False" EditSortPriority="1020" FieldType="LongText" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[Enter a description used ]]></HelpDefault>
+		</Field>
+		<Field Name="imageAspectRatioId" active="True" AdminOnly="False" Authorable="True" Caption="Aspect Ratio" EditTab="" DeveloperOnly="False" EditSortPriority="1015" FieldType="Integer" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="0" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" EditorAddonId="{D450B742-C50E-4834-B384-188B865C7354}" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+			<HelpDefault><![CDATA[Controls the aspect ratio for this image. 0=use post/blog default, 1=as uploaded, 2=1:1 square, 3=3:2 classic, 4=4:3 standard, 5=16:9 widescreen, 6=2:1 panoramic.]]></HelpDefault>
 		</Field>
 
 		<Field Name="sortorder" active="True" AdminOnly="False" Authorable="False" Caption="Alpha Sort Order" DeveloperOnly="False" EditSortPriority="2000" FieldType="Text" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="10" RedirectID="0" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[ ]]></HelpDefault>
 		</Field>
 
-		<Field Name="height" active="True" AdminOnly="False" Authorable="True" Caption="Height" DeveloperOnly="False" EditSortPriority="3000" FieldType="Integer" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+		<Field Name="height" active="True" AdminOnly="False" Authorable="True" Caption="Original Height" DeveloperOnly="False" EditSortPriority="3000" FieldType="Integer" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="Original" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[ ]]></HelpDefault>
 		</Field>
-		<Field Name="width" active="True" AdminOnly="False" Authorable="True" Caption="Width" DeveloperOnly="False" EditSortPriority="3010" FieldType="Integer" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+		<Field Name="width" active="True" AdminOnly="False" Authorable="True" Caption="Original Width" DeveloperOnly="False" EditSortPriority="3010" FieldType="Integer" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="Original" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[ ]]></HelpDefault>
 		</Field>
-		<Field Name="altsizelist" active="True" AdminOnly="False" Authorable="True" Caption="Alt Size List" DeveloperOnly="False" EditSortPriority="3020" FieldType="LongText" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+		<Field Name="altsizelist" active="True" AdminOnly="False" Authorable="False" Caption="Alt Size List" DeveloperOnly="False" EditSortPriority="3020" FieldType="LongText" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[ ]]></HelpDefault>
 		</Field>
-		<Field Name="blogentryid" active="True" AdminOnly="False" Authorable="True" Caption="Blog Entry" DeveloperOnly="False" EditSortPriority="3030" FieldType="Lookup" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="10" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="Blog Entries" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
-			<HelpDefault><![CDATA[Only used for images attached directoy to the post.]]></HelpDefault>
+		<Field Name="blogentryid" active="True" AdminOnly="False" Authorable="True" Caption="Blog Post" DeveloperOnly="False" EditSortPriority="3030" FieldType="Lookup" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="10" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="Post" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="Blog Entries" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+			<HelpDefault><![CDATA[The blog post this image belongs to.]]></HelpDefault>
 		</Field>
 	</CDef>
 
@@ -1160,7 +1364,7 @@
 		<Field Name="padleft" Caption="Left Padding" EditGroup="Padding" EditTab="Styles" FieldType="Boolean" Authorable="True" EditSortPriority="2030" DefaultValue="0" active="True" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[Add space between the edge of the block and the content.]]></HelpDefault>
 		</Field>
-		<Field Name="backgroundimagefilename" Caption="Background Image" EditGroup="Background" EditTab="Styles" FieldType="File" Authorable="True" EditSortPriority="2040" DefaultValue="" active="True" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+		<Field Name="backgroundimagefilename" Caption="Background Image" EditGroup="Background" EditTab="Styles" FieldType="image" Authorable="True" EditSortPriority="2040" DefaultValue="" active="True" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[Add a background image to the design block. It will be reduced in size to cover the entire background.]]></HelpDefault>
 		</Field>
 		<Field Name="asfullbleed" Caption="Add Container Margin for Full Bleed template" EditGroup="Padding" EditTab="Styles" FieldType="Boolean" Authorable="True" EditSortPriority="2050" DefaultValue="1" active="True" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
@@ -1171,6 +1375,15 @@
 		</Field>
 		<Field Name="themestyleid" Caption="Optional Layout Wrapper Class" EditGroup="Styles" EditTab="Styles" FieldType="Lookup" Authorable="True" EditSortPriority="4020" DefaultValue="" active="True" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" IsBaseField="False" LookupContent="Design Block Themes" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
 			<HelpDefault><![CDATA[Optional. Select a css class selector to be added to the block's wrapper. Use this feature to customize the layout styles. To add a custom style, add the css class selector in the content 'Design Block Themes' and add the css code to the style sheet in the site's theme addon.]]></HelpDefault>
+		</Field>
+		<Field Name="anchortag" Caption="Anchor Target" EditGroup="Styles" EditTab="Styles" FieldType="Text" Authorable="True" EditSortPriority="4030" DefaultValue="" active="True" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+				<HelpDefault><![CDATA[Optional. Enter a unique name (e.g. 'contact-form') to create an anchor target for this block. Link to this block with #contact-form on the same page, or /page-url#contact-form from another page. Use only lowercase letters, numbers, and hyphens.]]></HelpDefault>
+			</Field>
+		<Field Name="animatestyleid" Caption="Animation Style" EditGroup="Animation" EditTab="Styles" FieldType="Lookup" Authorable="True" EditSortPriority="4050" DefaultValue="1" active="True" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" Scramble="False" LookupList="No Animation,Fade In Up,Fade In Down,Fade In Left,Fade In Right,Bounce In,Zoom In" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+			<HelpDefault><![CDATA[Select an animation style. Choose 'No Animation' to disable scroll animations, or pick a style to animate this block when scrolled into view.]]></HelpDefault>
+		</Field>
+		<Field Name="animatespeedid" Caption="Animation Speed" EditGroup="Animation" EditTab="Styles" FieldType="Lookup" Authorable="True" EditSortPriority="4060" DefaultValue="2" active="True" AdminOnly="False" DeveloperOnly="False" HTMLContent="False" Required="False" TextBuffered="False" UniqueName="False" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" Scramble="False" LookupList="Slow,Normal,Fast" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="" RedirectPath="" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" >
+			<HelpDefault><![CDATA[Select the animation speed. Only applies when an animation style is selected.]]></HelpDefault>
 		</Field>
 		<!-- 
 			control info 
@@ -1193,6 +1406,16 @@
 		<Field Name="sortorder" active="True" AdminOnly="False" Authorable="False" Caption="Alpha Sort Order" DeveloperOnly="False" EditSortPriority="2000" FieldType="Text" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="0" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 		<Field Name="rssfeedid" active="True" AdminOnly="False" Authorable="True" Caption="RSS Feed" DeveloperOnly="False" EditSortPriority="1000" FieldType="Lookup" HTMLContent="False" IndexColumn="10" IndexSortDirection="" IndexSortOrder="99" IndexWidth="27" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="RSS Feeds" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 		<Field Name="blogpostid" active="True" AdminOnly="False" Authorable="True" Caption="Blog Post" DeveloperOnly="False" EditSortPriority="1010" FieldType="Lookup" HTMLContent="False" IndexColumn="20" IndexSortDirection="" IndexSortOrder="99" IndexWidth="27" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="Blog Entries" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
+	</CDef>
+	<!-- 
+		deprecated
+	-->
+	<CDef Name="Blog Image Rules" Active="1" AdminOnly="0" AllowAdd="1" AllowCalendarEvents="0" AllowContentChildTool="0" AllowContentTracking="0" AllowDelete="1" AllowMetaContent="" AllowTopicRules="0" AllowWorkflowAuthoring="0" AuthoringDataSourceName="Default" AuthoringTableName="BlogImageRules" ContentDataSourceName="Default" ContentTableName="BlogImageRules" DefaultSortMethod="By Name" DeveloperOnly="0" DropDownFieldList="Name" EditorGroupName="" Parent="" IconLink="" IconHeight="0" IconWidth="0" IconSprites="0" isbasecontent="0" guid="{BFFEE420-5632-41D5-9520-1594F425ED79}" >
+		<Field Name="name" active="True" AdminOnly="False" Authorable="True" Caption="Name" DeveloperOnly="False" EditSortPriority="110" FieldType="Text" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="0" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
+		<Field Name="active" active="True" AdminOnly="False" Authorable="True" Caption="Active" DeveloperOnly="False" EditSortPriority="200" FieldType="Boolean" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="0" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="1" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
+		<Field Name="sortorder" active="True" AdminOnly="False" Authorable="False" Caption="Alpha Sort Order" DeveloperOnly="False" EditSortPriority="2000" FieldType="Text" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="0" RedirectID="0" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
+		<Field Name="blogimageid" active="True" AdminOnly="False" Authorable="True" Caption="Blog Image" DeveloperOnly="False" EditSortPriority="1000" FieldType="Lookup" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="Blog Images" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
+		<Field Name="blogentryid" active="True" AdminOnly="False" Authorable="True" Caption="Blog Entry" DeveloperOnly="False" EditSortPriority="1100" FieldType="Lookup" HTMLContent="False" IndexColumn="0" IndexSortDirection="" IndexSortOrder="0" IndexWidth="" RedirectID="" RedirectPath="" Required="False" TextBuffered="False" UniqueName="False" DefaultValue="" RSSTitle="False" RSSDescription="False" MemberSelectGroup="" EditTab="" Scramble="False" LookupList="" NotEditable="False" Password="False" ReadOnly="False" ManyToManyRulePrimaryField="" ManyToManyRuleSecondaryField="" IsModified="False" IsBaseField="False" LookupContent="Blog Entries" RedirectContent="" ManyToManyContent="" ManyToManyRuleContent="" ></Field>
 	</CDef>
 	<ImportCollection name="Share">{3E7F5452-0E48-439F-9C14-D195019EBA78}</ImportCollection>
 	<ImportCollection name="Site Analytics">{be602ffd-f1a9-4932-988a-1d4d2658568b}</ImportCollection>

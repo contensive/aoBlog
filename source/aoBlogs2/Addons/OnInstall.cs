@@ -11,7 +11,7 @@ namespace Contensive.Blog {
         /// <summary>
         /// Blog Addon install handler
         /// </summary>
-        private const int codeVersion = 3;
+        private const int codeVersion = 4;
         //
         public override object Execute(CPBaseClass CP) {
             try {
@@ -34,6 +34,26 @@ namespace Contensive.Blog {
                     // -- v3: increase imageWidthMax default from 400 to 800 for existing blogs still at the old default
                     CP.Db.ExecuteNonQuery("update ccBlogs set imagewidthmax=800 where imagewidthmax=400");
                     siteVersion = 3;
+                }
+                if (siteVersion < 4) {
+                    // -- v4: migrate BlogImageRules to direct blogEntryId on BlogImages
+                    // -- for images linked via rules but missing blogEntryId, set it from the rule.
+                    // -- if an image is linked to multiple posts, use the newest post by dateAdded.
+                    CP.Db.ExecuteNonQuery(@"
+                        update i
+                        set i.blogentryid = best.blogentryid
+                        from BlogImages i
+                        inner join (
+                            select
+                                r.blogimageid,
+                                r.blogentryid,
+                                ROW_NUMBER() over (partition by r.blogimageid order by p.dateadded desc, r.blogentryid desc) as rn
+                            from BlogImageRules r
+                            inner join ccBlogCopy p on p.id = r.blogentryid
+                        ) best on best.blogimageid = i.id and best.rn = 1
+                        where (i.blogentryid is null or i.blogentryid = 0)
+                    ");
+                    siteVersion = 4;
                 }
                 CP.Site.SetProperty("Blog Version", siteVersion.ToString());
                 //
@@ -75,10 +95,10 @@ namespace Contensive.Blog {
                 //
                 return "";
             }
-            // 
+            //
             catch (Exception ex) {
                 CP.Site.ErrorReport(ex);
-                throw;
+                return "";
             }
         }
 

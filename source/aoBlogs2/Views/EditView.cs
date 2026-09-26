@@ -280,26 +280,12 @@ namespace Contensive.Blog.Views {
                                     if (BlogImage is not null) {
                                         BlogImageID = BlogImage.id;
                                         BlogImage.name = imageName;
-                                        // BlogImage.description = imageDescription
-                                        string FileExtension = "";
-                                        string FilenameNoExtension = "";
-                                        int Pos = imageFilename.LastIndexOf(".");
-                                        if (Pos >= 0) {
-                                            FileExtension = imageFilename.Substring(Pos + 1);
-                                            FilenameNoExtension = imageFilename.Substring(0, Pos);
-                                        }
+                                        BlogImage.blogEntryId = post.id;
                                         string VirtualFilePath = BlogImage.getUploadPath("filename");
                                         cp.Html.ProcessInputFile(constants.rnBlogUploadPrefix + "." + UploadPointer, VirtualFilePath);
                                         BlogImage.Filename = VirtualFilePath + imageFilename;
-                                        BlogImage.save(cp);
                                         BlogImage.sortOrder = new string('0', 12 - imageOrder.ToString().Length) + imageOrder.ToString();
-                                    }
-                                    // 
-                                    var ImageRule = DbBaseModel.addDefault<BlogImageRuleModel>(cp);
-                                    if (ImageRule is not null) {
-                                        ImageRule.BlogEntryID = post.id;
-                                        ImageRule.BlogImageID = BlogImageID;
-                                        ImageRule.save(cp);
+                                        BlogImage.save(cp);
                                     }
                                 }
                             }

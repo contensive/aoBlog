@@ -51,10 +51,13 @@
         //
         // -- portal
         public const string guidPortalShare = "{e4d011e9-9f3b-4f7e-8ec3-f4fcc2a20455}";
+        public const string guidPortalFeatureBlogs = "{C3A1B2D4-5E6F-4A8B-9C0D-E1F2A3B4C5D7}";
         public const string guidPortalFeatureBlogList = "{BEF4ADF2-A6FA-4C59-B413-69D369F8B6CE}";
         public const string guidPortalFeatureBlogDetails = "{08FBDABE-CB0E-4CC2-8BE0-57198A80102D}";
         public const string guidAddonBlogList = "{9C74771D-B95B-4ABF-86F1-00F4D5219EFC}";
         public const string guidAddonBlogDetails = "{DF86F90B-C13A-4E27-B88E-BBE7206637E4}";
+        public const string guidPortalFeaturePostList = "{D4B5C6A7-2E3F-4D5A-8B9C-F0E1D2C3B4A5}";
+        public const string guidAddonPostList = "{E5C6D7B8-3F4A-4E6B-9CAD-A1B2C3D4E5F6}";
         public const string guidPortalFeatureBlogPostList = "{ABF702AC-1A8E-4C52-A4CC-2EDF3B787A2B}";
         public const string guidAddonBlogPostList = "{9D2F6B87-BB3A-43BE-AE38-3922381254DA}";
         public const string guidPortalFeatureBlogPostInfo = "{209E7D9C-5A49-409F-B949-9D49F341735E}";
@@ -65,13 +68,19 @@
         public const string guidAddonBlogPostRss = "{F252F188-061A-46D3-B993-0B815003CF8F}";
         public const string guidPortalFeatureBlogPostSeo = "{B3B1F551-9AA4-4230-9A34-A59BC20F5F79}";
         public const string guidAddonBlogPostSeo = "{E73111BB-1DFB-4FFF-AC7D-D08292946087}";
+        public const string guidPortalFeatureBlogPostImages = "{C4D2E3F1-8A7B-4C5D-9E6F-A1B2C3D4E5F8}";
+        public const string guidAddonBlogPostImages = "{D5E3F4A2-9B8C-4D6E-AF70-B2C3D4E5F6A9}";
+        public const string guidPortalFeatureBlogPostImageDetails = "{E5F3A4B2-0C9D-4E7F-B081-C3D4E5F6A7B0}";
+        public const string guidAddonBlogPostImageDetails = "{F6A4B5C3-1DAE-4F80-C192-D4E5F6A7B8C1}";
         //
-        public const string guidPortalFeatureReports = "{E2F3A4B5-6C7D-8E9F-0A1B-2C3D4E5F6A7B}";
+        public const string guidPortalFeatureReports = "{bf40b429-78b0-4556-991b-6928c1c5c55c}";
         public const string guidPortalFeatureBlogPostReport = "{D4E5F6A7-1B2C-3D4E-5F6A-7B8C9D0E1F2A}";
         public const string guidAddonBlogPostReport = "{A1B2C3D4-5E6F-7A8B-9C0D-E1F2A3B4C5D6}";
         //
         public const string rnBlogId = "blogId";
         public const string rnBlogPostId = "blogPostId";
+        public const string rnBlogImageId = "blogImageId";
+        public const string rnBlogImageIsPrimary = "blogImageIsPrimary";
         public const string rnDstFeatureGuid = "dstFeatureGuid";
         public const string rnSrcFormId = "srcFormId";
         //
@@ -82,7 +91,10 @@
         public const int formIdBlogPostDetails = 740;
         public const int formIdBlogPostRss = 750;
         public const int formIdBlogPostSeo = 760;
+        public const int formIdBlogPostImages = 765;
+        public const int formIdBlogPostImageDetails = 766;
         public const int formIdBlogPostReport = 770;
+        public const int formIdPostList = 780;
         //
         public const string rnReportBlogFilter = "reportBlogFilter";
         public const string rnReportPeriodFilter = "reportPeriodFilter";

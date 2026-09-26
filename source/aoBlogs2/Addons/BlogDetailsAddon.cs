@@ -1,8 +1,7 @@
 
 using Contensive.BaseClasses;
-using Contensive.Blog.Models;
-using Contensive.Models.Db;
 using System;
+using System.Data;
 
 namespace Contensive.Blog {
     public class BlogDetailsAddon : AddonBaseClass {
@@ -13,7 +12,10 @@ namespace Contensive.Blog {
         public override object Execute(CPBaseClass cp) {
             try {
                 if (!cp.User.IsAdmin) { return "<p>You are not authorized to access this feature.</p>"; }
-                if (!cp.AdminUI.EndpointContainsPortal()) { return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogList, ""); }
+                if (!cp.AdminUI.EndpointContainsPortal()) {
+                    cp.Log.Warn($"BlogDetailsAddon, endpoint does not contain portal, redirecting to BlogList");
+                    return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogList, "");
+                }
                 processForm(cp);
                 return getForm(cp);
             } catch (Exception ex) {
@@ -55,6 +57,7 @@ namespace Contensive.Blog {
                     }
                 }
                 if ((button ?? "") == constants.buttonCancel || (button ?? "") == constants.buttonOK) {
+                    cp.Log.Warn($"BlogDetailsAddon, {button} button clicked, redirecting to BlogList");
                     cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogList, "");
                     return;
                 }
@@ -76,10 +79,13 @@ namespace Contensive.Blog {
                 layoutBuilder.isOuterContainer = false;
                 //
                 int blogId = cp.Doc.GetInteger(constants.rnBlogId);
-                var blog = DbBaseModel.create<BlogModel>(cp, blogId);
-                if (blog is null) {
-                    layoutBuilder.warningMessage = "This blog is not valid.";
-                    return layoutBuilder.getHtml();
+                //
+                // -- verify blog exists including inactive records (admin context)
+                using (DataTable dtBlog = cp.Db.ExecuteQuery($"select id from ccBlogs where id={blogId}")) {
+                    if (dtBlog?.Rows == null || dtBlog.Rows.Count == 0) {
+                        layoutBuilder.warningMessage = "This blog is not valid.";
+                        return layoutBuilder.getHtml();
+                    }
                 }
                 //
                 // -- refresh query string
@@ -169,7 +175,7 @@ namespace Contensive.Blog {
                 //
                 // -- hiddens
                 layoutBuilder.addFormHidden(constants.rnSrcFormId, constants.formIdBlogDetails);
-                layoutBuilder.addFormHidden(constants.rnBlogId, blog.id);
+                layoutBuilder.addFormHidden(constants.rnBlogId, blogId);
                 //
                 return layoutBuilder.getHtml();
             } catch (Exception ex) {

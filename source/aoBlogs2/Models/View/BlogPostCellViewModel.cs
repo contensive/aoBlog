@@ -8,6 +8,7 @@ using Contensive.Models.Db;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Contensive.Blog.Models.View {
     public class BlogPostCellViewModel {
@@ -73,6 +74,14 @@ namespace Contensive.Blog.Models.View {
         //
         // -- comment count (used by callers)
         public int commentCount { get; set; }
+        //
+        // -- remaining images (article view, images not embedded inline)
+        public bool hasRemainingImages { get; set; }
+        public string remainingImagesHtml { get; set; }
+        //
+        // -- add image link (article view, blog editor only)
+        public bool hasAddImageLink { get; set; }
+        public string addImageLinkHtml { get; set; }
         //
         //====================================================================================================
         /// <summary>
@@ -159,7 +168,43 @@ namespace Contensive.Blog.Models.View {
                 //
                 // -- copy
                 if (isArticleView) {
-                    result.copy = blogPost.copy;
+                    //
+                    // -- determine aspect ratio for all images (same as primary)
+                    int imageAspectRatioId = blogPost.primaryImageAspectRatioId > 0
+                        ? blogPost.primaryImageAspectRatioId
+                        : app.blog.defaultImageAspectRatioId;
+                    //
+                    // -- process [imageNNN] tags in article copy, replacing with rendered images
+                    bool isEditing = app.userIsEditing;
+                    var inlineImageIds = new HashSet<int>();
+                    string articleCopy = blogPost.copy ?? "";
+                    articleCopy = Regex.Replace(articleCopy, @"\[image(\d+)\]", (match) => {
+                        int imageId = int.Parse(match.Groups[1].Value);
+                        var image = blogImageList.FirstOrDefault(i => i.id == imageId);
+                        if (image == null || string.IsNullOrEmpty(image.Filename)) { return ""; }
+                        inlineImageIds.Add(imageId);
+                        return renderImageHtml(cp, image, imageAspectRatioId, isEditing);
+                    }, RegexOptions.IgnoreCase);
+                    result.copy = articleCopy;
+                    //
+                    // -- remaining images: secondary images (id > 0) not embedded inline, with a filename
+                    var remainingImages = blogImageList
+                        .Where(i => i.id > 0 && !inlineImageIds.Contains(i.id) && !string.IsNullOrEmpty(i.Filename))
+                        .ToList();
+                    if (remainingImages.Count > 0) {
+                        string html = "";
+                        foreach (var image in remainingImages) {
+                            html += renderImageHtml(cp, image, imageAspectRatioId, isEditing);
+                        }
+                        result.hasRemainingImages = true;
+                        result.remainingImagesHtml = html;
+                    }
+                    //
+                    // -- add image link (blog editor only, article view only)
+                    if (app.user != null && app.user.isBlogEditor(cp, app.blog)) {
+                        result.hasAddImageLink = true;
+                        result.addImageLinkHtml = cp.Content.GetAddLink(BlogImageModel.tableMetadata.contentName, $"blogEntryId={blogPost.id}", false, app.userIsEditing, false);
+                    }
                 } else {
                     result.copy = _GenericController.getBriefCopy(cp, blogPost.copy, app.blog.overviewLength);
                     result.showReadMore = true;
@@ -283,6 +328,41 @@ namespace Contensive.Blog.Models.View {
                 cp.Site.ErrorReport(ex, "BlogPostCellViewModel.create");
                 throw;
             }
+        }
+        //
+        //====================================================================================================
+        /// <summary>
+        /// Render a single blog image as an HTML img tag with responsive srcset/sizes.
+        /// Uses the image's own aspect ratio if set, otherwise falls back to defaultAspectRatioId.
+        /// When isEditing is true and the image has a record id, wraps with the platform edit wrapper.
+        /// </summary>
+        private static string renderImageHtml(CPBaseClass cp, BlogImageModel image, int defaultAspectRatioId, bool isEditing) {
+            int aspectRatioId = (image.imageAspectRatioId > 0) ? image.imageAspectRatioId : defaultAspectRatioId;
+            int imageWidth = 800;
+            int imageHeight = ImageController.getImageHeight(imageWidth, aspectRatioId);
+            string altSizeList = image.altSizeList ?? "";
+            var imgResult = cp.Image.GetImgSrcSet(image.Filename, imageWidth, imageHeight, ref altSizeList);
+            if (altSizeList != image.altSizeList) {
+                image.altSizeList = altSizeList;
+                image.save(cp);
+            }
+            string aspectClass = ImageController.getAspectRatioStyle(aspectRatioId);
+            string altText = cp.Utils.EncodeHTML(image.name ?? image.description ?? "");
+            string containerClass = "blogImageContainer" + (string.IsNullOrEmpty(aspectClass) ? "" : $" {aspectClass}");
+            bool manageAspect = !string.IsNullOrEmpty(aspectClass);
+            string imgTag;
+            if (manageAspect) {
+                imgTag = $"<img alt=\"{altText}\" title=\"{altText}\" class=\"blogImage\" src=\"{imgResult.src}\" srcset=\"{imgResult.srcset}\" sizes=\"{imgResult.sizes}\" width=\"{imageWidth}\" height=\"{imgResult.imageHeight}\" loading=\"lazy\">";
+            } else {
+                imgTag = $"<img alt=\"{altText}\" title=\"{altText}\" class=\"w-100 mx-auto d-block\" src=\"{imgResult.src}\" srcset=\"{imgResult.srcset}\" sizes=\"{imgResult.sizes}\" width=\"{imageWidth}\" height=\"{imgResult.imageHeight}\" loading=\"lazy\" style=\"height:auto\">";
+            }
+            string html = $"<div class=\"{containerClass} my-3\">{imgTag}</div>";
+            //
+            // -- wrap secondary images (id > 0) with edit wrapper when in edit mode
+            if (isEditing && image.id > 0) {
+                html = _GenericController.addEditWrapper(cp, html, image.id, image.name ?? "", BlogImageModel.tableMetadata.contentName);
+            }
+            return html;
         }
     }
 }

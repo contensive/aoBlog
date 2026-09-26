@@ -255,27 +255,31 @@ namespace Contensive.Blog.Views {
                                     RetryCommentPost = false;
                                     //
                                     if (blog.emailComment) {
-                                        //
-                                        // Send Comment Notification
-                                        string EntryLink = blogEntry.rssLink;
-                                        if (!EntryLink.Contains("?")) {
-                                            EntryLink += "?";
-                                        } else {
-                                            EntryLink += "&";
-                                        }
-                                        EntryLink = EntryLink + "blogentryid=" + blogEntry.id;
-                                        string EmailBody = $"The following blog comment was posted {DateTime.Now}To approve this comment, go to {EntryLink}\r\nBlog '{blog.name}'Post '{blogEntry.name}'By {cp.User.Name}\r\n\r\n{cp.Utils.EncodeHTML(Copy)}\r\n";
-                                        string EmailFromAddress = cp.Site.GetText("EmailFromAddress", "info@" + cp.Site.Domain);
-                                        if (blogEntry.authorMemberId != 0) {
-                                            cp.Email.sendUser(blogEntry.authorMemberId, EmailFromAddress, "Blog comment notification for [" + blog.name + "]", EmailBody, true, false);
-                                            cp.Email.sendUser(blogEntry.authorMemberId, EmailFromAddress, "Blog comment notification for [" + blog.name + "]", EmailBody, false, false);
-                                        }
-                                        int blogAuthorsGroupId = cp.Group.GetId(constants.nameGroupBlogAuthors);
-                                        if (blogAuthorsGroupId != 0) {
-                                            var MemberRuleList = DbBaseModel.createList<MemberRuleModel>(cp, "GroupId=" + blogAuthorsGroupId);
-                                            foreach (var MemberRule in MemberRuleList) {
-                                                cp.Email.sendUser(MemberRule.memberId, EmailFromAddress, "Blog comment on " + blog.name, EmailBody, false, false);
+                                        try {
+                                            //
+                                            // Send Comment Notification
+                                            string EntryLink = blogEntry.rssLink;
+                                            if (!EntryLink.Contains("?")) {
+                                                EntryLink += "?";
+                                            } else {
+                                                EntryLink += "&";
                                             }
+                                            EntryLink = EntryLink + "blogentryid=" + blogEntry.id;
+                                            string EmailBody = $"The following blog comment was posted {DateTime.Now}To approve this comment, go to {EntryLink}\r\nBlog '{blog.name}'Post '{blogEntry.name}'By {cp.User.Name}\r\n\r\n{cp.Utils.EncodeHTML(Copy)}\r\n";
+                                            string EmailFromAddress = cp.Site.GetText("EmailFromAddress", "info@" + cp.Site.Domain);
+                                            if (blogEntry.authorMemberId != 0) {
+                                                cp.Email.sendUser(blogEntry.authorMemberId, EmailFromAddress, $"Blog comment notification for [{blog.name}]", EmailBody, true, false);
+                                                cp.Email.sendUser(blogEntry.authorMemberId, EmailFromAddress, $"Blog comment notification for [{blog.name}]", EmailBody, false, false);
+                                            }
+                                            int blogAuthorsGroupId = cp.Group.GetId(constants.nameGroupBlogAuthors);
+                                            if (blogAuthorsGroupId != 0) {
+                                                var MemberRuleList = DbBaseModel.createList<MemberRuleModel>(cp, $"GroupId={blogAuthorsGroupId}");
+                                                foreach (var MemberRule in MemberRuleList) {
+                                                    cp.Email.sendUser(MemberRule.memberId, EmailFromAddress, $"Blog comment on {blog.name}", EmailBody, false, false);
+                                                }
+                                            }
+                                        } catch (Exception ex) {
+                                            cp.Site.ErrorReport(ex, "ArticleView.processArticleView, comment notification email");
                                         }
                                     }
                                 }

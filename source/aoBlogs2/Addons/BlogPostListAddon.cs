@@ -1,7 +1,5 @@
 
 using Contensive.BaseClasses;
-using Contensive.Blog.Models;
-using Contensive.Models.Db;
 using System;
 using System.Data;
 
@@ -15,6 +13,7 @@ namespace Contensive.Blog {
             try {
                 if (!cp.User.IsAdmin) { return "<p>You are not authorized to access this feature.</p>"; }
                 if (!cp.AdminUI.EndpointContainsPortal()) {
+                    cp.Log.Warn($"BlogPostListAddon, endpoint does not contain portal, redirecting to BlogList");
                     return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogList, "");
                 }
                 processForm(cp);
@@ -34,11 +33,13 @@ namespace Contensive.Blog {
                     case constants.buttonAdd: {
                             //
                             // -- redirect to post info with postId=0 for new
-                            cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogPostInfo, $"&{constants.rnBlogId}={blogId}&{constants.rnBlogPostId}=0");
+                            cp.Log.Warn($"BlogPostListAddon, Add button clicked, blogId [{blogId}], redirecting to BlogPostInfo");
+                            cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogPostInfo, $"&{constants.rnBlogPostId}=0");
                             return;
                         }
                     case constants.buttonCancel: {
-                            cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogDetails, $"&{constants.rnBlogId}={blogId}");
+                            cp.Log.Warn($"BlogPostListAddon, Cancel button clicked, blogId [{blogId}], redirecting to BlogDetails");
+                            cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogDetails, "");
                             return;
                         }
                 }
@@ -53,8 +54,16 @@ namespace Contensive.Blog {
                 if (!cp.Response.isOpen) { return ""; }
                 //
                 int blogId = cp.Doc.GetInteger(constants.rnBlogId);
-                var blog = DbBaseModel.create<BlogModel>(cp, blogId);
-                if (blog == null) { return "The blog is not valid."; }
+                //
+                // -- load blog by id including inactive records (admin context)
+                string blogName = "";
+                using (DataTable dtBlog = cp.Db.ExecuteQuery($"select id,name from ccBlogs where id={blogId}")) {
+                    if (dtBlog?.Rows == null || dtBlog.Rows.Count == 0) {
+                        cp.Log.Warn($"BlogPostListAddon, blog not found, blogId [{blogId}], showing error message");
+                        return "The blog is not valid.";
+                    }
+                    blogName = cp.Utils.EncodeText(dtBlog.Rows[0]["name"]);
+                }
                 //
                 var layoutBuilder = cp.AdminUI.CreateLayoutBuilderList(constants.guidAddonBlogPostList);
                 //
@@ -62,32 +71,42 @@ namespace Contensive.Blog {
                 layoutBuilder.columnCaption = "Row";
                 layoutBuilder.columnCaptionClass = "afwWidth20px afwTextAlignCenter";
                 layoutBuilder.columnCellClass = "afwTextAlignCenter";
+                layoutBuilder.columnDownloadable = false;
                 //
                 layoutBuilder.addColumn();
+                layoutBuilder.columnName = "id";
                 layoutBuilder.columnCaption = "ID";
                 layoutBuilder.columnCaptionClass = "afwWidth20px afwTextAlignCenter";
                 layoutBuilder.columnCellClass = "afwTextAlignCenter";
+                layoutBuilder.columnSortable = true;
                 //
                 layoutBuilder.addColumn();
+                layoutBuilder.columnName = "name";
                 layoutBuilder.columnCaption = "Name";
                 layoutBuilder.columnCaptionClass = "afwTextAlignLeft";
                 layoutBuilder.columnCellClass = "afwTextAlignLeft";
-                layoutBuilder.columnSortable = false;
+                layoutBuilder.columnSortable = true;
                 //
                 layoutBuilder.addColumn();
+                layoutBuilder.columnName = "dateAdded";
                 layoutBuilder.columnCaption = "Date Added";
                 layoutBuilder.columnCaptionClass = "afwWidth200px afwTextAlignCenter";
                 layoutBuilder.columnCellClass = "afwTextAlignCenter";
+                layoutBuilder.columnSortable = true;
                 //
                 layoutBuilder.addColumn();
+                layoutBuilder.columnName = "viewings";
                 layoutBuilder.columnCaption = "Views";
                 layoutBuilder.columnCaptionClass = "afwWidth100px afwTextAlignCenter";
                 layoutBuilder.columnCellClass = "afwTextAlignCenter";
+                layoutBuilder.columnSortable = true;
                 //
                 layoutBuilder.addColumn();
+                layoutBuilder.columnName = "active";
                 layoutBuilder.columnCaption = "Active";
                 layoutBuilder.columnCaptionClass = "afwWidth100px afwTextAlignCenter";
                 layoutBuilder.columnCellClass = "afwTextAlignCenter";
+                layoutBuilder.columnSortable = true;
                 //
                 // -- sql where clause
                 string sqlWhere = $"(blogId={blogId})";
@@ -105,7 +124,12 @@ namespace Contensive.Blog {
                 //
                 // -- data query
                 string sql = $"select id, name, dateAdded, viewings, active from ccBlogCopy where {sqlWhere}";
-                sql += string.IsNullOrEmpty(layoutBuilder.sqlOrderBy) ? " order by dateAdded desc" : $" order by {layoutBuilder.sqlOrderBy}";
+                string orderBy = "dateAdded desc";
+                if (!string.IsNullOrEmpty(layoutBuilder.sortField)) {
+                    orderBy = layoutBuilder.sortField;
+                    if (layoutBuilder.sortDirection == "desc") { orderBy += " desc"; }
+                }
+                sql += $" order by {orderBy}";
                 sql += $" OFFSET {(layoutBuilder.paginationPageNumber - 1) * layoutBuilder.paginationPageSize} ROWS FETCH NEXT {layoutBuilder.paginationPageSize} ROWS ONLY";
                 //
                 string postDetailBaseUrl = cp.AdminUI.GetPortalFeatureLink(constants.guidPortalShare, constants.guidPortalFeatureBlogPostDetails);
@@ -124,8 +148,8 @@ namespace Contensive.Blog {
                         //
                         layoutBuilder.addRow();
                         layoutBuilder.setCell((rowPtr + 1).ToString());
-                        layoutBuilder.setCell($"<a href=\"{postLink}\">{postId}</a>");
-                        layoutBuilder.setCell($"<a href=\"{postLink}\">{postName}</a>");
+                        layoutBuilder.setCell($"<a href=\"{postLink}\">{postId}</a>", postId);
+                        layoutBuilder.setCell($"<a href=\"{postLink}\">{postName}</a>", postName);
                         layoutBuilder.setCell(dateAdded == DateTime.MinValue ? "" : dateAdded.ToShortDateString());
                         layoutBuilder.setCell(viewings.ToString());
                         layoutBuilder.setCell(isActive ? "Yes" : "No");
@@ -136,16 +160,17 @@ namespace Contensive.Blog {
                 //
                 // -- layout settings
                 layoutBuilder.title = "Posts";
-                layoutBuilder.description = "Blog posts for this blog.";
+                layoutBuilder.description = "Blog posts for this blog. blogpostlist-0104";
                 layoutBuilder.includeForm = true;
                 layoutBuilder.includeBodyColor = true;
                 layoutBuilder.includeBodyPadding = true;
                 layoutBuilder.isOuterContainer = false;
                 layoutBuilder.paginationPageSizeDefault = 50;
+                layoutBuilder.allowDownloadButton = true;
                 //
                 // -- feature subnav
                 cp.Doc.AddRefreshQueryString(constants.rnBlogId, blogId);
-                layoutBuilder.portalSubNavTitleList.Add($"{blog.name}, #{blog.id}");
+                layoutBuilder.portalSubNavTitleList.Add($"{blogName}, #{blogId}");
                 //
                 // -- buttons
                 layoutBuilder.addFormButton(constants.buttonAdd);

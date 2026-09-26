@@ -144,7 +144,7 @@ namespace Contensive.Blog {
                 return result;
             } catch (Exception ex) {
                 cp.Site.ErrorReport(ex);
-                throw;
+                return "";
             }
         }
     }

@@ -17,6 +17,7 @@ namespace Contensive.Blog {
             try {
                 if (!cp.User.IsAdmin) { return "<p>You are not authorized to access this feature.</p>"; }
                 if (!cp.AdminUI.EndpointContainsPortal()) {
+                    cp.Log.Warn($"BlogPostReportAddon, endpoint does not contain portal, redirecting to BlogPostReport");
                     return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogPostReport, "");
                 }
                 return getForm(cp);
@@ -40,9 +41,6 @@ namespace Contensive.Blog {
                 // -- blog filter (select from content)
                 layoutBuilder.addFilterGroup("Blog");
                 layoutBuilder.addFilterSelectContent("Blog", constants.rnReportBlogFilter, blogFilterId, constants.cnBlogs, "", "All Blogs");
-                if (blogFilterId > 0) {
-                    layoutBuilder.addActiveFilter("Blog", constants.rnReportBlogFilter, constants.rnReportBlogFilter);
-                }
                 //
                 // -- period filter (select from list)
                 layoutBuilder.addFilterGroup("Period");
@@ -51,10 +49,7 @@ namespace Contensive.Blog {
                     new NameValueSelected("Last 30 Days", "2", periodFilter == 2),
                     new NameValueSelected("Last 7 Days", "3", periodFilter == 3)
                 };
-                layoutBuilder.addFilterSelect("Period", constants.rnReportPeriodFilter, periodOptions);
-                if (periodFilter > 1) {
-                    layoutBuilder.addActiveFilter("Period", constants.rnReportPeriodFilter, constants.rnReportPeriodFilter);
-                }
+                layoutBuilder.addFilterSelect("Period", constants.rnReportPeriodFilter, periodOptions, defaultValue: "1");
                 //
                 // -- date filter clause for the viewing log
                 string dateFilterClause = "";
@@ -71,32 +66,42 @@ namespace Contensive.Blog {
                 layoutBuilder.columnCaption = "Row";
                 layoutBuilder.columnCaptionClass = "afwWidth20px afwTextAlignCenter";
                 layoutBuilder.columnCellClass = "afwTextAlignCenter";
+                layoutBuilder.columnDownloadable = false;
                 //
                 layoutBuilder.addColumn();
+                layoutBuilder.columnName = "b.name";
                 layoutBuilder.columnCaption = "Blog";
                 layoutBuilder.columnCaptionClass = "afwWidth200px afwTextAlignLeft";
                 layoutBuilder.columnCellClass = "afwTextAlignLeft";
+                layoutBuilder.columnSortable = true;
                 //
                 layoutBuilder.addColumn();
+                layoutBuilder.columnName = "p.name";
                 layoutBuilder.columnCaption = "Post Name";
                 layoutBuilder.columnCaptionClass = "afwTextAlignLeft";
                 layoutBuilder.columnCellClass = "afwTextAlignLeft";
-                layoutBuilder.columnSortable = false;
+                layoutBuilder.columnSortable = true;
                 //
                 layoutBuilder.addColumn();
+                layoutBuilder.columnName = "viewCount";
                 layoutBuilder.columnCaption = "Views";
                 layoutBuilder.columnCaptionClass = "afwWidth100px afwTextAlignCenter";
                 layoutBuilder.columnCellClass = "afwTextAlignCenter";
+                layoutBuilder.columnSortable = true;
                 //
                 layoutBuilder.addColumn();
+                layoutBuilder.columnName = "utmViewCount";
                 layoutBuilder.columnCaption = "UTM Views";
                 layoutBuilder.columnCaptionClass = "afwWidth100px afwTextAlignCenter";
                 layoutBuilder.columnCellClass = "afwTextAlignCenter";
+                layoutBuilder.columnSortable = true;
                 //
                 layoutBuilder.addColumn();
+                layoutBuilder.columnName = "p.active";
                 layoutBuilder.columnCaption = "Active";
                 layoutBuilder.columnCaptionClass = "afwWidth100px afwTextAlignCenter";
                 layoutBuilder.columnCellClass = "afwTextAlignCenter";
+                layoutBuilder.columnSortable = true;
                 //
                 // -- sql where clause
                 string sqlWhere = "(1=1)";
@@ -150,7 +155,12 @@ namespace Contensive.Blog {
                             group by v.blogEntryId
                         ) uc on uc.blogEntryId = p.id
                     where {sqlWhere}";
-                sql += string.IsNullOrEmpty(layoutBuilder.sqlOrderBy) ? " order by isnull(vc.viewCount, 0) desc" : $" order by {layoutBuilder.sqlOrderBy}";
+                string orderBy = "isnull(vc.viewCount, 0) desc";
+                if (!string.IsNullOrEmpty(layoutBuilder.sortField)) {
+                    orderBy = layoutBuilder.sortField;
+                    if (layoutBuilder.sortDirection == "desc") { orderBy += " desc"; }
+                }
+                sql += $" order by {orderBy}";
                 sql += $" OFFSET {(layoutBuilder.paginationPageNumber - 1) * layoutBuilder.paginationPageSize} ROWS FETCH NEXT {layoutBuilder.paginationPageSize} ROWS ONLY";
                 //
                 // -- build the post detail link base
@@ -178,8 +188,8 @@ namespace Contensive.Blog {
                             //
                             layoutBuilder.addRow();
                             layoutBuilder.setCell((rowPtr + 1).ToString());
-                            layoutBuilder.setCell($"<a href=\"{blogLink}\">{cp.Utils.EncodeHTML(blogName)}</a>");
-                            layoutBuilder.setCell($"<a href=\"{postLink}\">{cp.Utils.EncodeHTML(postName)}</a>");
+                            layoutBuilder.setCell($"<a href=\"{blogLink}\">{cp.Utils.EncodeHTML(blogName)}</a>", blogName);
+                            layoutBuilder.setCell($"<a href=\"{postLink}\">{cp.Utils.EncodeHTML(postName)}</a>", postName);
                             layoutBuilder.setCell(viewCount.ToString());
                             layoutBuilder.setCell(utmViewCount.ToString());
                             layoutBuilder.setCell(postActive ? "Yes" : "No");
@@ -197,6 +207,7 @@ namespace Contensive.Blog {
                 layoutBuilder.includeBodyPadding = true;
                 layoutBuilder.isOuterContainer = false;
                 layoutBuilder.paginationPageSizeDefault = 50;
+                layoutBuilder.allowDownloadButton = true;
                 //
                 // -- hiddens
                 layoutBuilder.addFormHidden(constants.rnSrcFormId, constants.formIdBlogPostReport);

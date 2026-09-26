@@ -20,7 +20,11 @@ namespace Contensive.Blog.Models {
         public int height { get; set; }
         public int width { get; set; }
         /// <summary>
-        /// for images attached directly to the post. blank for images shared across posts
+        /// Controls the aspect ratio for this image. 0=use post/blog default.
+        /// </summary>
+        public int imageAspectRatioId { get; set; }
+        /// <summary>
+        /// the post this image belongs to
         /// </summary>
         public int blogEntryId { get; set; }
 
@@ -48,18 +52,15 @@ namespace Contensive.Blog.Models {
                     result.Add(primaryImage);
                 }
                 string sql = $@"
-                    select distinct
+                    select
                         i.*
                     from
-	                    BlogImages i
-	                    left join BlogImageRules r on r.blogimageid=i.id
+                        BlogImages i
                     where
-	                    i.blogentryid={blogEntry.id}
-	                    or (r.blogentryid={blogEntry.id})
+                        i.blogentryid={blogEntry.id}
                     order by
                         i.sortOrder, i.id
                     ";
-                // create a list of blogimagemodel records for all images referenced directly and indirectly by the blog image rules
                 using (DataTable dt = cp.Db.ExecuteQuery(sql)) {
                     foreach (DataRow dr in dt.Rows) {
                         var blogimage = new BlogImageModel();

@@ -3,6 +3,7 @@ using Contensive.BaseClasses;
 using Contensive.Blog.Models;
 using Contensive.Models.Db;
 using System;
+using System.Data;
 
 namespace Contensive.Blog {
     public class BlogPostSeoAddon : AddonBaseClass {
@@ -14,6 +15,7 @@ namespace Contensive.Blog {
             try {
                 if (!cp.User.IsAdmin) { return "<p>You are not authorized to access this feature.</p>"; }
                 if (!cp.AdminUI.EndpointContainsPortal()) {
+                    cp.Log.Warn($"BlogPostSeoAddon, endpoint does not contain portal, redirecting to BlogList");
                     return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogList, "");
                 }
                 processForm(cp);
@@ -45,7 +47,8 @@ namespace Contensive.Blog {
                 if (button == constants.buttonCancel || button == constants.buttonOK) {
                     //
                     // -- return to post list
-                    cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogPostList, $"&{constants.rnBlogId}={blogId}");
+                    cp.Log.Warn($"BlogPostSeoAddon, {button} button clicked, blogId [{blogId}], redirecting to BlogPostList");
+                    cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogPostList, "");
                     return;
                 }
             } catch (Exception ex) {
@@ -61,14 +64,30 @@ namespace Contensive.Blog {
                 int blogId = cp.Doc.GetInteger(constants.rnBlogId);
                 int postId = cp.Doc.GetInteger(constants.rnBlogPostId);
                 //
-                var blog = DbBaseModel.create<BlogModel>(cp, blogId);
-                if (blog == null) {
-                    return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogList);
+                // -- load blog by id including inactive records (admin context)
+                string blogName = "";
+                using (DataTable dtBlog = cp.Db.ExecuteQuery($"select id,name from ccBlogs where id={blogId}")) {
+                    if (dtBlog?.Rows == null || dtBlog.Rows.Count == 0) {
+                        cp.Log.Warn($"BlogPostSeoAddon, blog not found, blogId [{blogId}], redirecting to BlogList");
+                        return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogList);
+                    }
+                    blogName = cp.Utils.EncodeText(dtBlog.Rows[0]["name"]);
                 }
                 //
-                var post = DbBaseModel.create<BlogEntryModel>(cp, postId);
-                if (post == null) {
-                    return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogPostList, $"&{constants.rnBlogId}={blogId}");
+                // -- load post by id including inactive records (admin context)
+                string postName = "";
+                string postMetaTitle = "";
+                string postMetaDescription = "";
+                string postMetaKeywordList = "";
+                using (DataTable dtPost = cp.Db.ExecuteQuery($"select id,name,metaTitle,metaDescription,metaKeywordList from ccBlogCopy where id={postId}")) {
+                    if (dtPost?.Rows == null || dtPost.Rows.Count == 0) {
+                        cp.Log.Warn($"BlogPostSeoAddon, post not found, blogId [{blogId}], postId [{postId}], redirecting to BlogPostList");
+                        return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogPostList);
+                    }
+                    postName = cp.Utils.EncodeText(dtPost.Rows[0]["name"]);
+                    postMetaTitle = cp.Utils.EncodeText(dtPost.Rows[0]["metaTitle"]);
+                    postMetaDescription = cp.Utils.EncodeText(dtPost.Rows[0]["metaDescription"]);
+                    postMetaKeywordList = cp.Utils.EncodeText(dtPost.Rows[0]["metaKeywordList"]);
                 }
                 //
                 var layoutBuilder = cp.AdminUI.CreateLayoutBuilderNameValue();
@@ -77,17 +96,17 @@ namespace Contensive.Blog {
                 // -- form fields
                 layoutBuilder.addRow();
                 layoutBuilder.rowName = "Meta Title";
-                layoutBuilder.rowValue = cp.Html5.InputText("rnPostMetaTitle", 255, post.metaTitle ?? "", "form-control");
+                layoutBuilder.rowValue = cp.Html5.InputText("rnPostMetaTitle", 255, postMetaTitle, "form-control");
                 layoutBuilder.rowHelp = "The meta title for this post's page.";
                 //
                 layoutBuilder.addRow();
                 layoutBuilder.rowName = "Meta Description";
-                layoutBuilder.rowValue = cp.Html5.InputText("rnPostMetaDescription", 255, post.metaDescription ?? "", "form-control");
+                layoutBuilder.rowValue = cp.Html5.InputText("rnPostMetaDescription", 255, postMetaDescription, "form-control");
                 layoutBuilder.rowHelp = "The meta description for this post's page.";
                 //
                 layoutBuilder.addRow();
                 layoutBuilder.rowName = "Meta Keywords";
-                layoutBuilder.rowValue = cp.Html5.InputText("rnPostMetaKeywordList", 255, post.metaKeywordList ?? "", "form-control");
+                layoutBuilder.rowValue = cp.Html5.InputText("rnPostMetaKeywordList", 255, postMetaKeywordList, "form-control");
                 layoutBuilder.rowHelp = "The meta keywords for this post's page.";
                 //
                 // -- layout settings
@@ -101,8 +120,8 @@ namespace Contensive.Blog {
                 // -- feature subnav
                 cp.Doc.AddRefreshQueryString(constants.rnBlogId, blogId);
                 cp.Doc.AddRefreshQueryString(constants.rnBlogPostId, postId);
-                layoutBuilder.portalSubNavTitleList.Add($"{blog.name}, #{blog.id}");
-                layoutBuilder.portalSubNavTitleList.Add($"{post.name}");
+                layoutBuilder.portalSubNavTitleList.Add($"{blogName}, #{blogId}");
+                layoutBuilder.portalSubNavTitleList.Add($"{postName}");
                 //
                 // -- buttons
                 layoutBuilder.addFormButton(constants.buttonOK);
