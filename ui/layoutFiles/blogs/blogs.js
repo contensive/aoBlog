@@ -9,8 +9,69 @@ jQuery(document).ready(function(){
 			'callback':blogEmailSubscribeCallback
 		});
 		return false;
-		})
+		});
+	blogInitImageDragDrop();
 });
+//
+// Image Drag-and-Drop Placement
+//
+function blogInitImageDragDrop() {
+	var draggables = document.querySelectorAll('[data-blog-image-id][draggable="true"]');
+	var dropZones = document.querySelectorAll('.blogImageDropZone');
+	//
+	if (draggables.length === 0 || dropZones.length === 0) { return; }
+	//
+	draggables.forEach(function (el) {
+		el.addEventListener('dragstart', function (e) {
+			e.dataTransfer.setData('text/plain', el.getAttribute('data-blog-image-id'));
+			e.dataTransfer.effectAllowed = 'move';
+			el.classList.add('dragging');
+		});
+		el.addEventListener('dragend', function () {
+			el.classList.remove('dragging');
+			dropZones.forEach(function (dz) {
+				dz.classList.remove('dragover');
+			});
+		});
+	});
+	//
+	dropZones.forEach(function (dz) {
+		dz.addEventListener('dragover', function (e) {
+			e.preventDefault();
+			e.dataTransfer.dropEffect = 'move';
+			dz.classList.add('dragover');
+		});
+		dz.addEventListener('dragleave', function () {
+			dz.classList.remove('dragover');
+		});
+		dz.addEventListener('drop', function (e) {
+			e.preventDefault();
+			dz.classList.remove('dragover');
+			var imageId = e.dataTransfer.getData('text/plain');
+			var postId = dz.getAttribute('data-post-id');
+			var insertPosition = dz.getAttribute('data-drop-position');
+			//
+			if (!imageId || !postId) { return; }
+			//
+			dz.innerHTML = '<span>Placing image...</span>';
+			//
+			cj.remote({
+				'method': 'blogImagePlaceHandler',
+				'queryString': 'postId=' + postId + '&imageId=' + imageId + '&insertPosition=' + insertPosition,
+				'callback': function (response) {
+					if (response.substring(0, 2) === 'OK') {
+						window.location.reload();
+					} else {
+						dz.innerHTML = '<span style="color:red">Failed to place image</span>';
+						setTimeout(function () {
+							dz.innerHTML = '<span>Drop image here</span>';
+						}, 3000);
+					}
+				}
+			});
+		});
+	});
+}
 function blogEmailSubscribeCallback(response) {
 	if(response.substring(0,2)=='OK'){
 		jQuery('#blogSidebarEmailCell .blogSidebarCellInputCaption').html('You are subscribed to this blog.');

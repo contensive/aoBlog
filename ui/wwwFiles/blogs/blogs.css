@@ -534,3 +534,38 @@ width: inherit;
     list-style-position: outside;
     clear: both;
 }
+/*
+* Drag-and-drop image placement (edit mode only)
+*/
+.blogWrapper .blogImageDropZone {
+    border: 2px dashed #b0b0b0;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 8px 0;
+    text-align: center;
+    color: #999;
+    font-size: 0.85em;
+    transition: background-color 0.2s, border-color 0.2s;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.blogWrapper .blogImageDropZone.dragover {
+    background-color: #e8f4fd;
+    border-color: #0d6efd;
+    color: #0d6efd;
+}
+.blogWrapper .blogImageDropZone span {
+    pointer-events: none;
+}
+.blogWrapper blog-image.blogInlineImage {
+    display: block;
+}
+.blogWrapper [data-blog-image-id][draggable="true"] {
+    cursor: grab;
+}
+.blogWrapper [data-blog-image-id][draggable="true"]:active {
+    cursor: grabbing;
+    opacity: 0.7;
+}

@@ -254,6 +254,45 @@ An admin portal puts day-to-day management in one place: create and edit posts, 
 		<styleslinkhref></styleslinkhref>
 		<Scripting Language="VBScript" EntryPoint="" Timeout="5000"/>
 	</Addon>
+	<Addon name="blogImagePlaceHandler" guid="{A7B8C9D0-1E2F-3A4B-5C6D-7E8F9A0B1C2D}" type="Add-on">
+		<Copy></Copy>
+		<CopyText></CopyText>
+		<DotNetClass><![CDATA[Contensive.Blog.BlogImagePlaceRemote]]></DotNetClass>
+		<ArgumentList></ArgumentList>
+		<AsAjax>No</AsAjax>
+		<Filter>No</Filter>
+		<Help></Help>
+		<HelpLink></HelpLink>
+		<Icon Link="/blogs/blog.png" width="57" height="59" sprites="4" />
+		<InIframe>No</InIframe>
+		<BlockEditTools>Yes</BlockEditTools>
+		<FormXML></FormXML>
+		<IsInline>No</IsInline>
+		<JavascriptInHead></JavascriptInHead>
+		<javascriptForceHead>No</javascriptForceHead>
+		<JSHeadScriptSrc></JSHeadScriptSrc>
+		<JSBodyScriptSrc></JSBodyScriptSrc>
+		<JavascriptBodyEnd></JavascriptBodyEnd>
+		<JavascriptOnLoad></JavascriptOnLoad>
+		<Content>No</Content>
+		<Template>No</Template>
+		<Email>No</Email>
+		<Admin>No</Admin>
+		<OnPageEndEvent>No</OnPageEndEvent>
+		<OnPageStartEvent>No</OnPageStartEvent>
+		<OnBodyStart>No</OnBodyStart>
+		<OnBodyEnd>No</OnBodyEnd>
+		<RemoteMethod>Yes</RemoteMethod>
+		<ProcessRunOnce>No</ProcessRunOnce>
+		<ProcessInterval>0</ProcessInterval>
+		<MetaDescription></MetaDescription>
+		<OtherHeadTags></OtherHeadTags>
+		<PageTitle></PageTitle>
+		<RemoteAssetLink></RemoteAssetLink>
+		<Styles></Styles>
+		<styleslinkhref></styleslinkhref>
+		<Scripting Language="" EntryPoint="" Timeout="5000"/>
+	</Addon>
 	<Addon name="Blog Diagnostics" guid="{E5A3B2C1-7F4D-4E6A-9B8C-1D2E3F4A5B6C}" type="Add-on">
 		<Copy></Copy>
 		<CopyText></CopyText>

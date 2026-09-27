@@ -77,6 +77,8 @@
         public const string guidPortalFeatureBlogPostReport = "{D4E5F6A7-1B2C-3D4E-5F6A-7B8C9D0E1F2A}";
         public const string guidAddonBlogPostReport = "{A1B2C3D4-5E6F-7A8B-9C0D-E1F2A3B4C5D6}";
         //
+        public const string guidAddonBlogImagePlaceRemote = "{A7B8C9D0-1E2F-3A4B-5C6D-7E8F9A0B1C2D}";
+        //
         public const string rnBlogId = "blogId";
         public const string rnBlogPostId = "blogPostId";
         public const string rnBlogImageId = "blogImageId";

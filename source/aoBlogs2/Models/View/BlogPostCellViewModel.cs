@@ -185,6 +185,11 @@ namespace Contensive.Blog.Models.View {
                         inlineImageIds.Add(imageId);
                         return renderImageHtml(cp, image, imageAspectRatioId, isEditing);
                     }, RegexOptions.IgnoreCase);
+                    //
+                    // -- in edit mode, inject drop zones between block-level elements
+                    if (isEditing) {
+                        articleCopy = injectDropZones(articleCopy, blogPost.id);
+                    }
                     result.copy = articleCopy;
                     //
                     // -- remaining images: secondary images (id > 0) not embedded inline, with a filename
@@ -356,13 +361,60 @@ namespace Contensive.Blog.Models.View {
             } else {
                 imgTag = $"<img alt=\"{altText}\" title=\"{altText}\" class=\"w-100 mx-auto d-block\" src=\"{imgResult.src}\" srcset=\"{imgResult.srcset}\" sizes=\"{imgResult.sizes}\" width=\"{imageWidth}\" height=\"{imgResult.imageHeight}\" loading=\"lazy\" style=\"height:auto\">";
             }
-            string html = $"<div class=\"{containerClass} my-3\">{imgTag}</div>";
+            string dragAttrs = (isEditing && image.id > 0)
+                ? $" draggable=\"true\" data-blog-image-id=\"{image.id}\""
+                : "";
+            string html = $"<div class=\"{containerClass} my-3\"{dragAttrs}>{imgTag}</div>";
             //
             // -- wrap secondary images (id > 0) with edit wrapper when in edit mode
             if (isEditing && image.id > 0) {
                 html = _GenericController.addEditWrapper(cp, html, image.id, image.name ?? "", BlogImageModel.tableMetadata.contentName);
             }
+            //
+            // -- wrap in blogInlineImage so injectDropZones skips this element
+            // -- uses a non-block tag name so the drop zone regex does not match boundaries around images
+            html = $"<blog-image class=\"blogInlineImage\">{html}</blog-image>";
             return html;
+        }
+        //
+        //====================================================================================================
+        /// <summary>
+        /// In edit mode, inject drop zone HTML between block-level elements in the rendered article copy.
+        /// Each drop zone has a data-drop-position attribute (0=before all, N=between blocks, last=after all)
+        /// and a data-post-id attribute for the remote method call.
+        /// </summary>
+        private static string injectDropZones(string copy, int postId) {
+            string blockTags = "p|h[1-6]|div|blockquote|ul|ol|table|figure|section|hr|pre";
+            string pattern = $@"(<\/(?:{blockTags})\s*>)(\s*)(<(?:{blockTags})[\s>])";
+            int positionCounter = 0;
+            //
+            string dropZoneHtml(int pos) {
+                return $"<div class=\"blogImageDropZone\" data-drop-position=\"{pos}\" data-post-id=\"{postId}\"><span>Drop image here</span></div>";
+            }
+            //
+            // -- protect inline images from drop zone injection by replacing with placeholders
+            var imagePlaceholders = new Dictionary<string, string>();
+            int placeholderIndex = 0;
+            copy = Regex.Replace(copy, @"<blog-image\b[^>]*>[\s\S]*?</blog-image>", (match) => {
+                string key = $"__BLOGIMG{placeholderIndex++}__";
+                imagePlaceholders[key] = match.Value;
+                return key;
+            }, RegexOptions.IgnoreCase);
+            //
+            // -- insert drop zones between block elements (not before the first)
+            string result = Regex.Replace(copy, pattern, (match) => {
+                int pos = positionCounter++;
+                return $"{match.Groups[1].Value}{dropZoneHtml(pos)}{match.Groups[3].Value}";
+            }, RegexOptions.IgnoreCase);
+            //
+            // -- insert drop zone at the very end
+            result += dropZoneHtml(positionCounter);
+            //
+            // -- restore inline images
+            foreach (var kvp in imagePlaceholders) {
+                result = result.Replace(kvp.Key, kvp.Value);
+            }
+            return result;
         }
     }
 }
