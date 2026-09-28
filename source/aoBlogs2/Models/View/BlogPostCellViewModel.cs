@@ -211,7 +211,14 @@ namespace Contensive.Blog.Models.View {
                         result.addImageLinkHtml = cp.Content.GetAddLink(BlogImageModel.tableMetadata.contentName, $"blogEntryId={blogPost.id}", false, app.userIsEditing, false);
                     }
                 } else {
-                    result.copy = _GenericController.getBriefCopy(cp, blogPost.copy, app.blog.overviewLength);
+                    string summaryCopy = Regex.Replace(blogPost.copy, @"\[image\d+\]", "");
+                    //
+                    // -- downgrade heading tags by one level (h1->h2, h2->h3, etc.)
+                    // -- process from h5->h6 down to h1->h2 to avoid double-downgrading
+                    for (int h = 5; h >= 1; h--) {
+                        summaryCopy = Regex.Replace(summaryCopy, $@"<(/?)\s*h{h}(\s|>|/>)", $"<$1h{h + 1}$2", RegexOptions.IgnoreCase);
+                    }
+                    result.copy = summaryCopy;
                     result.showReadMore = true;
                 }
                 //
@@ -290,16 +297,7 @@ namespace Contensive.Blog.Models.View {
                 if (showComments) {
                     if (!isArticleView) {
                         //
-                        // -- list view tool line (for blog editors)
-                        if (app.user != null && app.user.isBlogEditor(cp, app.blog)) {
-                            var unapprovedComments = DbBaseModel.createList<BlogCommentModel>(cp, $"(Approved=0)and(EntryID={blogPost.id})");
-                            result.hasToolLine = true;
-                            result.unapprovedCommentCount = unapprovedComments.Count;
-                            string editQs = app.blogBaseLink;
-                            editQs = cp.Utils.ModifyQueryString(editQs, constants.RequestNameBlogEntryID, blogPost.id.ToString());
-                            editQs = cp.Utils.ModifyQueryString(editQs, constants.rnFormID, constants.FormBlogEntryEditor.ToString());
-                            result.editUrl = $"?{editQs}";
-                        }
+                        // -- list view: no tool line (keeps cards uniform)
                     } else {
                         //
                         // -- article view: show all comments
@@ -389,7 +387,7 @@ namespace Contensive.Blog.Models.View {
             int positionCounter = 0;
             //
             string dropZoneHtml(int pos) {
-                return $"<div class=\"blogImageDropZone\" data-drop-position=\"{pos}\" data-post-id=\"{postId}\"><span>Drop image here</span></div>";
+                return $"<div class=\"blogImageDropZone\" data-drop-position=\"{pos}\" data-post-id=\"{postId}\"><span>+ New Image or Drag Image here</span></div>";
             }
             //
             // -- protect inline images from drop zone injection by replacing with placeholders

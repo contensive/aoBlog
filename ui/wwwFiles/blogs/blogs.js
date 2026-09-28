@@ -42,7 +42,29 @@ function blogInitImageDragDrop() {
 	var draggables = document.querySelectorAll('[data-blog-image-id][draggable="true"]');
 	var dropZones = document.querySelectorAll('.blogImageDropZone');
 	//
-	if (draggables.length === 0 || dropZones.length === 0) { return; }
+	// -- check for a pending image placement from a previous add-image modal
+	var pending = sessionStorage.getItem('blogPendingImagePlace');
+	if (pending) {
+		sessionStorage.removeItem('blogPendingImagePlace');
+		try {
+			var placement = JSON.parse(pending);
+			var remainingEl = document.querySelector('.blogRemainingImages [data-blog-image-id]');
+			if (remainingEl) {
+				var newImageId = remainingEl.getAttribute('data-blog-image-id');
+				cj.remote({
+					'method': 'blogImagePlaceHandler',
+					'queryString': `postId=${placement.postId}&imageId=${newImageId}&insertPosition=${placement.position}`,
+					'callback': function (response) {
+						if (response.substring(0, 2) === 'OK') {
+							window.location.reload();
+						}
+					}
+				});
+			}
+		} catch (e) { /* ignore parse errors */ }
+	}
+	//
+	if (dropZones.length === 0) { return; }
 	//
 	draggables.forEach(function (el) {
 		el.addEventListener('dragstart', function (e) {
@@ -87,11 +109,23 @@ function blogInitImageDragDrop() {
 					} else {
 						dz.innerHTML = '<span style="color:red">Failed to place image</span>';
 						setTimeout(function () {
-							dz.innerHTML = '<span>Drop image here</span>';
+							dz.innerHTML = '<span>+ New Image or Drag Image here</span>';
 						}, 3000);
 					}
 				}
 			});
+		});
+		//
+		// -- click to add a new image (same as the Add Image button at the bottom)
+		dz.addEventListener('click', function () {
+			var addBtn = document.querySelector('.blogAddImage .addNewItemTag');
+			if (addBtn) {
+				sessionStorage.setItem('blogPendingImagePlace', JSON.stringify({
+					postId: dz.getAttribute('data-post-id'),
+					position: dz.getAttribute('data-drop-position')
+				}));
+				addBtn.click();
+			}
 		});
 	});
 }

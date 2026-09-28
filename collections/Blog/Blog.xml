@@ -534,7 +534,13 @@ An admin portal puts day-to-day management in one place: create and edit posts, 
 		<record content="MCP Server Instructions" guid="{130998D4-3D3E-402B-9146-1E80D5D8E018}" name="Blog">
 			<field name="sortOrder">1000</field>
 			<field name="category">Blog</field>
-			<field name="instructions"><![CDATA[Blog: A blog is created by adding a Blog widget to a page using page_widget_add. Each Blog widget instance represents one blog. If no blogs exist, first use widget_types to find the Blog widget, then add it to a page. Use blog_list to see existing blogs. Each blog contains posts managed with blog_post_list, blog_post_get, blog_post_create, blog_post_update, and blog_post_delete. Blog-level settings (caption, comment moderation, post display count) are updated with blog_update.]]></field>
+			<field name="instructions"><![CDATA[Blog: A blog is created by adding a Blog widget to a page using page_widget_add. Each Blog widget instance represents one blog. If no blogs exist, first use widget_types to find the Blog widget, then add it to a page. Use blog_list to see existing blogs. Each blog contains posts managed with blog_post_list, blog_post_get, blog_post_create, blog_post_update, and blog_post_delete. Blog-level settings (caption, comment moderation, post display count) are updated with blog_update.
+
+IMAGE SYSTEM: Each post has a two-tier image system. Image 1 is the primary image (hero/thumbnail), stored on the post itself and managed via blog_post_update (primaryImage, primaryImageDescription, primaryImageAspectRatioId fields) or blog_post_image_update with imageId=0. Images 2+ are secondary images stored in a separate table, managed with blog_post_image_add, blog_post_image_update, and blog_post_image_delete. Use blog_post_image_list or blog_post_get to see all images with their position numbers. When users say "image 1" or "the first image" they mean the primary image; "image 2" means the first secondary image, and so on. To upload a new image file, first use resource_upload to upload the file, then pass the resulting resourceName to the blog image tool.
+
+INLINE IMAGE PLACEMENT: Secondary images can be placed inline within the post body using [imageNNN] tags (where NNN is the database image ID, not the position number). The post body (copy field) contains these tags as raw text. Use blog_post_image_place to insert or move a secondary image to a specific position between block-level HTML elements. Secondary images not referenced by any [imageNNN] tag appear as "remaining images" below the article. The primary image is always displayed at the top and does not use [imageNNN] tags.
+
+ASPECT RATIOS: Both primary and secondary images support aspect ratio control. Values: 0=blog default, 1=as-is (no cropping), 2=1:1 (square), 3=3:2, 4=4:3, 5=16:9, 6=2:1, 7=3:1, 8=5:1.]]></field>
 		</record>
 		<!--
 			MCP Tool Definitions - AI-callable tools for blog management
@@ -667,7 +673,7 @@ An admin portal puts day-to-day management in one place: create and edit posts, 
 		</record>
 		<record content="MCP Tool Definitions" guid="{7B61207D-6FE2-4098-A9F8-6DA1ECE39913}" name="blog_post_get">
 			<field name="toolName">blog_post_get</field>
-			<field name="description"><![CDATA[Get a single blog post by ID with full details including body content, metadata, and image information.]]></field>
+			<field name="description"><![CDATA[Get a single blog post by ID with full details including body content, metadata, and a unified images array. The images array lists all images (primary first at position 1, then secondary images at positions 2+) with their imageId, filename, altText, description, aspectRatioId, and inlineTag. The copy field contains raw [imageNNN] tags showing where secondary images are placed inline.]]></field>
 			<field name="addonGuid">{2673988C-B513-4EDD-9BCE-DEE883981C5E}</field>
 			<field name="category">Blog</field>
 			<field name="inputSchemaJson"><![CDATA[{
@@ -683,7 +689,7 @@ An admin portal puts day-to-day management in one place: create and edit posts, 
 		</record>
 		<record content="MCP Tool Definitions" guid="{23107F74-64A8-48FC-A43A-58EE52B1E28B}" name="blog_post_create">
 			<field name="toolName">blog_post_create</field>
-			<field name="description"><![CDATA[Create a new blog post. Requires blogId and name. Returns the new post ID.]]></field>
+			<field name="description"><![CDATA[Create a new blog post. Requires blogId and name. Returns the new post ID. To add images after creation, use blog_post_update for the primary image and blog_post_image_add for secondary images.]]></field>
 			<field name="addonGuid">{2673988C-B513-4EDD-9BCE-DEE883981C5E}</field>
 			<field name="category">Blog</field>
 			<field name="inputSchemaJson"><![CDATA[{
@@ -727,7 +733,7 @@ An admin portal puts day-to-day management in one place: create and edit posts, 
 		</record>
 		<record content="MCP Tool Definitions" guid="{9F1EC815-9BEA-4748-AED4-98441E207040}" name="blog_post_update">
 			<field name="toolName">blog_post_update</field>
-			<field name="description"><![CDATA[Update an existing blog post. Provide only the fields you want to change. Supports undo.]]></field>
+			<field name="description"><![CDATA[Update an existing blog post. Provide only the fields you want to change. Supports undo. Use primaryImage and primaryImageDescription to set the primary image (image 1). Use primaryImageAspectRatioId (0=blog default, 1=as-is, 2=1:1, 3=3:2, 4=4:3, 5=16:9, 6=2:1, 7=3:1, 8=5:1) to control primary image cropping. For secondary images (images 2+), use the blog_post_image_* tools.]]></field>
 			<field name="addonGuid">{2673988C-B513-4EDD-9BCE-DEE883981C5E}</field>
 			<field name="category">Blog</field>
 			<field name="inputSchemaJson"><![CDATA[{
@@ -784,6 +790,10 @@ An admin portal puts day-to-day management in one place: create and edit posts, 
     "primaryImageDescription": {
       "type": "string",
       "description": "Alt text for the primary image"
+    },
+    "primaryImageAspectRatioId": {
+      "type": "integer",
+      "description": "Aspect ratio for the primary image. 0=blog default, 1=as-is, 2=1:1, 3=3:2, 4=4:3, 5=16:9, 6=2:1, 7=3:1, 8=5:1"
     }
   },
   "required": ["postId"]
@@ -803,6 +813,134 @@ An admin portal puts day-to-day management in one place: create and edit posts, 
     }
   },
   "required": ["postId"]
+}]]></field>
+		</record>
+		<record content="MCP Tool Definitions" guid="{3428B158-0EC5-4748-901C-93E4CFEA407B}" name="blog_post_image_list">
+			<field name="toolName">blog_post_image_list</field>
+			<field name="description"><![CDATA[List all images for a blog post as a unified array. Position 1 is the primary image (if set); positions 2+ are secondary images ordered by sort order. Each entry includes imageId, isPrimary, filename, altText, description, aspectRatioId, and inlineTag (the [imageNNN] tag if placed inline, or empty if not). Use this to see which images exist and where they are placed.]]></field>
+			<field name="addonGuid">{2673988C-B513-4EDD-9BCE-DEE883981C5E}</field>
+			<field name="category">Blog</field>
+			<field name="inputSchemaJson"><![CDATA[{
+  "type": "object",
+  "properties": {
+    "postId": {
+      "type": "integer",
+      "description": "ID of the blog post"
+    }
+  },
+  "required": ["postId"]
+}]]></field>
+		</record>
+		<record content="MCP Tool Definitions" guid="{F846FCF6-64B3-4F99-9E49-286FE76B9847}" name="blog_post_image_add">
+			<field name="toolName">blog_post_image_add</field>
+			<field name="description"><![CDATA[Add a new secondary image to a blog post. First upload the image file using resource_upload, then pass the resourceName here. The new image is added at the end of the image list. It will appear in the "remaining images" section below the article until placed inline with blog_post_image_place. Supports undo.]]></field>
+			<field name="addonGuid">{2673988C-B513-4EDD-9BCE-DEE883981C5E}</field>
+			<field name="category">Blog</field>
+			<field name="inputSchemaJson"><![CDATA[{
+  "type": "object",
+  "properties": {
+    "postId": {
+      "type": "integer",
+      "description": "ID of the blog post to add the image to"
+    },
+    "resourceName": {
+      "type": "string",
+      "description": "Filename from resource_upload for the image file"
+    },
+    "altText": {
+      "type": "string",
+      "description": "Alt text for the image (used as the image name)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Longer description of the image"
+    },
+    "aspectRatioId": {
+      "type": "integer",
+      "description": "Aspect ratio: 0=blog default, 1=as-is, 2=1:1, 3=3:2, 4=4:3, 5=16:9, 6=2:1, 7=3:1, 8=5:1"
+    }
+  },
+  "required": ["postId", "resourceName"]
+}]]></field>
+		</record>
+		<record content="MCP Tool Definitions" guid="{915F9CB9-9016-4C0A-8716-6674EBE0EB70}" name="blog_post_image_update">
+			<field name="toolName">blog_post_image_update</field>
+			<field name="description"><![CDATA[Update an existing image on a blog post. Use imageId=0 to update the primary image, or imageId>0 for a secondary image. Provide only the fields you want to change. To replace the image file, first use resource_upload then pass the resourceName. Supports undo.]]></field>
+			<field name="addonGuid">{2673988C-B513-4EDD-9BCE-DEE883981C5E}</field>
+			<field name="category">Blog</field>
+			<field name="inputSchemaJson"><![CDATA[{
+  "type": "object",
+  "properties": {
+    "postId": {
+      "type": "integer",
+      "description": "ID of the blog post"
+    },
+    "imageId": {
+      "type": "integer",
+      "description": "Image ID: 0 for the primary image, or the database ID for a secondary image"
+    },
+    "altText": {
+      "type": "string",
+      "description": "New alt text for the image"
+    },
+    "description": {
+      "type": "string",
+      "description": "New description (secondary images only)"
+    },
+    "resourceName": {
+      "type": "string",
+      "description": "New image file from resource_upload (replaces current file)"
+    },
+    "aspectRatioId": {
+      "type": "integer",
+      "description": "New aspect ratio: 0=blog default, 1=as-is, 2=1:1, 3=3:2, 4=4:3, 5=16:9, 6=2:1, 7=3:1, 8=5:1"
+    }
+  },
+  "required": ["postId", "imageId"]
+}]]></field>
+		</record>
+		<record content="MCP Tool Definitions" guid="{AD7E40FD-511C-40C7-9C23-42208DDB7F49}" name="blog_post_image_delete">
+			<field name="toolName">blog_post_image_delete</field>
+			<field name="description"><![CDATA[Delete a secondary image from a blog post (soft delete). Cannot delete the primary image this way; use blog_post_update to clear primaryImage instead. If the image was placed inline with an [imageNNN] tag, that tag is also removed from the post body. Supports undo.]]></field>
+			<field name="addonGuid">{2673988C-B513-4EDD-9BCE-DEE883981C5E}</field>
+			<field name="category">Blog</field>
+			<field name="inputSchemaJson"><![CDATA[{
+  "type": "object",
+  "properties": {
+    "postId": {
+      "type": "integer",
+      "description": "ID of the blog post"
+    },
+    "imageId": {
+      "type": "integer",
+      "description": "Database ID of the secondary image to delete (must be > 0)"
+    }
+  },
+  "required": ["postId", "imageId"]
+}]]></field>
+		</record>
+		<record content="MCP Tool Definitions" guid="{8315C54A-3D94-4BAF-9D80-FAA63A6DA202}" name="blog_post_image_place">
+			<field name="toolName">blog_post_image_place</field>
+			<field name="description"><![CDATA[Place or move a secondary image inline within the post body. Inserts (or moves) the [imageNNN] tag at the specified block-element boundary position. Position 0 = after the first block element, higher numbers = further down. If the image already has an [imageNNN] tag in the body, it is moved to the new position. Images not placed inline appear as "remaining images" below the article. To remove an image from inline placement without deleting it, use blog_post_update to edit the copy field and remove the [imageNNN] tag. Supports undo.]]></field>
+			<field name="addonGuid">{2673988C-B513-4EDD-9BCE-DEE883981C5E}</field>
+			<field name="category">Blog</field>
+			<field name="inputSchemaJson"><![CDATA[{
+  "type": "object",
+  "properties": {
+    "postId": {
+      "type": "integer",
+      "description": "ID of the blog post"
+    },
+    "imageId": {
+      "type": "integer",
+      "description": "Database ID of the secondary image to place (must be > 0)"
+    },
+    "insertPosition": {
+      "type": "integer",
+      "description": "Block boundary position to insert the image at. 0 = after the first block element, higher values = further down the article."
+    }
+  },
+  "required": ["postId", "imageId", "insertPosition"]
 }]]></field>
 		</record>
 		<record content="Layouts" guid="{1E579F72-64D5-4413-89EA-A61E8EDA426D}" name="Blog Layout">

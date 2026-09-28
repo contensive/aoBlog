@@ -16,26 +16,19 @@
 <body>
 
     <div  data-layout="Blog Post Cell" id="shouldNotBeIncluded-1244">
-        <div class="{{#isArticleView}}col-12{{/isArticleView}} {{^isArticleView}}col-12 col-md-6{{/isArticleView}}">
-            {{{editWrapperStart}}}
-            <div class="border rounded-4 mb-4 shadow-sm bg-light">
-
-                <div class="blogContentWrapper p-4">
+        <div class="{{#isArticleView}}col-12{{/isArticleView}} {{^isArticleView}}col-12 col-md-6 d-flex{{/isArticleView}}">
+            <div class="border rounded-4 mb-4 shadow-sm bg-light d-flex flex-column w-100">
+                {{{editWrapperStart}}}
+                <div class="blogContentWrapper p-4 d-flex flex-column flex-grow-1">
                     {{#isArticleView}}
                         <h1 class="aoBlogEntryName mb-3 fw-bold">{{headline}}</h1>
                     {{/isArticleView}}
-                    
+
                     {{^isArticleView}}
                         {{{editLinkHtml}}}
                         <h2 class="aoBlogEntryName mb-3"><a href="{{entryLink}}" class="fw-medium">{{headline}}</a></h2>
                     {{/isArticleView}}
 
-                    <div class="mb-1 text-body-secondary">
-                        {{#hasByLine}}
-                            <div class="aoBlogEntryByLine">Posted {{{byLine}}}</div>
-                        {{/hasByLine}}
-                    </div>
-                
                     {{#hasImage}}
                         <div class="blogImageContainer {{styleAspectRatio}}">
                             {{#isArticleView}}
@@ -92,22 +85,30 @@
                                 </a>
                             {{/isArticleView}}
                         </div>
-                    {{/hasImage}}  
-                    
+                    {{/hasImage}}
+
+                    <div class="mt-3 mb-0 text-body-secondary">
+                        {{#hasByLine}}
+                            <div class="aoBlogEntryByLine">Posted {{{byLine}}}</div>
+                        {{/hasByLine}}
+                    </div>
+
                     <hr>
                 
-                    <div class="blogArticleWrapper mt-4">
+                    <div class="blogArticleWrapper flex-grow-1">
                         {{#isArticleView}}
                             {{{copy}}}
                         {{/isArticleView}}
 
                         {{^isArticleView}}
-                            <p>{{{copy}}}</p>
+                            <div class="blogBriefCopy">
+                                {{{copy}}}
+                            </div>
                         {{/isArticleView}}
                     </div>
-            
+
                     {{#showReadMore}}
-                        <a href="{{entryLink}}" class="aoBlogEntryReadMore">
+                        <a href="{{entryLink}}" class="aoBlogEntryReadMore mt-auto">
                             Continue reading <i class="fa-solid fa-arrow-right ms-3"></i>
                         </a>
                     {{/showReadMore}}
@@ -125,11 +126,11 @@
                     {{/hasAddImageLink}}
 
                 </div>
-            </div>
+
                 {{#hasPodcast}}
                     {{{podcastHtml}}}
                 {{/hasPodcast}}
-                        
+
                 {{#hasTags}}
                     <div class="aoBlogTagListSection">
                         <div class="aoBlogTagListHeader">Tags</div>
@@ -138,13 +139,14 @@
                 {{/hasTags}}
 
                 {{{commentsHtml}}}
-                    
+
                 {{#hasToolLine}}
                     <div class="aoBlogToolLink">Unapproved Comments ({{unapprovedCommentCount}})&nbsp;|&nbsp;<a
                             href="{{editUrl}}">Edit</a>
                     </div>
                 {{/hasToolLine}}
-            {{{editWrapperEnd}}}
+                {{{editWrapperEnd}}}
+            </div>
         </div>
         <input type="hidden" name="{{commentCntName}}" value="{{commentCntValue}}">
     </div>

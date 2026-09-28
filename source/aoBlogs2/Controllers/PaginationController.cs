@@ -21,8 +21,6 @@ namespace Contensive.Blog.Controllers {
             try {
                 var result = new StringBuilder();
                 string basePageUrl = cp.Content.GetLinkAliasByPageID(cp.Doc.PageId, "", "");
-                if (pageNumberCurrent > 1)
-                    result.Append("<li class=\"page-item\"><a class=\"page-link\" href=\"" + getPageUrl(cp, basePageUrl, pageNumberCurrent - 1) + "\">Previous</a></li>");
                 int recordTop = (pageNumberCurrent - 1) * recordsPerPage;
                 int pageCount = (int)Math.Round(Math.Truncate(recordCount / (double)recordsPerPage + 0.999d));
                 int pageFirst = pageNumberCurrent - 3;
@@ -31,15 +29,34 @@ namespace Contensive.Blog.Controllers {
                 int pageLast = pageFirst + 6;
                 if (pageLast > pageCount)
                     pageLast = pageCount;
+                //
+                // -- "First" link when page 1 is not in the visible range
+                if (pageFirst > 1) {
+                    result.Append($"<li class=\"page-item\"><a class=\"page-link\" href=\"{getPageUrl(cp, basePageUrl, 1)}\">First</a></li>");
+                }
+                //
+                // -- "Previous" link
+                if (pageNumberCurrent > 1) {
+                    result.Append($"<li class=\"page-item\"><a class=\"page-link\" href=\"{getPageUrl(cp, basePageUrl, pageNumberCurrent - 1)}\">Previous</a></li>");
+                }
+                //
+                // -- page number links
                 if (pageCount > 1) {
                     for (int pageNumber = pageFirst, loopTo = pageLast; pageNumber <= loopTo; pageNumber++) {
                         var pageUrl = getPageUrl(cp, basePageUrl, pageNumber);
-                        var htmlClass = (pageUrl==cp.Request.PathPage) ? "page-item active" : "page-item";
+                        var htmlClass = (pageUrl == cp.Request.PathPage) ? "page-item active" : "page-item";
                         result.Append($"<li class=\"{htmlClass}\"><a class=\"page-link\" href=\"{pageUrl}\">{pageNumber}</a></li>");
                     }
                 }
+                //
+                // -- "Next" link
                 if (pageCount > pageNumberCurrent) {
                     result.Append($"<li class=\"page-item\"><a class=\"page-link\" href=\"{getPageUrl(cp, basePageUrl, pageNumberCurrent + 1)}\">Next</a></li>");
+                }
+                //
+                // -- "Last" link when the last page is not in the visible range
+                if (pageLast < pageCount) {
+                    result.Append($"<li class=\"page-item\"><a class=\"page-link\" href=\"{getPageUrl(cp, basePageUrl, pageCount)}\">Last</a></li>");
                 }
                 // 
                 return $"<nav><ul class=\"pagination\">{result}</ul></nav>";

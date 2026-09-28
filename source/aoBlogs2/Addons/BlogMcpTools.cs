@@ -6,6 +6,7 @@ using Contensive.Models.Db;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 //
 namespace Contensive.Addons.Blog {
     //
@@ -23,6 +24,11 @@ namespace Contensive.Addons.Blog {
         private const string ToolBlogPostCreate = "blog_post_create";
         private const string ToolBlogPostUpdate = "blog_post_update";
         private const string ToolBlogPostDelete = "blog_post_delete";
+        private const string ToolBlogPostImageList = "blog_post_image_list";
+        private const string ToolBlogPostImageAdd = "blog_post_image_add";
+        private const string ToolBlogPostImageUpdate = "blog_post_image_update";
+        private const string ToolBlogPostImageDelete = "blog_post_image_delete";
+        private const string ToolBlogPostImagePlace = "blog_post_image_place";
         //
         // ====================================================================================================
         //
@@ -56,6 +62,16 @@ namespace Contensive.Addons.Blog {
                         return blogPostUpdate(cp, args);
                     case ToolBlogPostDelete:
                         return blogPostDelete(cp, args);
+                    case ToolBlogPostImageList:
+                        return blogPostImageList(cp, args);
+                    case ToolBlogPostImageAdd:
+                        return blogPostImageAdd(cp, args);
+                    case ToolBlogPostImageUpdate:
+                        return blogPostImageUpdate(cp, args);
+                    case ToolBlogPostImageDelete:
+                        return blogPostImageDelete(cp, args);
+                    case ToolBlogPostImagePlace:
+                        return blogPostImagePlace(cp, args);
                     default:
                         return McpResponseHelper.Error(cp, $"Unknown tool: {toolName}");
                 }
@@ -212,6 +228,10 @@ namespace Contensive.Addons.Blog {
                 if (post == null) {
                     return McpResponseHelper.Error(cp, $"Blog post #{postId} not found.");
                 }
+                //
+                // -- build unified images array
+                var images = buildImageList(cp, post);
+                //
                 var result = new {
                     postId = post.id,
                     name = post.name,
@@ -229,7 +249,9 @@ namespace Contensive.Addons.Blog {
                     metaKeywordList = post.metaKeywordList ?? "",
                     primaryImage = post.primaryImage ?? "",
                     primaryImageDescription = post.primaryImageDescription ?? "",
-                    active = post.active
+                    primaryImageAspectRatioId = post.primaryImageAspectRatioId,
+                    active = post.active,
+                    images
                 };
                 return McpResponseHelper.Success(cp, result, "OK");
             } catch (Exception ex) {
@@ -318,7 +340,8 @@ namespace Contensive.Addons.Blog {
                     ["metaDescription"] = post.metaDescription ?? "",
                     ["metaKeywordList"] = post.metaKeywordList ?? "",
                     ["primaryImage"] = post.primaryImage ?? "",
-                    ["primaryImageDescription"] = post.primaryImageDescription ?? ""
+                    ["primaryImageDescription"] = post.primaryImageDescription ?? "",
+                    ["primaryImageAspectRatioId"] = post.primaryImageAspectRatioId.ToString()
                 };
                 McpUndoHelper.Capture(cp, Contensive.Blog.constants.cnBlogEntries, post.id, post.ccguid, ToolBlogPostUpdate, fieldsBefore);
                 //
@@ -334,6 +357,7 @@ namespace Contensive.Addons.Blog {
                 if (args.ContainsKey("metaKeywordList")) { post.metaKeywordList = McpResponseHelper.GetStringArg(args, "metaKeywordList"); }
                 if (args.ContainsKey("primaryImage")) { post.primaryImage = McpResponseHelper.GetStringArg(args, "primaryImage"); }
                 if (args.ContainsKey("primaryImageDescription")) { post.primaryImageDescription = McpResponseHelper.GetStringArg(args, "primaryImageDescription"); }
+                if (args.ContainsKey("primaryImageAspectRatioId")) { post.primaryImageAspectRatioId = McpResponseHelper.GetIntArg(args, "primaryImageAspectRatioId"); }
                 if (args.ContainsKey("datePublished")) {
                     string dateStr = McpResponseHelper.GetStringArg(args, "datePublished");
                     if (!string.IsNullOrEmpty(dateStr) && DateTime.TryParse(dateStr, out DateTime parsedDate)) {
@@ -382,6 +406,303 @@ namespace Contensive.Addons.Blog {
                 cp.Site.ErrorReport(ex);
                 return McpResponseHelper.Error(cp, "Error deleting blog post.");
             }
+        }
+        //
+        // ====================================================================================================
+        // -- blog_post_image_list
+        // ====================================================================================================
+        //
+        private string blogPostImageList(CPBaseClass cp, Dictionary<string, object> args) {
+            try {
+                int postId = McpResponseHelper.GetIntArg(args, "postId");
+                if (postId == 0) {
+                    return McpResponseHelper.Error(cp, "postId is required.");
+                }
+                var post = DbBaseModel.create<BlogEntryModel>(cp, postId);
+                if (post == null) {
+                    return McpResponseHelper.Error(cp, $"Blog post #{postId} not found.");
+                }
+                //
+                var images = buildImageList(cp, post);
+                return McpResponseHelper.Success(cp, new { postId = post.id, images }, $"Found {images.Count} image(s) for post #{postId}");
+            } catch (Exception ex) {
+                cp.Site.ErrorReport(ex);
+                return McpResponseHelper.Error(cp, "Error listing blog post images.");
+            }
+        }
+        //
+        // ====================================================================================================
+        // -- blog_post_image_add
+        // ====================================================================================================
+        //
+        private string blogPostImageAdd(CPBaseClass cp, Dictionary<string, object> args) {
+            try {
+                int postId = McpResponseHelper.GetIntArg(args, "postId");
+                string resourceName = McpResponseHelper.GetStringArg(args, "resourceName");
+                if (postId == 0) {
+                    return McpResponseHelper.Error(cp, "postId is required.");
+                }
+                if (string.IsNullOrEmpty(resourceName)) {
+                    return McpResponseHelper.Error(cp, "resourceName is required.");
+                }
+                var post = DbBaseModel.create<BlogEntryModel>(cp, postId);
+                if (post == null) {
+                    return McpResponseHelper.Error(cp, $"Blog post #{postId} not found.");
+                }
+                //
+                var image = DbBaseModel.addDefault<BlogImageModel>(cp);
+                if (image == null) {
+                    return McpResponseHelper.Error(cp, "Error creating image record.");
+                }
+                image.blogEntryId = postId;
+                image.name = McpResponseHelper.GetStringArg(args, "altText");
+                image.description = McpResponseHelper.GetStringArg(args, "description");
+                image.imageAspectRatioId = McpResponseHelper.GetIntArg(args, "aspectRatioId");
+                image.sortOrder = getNextSortOrder(cp, postId);
+                image.save(cp);
+                //
+                // -- copy the uploaded resource file to the image's upload path
+                string uploadPath = image.getUploadPath("filename");
+                string fileName = System.IO.Path.GetFileName(resourceName);
+                string destPath = $"{uploadPath}{fileName}";
+                cp.CdnFiles.Copy(resourceName, destPath);
+                image.Filename = destPath;
+                image.save(cp);
+                //
+                // -- capture undo (recordDeleted=true means undo will delete this newly created record)
+                McpUndoHelper.Capture(cp, Contensive.Blog.constants.cnBlogImages, image.id, image.ccguid, ToolBlogPostImageAdd, new Dictionary<string, string>(), recordDeleted: true);
+                //
+                // -- determine position in the unified list
+                var imageList = BlogImageModel.getPostImageList(cp, post);
+                int position = imageList.FindIndex(i => i.id == image.id) + 1;
+                //
+                return McpResponseHelper.Success(cp, new { imageId = image.id, postId, filename = image.Filename, position }, "Image added successfully.");
+            } catch (Exception ex) {
+                cp.Site.ErrorReport(ex);
+                return McpResponseHelper.Error(cp, "Error adding blog post image.");
+            }
+        }
+        //
+        // ====================================================================================================
+        // -- blog_post_image_update
+        // ====================================================================================================
+        //
+        private string blogPostImageUpdate(CPBaseClass cp, Dictionary<string, object> args) {
+            try {
+                int postId = McpResponseHelper.GetIntArg(args, "postId");
+                int imageId = McpResponseHelper.GetIntArg(args, "imageId");
+                if (postId == 0) {
+                    return McpResponseHelper.Error(cp, "postId is required.");
+                }
+                var post = DbBaseModel.create<BlogEntryModel>(cp, postId);
+                if (post == null) {
+                    return McpResponseHelper.Error(cp, $"Blog post #{postId} not found.");
+                }
+                //
+                if (imageId == 0) {
+                    //
+                    // -- update primary image
+                    var fieldsBefore = new Dictionary<string, string> {
+                        ["primaryImage"] = post.primaryImage ?? "",
+                        ["primaryImageDescription"] = post.primaryImageDescription ?? "",
+                        ["primaryImageAspectRatioId"] = post.primaryImageAspectRatioId.ToString(),
+                        ["primaryImageAltSizeList"] = post.primaryImageAltSizeList ?? ""
+                    };
+                    McpUndoHelper.Capture(cp, Contensive.Blog.constants.cnBlogEntries, post.id, post.ccguid, ToolBlogPostImageUpdate, fieldsBefore);
+                    //
+                    if (args.ContainsKey("altText")) { post.primaryImageDescription = McpResponseHelper.GetStringArg(args, "altText"); }
+                    if (args.ContainsKey("aspectRatioId")) { post.primaryImageAspectRatioId = McpResponseHelper.GetIntArg(args, "aspectRatioId"); }
+                    if (args.ContainsKey("resourceName")) {
+                        string resourceName = McpResponseHelper.GetStringArg(args, "resourceName");
+                        string uploadPath = $"ccblogcopy/primaryimage/{postId.ToString().PadLeft(12, '0')}/";
+                        string fileName = System.IO.Path.GetFileName(resourceName);
+                        string destPath = $"{uploadPath}{fileName}";
+                        cp.CdnFiles.Copy(resourceName, destPath);
+                        post.primaryImage = destPath;
+                        post.primaryImageAltSizeList = "";
+                    }
+                    post.save(cp);
+                    return McpResponseHelper.Success(cp, new { imageId = 0, postId }, "Primary image updated successfully.");
+                } else {
+                    //
+                    // -- update secondary image
+                    var image = DbBaseModel.create<BlogImageModel>(cp, imageId);
+                    if (image == null || image.blogEntryId != postId) {
+                        return McpResponseHelper.Error(cp, $"Image #{imageId} not found on post #{postId}.");
+                    }
+                    var fieldsBefore = new Dictionary<string, string> {
+                        ["name"] = image.name ?? "",
+                        ["description"] = image.description ?? "",
+                        ["Filename"] = image.Filename ?? "",
+                        ["imageAspectRatioId"] = image.imageAspectRatioId.ToString(),
+                        ["altSizeList"] = image.altSizeList ?? ""
+                    };
+                    McpUndoHelper.Capture(cp, Contensive.Blog.constants.cnBlogImages, image.id, image.ccguid, ToolBlogPostImageUpdate, fieldsBefore);
+                    //
+                    if (args.ContainsKey("altText")) { image.name = McpResponseHelper.GetStringArg(args, "altText"); }
+                    if (args.ContainsKey("description")) { image.description = McpResponseHelper.GetStringArg(args, "description"); }
+                    if (args.ContainsKey("aspectRatioId")) { image.imageAspectRatioId = McpResponseHelper.GetIntArg(args, "aspectRatioId"); }
+                    if (args.ContainsKey("resourceName")) {
+                        string resourceName = McpResponseHelper.GetStringArg(args, "resourceName");
+                        string uploadPath = image.getUploadPath("filename");
+                        string fileName = System.IO.Path.GetFileName(resourceName);
+                        string destPath = $"{uploadPath}{fileName}";
+                        cp.CdnFiles.Copy(resourceName, destPath);
+                        image.Filename = destPath;
+                        image.altSizeList = "";
+                    }
+                    image.save(cp);
+                    return McpResponseHelper.Success(cp, new { imageId = image.id, postId }, "Image updated successfully.");
+                }
+            } catch (Exception ex) {
+                cp.Site.ErrorReport(ex);
+                return McpResponseHelper.Error(cp, "Error updating blog post image.");
+            }
+        }
+        //
+        // ====================================================================================================
+        // -- blog_post_image_delete
+        // ====================================================================================================
+        //
+        private string blogPostImageDelete(CPBaseClass cp, Dictionary<string, object> args) {
+            try {
+                int postId = McpResponseHelper.GetIntArg(args, "postId");
+                int imageId = McpResponseHelper.GetIntArg(args, "imageId");
+                if (postId == 0) {
+                    return McpResponseHelper.Error(cp, "postId is required.");
+                }
+                if (imageId == 0) {
+                    return McpResponseHelper.Error(cp, "Cannot delete the primary image this way. Use blog_post_update to clear primaryImage instead.");
+                }
+                var post = DbBaseModel.create<BlogEntryModel>(cp, postId);
+                if (post == null) {
+                    return McpResponseHelper.Error(cp, $"Blog post #{postId} not found.");
+                }
+                var image = DbBaseModel.create<BlogImageModel>(cp, imageId);
+                if (image == null || image.blogEntryId != postId) {
+                    return McpResponseHelper.Error(cp, $"Image #{imageId} not found on post #{postId}.");
+                }
+                //
+                // -- capture undo for the image record (soft delete)
+                var imageFieldsBefore = new Dictionary<string, string> {
+                    ["active"] = "1"
+                };
+                McpUndoHelper.Capture(cp, Contensive.Blog.constants.cnBlogImages, image.id, image.ccguid, ToolBlogPostImageDelete, imageFieldsBefore);
+                //
+                // -- remove any [imageNNN] tag from post copy
+                string copyBefore = post.copy ?? "";
+                string pattern = $@"\[image{imageId}\]";
+                string copyAfter = Regex.Replace(copyBefore, pattern, "", RegexOptions.IgnoreCase);
+                if (copyAfter != copyBefore) {
+                    var postFieldsBefore = new Dictionary<string, string> {
+                        ["copy"] = copyBefore
+                    };
+                    McpUndoHelper.Capture(cp, Contensive.Blog.constants.cnBlogEntries, post.id, post.ccguid, ToolBlogPostImageDelete, postFieldsBefore);
+                    post.copy = copyAfter;
+                    post.save(cp);
+                }
+                //
+                // -- soft delete the image
+                using (CPCSBaseClass cs = cp.CSNew()) {
+                    if (cs.OpenRecord(Contensive.Blog.constants.cnBlogImages, imageId)) {
+                        cs.SetField("active", "0");
+                        cs.Save();
+                    }
+                }
+                return McpResponseHelper.Success(cp, new { imageId, postId }, "Image deleted successfully.");
+            } catch (Exception ex) {
+                cp.Site.ErrorReport(ex);
+                return McpResponseHelper.Error(cp, "Error deleting blog post image.");
+            }
+        }
+        //
+        // ====================================================================================================
+        // -- blog_post_image_place
+        // ====================================================================================================
+        //
+        private string blogPostImagePlace(CPBaseClass cp, Dictionary<string, object> args) {
+            try {
+                int postId = McpResponseHelper.GetIntArg(args, "postId");
+                int imageId = McpResponseHelper.GetIntArg(args, "imageId");
+                int insertPosition = McpResponseHelper.GetIntArg(args, "insertPosition");
+                if (postId == 0) {
+                    return McpResponseHelper.Error(cp, "postId is required.");
+                }
+                if (imageId == 0) {
+                    return McpResponseHelper.Error(cp, "imageId is required and must be a secondary image (> 0). The primary image cannot be placed inline.");
+                }
+                var post = DbBaseModel.create<BlogEntryModel>(cp, postId);
+                if (post == null) {
+                    return McpResponseHelper.Error(cp, $"Blog post #{postId} not found.");
+                }
+                var image = DbBaseModel.create<BlogImageModel>(cp, imageId);
+                if (image == null || image.blogEntryId != postId) {
+                    return McpResponseHelper.Error(cp, $"Image #{imageId} not found on post #{postId}.");
+                }
+                //
+                // -- capture undo for the post copy
+                var fieldsBefore = new Dictionary<string, string> {
+                    ["copy"] = post.copy ?? ""
+                };
+                McpUndoHelper.Capture(cp, Contensive.Blog.constants.cnBlogEntries, post.id, post.ccguid, ToolBlogPostImagePlace, fieldsBefore);
+                //
+                // -- place the image using the shared logic from BlogImagePlaceRemote
+                post.copy = Contensive.Blog.BlogImagePlaceRemote.placeImageInCopy(post.copy ?? "", imageId, insertPosition);
+                post.save(cp);
+                //
+                return McpResponseHelper.Success(cp, new { postId, imageId, inlineTag = $"[image{imageId}]", insertPosition }, "Image placed inline successfully.");
+            } catch (Exception ex) {
+                cp.Site.ErrorReport(ex);
+                return McpResponseHelper.Error(cp, "Error placing blog post image.");
+            }
+        }
+        //
+        // ====================================================================================================
+        // -- helper: build unified image list for a post
+        // ====================================================================================================
+        //
+        private static List<object> buildImageList(CPBaseClass cp, BlogEntryModel post) {
+            var blogImageList = BlogImageModel.getPostImageList(cp, post);
+            //
+            // -- scan copy for [imageNNN] tags to determine inline placement
+            var inlineTagLookup = new Dictionary<int, string>();
+            if (!string.IsNullOrEmpty(post.copy)) {
+                foreach (Match match in Regex.Matches(post.copy, @"\[image(\d+)\]", RegexOptions.IgnoreCase)) {
+                    int tagImageId = int.Parse(match.Groups[1].Value);
+                    inlineTagLookup[tagImageId] = match.Value;
+                }
+            }
+            //
+            int position = 1;
+            return blogImageList.Select(img => {
+                bool isPrimary = (img.id == 0);
+                string inlineTag = (!isPrimary && inlineTagLookup.ContainsKey(img.id)) ? inlineTagLookup[img.id] : "";
+                return (object)new {
+                    position = position++,
+                    imageId = img.id,
+                    isPrimary,
+                    filename = img.Filename ?? "",
+                    altText = isPrimary ? (post.primaryImageDescription ?? "") : (img.name ?? ""),
+                    description = img.description ?? "",
+                    aspectRatioId = isPrimary ? post.primaryImageAspectRatioId : img.imageAspectRatioId,
+                    inlineTag
+                };
+            }).ToList();
+        }
+        //
+        // ====================================================================================================
+        // -- helper: get next sort order for a post's images
+        // ====================================================================================================
+        //
+        private static string getNextSortOrder(CPBaseClass cp, int postId) {
+            int count = 0;
+            string sql = $"SELECT COUNT(*) as cnt FROM BlogImages WHERE blogentryid={postId} AND (active<>0)";
+            using (var dt = cp.Db.ExecuteQuery(sql)) {
+                if (dt.Rows.Count > 0) {
+                    count = cp.Utils.EncodeInteger(dt.Rows[0]["cnt"]);
+                }
+            }
+            return (count + 1).ToString().PadLeft(12, '0');
         }
     }
 }

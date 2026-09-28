@@ -12,7 +12,7 @@ namespace Contensive.Blog {
         //
         // ====================================================================================================
         //
-        private const string blockTags = "p|h[1-6]|div|blockquote|ul|ol|table|figure|section|hr|pre";
+        internal const string blockTags = "p|h[1-6]|div|blockquote|ul|ol|table|figure|section|hr|pre";
         //
         public override object Execute(CPBaseClass cp) {
             try {
@@ -34,41 +34,8 @@ namespace Contensive.Blog {
                 var image = DbBaseModel.create<BlogImageModel>(cp, imageId);
                 if (image is null || image.blogEntryId != postId) { return "ERR:image not found"; }
                 //
-                // -- get the copy, replace all [imageNNN] tags with non-block placeholders.
-                // -- The dragged image gets a sentinel placeholder so its position does not
-                // -- create a new block boundary (matching the frontend drop zone numbering).
-                // -- Other images also get non-block placeholders for the same reason.
-                string copy = blogPost.copy ?? "";
-                string draggedPlaceholder = "__DRAGGEDIMG__";
-                var placeholders = new Dictionary<string, string>();
-                int placeholderIdx = 0;
-                string expandedCopy = Regex.Replace(copy, @"\[image(\d+)\]", (m) => {
-                    int tagImageId = int.Parse(m.Groups[1].Value);
-                    if (tagImageId == imageId) {
-                        return draggedPlaceholder;
-                    }
-                    string key = $"__IMGPH{placeholderIdx++}__";
-                    placeholders[key] = m.Value;
-                    return key;
-                }, RegexOptions.IgnoreCase);
-                //
-                // -- insert the image tag at the requested position.
-                // -- The dragged image sentinel is still in place, preventing a false
-                // -- block boundary where the image was. This matches the frontend
-                // -- drop zone numbering which also has no drop zone at the image location.
-                string imageTag = $"[image{imageId}]";
-                string resultCopy = insertImageTagAtPosition(expandedCopy, imageTag, insertPosition);
-                //
-                // -- remove the dragged image sentinel now that positions are resolved
-                resultCopy = resultCopy.Replace(draggedPlaceholder, "");
-                //
-                // -- restore other image placeholders back to original [imageNNN] tags
-                foreach (var kvp in placeholders) {
-                    resultCopy = resultCopy.Replace(kvp.Key, kvp.Value);
-                }
-                //
-                // -- save
-                blogPost.copy = resultCopy;
+                // -- place the image tag at the requested position
+                blogPost.copy = placeImageInCopy(blogPost.copy, imageId, insertPosition);
                 blogPost.save(cp);
                 //
                 return "OK";
@@ -80,10 +47,41 @@ namespace Contensive.Blog {
         //
         // ====================================================================================================
         /// <summary>
+        /// Place an [imageNNN] tag at the specified block boundary position in the copy.
+        /// If the image's tag already exists in the copy, it is moved to the new position.
+        /// Returns the modified copy string.
+        /// </summary>
+        internal static string placeImageInCopy(string copy, int imageId, int insertPosition) {
+            string draggedPlaceholder = "__DRAGGEDIMG__";
+            var placeholders = new Dictionary<string, string>();
+            int placeholderIdx = 0;
+            string expandedCopy = Regex.Replace(copy ?? "", @"\[image(\d+)\]", (m) => {
+                int tagImageId = int.Parse(m.Groups[1].Value);
+                if (tagImageId == imageId) {
+                    return draggedPlaceholder;
+                }
+                string key = $"__IMGPH{placeholderIdx++}__";
+                placeholders[key] = m.Value;
+                return key;
+            }, RegexOptions.IgnoreCase);
+            //
+            string imageTag = $"[image{imageId}]";
+            string resultCopy = insertImageTagAtPosition(expandedCopy, imageTag, insertPosition);
+            //
+            resultCopy = resultCopy.Replace(draggedPlaceholder, "");
+            //
+            foreach (var kvp in placeholders) {
+                resultCopy = resultCopy.Replace(kvp.Key, kvp.Value);
+            }
+            return resultCopy;
+        }
+        //
+        // ====================================================================================================
+        /// <summary>
         /// Insert an image tag at the specified block-element boundary position.
         /// Position 0 = after the first block element, position N = after the (N+1)th, last = after all content.
         /// </summary>
-        private static string insertImageTagAtPosition(string copy, string imageTag, int position) {
+        internal static string insertImageTagAtPosition(string copy, string imageTag, int position) {
             string pattern = $@"(<\/(?:{blockTags})\s*>)(\s*)(<(?:{blockTags})[\s>])";
             //
             var boundaries = new List<int>();

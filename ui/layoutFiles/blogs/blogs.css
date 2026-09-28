@@ -3,11 +3,11 @@
 force blog nav background
 */
 .blogWrapper .page-link {
-    color: #0d6efd;
+    color: #0d6efd !important;
 }
 .blogWrapper .active>.page-link,
 .blogWrapper  .page-link.active {
-    color: white;
+    color: white !important;
 }
 /*
 * warnings
@@ -80,7 +80,6 @@ force blog nav background
 .blogWrapper .blogImageContainer
 {
 	position: relative;
-	padding: 1.5rem;
 }
 .blogWrapper .blogImage
 {
@@ -153,10 +152,32 @@ force blog nav background
 	margin-bottom:10px;
 }
 
+.blogWrapper .blogContentWrapper:has(.blogBriefCopy) {
+	max-height: 600px;
+}
+.blogWrapper .blogArticleWrapper:has(.blogBriefCopy) {
+	overflow: hidden;
+	min-height: 0;
+	position: relative;
+}
+.blogWrapper .blogBriefCopy {
+	height: 100%;
+	overflow: hidden;
+}
+.blogWrapper .blogArticleWrapper:has(.blogBriefCopy)::after {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 1.5em;
+	background: linear-gradient(to bottom, transparent, var(--bs-light, #f8f9fa));
+	pointer-events: none;
+}
 .blogWrapper a.aoBlogEntryReadMore
 {
 	text-decoration: none;
-	
+
 }
 .blogWrapper .aoBlogEntryByLine
 {
@@ -550,6 +571,12 @@ width: inherit;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+.blogWrapper .blogImageDropZone:hover {
+    background-color: #f0f0f0;
+    border-color: #888;
+    color: #666;
+    cursor: pointer;
 }
 .blogWrapper .blogImageDropZone.dragover {
     background-color: #e8f4fd;
