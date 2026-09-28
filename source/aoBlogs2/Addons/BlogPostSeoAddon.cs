@@ -30,8 +30,13 @@ namespace Contensive.Blog {
             try {
                 string button = cp.Doc.GetText(constants.rnButton);
                 if (string.IsNullOrEmpty(button)) { return; }
+                int postId = cp.Doc.GetInteger("id");
+                if (postId == 0) { postId = cp.Doc.GetInteger(constants.rnBlogPostId); }
                 int blogId = cp.Doc.GetInteger(constants.rnBlogId);
-                int postId = cp.Doc.GetInteger(constants.rnBlogPostId);
+                if (blogId == 0 && postId > 0) {
+                    var post = DbBaseModel.create<BlogEntryModel>(cp, postId);
+                    if (post != null) { blogId = post.blogId; }
+                }
                 //
                 if (button == constants.buttonSave || button == constants.buttonOK) {
                     //
@@ -61,8 +66,26 @@ namespace Contensive.Blog {
             try {
                 if (!cp.Response.isOpen) { return ""; }
                 //
+                int postId = cp.Doc.GetInteger("id");
+                if (postId == 0) { postId = cp.Doc.GetInteger(constants.rnBlogPostId); }
                 int blogId = cp.Doc.GetInteger(constants.rnBlogId);
-                int postId = cp.Doc.GetInteger(constants.rnBlogPostId);
+                //
+                // -- load post by id including inactive records (admin context)
+                string postName = "";
+                string postMetaTitle = "";
+                string postMetaDescription = "";
+                string postMetaKeywordList = "";
+                using (DataTable dtPost = cp.Db.ExecuteQuery($"select id,name,metaTitle,metaDescription,metaKeywordList,blogId from ccBlogCopy where id={postId}")) {
+                    if (dtPost?.Rows == null || dtPost.Rows.Count == 0) {
+                        cp.Log.Warn($"BlogPostSeoAddon, post not found, blogId [{blogId}], postId [{postId}], redirecting to BlogPostList");
+                        return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogPostList);
+                    }
+                    postName = cp.Utils.EncodeText(dtPost.Rows[0]["name"]);
+                    postMetaTitle = cp.Utils.EncodeText(dtPost.Rows[0]["metaTitle"]);
+                    postMetaDescription = cp.Utils.EncodeText(dtPost.Rows[0]["metaDescription"]);
+                    postMetaKeywordList = cp.Utils.EncodeText(dtPost.Rows[0]["metaKeywordList"]);
+                    if (blogId == 0) { blogId = cp.Utils.EncodeInteger(dtPost.Rows[0]["blogId"]); }
+                }
                 //
                 // -- load blog by id including inactive records (admin context)
                 string blogName = "";
@@ -72,22 +95,6 @@ namespace Contensive.Blog {
                         return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogList);
                     }
                     blogName = cp.Utils.EncodeText(dtBlog.Rows[0]["name"]);
-                }
-                //
-                // -- load post by id including inactive records (admin context)
-                string postName = "";
-                string postMetaTitle = "";
-                string postMetaDescription = "";
-                string postMetaKeywordList = "";
-                using (DataTable dtPost = cp.Db.ExecuteQuery($"select id,name,metaTitle,metaDescription,metaKeywordList from ccBlogCopy where id={postId}")) {
-                    if (dtPost?.Rows == null || dtPost.Rows.Count == 0) {
-                        cp.Log.Warn($"BlogPostSeoAddon, post not found, blogId [{blogId}], postId [{postId}], redirecting to BlogPostList");
-                        return cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogPostList);
-                    }
-                    postName = cp.Utils.EncodeText(dtPost.Rows[0]["name"]);
-                    postMetaTitle = cp.Utils.EncodeText(dtPost.Rows[0]["metaTitle"]);
-                    postMetaDescription = cp.Utils.EncodeText(dtPost.Rows[0]["metaDescription"]);
-                    postMetaKeywordList = cp.Utils.EncodeText(dtPost.Rows[0]["metaKeywordList"]);
                 }
                 //
                 var layoutBuilder = cp.AdminUI.CreateLayoutBuilderNameValue();

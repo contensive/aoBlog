@@ -31,7 +31,8 @@ namespace Contensive.Blog {
                 if ((button ?? "") == constants.buttonSave || (button ?? "") == constants.buttonOK) {
                     //
                     // -- save changes
-                    int blogId = cp.Doc.GetInteger(constants.rnBlogId);
+                    int blogId = cp.Doc.GetInteger("id");
+                    if (blogId == 0) { blogId = cp.Doc.GetInteger(constants.rnBlogId); }
                     using (var cs = cp.CSNew()) {
                         cs.Open(constants.cnBlogs, $"id={blogId}");
                         if (cs.OK()) {
@@ -78,7 +79,8 @@ namespace Contensive.Blog {
                 layoutBuilder.includeBodyPadding = true;
                 layoutBuilder.isOuterContainer = false;
                 //
-                int blogId = cp.Doc.GetInteger(constants.rnBlogId);
+                int blogId = cp.Doc.GetInteger("id");
+                if (blogId == 0) { blogId = cp.Doc.GetInteger(constants.rnBlogId); }
                 //
                 // -- verify blog exists including inactive records (admin context)
                 using (DataTable dtBlog = cp.Db.ExecuteQuery($"select id from ccBlogs where id={blogId}")) {

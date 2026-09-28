@@ -1154,7 +1154,7 @@ ASPECT RATIOS: Both primary and secondary images support aspect ratio control. V
 			<HelpDefault><![CDATA[  ]]></HelpDefault>
 		</Field>
 	</CDef>
-	<CDef Name="Blog Entries" Active="1" AdminOnly="0" AllowAdd="1" AllowCalendarEvents="0" AllowContentChildTool="0" AllowContentTracking="0" AllowDelete="1" AllowMetaContent="" AllowTopicRules="0" NavTypeID="0" AddonCategoryId="0" AuthoringDataSourceName="Default" AuthoringTableName="ccBlogCopy" ContentDataSourceName="Default" ContentTableName="ccBlogCopy" DefaultSortMethod="By Name" DeveloperOnly="0" DropDownFieldList="NAME" EditorGroupName="Site Managers" Parent="" IconLink="" IconHeight="0" IconWidth="0" IconSprites="0" isbasecontent="0" guid="{524CFE8D-9CB3-4159-B1B0-683E62C38344}" >
+	<CDef Name="Blog Entries" portalfeatureguid="{33EA4B39-544B-4E1A-A8B3-80E694DD9842}" Active="1" AdminOnly="0" AllowAdd="1" AllowCalendarEvents="0" AllowContentChildTool="0" AllowContentTracking="0" AllowDelete="1" AllowMetaContent="" AllowTopicRules="0" NavTypeID="0" AddonCategoryId="0" AuthoringDataSourceName="Default" AuthoringTableName="ccBlogCopy" ContentDataSourceName="Default" ContentTableName="ccBlogCopy" DefaultSortMethod="By Name" DeveloperOnly="0" DropDownFieldList="NAME" EditorGroupName="Site Managers" Parent="" IconLink="" IconHeight="0" IconWidth="0" IconSprites="0" isbasecontent="0" guid="{524CFE8D-9CB3-4159-B1B0-683E62C38344}" >
 	<!-- 
 		main tab / edit modal
 	-->
