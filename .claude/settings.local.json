@@ -20,7 +20,11 @@
       "Bash(dotnet clean:*)",
       "Bash(dotnet pack:*)",
       "Bash(npx --yes resvg-cli:*)",
-      "WebFetch(domain:contensive.github.io)"
+      "WebFetch(domain:contensive.github.io)",
+      "WebFetch(domain:api.github.com)",
+      "Bash(dotnet tool list:*)",
+      "Bash(dotnet-ildasm:*)",
+      "Bash(gh api:*)"
     ]
   }
 }
