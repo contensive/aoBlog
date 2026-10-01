@@ -34,6 +34,20 @@ namespace Contensive.Blog {
         internal static void processForm(CPBaseClass cp) {
             try {
                 //
+                // -- check for delete dialog action first (dialog submits without a button value)
+                string deleteAction = cp.Doc.GetText(constants.rnDeleteAction);
+                if (!string.IsNullOrEmpty(deleteAction) && deleteAction == "confirm") {
+                    int postId = cp.Doc.GetInteger(constants.rnBlogPostId);
+                    if (postId == 0) { postId = cp.Doc.GetInteger("id"); }
+                    int blogId = cp.Doc.GetInteger(constants.rnBlogId);
+                    if (postId > 0) {
+                        cp.Content.Delete(constants.cnBlogEntries, $"id={postId}");
+                        cp.Log.Warn($"BlogPostDetailsAddon, post [{postId}] deleted");
+                    }
+                    cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogPostList, "");
+                    return;
+                }
+                //
                 // -- check for email dialog action first (dialog submits without a button value)
                 string emailAction = cp.Doc.GetText(constants.rnEmailAction);
                 if (!string.IsNullOrEmpty(emailAction)) {
@@ -138,6 +152,11 @@ namespace Contensive.Blog {
                         cs.Close();
                     }
                 }
+                if (button == constants.buttonDelete) {
+                    //
+                    // -- Delete button clicked, getForm will show the confirmation dialog
+                    return;
+                }
                 if (button == constants.buttonEmailVersion) {
                     //
                     // -- Email Version button clicked, getForm will show the dialog
@@ -221,14 +240,21 @@ namespace Contensive.Blog {
                 layoutBuilder.addFormButton(constants.buttonSave);
                 layoutBuilder.addFormButton(constants.buttonCancel);
                 layoutBuilder.addFormButton(constants.buttonEmailVersion);
+                layoutBuilder.addFormButton(constants.buttonDelete, constants.rnButton, "", "btn btn-danger float-end ms-2");
                 //
                 // -- hiddens
                 layoutBuilder.addFormHidden(constants.rnSrcFormId, constants.formIdBlogPostDetails);
                 layoutBuilder.addFormHidden(constants.rnBlogPostId, postId);
                 layoutBuilder.addFormHidden(constants.rnBlogId, blogId);
                 //
-                // -- check if Email Version button was just clicked (no action yet means show dialog)
+                // -- check if Delete button was just clicked (show confirmation dialog)
                 string button = cp.Doc.GetText(constants.rnButton);
+                if ((button ?? "") == constants.buttonDelete) {
+                    string dialogHtml = buildDeleteConfirmDialog(cp, postName);
+                    layoutBuilder.htmlAfterBody += dialogHtml;
+                }
+                //
+                // -- check if Email Version button was just clicked (no action yet means show dialog)
                 string emailAction = cp.Doc.GetText(constants.rnEmailAction);
                 bool showEmailDialog = (button == constants.buttonEmailVersion && string.IsNullOrEmpty(emailAction));
                 cp.Log.Warn($"BlogPostDetailsAddon.getForm, button=[{button}], emailAction=[{emailAction}], showEmailDialog=[{showEmailDialog}], buttonEmailVersion=[{constants.buttonEmailVersion}], match=[{button == constants.buttonEmailVersion}]");
@@ -242,6 +268,47 @@ namespace Contensive.Blog {
                 cp.Site.ErrorReport(ex);
                 throw;
             }
+        }
+        //
+        // ====================================================================================================
+        /// <summary>
+        /// Build the delete confirmation dialog as a Bootstrap 5 modal that auto-opens.
+        /// </summary>
+        private static string buildDeleteConfirmDialog(CPBaseClass cp, string postName) {
+            var sb = new StringBuilder();
+            sb.Append("<div class=\"modal fade\" id=\"deletePostModal\" tabindex=\"-1\" aria-labelledby=\"deletePostModalLabel\" aria-hidden=\"true\">");
+            sb.Append("<div class=\"modal-dialog\">");
+            sb.Append("<div class=\"modal-content\">");
+            //
+            // -- header
+            sb.Append("<div class=\"modal-header\">");
+            sb.Append("<h5 class=\"modal-title\" id=\"deletePostModalLabel\">Delete Post</h5>");
+            sb.Append("<button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\" aria-label=\"Close\"></button>");
+            sb.Append("</div>");
+            //
+            // -- body
+            sb.Append("<div class=\"modal-body\">");
+            sb.Append($"<p>Are you sure you want to permanently delete the post \"{cp.Utils.EncodeHTML(postName)}\"?</p>");
+            sb.Append("<p>This action cannot be undone.</p>");
+            sb.Append("</div>");
+            //
+            // -- footer
+            sb.Append("<div class=\"modal-footer\">");
+            sb.Append("<button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">No</button>");
+            sb.Append($"<button type=\"button\" class=\"btn btn-danger\" onclick=\"document.querySelector('input[name={constants.rnDeleteAction}]').value='confirm';this.closest('form').submit();\">Yes, Delete</button>");
+            sb.Append("</div>");
+            //
+            sb.Append("</div>");
+            sb.Append("</div>");
+            sb.Append("</div>");
+            //
+            // -- hidden field for delete action
+            sb.Append($"<input type=\"hidden\" name=\"{constants.rnDeleteAction}\" value=\"\">");
+            //
+            // -- auto-open modal
+            sb.Append("<script>document.addEventListener('DOMContentLoaded',function(){var m=new bootstrap.Modal(document.getElementById('deletePostModal'));m.show();});</script>");
+            //
+            return sb.ToString();
         }
         //
         // ====================================================================================================

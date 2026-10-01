@@ -108,8 +108,8 @@ namespace Contensive.Blog {
                 layoutBuilder.columnCellClass = "afwTextAlignCenter";
                 layoutBuilder.columnSortable = true;
                 //
-                // -- sql where clause
-                string sqlWhere = $"(blogId={blogId})";
+                // -- sql where clause (only posts with a valid blog)
+                string sqlWhere = $"(blogId={blogId}) and (blogId in (select id from ccBlogs))";
                 if (!string.IsNullOrEmpty(layoutBuilder.sqlSearchTerm)) {
                     sqlWhere += $" and(name like {cp.Db.EncodeSQLTextLike(layoutBuilder.sqlSearchTerm)})";
                 }

@@ -2,6 +2,7 @@
 using Contensive.BaseClasses;
 using System;
 using System.Data;
+using System.Text;
 
 namespace Contensive.Blog {
     public class BlogDetailsAddon : AddonBaseClass {
@@ -26,8 +27,34 @@ namespace Contensive.Blog {
         //
         internal static void processForm(CPBaseClass cp) {
             try {
+                //
+                // -- check for delete dialog action first (dialog submits without a button value)
+                string deleteAction = cp.Doc.GetText(constants.rnDeleteAction);
+                if (!string.IsNullOrEmpty(deleteAction) && deleteAction == "confirm") {
+                    int blogId = cp.Doc.GetInteger(constants.rnBlogId);
+                    if (blogId == 0) { blogId = cp.Doc.GetInteger("id"); }
+                    if (blogId > 0) {
+                        //
+                        // -- delete all posts for this blog
+                        cp.Content.Delete(constants.cnBlogEntries, $"blogId={blogId}");
+                        //
+                        // -- delete the blog
+                        cp.Content.Delete(constants.cnBlogs, $"id={blogId}");
+                        //
+                        cp.Log.Warn($"BlogDetailsAddon, blog [{blogId}] and all its posts deleted");
+                    }
+                    cp.AdminUI.RedirectToPortalFeature(constants.guidPortalShare, constants.guidPortalFeatureBlogList, "");
+                    return;
+                }
+                //
                 if (!cp.Doc.IsProperty(constants.rnButton)) { return; }
                 string button = cp.Doc.GetText(constants.rnButton);
+                //
+                if ((button ?? "") == constants.buttonDelete) {
+                    //
+                    // -- Delete button clicked, getForm will show the confirmation dialog
+                    return;
+                }
                 if ((button ?? "") == constants.buttonSave || (button ?? "") == constants.buttonOK) {
                     //
                     // -- save changes
@@ -94,6 +121,7 @@ namespace Contensive.Blog {
                 cp.Doc.AddRefreshQueryString(constants.rnDstFeatureGuid, constants.guidPortalFeatureBlogDetails);
                 cp.Doc.AddRefreshQueryString(constants.rnBlogId, blogId);
                 //
+                string blogName = "";
                 using (var cs = cp.CSNew()) {
                     cs.Open(constants.cnBlogs, $"id={blogId}");
                     if (!cs.OK()) {
@@ -104,7 +132,8 @@ namespace Contensive.Blog {
                         return layoutBuilder.getHtml();
                     }
                     //
-                    layoutBuilder.portalSubNavTitleList.Add($"{cs.GetText("name")}, #{cs.GetInteger("id")}");
+                    blogName = cs.GetText("name");
+                    layoutBuilder.portalSubNavTitleList.Add($"{blogName}, #{cs.GetInteger("id")}");
                     //
                     layoutBuilder.addRow();
                     layoutBuilder.rowName = "Name";
@@ -174,16 +203,65 @@ namespace Contensive.Blog {
                 layoutBuilder.addFormButton(constants.buttonCancel);
                 layoutBuilder.addFormButton(constants.buttonSave);
                 layoutBuilder.addFormButton(constants.buttonOK);
+                layoutBuilder.addFormButton(constants.buttonDelete, constants.rnButton, "", "btn btn-danger float-end ms-2");
                 //
                 // -- hiddens
                 layoutBuilder.addFormHidden(constants.rnSrcFormId, constants.formIdBlogDetails);
                 layoutBuilder.addFormHidden(constants.rnBlogId, blogId);
+                //
+                // -- check if Delete button was just clicked (show confirmation dialog)
+                string button = cp.Doc.GetText(constants.rnButton);
+                if ((button ?? "") == constants.buttonDelete) {
+                    string dialogHtml = buildDeleteConfirmDialog(cp, blogName);
+                    layoutBuilder.htmlAfterBody += dialogHtml;
+                }
                 //
                 return layoutBuilder.getHtml();
             } catch (Exception ex) {
                 cp.Site.ErrorReport(ex);
                 throw;
             }
+        }
+        //
+        // ====================================================================================================
+        /// <summary>
+        /// Build the delete confirmation dialog as a Bootstrap 5 modal that auto-opens.
+        /// </summary>
+        private static string buildDeleteConfirmDialog(CPBaseClass cp, string blogName) {
+            var sb = new StringBuilder();
+            sb.Append("<div class=\"modal fade\" id=\"deleteBlogModal\" tabindex=\"-1\" aria-labelledby=\"deleteBlogModalLabel\" aria-hidden=\"true\">");
+            sb.Append("<div class=\"modal-dialog\">");
+            sb.Append("<div class=\"modal-content\">");
+            //
+            // -- header
+            sb.Append("<div class=\"modal-header\">");
+            sb.Append("<h5 class=\"modal-title\" id=\"deleteBlogModalLabel\">Delete Blog</h5>");
+            sb.Append("<button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\" aria-label=\"Close\"></button>");
+            sb.Append("</div>");
+            //
+            // -- body
+            sb.Append("<div class=\"modal-body\">");
+            sb.Append($"<p>Are you sure you want to permanently delete the blog named \"{cp.Utils.EncodeHTML(blogName)}\"?</p>");
+            sb.Append("<p>This will also delete all of its posts. This action cannot be undone.</p>");
+            sb.Append("</div>");
+            //
+            // -- footer
+            sb.Append("<div class=\"modal-footer\">");
+            sb.Append("<button type=\"button\" class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">No</button>");
+            sb.Append($"<button type=\"button\" class=\"btn btn-danger\" onclick=\"document.querySelector('input[name={constants.rnDeleteAction}]').value='confirm';this.closest('form').submit();\">Yes, Delete</button>");
+            sb.Append("</div>");
+            //
+            sb.Append("</div>");
+            sb.Append("</div>");
+            sb.Append("</div>");
+            //
+            // -- hidden field for delete action
+            sb.Append($"<input type=\"hidden\" name=\"{constants.rnDeleteAction}\" value=\"\">");
+            //
+            // -- auto-open modal
+            sb.Append("<script>document.addEventListener('DOMContentLoaded',function(){var m=new bootstrap.Modal(document.getElementById('deleteBlogModal'));m.show();});</script>");
+            //
+            return sb.ToString();
         }
     }
 }

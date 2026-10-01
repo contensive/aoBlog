@@ -85,7 +85,7 @@ namespace Contensive.Blog {
                 }
                 //
                 // -- count
-                string sqlCount = $"select count(*) from ccBlogCopy p left join ccBlogs b on b.id = p.blogId where {sqlWhere}";
+                string sqlCount = $"select count(*) from ccBlogCopy p inner join ccBlogs b on b.id = p.blogId where {sqlWhere}";
                 using (DataTable dt = cp.Db.ExecuteQuery(sqlCount)) {
                     if (dt?.Rows != null && dt.Rows.Count == 1) {
                         layoutBuilder.recordCount = cp.Utils.EncodeInteger(dt.Rows[0][0]);
@@ -93,7 +93,7 @@ namespace Contensive.Blog {
                 }
                 //
                 // -- data query
-                string sql = $"select p.id, p.name, p.dateAdded, p.viewings, p.blogId, b.name as blogName from ccBlogCopy p left join ccBlogs b on b.id = p.blogId where {sqlWhere}";
+                string sql = $"select p.id, p.name, p.dateAdded, p.viewings, p.blogId, b.name as blogName from ccBlogCopy p inner join ccBlogs b on b.id = p.blogId where {sqlWhere}";
                 string orderBy = "p.dateAdded desc";
                 if (!string.IsNullOrEmpty(layoutBuilder.sortField)) {
                     orderBy = layoutBuilder.sortField;

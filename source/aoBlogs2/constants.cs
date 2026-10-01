@@ -114,6 +114,9 @@
         public const string rnEmailAction = "emailAction";
         public const string userPropertyEmailParagraphCount = "BlogEmailParagraphCount";
         //
+        // -- blog delete dialog
+        public const string rnDeleteAction = "deleteAction";
+        //
         public const string reCaptchaDisplayGuid = "{E9E51C6E-9152-4284-A44F-D3ABC423AB90}";
         public const string reCaptchaProcessGuid = "{030AC5B0-F796-4EA4-B94C-986B1C29C16C}";
         public const string RSSProcessAddonGuid = "{2119C2DA-1D57-4C32-B13C-28CD2D85EDF5}";
