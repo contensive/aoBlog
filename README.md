@@ -1,6 +1,6 @@
 # aoBlog
 
-aoBlog is a C# .NET Framework 4.7.2 blogging addon for the Contensive CMS platform. It builds a signed assembly (aoBlogs2.dll) that gets packaged into a Contensive collection zip for deployment.
+aoBlog is a C# .NET Standard 2.0 blogging addon for the Contensive CMS platform. It builds a signed assembly (aoBlogs2.dll) that gets packaged into a Contensive collection zip for deployment.
 
 ## Reference Contensive Development
 
