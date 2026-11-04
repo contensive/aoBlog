@@ -17,6 +17,7 @@ namespace Contensive.Blog.Models.View {
         public string headline { get; set; }
         public string entryLink { get; set; }
         public bool isArticleView { get; set; }
+        public bool hasSidebar { get; set; }
         //
         // -- edit link (injected HTML from framework)
         public string editLinkHtml { get; set; }

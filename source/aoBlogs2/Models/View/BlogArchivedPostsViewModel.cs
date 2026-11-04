@@ -59,6 +59,7 @@ namespace Contensive.Blog.Models.View {
                         string entryEditLink = app.userIsEditing ? cp.Content.GetEditLink(blogPost.name, blogPost.id.ToString(), true, blogPost.name, true) : "";
                         List<BlogImageModel> blogImageList = BlogImageModel.getPostImageList(cp, blogPost);
                         var postCellVm = BlogPostCellViewModel.create(cp, app, blogPost, blogImageList, false, false, entryEditLink);
+                        postCellVm.hasSidebar = app.hasSidebar;
                         postCellsHtml += cp.Mustache.Render(cp.Layout.GetLayout(constants.layoutGuidBlogPostCell, constants.layoutNameBlogPostCell, constants.layoutPathFilenameBlogPostCell), postCellVm);
                         postCellsHtml += "<hr>";
                     }

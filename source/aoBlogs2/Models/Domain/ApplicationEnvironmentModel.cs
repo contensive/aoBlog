@@ -196,6 +196,11 @@ namespace Contensive.Blog.Models {
         // 
         // 
         /// <summary>
+        /// True if the sidebar is visible for this request. Set by BlogWidgetViewModel before rendering body.
+        /// </summary>
+        public bool hasSidebar { get; set; }
+        //
+        /// <summary>
         /// if false, do now show tags. This blocks all the additional pages that hurt SEO
         /// </summary>
         /// <returns></returns>

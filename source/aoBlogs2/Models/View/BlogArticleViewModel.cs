@@ -59,6 +59,7 @@ namespace Contensive.Blog.Models.View {
                 // -- render blog post cell via sub-template
                 List<BlogImageModel> blogImageList = BlogImageModel.getPostImageList(cp, app.blogPost);
                 var postCellVm = BlogPostCellViewModel.create(cp, app, app.blogPost, blogImageList, true, false, entryEditLink);
+                postCellVm.hasSidebar = app.hasSidebar;
                 result.postCellHtml = cp.Mustache.Render(cp.Layout.GetLayout(constants.layoutGuidBlogPostCell, constants.layoutNameBlogPostCell, constants.layoutPathFilenameBlogPostCell), postCellVm);
                 //
                 // -- count the viewing and log it, excluding bots

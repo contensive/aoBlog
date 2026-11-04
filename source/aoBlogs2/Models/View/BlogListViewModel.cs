@@ -106,6 +106,7 @@ namespace Contensive.Blog.Models.View {
                         if (!isBlocked) {
                             List<BlogImageModel> blogImageList = BlogImageModel.getPostImageList(cp, post);
                             var postCellVm = BlogPostCellViewModel.create(cp, app, post, blogImageList, false, true, "");
+                            postCellVm.hasSidebar = app.hasSidebar;
                             //
                             // -- add edit wrapper HTML as template variables (only when editing enabled)
                             if (cp.User.IsEditing()) {

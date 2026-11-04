@@ -111,9 +111,8 @@ namespace Contensive.Blog.Models {
                 if (!string.IsNullOrEmpty(request.ButtonValue)) {
                     dstFormId = BlogBodyController.ProcessForm(cp, app, request, ref retryCommentPost);
                 }
-                result.blogBody = getBodyHtml(cp, app, request, dstFormId, retryCommentPost, result);
                 //
-                // -- populate sidebar properties
+                // -- populate sidebar properties (must be computed before getBodyHtml so post cells can use hasSidebar)
                 result.blogId = blog.id.ToString();
                 result.isAdmin = cp.User.IsAdmin;
                 result.isArticleView = request.blogEntryId > 0;
@@ -125,6 +124,9 @@ namespace Contensive.Blog.Models {
                 bool allowArticleSidebar = allowListSidebar | blog.allowArticleCTA;
                 bool isEditForm = dstFormId == constants.FormBlogEntryEditor;
                 result.hasSidebar = !isEditForm && (result.isArticleView ? allowArticleSidebar : allowListSidebar);
+                app.hasSidebar = result.hasSidebar;
+                //
+                result.blogBody = getBodyHtml(cp, app, request, dstFormId, retryCommentPost, result);
                 //
                 if (result.hasSidebar) {
                     //

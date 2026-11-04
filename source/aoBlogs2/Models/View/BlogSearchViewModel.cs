@@ -99,6 +99,7 @@ namespace Contensive.Blog.Models.View {
                             }
                             List<BlogImageModel> blogImageList = BlogImageModel.getPostImageList(cp, blogEntry);
                             var postCellVm = BlogPostCellViewModel.create(cp, app, blogEntry, blogImageList, false, true, "");
+                            postCellVm.hasSidebar = app.hasSidebar;
                             searchResultsHtml += cp.Mustache.Render(cp.Layout.GetLayout(constants.layoutGuidBlogPostCell, constants.layoutNameBlogPostCell, constants.layoutPathFilenameBlogPostCell), postCellVm);
                             searchResultsHtml += "<hr>";
                         }

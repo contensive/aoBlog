@@ -16,7 +16,7 @@
 <body>
 
     <div  data-layout="Blog Post Cell" id="shouldNotBeIncluded-1244">
-        <div class="{{#isArticleView}}col-12{{/isArticleView}} {{^isArticleView}}col-12 col-md-6 d-flex{{/isArticleView}}">
+        <div class="{{#isArticleView}}col-12{{/isArticleView}} {{^isArticleView}}col-12 {{#hasSidebar}}col-md-6{{/hasSidebar}}{{^hasSidebar}}col-md-4{{/hasSidebar}} d-flex{{/isArticleView}}">
             <div class="border rounded-4 mb-4 shadow-sm bg-light d-flex flex-column w-100">
                 {{{editWrapperStart}}}
                 <div class="blogContentWrapper p-4 d-flex flex-column flex-grow-1">
